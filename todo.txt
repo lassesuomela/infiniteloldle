@@ -1,0 +1,16 @@
+Tiedossa:
+name
+title
+resource
+skinCount
+spriteIds
+genre
+
+---
+Tarvitaan vielä:
+position: top/mid/bot
+gender: male/female/other
+rangeType: ranged/melee
+region: freljord/etc
+released: 2014
+species: voidling
