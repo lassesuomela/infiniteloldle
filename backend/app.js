@@ -17,9 +17,11 @@ app.use(helmet());
 app.use(express.json());
 app.use(morgan("dev"));
 
+const auth = require("./configs/auth")
+
 const championRoutes = require("./routes/championRoutes")
 
-app.use("/api", championRoutes)
+app.use("/api", auth, championRoutes)
 
 // start the server and bind to all interfaces
 app.listen(port, "0.0.0.0", () => {
