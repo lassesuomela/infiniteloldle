@@ -8,30 +8,36 @@ const create = (req, res) => {
         return res.json({ status:"error", message:"One or more fields must be provided"})
     }
 
-    champion.add(data, (err, result) => {
+    champion.create(data, (err, result) => {
 
         if(err){
             return res.json({status: "error", error: err})
         }
 
-        res.json({status: "success", message: result})
+        res.json({status: "success", message: "Champion added successfully"})
     })
 }
 
 const addMoreData = (req, res) => {
-    const data = req.body;
+    const body = req.body;
 
-    if(!data.position || !data.gender || !data.rangeType || !data.region || !data.released){
+    const data = {
+        name:body.champion,
+        released: body.data[0].released.toString(),
+        position: body.data[1].positions.toString(),
+        rangeType: body.data[2].rangeTypes.toString()
+    }
+
+    if(!data.position || !data.rangeType || !data.released || !data.name){
         return res.json({ status:"error", message:"One or more fields must be provided"})
     }
 
-    champion.add(data, (err, result) => {
+    champion.addMoreData(data, (err, result) => {
 
         if(err){
             return res.json({status: "error", error: err})
         }
-
-        res.json({status: "success", message: result})
+        res.json({status: "success", message: "Champion edited"})
     })
 }
 
