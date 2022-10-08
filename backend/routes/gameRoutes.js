@@ -4,7 +4,6 @@ const router = express.Router();
 
 const championController = require("../controllers/championController")
 
-router.post('/champion', championController.Create)
-router.put('/champion', championController.AddMoreData)
+router.post('/guess', championController.Guess)
 
 module.exports = router;

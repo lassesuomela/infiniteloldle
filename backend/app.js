@@ -20,6 +20,11 @@ app.use(morgan("dev"));
 const auth = require("./configs/auth")
 
 const championRoutes = require("./routes/championRoutes")
+const userRoutes = require("./routes/userRoutes")
+const gameRoutes = require("./routes/gameRoutes")
+
+app.use("/api", userRoutes)
+app.use("/api", gameRoutes)
 
 app.use("/api", auth, championRoutes)
 
