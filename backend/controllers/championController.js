@@ -4,7 +4,7 @@ const create = (req, res) => {
 
     const data = req.body;
 
-    if(!data.name || !data.title || !data.resource || !data.skinCount || !data.spriteIds || !data.genre){
+    if(!data.name || !data.title || !data.resource || !data.skinCount || !data.spriteIds || !data.genre || !data.gender){
         return res.json({ status:"error", message:"One or more fields must be provided"})
     }
 
@@ -22,13 +22,14 @@ const addMoreData = (req, res) => {
     const body = req.body;
 
     const data = {
-        name:body.champion,
+        name: body.champion,
         released: body.data[0].released.toString(),
-        position: body.data[1].positions.toString(),
-        rangeType: body.data[2].rangeTypes.toString()
+        region: body.data[1].region.toString(),
+        position: body.data[2].positions.toString(),
+        rangeType: body.data[3].rangeTypes.toString()
     }
 
-    if(!data.position || !data.rangeType || !data.released || !data.name){
+    if(!data.position || !data.rangeType || !data.released || !data.name || !data.region){
         return res.json({ status:"error", message:"One or more fields must be provided"})
     }
 

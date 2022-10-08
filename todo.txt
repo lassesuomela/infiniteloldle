@@ -1,15 +1,20 @@
 Tiedossa:
+
+Post request:
 name
 title
 resource
 skinCount
 spriteIds
 genre
+gender
+
+Put request:
 released
 position
 rangeType
+region
 ---
 Tarvitaan vielä:
-gender: male/female/other
-region: freljord/etc
+
 species: voidling
