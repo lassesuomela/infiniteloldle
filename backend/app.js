@@ -17,16 +17,22 @@ app.use(helmet());
 app.use(express.json());
 app.use(morgan("dev"));
 
-const auth = require("./configs/auth")
+const auth = require("./configs/auth");
+const token = require("./configs/token");
 
-const championRoutes = require("./routes/championRoutes")
-const userRoutes = require("./routes/userRoutes")
-const gameRoutes = require("./routes/gameRoutes")
+const championRoutes = require("./routes/championRoutes");
+const userRoutes = require("./routes/userRoutes");
+const createUserRoutes = require("./routes/createUserRoutes");
+const gameRoutes = require("./routes/gameRoutes");
 
-app.use("/api", userRoutes)
-app.use("/api", gameRoutes)
+app.use("/api", createUserRoutes);
 
-app.use("/api", auth, championRoutes)
+app.use(token);
+
+app.use("/api", userRoutes);
+app.use("/api", gameRoutes);
+
+app.use("/api", auth, championRoutes);
 
 // start the server and bind to all interfaces
 app.listen(port, "0.0.0.0", () => {

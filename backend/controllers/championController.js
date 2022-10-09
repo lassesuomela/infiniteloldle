@@ -46,13 +46,8 @@ const AddMoreData = (req, res) => {
 const Guess = (req, res) => {
 
     const { guess } = req.body;
-    let token = req.headers.authorization;
 
-    if(token){
-        token = token.split(" ")[1];
-    }else{
-        return res.json({status: "error", message:"Token is needed"})
-    }
+    const token = req.token;
 
     champion.getByToken(token, (err, correctChampionData) => {
 

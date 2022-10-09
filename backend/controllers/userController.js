@@ -50,13 +50,8 @@ const Create = (req, res) => {
 }
 
 const CheckToken = (req, res) => {
-    let token = req.headers.authorization;
 
-    if (token){
-        token = token.split(" ")[1];
-    }else{
-        return res.json({status:"error", message:"Token must be provided"})
-    }
+    const token = req.token;
 
     user.fetchByToken(token, (err, result) => {
         if (result[0]){

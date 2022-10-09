@@ -1,19 +1,12 @@
 require("dotenv").config()
 
 const auth = (req, res, next) => {
-    let authorization = req.headers.authorization
+    const token = req.token;
 
-    if(!authorization){
-        return res.json({status:"error", message: "Authorization token required"})
-    }
-
-    authorization = authorization.split(" ")[1]
-
-    if(authorization === process.env.TOKEN) {
+    if(token === process.env.TOKEN) {
         next();
     }else{
         res.json({status:"error", message: "Invalid authorization token"})
-        console.log(authorization);
     }
 }
 

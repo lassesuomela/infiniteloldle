@@ -4,6 +4,6 @@ const router = express.Router();
 
 const userController = require("../controllers/userController")
 
-router.get("/user", userController.CheckToken)
+router.post("/user", userController.Create)
 
 module.exports = router;
