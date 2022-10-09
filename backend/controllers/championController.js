@@ -124,22 +124,26 @@ const Guess = (req, res) => {
                     guessedChampion: guessChampionData[0].name,
                     
                     resource: guessChampionData[0].resource,
-                    sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? "true" : "false",
+                    sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
                     
+                    // TODO: get partial data
                     position: guessChampionData[0].position,
-                    samePosition: guessChampionData[0].position === correctChampionData[0].position ? "true" : "false",
+                    samePosition: guessChampionData[0].position === correctChampionData[0].position ? true : false,
                     
+                    // TODO: get partial data
                     rangeType: guessChampionData[0].rangeType,
-                    sameRangeType: guessChampionData[0].rangeType === correctChampionData[0].rangeType ? "true" : "false",
+                    sameRangeType: guessChampionData[0].rangeType === correctChampionData[0].rangeType ? true : false,
                     
+                    // TODO: get partial data
                     region: guessChampionData[0].region,
-                    sameRegion: guessChampionData[0].region === correctChampionData[0].region ? "true" : "false",
+                    sameRegion: guessChampionData[0].region === correctChampionData[0].region ? true : false,
                     
                     guessedYear: guessChampionData[0].released,
                     releaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
                     
+                    // TODO: get partial data
                     genre: guessChampionData[0].genre,
-                    sameGenre: guessChampionData[0].genre === correctChampionData[0].genre ? "true" : "false",
+                    sameGenre: guessChampionData[0].genre === correctChampionData[0].genre ? true : false,
                 }
 
                 return res.json({status: "error", correctGuess: false, properties: data})

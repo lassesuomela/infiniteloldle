@@ -24,8 +24,10 @@ const championRoutes = require("./routes/championRoutes");
 const userRoutes = require("./routes/userRoutes");
 const createUserRoutes = require("./routes/createUserRoutes");
 const gameRoutes = require("./routes/gameRoutes");
+const scoreboardRoutes = require("./routes/scoreboardRoutes");
 
 app.use("/api", createUserRoutes);
+app.use("/api", scoreboardRoutes);
 
 app.use(token);
 
