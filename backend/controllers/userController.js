@@ -9,7 +9,7 @@ const Create = (req, res) => {
     crypto.randomBytes(46, (err, token) => {
         if(err) {
             console.log(err);
-            return res.json({status:"error",message:"Error on token creation"})
+            return res.json({status:"error", message:"Error on token creation"})
         }
 
         token = token.toString("base64");
@@ -19,7 +19,7 @@ const Create = (req, res) => {
         champion.getAllIds((err, data) => {
             if(err) {
                 console.log(err);
-                return res.json({status:"error",message:"Error on fetching ids"})
+                return res.json({status:"error", message:"Error on fetching ids"})
             }
 
             const random = Math.floor(Math.random() * data.length);
@@ -29,7 +29,7 @@ const Create = (req, res) => {
             data = {
                 nickname: !nickname ? "Anonymous" : nickname,
                 token: token,
-                currentChampion:currentChampion["id"],
+                currentChampion: currentChampion["id"],
                 timestamp: new Date().toLocaleDateString("en"),
                 ip: ip
             }
@@ -40,7 +40,7 @@ const Create = (req, res) => {
 
                 if(err) {
                     console.log(err);
-                    return res.json({status:"error",message:"Error on fetching ids"})
+                    return res.json({status:"error", message:"Error on fetching ids"})
                 }
 
                 res.json({status: "success", token: token})

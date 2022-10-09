@@ -6,7 +6,7 @@ const Create = (req, res) => {
     const data = req.body;
 
     if(!data.name || !data.title || !data.resource || !data.skinCount || !data.spriteIds || !data.genre || !data.gender){
-        return res.json({ status:"error", message:"One or more fields must be provided"})
+        return res.json({ status:"error", message: "One or more fields must be provided"})
     }
 
     champion.create(data, (err, result) => {
@@ -31,7 +31,7 @@ const AddMoreData = (req, res) => {
     }
 
     if(!data.position || !data.rangeType || !data.released || !data.name || !data.region){
-        return res.json({ status:"error", message:"One or more fields must be provided"})
+        return res.json({status: "error", message: "One or more fields must be provided"})
     }
 
     champion.addMoreData(data, (err, result) => {
@@ -47,12 +47,16 @@ const Guess = (req, res) => {
 
     const { guess } = req.body;
 
+    if (!guess) {
+        return res.json({status: "error", message: "Guess is required"});
+    }
+
     const token = req.token;
 
     champion.getByToken(token, (err, correctChampionData) => {
 
         if(!correctChampionData[0]){
-            return res.json({status: "error", message: "Nothing found with that token"})
+            return res.json({status: "error", message: "Token is invalid"})
         }
 
         if(guess === correctChampionData[0].name){
@@ -61,14 +65,14 @@ const Guess = (req, res) => {
             champion.getAllIds((err, data) => {
                 if(err) {
                     console.log(err);
-                    return res.json({status: "error",message: "Error on fetching ids"})
+                    return res.json({status: "error", message: "Error on fetching champions ids"})
                 }
 
                 user.fetchByToken(token, (err, result) => {
 
                     if(err) {
                         console.log(err);
-                        return res.json({status: "error",message: "Error on fetching with token"})
+                        return res.json({status: "error", message: "Error on fetching data with the token provided"})
                     }
 
                     let solvedChampions;
@@ -100,7 +104,7 @@ const Guess = (req, res) => {
     
                         if(err) {
                             console.log(err);
-                            return res.json({status: "error",message: "Error on fetching ids"})
+                            return res.json({status: "error", message: "Error on updating user data"})
                         }
         
                         res.json({status: "success", correctGuess: true})
@@ -113,7 +117,7 @@ const Guess = (req, res) => {
             champion.getByName(guess, (err, guessChampionData) => {
 
                 if (!guessChampionData[0]){
-                    return res.json({ status: "error", message:"Nothing found with that name"})
+                    return res.json({ status: "error", message: "Nothing found with that champion name"})
                 }
 
                 const data = {
