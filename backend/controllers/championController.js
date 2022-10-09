@@ -48,8 +48,6 @@ const Guess = (req, res) => {
     const { guess } = req.body;
     let token = req.headers.authorization;
 
-    console.log(guess);
-
     if(token){
         token = token.split(" ")[1];
     }else{
@@ -59,12 +57,61 @@ const Guess = (req, res) => {
     champion.getByToken(token, (err, correctChampionData) => {
 
         if(!correctChampionData[0]){
-            return res.json({ status: "error", message:"Nothing found with that token"})
+            return res.json({status: "error", message: "Nothing found with that token"})
         }
 
         if(guess === correctChampionData[0].name){
             // add champ id to solved champions in this token and fetch new one
-            return res.json({status: "success", correctGuess: true})
+
+            champion.getAllIds((err, data) => {
+                if(err) {
+                    console.log(err);
+                    return res.json({status: "error",message: "Error on fetching ids"})
+                }
+
+                user.fetchByToken(token, (err, result) => {
+
+                    if(err) {
+                        console.log(err);
+                        return res.json({status: "error",message: "Error on fetching with token"})
+                    }
+
+                    let solvedChampions;
+
+                    if(result[0]["solvedChampion"]){
+                        solvedChampions = correctChampionData[0]["id"] + "," + result[0]["solvedChampion"];
+                    }else{
+                        solvedChampions = correctChampionData[0]["id"];
+                    }
+
+                    const solvedChamps = solvedChampions.split(",");
+
+                    // remove solved champs from the all champions pool
+                    const champPool = data.filter(id => {
+                        return !solvedChamps.includes(id["id"].toString());
+                    })
+
+                    const random = Math.floor(Math.random() * champPool.length);
+        
+                    const newChampion = champPool[random];
+
+                    let payload = {
+                        currentChampion: newChampion["id"],
+                        solvedChampions: solvedChampions,
+                        token: token
+                    }
+
+                    user.update(payload, (err, result) => {
+    
+                        if(err) {
+                            console.log(err);
+                            return res.json({status: "error",message: "Error on fetching ids"})
+                        }
+        
+                        res.json({status: "success", correctGuess: true})
+                    })
+                })
+            })
         }else{
             // wrong guess return diff
 
@@ -75,7 +122,6 @@ const Guess = (req, res) => {
                 }
 
                 const data = {
-                    correctGuess: false,
                     guessedChampion: guessChampionData[0].name,
                     
                     resource: guessChampionData[0].resource,
@@ -97,7 +143,7 @@ const Guess = (req, res) => {
                     sameGenre: guessChampionData[0].genre === correctChampionData[0].genre ? "true" : "false",
                 }
 
-                return res.json({status: "error", message: "Wrong champion", difference: data})
+                return res.json({status: "error", correctGuess: false, properties: data})
             })
         }
     })
