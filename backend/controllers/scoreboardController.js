@@ -11,13 +11,9 @@ const TopAllTime = (req, res) => {
                 score = 1;
             }
 
-            console.log(score);
-
             data["score"] = score;
             delete data["solvedChampion"];
         })
-
-        console.log(result);
 
         res.json({status: "success", scores: result});
     })
