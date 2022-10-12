@@ -12,12 +12,25 @@ axios.defaults.headers.common['authorization'] = "Bearer " + token;
 export default function Game() {
 
   const [champions, setChampions] = useState([]);
+  const [guesses, setGuesses] = useState([]);
 
   const Guess = (e) => {
     e.preventDefault();
 
     const champion = e.target[0].value;
     e.target[0].value = "";
+
+    if(!champion){
+      console.log("Input is needed");
+      return;
+    }
+
+    if(guesses.indexOf(champion) !== -1){
+      console.log("Duplicate");
+      return;
+    }
+
+    setGuesses(guesses => [...guesses, champion]);
 
     axios.post(url + "/guess", {guess:champion}).then(response => {
 
