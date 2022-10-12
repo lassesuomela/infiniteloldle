@@ -66,6 +66,24 @@ const AddChampionId = (req, res) => {
     })
 }
 
+const GetAllChampions = (req, res) => {
+
+    champion.getAllNames((err, result) => {
+
+        if(err){
+            return res.json({status: "error", error: err})
+        }
+
+        let champions = [];
+        result.forEach(champ => {
+            champions.push(champ["name"])    
+        });
+
+        res.json({status: "success", champions: champions})
+    })
+}
+
+
 const Guess = (req, res) => {
 
     const { guess } = req.body;
@@ -209,5 +227,6 @@ module.exports = {
     Create,
     AddMoreData,
     AddChampionId,
+    GetAllChampions,
     Guess
 }

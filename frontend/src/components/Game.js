@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from "axios";
 import "../Game.css";
 import Titles from "./GameTitle";
@@ -11,10 +11,36 @@ axios.defaults.headers.common['authorization'] = "Bearer " + token;
 
 export default function Game() {
 
+  const [validGuesses, setValidGuesses] = useState([]);
   const [champions, setChampions] = useState([]);
   const [guesses, setGuesses] = useState([]);
 
+  useEffect(() => {
+    axios.get(url + "/champions").then(response => {
+
+      const data = response.data.champions;
+
+      setValidGuesses(data);
+
+    }).catch(error => {
+      console.log(error);
+    })
+
+    let championInput = document.getElementById("championInput");
+
+    championInput.addEventListener("keyup", (e) => {
+
+      if (e.target.value.length > 1) {
+        championInput.setAttribute("list", "championList");
+      } else {
+        championInput.setAttribute("list", "");
+      }
+  });
+  
+  }, [])
+
   const Guess = (e) => {
+
     e.preventDefault();
 
     const champion = e.target[0].value;
@@ -29,6 +55,8 @@ export default function Game() {
       console.log("Duplicate");
       return;
     }
+
+    setValidGuesses(validGuesses.filter(item => item !== champion));
 
     setGuesses(guesses => [...guesses, champion]);
 
@@ -58,7 +86,14 @@ export default function Game() {
   return (
     <div className="container">
       <form className="form-control row g-3 mb-3" onSubmit={Guess} >
-        <input type="text" className="form-control" id="champion" placeholder="Champion name" />
+        <input type="text" className="form-control" id="championInput" placeholder="Champion name" autocomplete="off"/>
+        <datalist id="championList">
+          {
+            validGuesses.map(champion =>(
+              <option value={champion} />
+            ))
+          }
+        </datalist>
 
         <button className="btn btn-primary mb-3" >Guess</button>
       </form>

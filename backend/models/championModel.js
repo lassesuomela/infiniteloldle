@@ -13,6 +13,9 @@ const champion = {
     getAllIds: (cb) =>{
         return db.query("SELECT id FROM champions", cb)
     },
+    getAllNames: (cb) =>{
+        return db.query("SELECT name FROM champions", cb)
+    },
     getByToken: (token, cb) =>{
         return db.query("SELECT users.currentChampion, champions.id, champions.name, champions.resource, champions.position, champions.gender, champions.rangeType, champions.released, champions.region, champions.genre FROM users JOIN champions ON champions.id = users.currentChampion WHERE users.token = ?", [token], cb)
     },
