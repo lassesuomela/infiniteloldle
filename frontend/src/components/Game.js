@@ -1,5 +1,5 @@
 import React from 'react'
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import "../Game.css";
 import Titles from "./GameTitle";
@@ -12,7 +12,7 @@ axios.defaults.headers.common['authorization'] = "Bearer " + token;
 
 export default function Game() {
 
-  const [guesses, setGuesses] = useState([]);
+  const [champions, setChampions] = useState([]);
 
   const Guess = (e) => {
     e.preventDefault();
@@ -21,11 +21,13 @@ export default function Game() {
 
     axios.post(url + "/guess", {guess:champion}).then(response => {
 
+      const correct = response.data.correctGuess;
+
+      console.log(correct ? "ez gg" : "wrong champ")
+
       const data = response.data.properties;
 
-      console.log(data)
-
-      setGuesses(data);
+      setChampions(champions => [...champions, data]);
 
     }).catch(error => {
       console.log(error);
@@ -34,18 +36,17 @@ export default function Game() {
 
   return (
     <div className="container">
-      <form class="form-control" onSubmit={Guess} >
-        <label className="control-label" for="champion">Champion</label>
-        <input type="text" className="form-control" id="champion" placeholder="Champion" />
+      <form className="form-control row g-3 mb-3" onSubmit={Guess} >
+        <input type="text" className="form-control" id="champion" placeholder="Champion name" />
 
-        <button className="btn btn-primary" >Guess</button>
+        <button className="btn btn-primary mb-3" >Guess</button>
       </form>
 
       <Titles />
-      <div id="guesses">
+      <div id="champions">
         {
-          guesses.map((guess) =>(
-            <ChampionDetails guessedChampion={guess.guessedChampion} gender={guess.gender} genre={guess.genre} resource={guess.resource} rangeTypes={guess.rangeType} positions={guess.position} releaseYear={guess.releaseYear} regions={guess.region} skinCount={guess.skinCount}/>
+          champions.map(champ =>(
+            <ChampionDetails guessedChampion={champ[0].guessedChampion} gender={champ[0].gender} genre={champ[0].genre} resource={champ[0].resource} rangeTypes={champ[0].rangeType} positions={champ[0].position} releaseYear={champ[0].releaseYear} regions={champ[0].region} skinCount={champ[0].skinCount}/>
           ))
         }
         
