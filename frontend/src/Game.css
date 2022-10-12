@@ -1,0 +1,11 @@
+.correct {
+    background-color: green;
+}
+
+.partial {
+    background-color: yellow;
+}
+
+.incorrect {
+    background-color: red;
+}

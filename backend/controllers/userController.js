@@ -6,6 +6,8 @@ const Create = (req, res) => {
 
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
+    console.log(req.body);
+
     crypto.randomBytes(46, (err, token) => {
         if(err) {
             console.log(err);

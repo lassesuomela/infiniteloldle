@@ -125,6 +125,9 @@ const Guess = (req, res) => {
                     
                     resource: guessChampionData[0].resource,
                     sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
+
+                    gender: guessChampionData[0].gender,
+                    sameGender: guessChampionData[0].gender === correctChampionData[0].gender ? true : false,
                     
                     // TODO: get partial data
                     position: guessChampionData[0].position,
@@ -138,15 +141,18 @@ const Guess = (req, res) => {
                     region: guessChampionData[0].region,
                     sameRegion: guessChampionData[0].region === correctChampionData[0].region ? true : false,
                     
-                    guessedYear: guessChampionData[0].released,
-                    releaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
+                    releaseYear: guessChampionData[0].released,
+                    sameReleaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
                     
+                    skinCount: guessChampionData[0].skinCount,
+                    sameSkinCount: correctChampionData[0].skinCount === guessChampionData[0].skinCount ? "=" : correctChampionData[0].skinCount > guessChampionData[0].skinCount ? ">" : "<",
+
                     // TODO: get partial data
                     genre: guessChampionData[0].genre,
                     sameGenre: guessChampionData[0].genre === correctChampionData[0].genre ? true : false,
                 }
 
-                return res.json({status: "error", correctGuess: false, properties: data})
+                return res.json({status: "error", correctGuess: false, properties: [data]})
             })
         }
     })
