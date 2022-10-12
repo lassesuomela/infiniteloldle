@@ -106,7 +106,12 @@ const Guess = (req, res) => {
                         solvedChampions = correctChampionData[0]["id"];
                     }
 
-                    const solvedChamps = solvedChampions.split(",");
+                    let solvedChamps;
+                    if(solvedChampions.length > 1){
+                        solvedChamps = solvedChampions.split(",");
+                    }else {
+                        solvedChamps = solvedChampions.toString();
+                    }
 
                     // remove solved champs from the all champions pool
                     const champPool = data.filter(id => {
@@ -148,35 +153,38 @@ const Guess = (req, res) => {
                     championKey: guessChampionData[0].championKey,
                     
                     resource: guessChampionData[0].resource,
-                    sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
 
                     gender: guessChampionData[0].gender,
-                    sameGender: guessChampionData[0].gender === correctChampionData[0].gender ? true : false,
                     
                     // TODO: get partial data
                     position: guessChampionData[0].position,
-                    samePosition: guessChampionData[0].position === correctChampionData[0].position ? true : false,
                     
                     // TODO: get partial data
                     rangeType: guessChampionData[0].rangeType,
-                    sameRangeType: guessChampionData[0].rangeType === correctChampionData[0].rangeType ? true : false,
                     
                     // TODO: get partial data
                     region: guessChampionData[0].region,
-                    sameRegion: guessChampionData[0].region === correctChampionData[0].region ? true : false,
                     
                     releaseYear: guessChampionData[0].released,
-                    sameReleaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
                     
                     skinCount: guessChampionData[0].skinCount,
-                    sameSkinCount: correctChampionData[0].skinCount === guessChampionData[0].skinCount ? "=" : correctChampionData[0].skinCount > guessChampionData[0].skinCount ? ">" : "<",
 
                     // TODO: get partial data
                     genre: guessChampionData[0].genre,
+                }
+
+                const similarites = {
+                    sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
+                    sameGender: guessChampionData[0].gender === correctChampionData[0].gender ? true : false,
+                    samePosition: guessChampionData[0].position === correctChampionData[0].position ? true : false,
+                    sameRangeType: guessChampionData[0].rangeType === correctChampionData[0].rangeType ? true : false,
+                    sameRegion: guessChampionData[0].region === correctChampionData[0].region ? true : false,
+                    sameReleaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
+                    sameSkinCount: correctChampionData[0].skinCount === guessChampionData[0].skinCount ? "=" : correctChampionData[0].skinCount > guessChampionData[0].skinCount ? ">" : "<",
                     sameGenre: guessChampionData[0].genre === correctChampionData[0].genre ? true : false,
                 }
 
-                return res.json({status: "error", correctGuess: false, properties: [data]})
+                return res.json({status: "error", correctGuess: false, properties: [data, similarites]})
             })
         }
     })
