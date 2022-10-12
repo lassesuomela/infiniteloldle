@@ -23,16 +23,18 @@ export default function Game() {
 
       const correct = response.data.correctGuess;
 
+      if(correct) {
+        CorrectGuess(champion);
+        return;
+      }
+
       const data = response.data.properties;
 
       setChampions(champions => [...champions, data].reverse());
 
-      if(correct) {
-        CorrectGuess(champion);
-      }
-
     }).catch(error => {
       console.log(error);
+      setChampions([]);
     })
   }
 
