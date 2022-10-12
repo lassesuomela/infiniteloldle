@@ -5,7 +5,7 @@ export default function ChampionDetails(props) {
     <div className="container">
         <div className="row">
             <div className="col">
-                <img src={"https://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/" + props.key + ".png"} alt="Champion" class="img-thumbnail"/>
+                <img src={"https://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/" + props.championKey + ".png"} alt="Champion" class="img-thumbnail"/>
             </div>
             <div className="col">
                 {props.gender === 1 ? "Male" : props.gender === 2 ? "Female" : "Other"}

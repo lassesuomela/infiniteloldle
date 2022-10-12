@@ -27,7 +27,7 @@ export default function Game() {
 
       const data = response.data.properties;
 
-      setChampions(champions => [...champions, data]);
+      setChampions(champions => [...champions, data].reverse());
 
     }).catch(error => {
       console.log(error);
@@ -46,7 +46,7 @@ export default function Game() {
       <div id="champions">
         {
           champions.map(champ =>(
-            <ChampionDetails guessedChampion={champ[0].championKey} gender={champ[0].gender} genre={champ[0].genre} resource={champ[0].resource} rangeTypes={champ[0].rangeType} positions={champ[0].position} releaseYear={champ[0].releaseYear} regions={champ[0].region} skinCount={champ[0].skinCount}/>
+            <ChampionDetails championKey={champ[0].championKey} gender={champ[0].gender} genre={champ[0].genre} resource={champ[0].resource} rangeTypes={champ[0].rangeType} positions={champ[0].position} releaseYear={champ[0].releaseYear} regions={champ[0].region} skinCount={champ[0].skinCount}/>
           ))
         }
         

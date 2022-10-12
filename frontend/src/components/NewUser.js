@@ -20,8 +20,7 @@ export default function NewUser() {
         }
 
         axios.get(url + "/user").then(response => {
-            console.log(response.data);
-            setIsLoggedIn(true);
+            response.data.status === "success" ? setIsLoggedIn(true) : setIsLoggedIn(false)
         }).catch(error => {
             console.log(error);
             setIsLoggedIn(false);

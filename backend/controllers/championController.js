@@ -145,6 +145,7 @@ const Guess = (req, res) => {
 
                 const data = {
                     guessedChampion: guessChampionData[0].name,
+                    championKey: guessChampionData[0].championKey,
                     
                     resource: guessChampionData[0].resource,
                     sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
