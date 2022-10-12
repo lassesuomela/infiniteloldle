@@ -30,11 +30,34 @@ const AddMoreData = (req, res) => {
         rangeType: body.data[3].rangeTypes.toString()
     }
 
-    if(!data.position || !data.rangeType || !data.released || !data.name || !data.region){
+    if(!body.champion || !body.data[0].released || !body.data[1].region || !body.data[2].positions || !body.data[3].rangeTypes){
         return res.json({status: "error", message: "One or more fields must be provided"})
     }
 
     champion.addMoreData(data, (err, result) => {
+
+        if(err){
+            return res.json({status: "error", error: err})
+        }
+        res.json({status: "success", message: "Champion edited"})
+    })
+}
+
+const AddChampionId = (req, res) => {
+    const body = req.body;
+
+    const data = {
+        name: body.name,
+        key: body.key
+    }
+
+    if(!body.name || !body.key){
+        return res.json({status: "error", message: "One or more fields must be provided"})
+    }
+
+    console.log(data.key, data.name);
+
+    champion.addChampionId(data, (err, result) => {
 
         if(err){
             return res.json({status: "error", error: err})
@@ -161,5 +184,6 @@ const Guess = (req, res) => {
 module.exports = {
     Create,
     AddMoreData,
+    AddChampionId,
     Guess
 }

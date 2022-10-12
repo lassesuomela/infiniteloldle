@@ -7,6 +7,9 @@ const champion = {
     addMoreData: (data, cb) =>{
         return db.query("UPDATE champions SET position = ?, rangeType = ?, released = ?, region = ? WHERE name = ?", [data.position, data.rangeType, data.released, data.region, data.name], cb)
     },
+    addChampionId: (data, cb) =>{
+        return db.query("UPDATE champions SET championKey = ? WHERE name = ?", [data.key, data.name], cb)
+    },
     getAllIds: (cb) =>{
         return db.query("SELECT id FROM champions", cb)
     },
