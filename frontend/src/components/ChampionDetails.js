@@ -15,13 +15,13 @@ export default function ChampionDetails(props) {
                 <span className={props.similarites.sameResource ? "correct" : "incorrect"}>{props.resource}</span>
             </div>
             <div className="col" id="range">
-                <span className={props.similarites.sameRangeType ? "correct" : "incorrect" ? props.similarites.sameRangeType === "partial" : "partial"}>{props.rangeTypes.replace(",", " ")}</span>
+                <span className={props.similarites.sameRangeType ? "correct" : "incorrect" ? props.similarites.sameRangeType === "partial" : "partial"}>{props.rangeTypes.replace(/,/g, " ")}</span>
             </div>
             <div className="col" id="genre">
-                <span className={props.similarites.sameGenre ? "correct" : "incorrect" ? props.similarites.sameGenre === "partial" : "partial"}>{props.genre.replace(",", " ")}</span>
+                <span className={props.similarites.sameGenre ? "correct" : "incorrect" ? props.similarites.sameGenre === "partial" : "partial"}>{props.genre.replace(/,/g, " ")}</span>
             </div>
             <div className="col" id="position">
-                <span className={props.similarites.samePosition ? "correct" : "incorrect" ? props.similarites.samePosition === "partial" : "partial"}>{props.positions.replace(",", " ")}</span>
+                <span className={props.similarites.samePosition === "partial" ? "partial" : props.similarites.samePosition ? "correct" : "incorrect"}>{props.positions.replace(/,/g, " ")}</span>
             </div>
             <div className="col" id="released">
                 <span className={props.similarites.sameReleaseYear === "=" ? "correct" : "incorrect"}>{props.similarites.sameReleaseYear + props.releaseYear}</span>

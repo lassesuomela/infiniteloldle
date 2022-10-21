@@ -76,7 +76,7 @@ const GetAllChampions = (req, res) => {
 
         let champions = [];
         result.forEach(champ => {
-            champions.push(champ["name"])    
+            champions.push({label:champ["name"], value:champ["name"]})    
         });
 
         res.json({status: "success", champions: champions})
@@ -187,7 +187,10 @@ const Guess = (req, res) => {
                     genre: guessChampionData[0].genre,
                 }
 
+                // Todo:
+                // fix this, it doesnt actually work
                 let samePos;
+                console.log(guessChampionData[0].position + "===" + correctChampionData[0].position)
                 if(guessChampionData[0].position === correctChampionData[0].position){
                     samePos = true;
                 }else if(guessChampionData[0].position.includes(correctChampionData[0].position)){
@@ -196,15 +199,12 @@ const Guess = (req, res) => {
                     samePos = false;
                 }
 
-                console.log(guessChampionData[0].position.includes(correctChampionData[0].position));
-
                 const similarites = {
                     sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
                     sameGender: guessChampionData[0].gender === correctChampionData[0].gender ? true : false,
                     sameReleaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
                     sameSkinCount: correctChampionData[0].skinCount === guessChampionData[0].skinCount ? "=" : correctChampionData[0].skinCount > guessChampionData[0].skinCount ? ">" : "<",
                     
-                    // TODO: get partial data
                     samePosition: samePos,
 
                     // TODO: get partial data

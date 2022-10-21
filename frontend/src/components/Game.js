@@ -3,6 +3,7 @@ import axios from "axios";
 import "../Game.css";
 import Titles from "./GameTitle";
 import ChampionDetails from "./ChampionDetails";
+import Select from 'react-select';
 
 const url = "http://localhost:8081/api";
 const token = localStorage.getItem("token");
@@ -14,6 +15,7 @@ export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
   const [champions, setChampions] = useState([]);
   const [guesses, setGuesses] = useState([]);
+  const [currentGuess, setGuess] = useState(validGuesses[0]);
 
   useEffect(() => {
     axios.get(url + "/champions").then(response => {
@@ -21,51 +23,40 @@ export default function Game() {
       const data = response.data.champions;
 
       setValidGuesses(data);
+      console.log(data);
 
     }).catch(error => {
       console.log(error);
     })
 
-    let championInput = document.getElementById("championInput");
-
-    championInput.addEventListener("keyup", (e) => {
-
-      if (e.target.value.length > 1) {
-        championInput.setAttribute("list", "championList");
-      } else {
-        championInput.setAttribute("list", "");
-      }
-  });
-  
   }, [])
 
   const Guess = (e) => {
 
+    console.log("using this currentGuess: " + currentGuess);
+
     e.preventDefault();
 
-    const champion = e.target[0].value;
-    e.target[0].value = "";
-
-    if(!champion){
+    if(!currentGuess){
       console.log("Input is needed");
       return;
     }
 
-    if(guesses.indexOf(champion) !== -1){
+    if(guesses.indexOf(currentGuess) !== -1){
       console.log("Duplicate");
       return;
     }
 
-    setValidGuesses(validGuesses.filter(item => item !== champion));
+    setValidGuesses(validGuesses.filter(item => item !== currentGuess));
 
-    setGuesses(guesses => [...guesses, champion]);
+    setGuesses(guesses => [...guesses, currentGuess]);
 
-    axios.post(url + "/guess", {guess:champion}).then(response => {
+    axios.post(url + "/guess", {guess:currentGuess}).then(response => {
 
       const correct = response.data.correctGuess;
 
       if(correct) {
-        CorrectGuess(champion);
+        CorrectGuess(currentGuess);
         return;
       }
 
@@ -85,15 +76,12 @@ export default function Game() {
 
   return (
     <div className="container">
-      <form className="form-control row g-3 mb-3" onSubmit={Guess} >
-        <input type="text" className="form-control" id="championInput" placeholder="Champion name" autocomplete="off"/>
-        <datalist id="championList">
-          {
-            validGuesses.map(champion =>(
-              <option value={champion} />
-            ))
-          }
-        </datalist>
+      <form className="form-control row g-3 mb-3" onSubmit={Guess} id="guess-form">
+
+        <Select 
+          options={validGuesses}
+          onChange={selectedOption => setGuess(selectedOption.value)}
+        />
 
         <button className="btn btn-primary mb-3" >Guess</button>
       </form>
