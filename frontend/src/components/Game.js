@@ -65,7 +65,7 @@ export default function Game() {
 
       const data = response.data.properties;
 
-      setChampions(champions => [...champions, data].reverse());
+      setChampions(champions => [data, ...champions]);
 
     }).catch(error => {
       console.log(error);
@@ -74,7 +74,7 @@ export default function Game() {
   }
 
   const CorrectGuess = (champion) => {
-    alert("Victory!\nChampion was: " + champion + "\n took " + guesses.length + " tries")
+    alert("Victory!\nChampion was: " + champion + "\n took " + (guesses.length + 1) + " tries")
   }
 
   return (
