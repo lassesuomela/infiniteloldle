@@ -18,22 +18,22 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
 
   useEffect(() => {
+    FetchChampions();
+  }, [])
+
+  const FetchChampions = () => {
     axios.get(url + "/champions").then(response => {
 
       const data = response.data.champions;
 
       setValidGuesses(data);
-      console.log(data);
 
     }).catch(error => {
       console.log(error);
     })
-
-  }, [])
+  }
 
   const Guess = (e) => {
-
-    console.log("using this currentGuess: " + currentGuess);
 
     e.preventDefault();
 
@@ -47,7 +47,7 @@ export default function Game() {
       return;
     }
 
-    setValidGuesses(validGuesses.filter(item => item !== currentGuess));
+    setValidGuesses(validGuesses.filter(item => item.label !== currentGuess));
 
     setGuesses(guesses => [...guesses, currentGuess]);
 
@@ -57,6 +57,9 @@ export default function Game() {
 
       if(correct) {
         CorrectGuess(currentGuess);
+        setGuesses([]);
+        setChampions([]);
+        FetchChampions();
         return;
       }
 
@@ -71,7 +74,7 @@ export default function Game() {
   }
 
   const CorrectGuess = (champion) => {
-    console.log("Champion was: " + champion);
+    alert("Victory!\nChampion was: " + champion + "\n took " + guesses.length + " tries")
   }
 
   return (
