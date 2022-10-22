@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Footer() {
   return (
-    <div id="footer" className="fixed-bottom text-center">
+    <div id="footer" className="text-center">
       <div className="mb-3">
         <span>About</span>
       </div>
