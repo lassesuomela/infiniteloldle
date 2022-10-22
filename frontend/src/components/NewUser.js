@@ -54,13 +54,13 @@ export default function NewUser() {
 
     if(!isLoggedIn) {
         return (
-            <div>
-                <form className="form control" onSubmit={newUser}>
-                    <label className="control-label" for="nickname">Nickname</label>
+            <div className="container searchBox">
+                <form className="form-control row g-3 mb-4 w-25" onSubmit={newUser}>
                     <input type="text" className="form-control" id="nickname" placeholder="Nickname" />
     
-                    <button className="btn btn-primary">Save</button>
-    
+                    <div className="text-center">
+                        <button className="btn btn-primary mb-3 mt-1 w-25">Save</button>
+                    </div>
                 </form>
             </div>
         );

@@ -18,10 +18,10 @@ export default function ChampionDetails(props) {
                 <span className="align-center">{props.rangeTypes.replace(/,/g, " ")}</span>
             </div>
             <div className={props.similarites.sameGenre === "partial" ? "col-2 championData partial" : props.similarites.sameGenre ? "col-2 championData correct" : "col-2 championData incorrect"} id="genre">
-                <span className="align-center">{props.genre.replace(/,/g, " ")}</span>
+                <span className="align-center breakWord">{props.genre.replace(/,/g, " ")}</span>
             </div>
             <div className={props.similarites.samePosition === "partial" ? "col-2 championData partial" : props.similarites.samePosition ? "col-2 championData correct" : "col-2 championData incorrect"} id="position">
-                <span className="align-center">{props.positions.replace(/,/g, " ")}</span>
+                <span className="align-center breakWord">{props.positions.replace(/,/g, " ")}</span>
             </div>
             <div className={props.similarites.sameReleaseYear === "=" ? "col-1 championData correct" : "col-1 championData incorrect"} id="released">
                 <span className="align-center">{props.similarites.sameReleaseYear + props.releaseYear}</span>

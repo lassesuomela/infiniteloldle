@@ -3,9 +3,18 @@ span {
     font-size: 1.2em;
     margin: auto;
 }
+
+.main {
+    padding-bottom: 8em;
+}
+
+.breakWord {
+    word-spacing: 100vw;
+}
+
 .championData {
     border: 0.1em solid #010A13;
-    box-shadow: inset 0 0 1.2em #F0E6D2;
+    box-shadow: inset 0 0 1.5em #F0E6D2;
     display: flex;
 }
 

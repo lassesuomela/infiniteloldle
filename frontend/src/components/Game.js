@@ -75,27 +75,35 @@ export default function Game() {
     setChampions([]);
   }
 
+  {
+    if(!token){
+      return "";
+    }
+  }
+  
   return (
-    <div className="container">
+    <div className="container main">
 
-    <div className="searchBox mt-3 mb-3">
+      <div className="searchBox mt-3 mb-3">
 
-      <form className="form-control row g-3 mb-4 w-25" onSubmit={Guess} id="guess-form">
+        <form className="form-control row g-3 mb-4 w-25" onSubmit={Guess} id="guess-form">
 
-        <Select 
-          options={validGuesses}
-          onChange={selectedOption => setGuess(selectedOption.value)}
-        />
+          <Select 
+            options={validGuesses}
+            onChange={selectedOption => setGuess(selectedOption.value)}
+          />
 
-      <div className="text-center">
-        <button className="btn btn-primary mb-3 mt-1 w-25">Guess</button>
+        <div className="text-center">
+          <button className="btn btn-primary mb-3 mt-1 w-25">Guess</button>
+        </div>
+        </form>
+
       </div>
-      </form>
 
-    </div>
-
-
-      <Titles />
+      {
+        champions.length > 0 ? <Titles /> : ""
+      }
+      
       <div id="champions">
         {
           champions.map(champ =>(
