@@ -77,15 +77,23 @@ export default function Game() {
 
   return (
     <div className="container">
-      <form className="form-control row g-3 mb-3" onSubmit={Guess} id="guess-form">
+
+    <div className="searchBox mt-3 mb-3">
+
+      <form className="form-control row g-3 mb-4 w-25" onSubmit={Guess} id="guess-form">
 
         <Select 
           options={validGuesses}
           onChange={selectedOption => setGuess(selectedOption.value)}
         />
 
-        <button className="btn btn-primary mb-3">Guess</button>
+      <div className="text-center">
+        <button className="btn btn-primary mb-3 mt-1 w-25">Guess</button>
+      </div>
       </form>
+
+    </div>
+
 
       <Titles />
       <div id="champions">
