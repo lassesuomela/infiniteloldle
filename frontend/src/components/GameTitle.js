@@ -2,34 +2,31 @@ import React from 'react'
 
 export default function GameTitle() {
   return (
-    <div className="container">
+    <div className="container text-center">
         <div className="row">
-            <div className="col">
-                Champion
+            <div className="col-2">
+                <p>Champion</p>
             </div>
-            <div className="col">
-                Gender
+            <div className="col-1">
+                <p>Gender</p>
             </div>
-            <div className="col">
-                Resource
+            <div className="col-1">
+                <p>Resource</p>
             </div>
-            <div className="col">
-                Range type(s)
+            <div className="col-1">
+                <p>Range type</p>
             </div>
-            <div className="col">
-                Genre
+            <div className="col-2">
+                <p>Genre(s)</p>
             </div>
-            <div className="col">
-                Postion(s)
+            <div className="col-2">
+                <p>Postion(s)</p>
             </div>
-            <div className="col">
-                Release year
+            <div className="col-1">
+                <p>Released</p>
             </div>
-            <div className="col">
-                Region(s)
-            </div>
-            <div className="col">
-                Skin count
+            <div className="col-2">
+                <p>Region(s)</p>
             </div>
         </div>
     </div>

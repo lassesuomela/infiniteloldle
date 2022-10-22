@@ -100,126 +100,122 @@ const Guess = (req, res) => {
             return res.json({status: "error", message: "Token is invalid"})
         }
 
-        if(guess === correctChampionData[0].name){
-            // add champ id to solved champions in this token and fetch new one
+        // wrong guess return diff
 
-            champion.getAllIds((err, data) => {
-                if(err) {
-                    console.log(err);
-                    return res.json({status: "error", message: "Error on fetching champions ids"})
-                }
+        champion.getByName(guess, (err, guessChampionData) => {
 
-                user.fetchByToken(token, (err, result) => {
+            if (!guessChampionData[0]){
+                return res.json({ status: "error", message: "Nothing found with that champion name"})
+            }
 
+            const champData = {
+                guessedChampion: guessChampionData[0].name,
+                championKey: guessChampionData[0].championKey,
+                
+                resource: guessChampionData[0].resource,
+
+                gender: guessChampionData[0].gender,
+                
+                position: guessChampionData[0].position,
+                
+                rangeType: guessChampionData[0].rangeType,
+                
+                region: guessChampionData[0].region,
+                
+                releaseYear: guessChampionData[0].released,
+                
+                genre: guessChampionData[0].genre,
+            }
+
+            // Todo:
+            // fix this, it doesnt actually work
+            let samePos;
+            console.log(guessChampionData[0].position + "===" + correctChampionData[0].position)
+            if(guessChampionData[0].position === correctChampionData[0].position){
+                samePos = true;
+            }else if(guessChampionData[0].position.includes(correctChampionData[0].position)){
+                samePos = "partial";
+            }else{
+                samePos = false;
+            }
+
+            const similarites = {
+                sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
+                sameGender: guessChampionData[0].gender === correctChampionData[0].gender ? true : false,
+                sameReleaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
+                
+                samePosition: samePos,
+
+                // TODO: get partial data
+                sameRangeType: guessChampionData[0].rangeType === correctChampionData[0].rangeType ? true : false,
+                
+                // TODO: get partial data
+                sameRegion: guessChampionData[0].region === correctChampionData[0].region ? true : false,
+                
+                // TODO: get partial data
+                sameGenre: guessChampionData[0].genre === correctChampionData[0].genre ? true : false,
+            }
+
+            if(guess !== correctChampionData[0].name){
+                return res.json({status: "error", correctGuess: false, properties: [champData, similarites]})
+
+            }else{
+                champion.getAllIds((err, data) => {
                     if(err) {
                         console.log(err);
-                        return res.json({status: "error", message: "Error on fetching data with the token provided"})
+                        return res.json({status: "error", message: "Error on fetching champions ids"})
                     }
-
-                    let solvedChampions;
-
-                    if(result[0]["solvedChampion"]){
-                        solvedChampions = correctChampionData[0]["id"] + "," + result[0]["solvedChampion"];
-                    }else{
-                        solvedChampions = correctChampionData[0]["id"];
-                    }
-
-                    let solvedChamps;
-                    if(solvedChampions.length > 1){
-                        solvedChamps = solvedChampions.split(",");
-                    }else {
-                        solvedChamps = solvedChampions.toString();
-                    }
-
-                    // remove solved champs from the all champions pool
-                    const champPool = data.filter(id => {
-                        return !solvedChamps.includes(id["id"].toString());
-                    })
-
-                    const random = Math.floor(Math.random() * champPool.length);
-        
-                    const newChampion = champPool[random];
-
-                    let payload = {
-                        currentChampion: newChampion["id"],
-                        solvedChampions: solvedChampions,
-                        token: token
-                    }
-
-                    user.update(payload, (err, result) => {
+    
+                    user.fetchByToken(token, (err, result) => {
     
                         if(err) {
                             console.log(err);
-                            return res.json({status: "error", message: "Error on updating user data"})
+                            return res.json({status: "error", message: "Error on fetching data with the token provided"})
                         }
+    
+                        let solvedChampions;
+    
+                        if(result[0]["solvedChampion"]){
+                            solvedChampions = correctChampionData[0]["id"] + "," + result[0]["solvedChampion"];
+                        }else{
+                            solvedChampions = correctChampionData[0]["id"];
+                        }
+    
+                        let solvedChamps;
+                        if(solvedChampions.length > 1){
+                            solvedChamps = solvedChampions.split(",");
+                        }else {
+                            solvedChamps = solvedChampions.toString();
+                        }
+    
+                        // remove solved champs from the all champions pool
+                        const champPool = data.filter(id => {
+                            return !solvedChamps.includes(id["id"].toString());
+                        })
+    
+                        const random = Math.floor(Math.random() * champPool.length);
+            
+                        const newChampion = champPool[random];
+    
+                        let payload = {
+                            currentChampion: newChampion["id"],
+                            solvedChampions: solvedChampions,
+                            token: token
+                        }
+    
+                        user.update(payload, (err, result) => {
         
-                        res.json({status: "success", correctGuess: true})
+                            if(err) {
+                                console.log(err);
+                                return res.json({status: "error", message: "Error on updating user data"})
+                            }
+            
+                            res.json({status: "success", correctGuess: true, properties: [champData, similarites]})
+                        })
                     })
                 })
-            })
-        }else{
-            // wrong guess return diff
-
-            champion.getByName(guess, (err, guessChampionData) => {
-
-                if (!guessChampionData[0]){
-                    return res.json({ status: "error", message: "Nothing found with that champion name"})
-                }
-
-                const data = {
-                    guessedChampion: guessChampionData[0].name,
-                    championKey: guessChampionData[0].championKey,
-                    
-                    resource: guessChampionData[0].resource,
-
-                    gender: guessChampionData[0].gender,
-                    
-                    position: guessChampionData[0].position,
-                    
-                    rangeType: guessChampionData[0].rangeType,
-                    
-                    region: guessChampionData[0].region,
-                    
-                    releaseYear: guessChampionData[0].released,
-                    
-                    skinCount: guessChampionData[0].skinCount,
-
-                    genre: guessChampionData[0].genre,
-                }
-
-                // Todo:
-                // fix this, it doesnt actually work
-                let samePos;
-                console.log(guessChampionData[0].position + "===" + correctChampionData[0].position)
-                if(guessChampionData[0].position === correctChampionData[0].position){
-                    samePos = true;
-                }else if(guessChampionData[0].position.includes(correctChampionData[0].position)){
-                    samePos = "partial";
-                }else{
-                    samePos = false;
-                }
-
-                const similarites = {
-                    sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
-                    sameGender: guessChampionData[0].gender === correctChampionData[0].gender ? true : false,
-                    sameReleaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
-                    sameSkinCount: correctChampionData[0].skinCount === guessChampionData[0].skinCount ? "=" : correctChampionData[0].skinCount > guessChampionData[0].skinCount ? ">" : "<",
-                    
-                    samePosition: samePos,
-
-                    // TODO: get partial data
-                    sameRangeType: guessChampionData[0].rangeType === correctChampionData[0].rangeType ? true : false,
-                    
-                    // TODO: get partial data
-                    sameRegion: guessChampionData[0].region === correctChampionData[0].region ? true : false,
-                    
-                    // TODO: get partial data
-                    sameGenre: guessChampionData[0].genre === correctChampionData[0].genre ? true : false,
-                }
-
-                return res.json({status: "error", correctGuess: false, properties: [data, similarites]})
-            })
-        }
+            }
+        })
     })
 } 
 

@@ -1,11 +1,23 @@
+span {
+    font-family: Spiegel;
+    font-size: 1.2em;
+    margin: auto;
+}
+
+.championData {
+    border: 0.1em solid #010A13;
+    box-shadow: inset 0 0 1.2em #F0E6D2;
+    display: flex;
+}
+
 .correct{
-    background-color: green;
+    background-color: #198754;
 }
 
 .partial {
-    background-color: yellow;
+    background-color: #ffc107;
 }
 
 .incorrect {
-    background-color: red;
+    background-color: #dc3545;
 }

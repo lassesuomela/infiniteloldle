@@ -3,34 +3,31 @@ import React from 'react';
 export default function ChampionDetails(props) {
 
   return (
-    <div className="container">
-        <div className="row">
-            <div className="col">
-                <img src={"https://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/" + props.championKey + ".png"} alt="Champion" class="img-thumbnail"/>
+    <div className="container text-center">
+        <div className="row mb-2 ">
+            <div className="col-2">
+                <img src={"https://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/" + props.championKey + ".png"} alt="Champion" class="championData"/>
             </div>
-            <div className="col" id="gender">
-                <span className={props.similarites.sameGender ? "correct" : "incorrect"}>{props.gender === 1 ? "Male" : props.gender === 2 ? "Female" : "Other"}</span>
+            <div className={props.similarites.sameGender ? "col-1 championData correct" : "col-1 championData incorrect"} id="gender">
+                <span className="align-center">{props.gender === 1 ? "Male" : props.gender === 2 ? "Female" : "Other"}</span>
             </div>
-            <div className="col" id="resource">
-                <span className={props.similarites.sameResource ? "correct" : "incorrect"}>{props.resource}</span>
+            <div className={props.similarites.sameResource ? "col-1 championData correct" : "col-1 championData incorrect"} id="resource">
+                <span className="align-center">{props.resource}</span>
             </div>
-            <div className="col" id="range">
-                <span className={props.similarites.sameRangeType ? "correct" : "incorrect" ? props.similarites.sameRangeType === "partial" : "partial"}>{props.rangeTypes.replace(/,/g, " ")}</span>
+            <div className={props.similarites.sameRangeType === "partial" ? "col-1 championData partial" : props.similarites.sameRangeType ? "col-1 championData correct" : "col-1 championData incorrect"} id="range">
+                <span className="align-center">{props.rangeTypes.replace(/,/g, " ")}</span>
             </div>
-            <div className="col" id="genre">
-                <span className={props.similarites.sameGenre ? "correct" : "incorrect" ? props.similarites.sameGenre === "partial" : "partial"}>{props.genre.replace(/,/g, " ")}</span>
+            <div className={props.similarites.sameGenre === "partial" ? "col-2 championData partial" : props.similarites.sameGenre ? "col-2 championData correct" : "col-2 championData incorrect"} id="genre">
+                <span className="align-center">{props.genre.replace(/,/g, " ")}</span>
             </div>
-            <div className="col" id="position">
-                <span className={props.similarites.samePosition === "partial" ? "partial" : props.similarites.samePosition ? "correct" : "incorrect"}>{props.positions.replace(/,/g, " ")}</span>
+            <div className={props.similarites.samePosition === "partial" ? "col-2 championData partial" : props.similarites.samePosition ? "col-2 championData correct" : "col-2 championData incorrect"} id="position">
+                <span className="align-center">{props.positions.replace(/,/g, " ")}</span>
             </div>
-            <div className="col" id="released">
-                <span className={props.similarites.sameReleaseYear === "=" ? "correct" : "incorrect"}>{props.similarites.sameReleaseYear + props.releaseYear}</span>
+            <div className={props.similarites.sameReleaseYear === "=" ? "col-1 championData correct" : "col-1 championData incorrect"} id="released">
+                <span className="align-center">{props.similarites.sameReleaseYear + props.releaseYear}</span>
             </div>
-            <div className="col" id="region">
-                <span className={props.similarites.sameRegion ? "correct" : "incorrect"}>{props.regions}</span>
-            </div>
-            <div className="col" id="skinCount">
-                <span className={props.similarites.sameSkinCount === "=" ? "correct" : "incorrect"}>{props.similarites.sameSkinCount + props.skinCount}</span>
+            <div className={props.similarites.sameRegion ? "col-2 championData correct" : "col-2 championData incorrect"} id="region">
+                <span className="align-center">{props.regions}</span>
             </div>
         </div>
     </div>
