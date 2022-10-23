@@ -19,7 +19,7 @@ span {
 }
 
 .championData:first-child{
-    width: 5em;
+    width: 10ch;
 }
 .searchBox {
     display: flex;
