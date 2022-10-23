@@ -15,7 +15,6 @@ export default function NewUser() {
 
         if(!token) {
             setIsLoggedIn(false);
-            console.log("user not logged in");
             return;
         }
 
@@ -27,7 +26,8 @@ export default function NewUser() {
         })
     }
 
-    const createToken = () => {
+    const createToken = (e) => {
+        e.preventDefault();
 
         axios.post(url + "/user", {nickname}).then(response => {
             console.log(response.data);
@@ -43,25 +43,18 @@ export default function NewUser() {
 
     }, [])
 
-
-    const newUser = (e) => {
-        e.preventDefault();
-        
-        setNickname(e.target[0].value);
-
-        createToken();
-    }
-
     if(!isLoggedIn) {
         return (
-            <div className="container searchBox">
-                <form className="form-control row g-3 mb-4 w-25" onSubmit={newUser}>
-                    <input type="text" className="form-control" id="nickname" placeholder="Nickname" />
-    
-                    <div className="text-center">
-                        <button className="btn btn-primary mb-3 mt-1 w-25">Save</button>
-                    </div>
-                </form>
+            <div className="container ">
+                <h3 className="text-center pb-4">Please enter your nickname</h3>
+                <div className="searchBox">
+                    <form className="form-control row g-3 mb-4 w-25" onSubmit={createToken}>
+                        <input type="text" className="form-control" id="nickname" placeholder="Nickname" onChange={e => setNickname(e.target.value)}/>
+                        <div className="text-center">
+                            <button className="btn btn-primary mb-3 mt-1 w-25">Save</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         );
     }
