@@ -3,6 +3,7 @@ import axios from "axios";
 import Titles from "./GameTitle";
 import ChampionDetails from "./ChampionDetails";
 import Select from 'react-select';
+import Victory from "./Victory";
 
 const url = "http://localhost:8081/api";
 const token = localStorage.getItem("token");
@@ -15,12 +16,14 @@ export default function Game() {
   const [champions, setChampions] = useState([]);
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
+  const [correctGuess, setCorrectGuess] = useState(false);
 
   useEffect(() => {
     FetchChampions();
   }, [])
 
   const FetchChampions = () => {
+
     axios.get(url + "/champions").then(response => {
 
       const data = response.data.champions;
@@ -58,9 +61,10 @@ export default function Game() {
 
       setChampions(champions => [data, ...champions]);
 
-      if(correct) {
-        CorrectGuess(currentGuess);
-        FetchChampions();
+      console.log(champions)
+
+      if(correct){
+        setCorrectGuess(true)
       }
 
     }).catch(error => {
@@ -69,10 +73,13 @@ export default function Game() {
     })
   }
 
-  const CorrectGuess = (champion) => {
-    alert("Victory!\nChampion was: " + champion + "\n took " + (guesses.length + 1) + " tries")
+  const Restart = () => {
+    FetchChampions();
+
     setGuesses([]);
     setChampions([]);
+    setGuess();
+    setCorrectGuess(false);
   }
 
   if(!token){
@@ -93,11 +100,17 @@ export default function Game() {
           <Select 
             options={validGuesses}
             onChange={selectedOption => setGuess(selectedOption.value)}
+            isDisabled={correctGuess}
           />
 
-        <div className="text-center">
-          <button className="btn btn-primary mb-3 mt-1 w-25">Guess</button>
-        </div>
+          <div className="d-flex justify-content-evenly">
+            <button className="btn btn-primary mb-3 mt-1 w-25">Guess</button>
+            {
+              correctGuess ? 
+              <button className="btn btn-dark mb-3 mt-1 w-25" onClick={Restart}>Reset</button>
+              : ""
+            }
+          </div>
         </form>
 
       </div>
@@ -109,11 +122,18 @@ export default function Game() {
       <div id="champions">
         {
           champions.map(champ =>(
+
             <ChampionDetails championKey={champ[0].championKey} gender={champ[0].gender} genre={champ[0].genre} resource={champ[0].resource} rangeTypes={champ[0].rangeType} positions={champ[0].position} releaseYear={champ[0].releaseYear} regions={champ[0].region} similarites={champ[1]}/>
           ))
         }
         
       </div>
+
+        {
+          correctGuess ? 
+          <Victory id="victory" championKey={champions[0][0].championKey} champion={champions[0][0].guessedChampion} tries={guesses.length} />
+          : ""
+        }
     </div>
   )
 }
