@@ -18,6 +18,9 @@ span {
     display: flex;
 }
 
+.championData:first-child{
+    width: 5em;
+}
 .searchBox {
     display: flex;
     justify-content: center;

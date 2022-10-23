@@ -84,6 +84,10 @@ export default function Game() {
   return (
     <div className="container main">
 
+      <div className="text-center pb-3">
+        <h4>Start guessing your champion</h4>
+      </div>
+
       <div className="searchBox mt-3 mb-3">
 
         <form className="form-control row g-3 mb-4 w-25" onSubmit={Guess} id="guess-form">

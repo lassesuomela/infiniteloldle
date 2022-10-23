@@ -5,8 +5,9 @@ export default function ChampionDetails(props) {
   return (
     <div className="container text-center">
         <div className="row mb-2 ">
-            <div className="col-2">
-                <img src={"https://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/" + props.championKey + ".png"} alt="Champion" class="championData"/>
+            <div className="col-1"></div>
+            <div className="col-1">
+                <img src={"https://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/" + props.championKey + ".png"} alt={props.championKey} class="championData"/>
             </div>
             <div className={props.similarites.sameGender ? "col-1 championData correct" : "col-1 championData incorrect"} id="gender">
                 <span className="align-center">{props.gender === 1 ? "Male" : props.gender === 2 ? "Female" : "Other"}</span>

@@ -4,7 +4,8 @@ export default function GameTitle() {
   return (
     <div className="container text-center">
         <div className="row">
-            <div className="col-2">
+            <div className="col-1"></div>
+            <div className="col-1">
                 <p>Champion</p>
             </div>
             <div className="col-1">
