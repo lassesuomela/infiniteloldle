@@ -83,6 +83,28 @@ const GetAllChampions = (req, res) => {
     })
 }
 
+const GetPartialSimilarites = (currentGuess, correctChampion) => {
+
+
+    const guessPos = currentGuess.split(",").sort()
+    const correctPos = correctChampion.split(",").sort()
+
+    if(guessPos.length === correctPos.length){
+        if(guessPos[0] === correctPos[0]){
+            return true
+        }
+    }
+
+    for (let i = 0; i < guessPos.length; i++) {
+        for (let j = 0; j < correctPos.length; j++) {
+            if(guessPos[i] === correctPos[j]){
+                return "partial"
+            }
+        }
+    }
+
+    return false
+}
 
 const Guess = (req, res) => {
 
@@ -127,34 +149,24 @@ const Guess = (req, res) => {
                 genre: guessChampionData[0].genre,
             }
 
-            // Todo:
-            // fix this, it doesnt actually work
-            let samePos;
-            console.log(guessChampionData[0].position + "===" + correctChampionData[0].position)
-            if(guessChampionData[0].position === correctChampionData[0].position){
-                samePos = true;
-            }else if(guessChampionData[0].position.includes(correctChampionData[0].position)){
-                samePos = "partial";
-            }else{
-                samePos = false;
-            }
-
             const similarites = {
                 sameResource: guessChampionData[0].resource === correctChampionData[0].resource ? true : false,
                 sameGender: guessChampionData[0].gender === correctChampionData[0].gender ? true : false,
                 sameReleaseYear: correctChampionData[0].released === guessChampionData[0].released ? "=" : correctChampionData[0].released > guessChampionData[0].released ? ">" : "<",
                 
-                samePosition: samePos,
+                samePosition: GetPartialSimilarites(guessChampionData[0].position, correctChampionData[0].position),
 
                 // TODO: get partial data
-                sameRangeType: guessChampionData[0].rangeType === correctChampionData[0].rangeType ? true : false,
+                sameRangeType: GetPartialSimilarites(guessChampionData[0].rangeType, correctChampionData[0].rangeType),
                 
                 // TODO: get partial data
-                sameRegion: guessChampionData[0].region === correctChampionData[0].region ? true : false,
+                sameRegion: GetPartialSimilarites(guessChampionData[0].region, correctChampionData[0].region),
                 
                 // TODO: get partial data
-                sameGenre: guessChampionData[0].genre === correctChampionData[0].genre ? true : false,
+                sameGenre: GetPartialSimilarites(guessChampionData[0].genre, correctChampionData[0].genre),
             }
+
+            console.log("Correct champion is: " + correctChampionData[0].name)
 
             if(guess !== correctChampionData[0].name){
                 return res.json({status: "error", correctGuess: false, properties: [champData, similarites]})

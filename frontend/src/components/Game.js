@@ -75,10 +75,8 @@ export default function Game() {
     setChampions([]);
   }
 
-  {
-    if(!token){
-      return "";
-    }
+  if(!token){
+    return "";
   }
   
   return (
