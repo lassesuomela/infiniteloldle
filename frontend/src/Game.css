@@ -25,6 +25,7 @@ p, small {
 .championData:first-child{
     width: 10ch;
 }
+
 .searchBox {
     display: flex;
     justify-content: center;
@@ -58,4 +59,13 @@ p, small {
 
 .victory .smaller {
     font-size: 1.1em;
+}
+
+.modal-header {
+    border: none;
+}
+
+.modal-content {
+    background-color: transparent;
+    border: none;
 }

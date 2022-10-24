@@ -20,6 +20,7 @@ export default function Game() {
 
   useEffect(() => {
     FetchChampions();
+
   }, [])
 
   const FetchChampions = () => {
@@ -110,6 +111,7 @@ export default function Game() {
               <button className="btn btn-dark mb-3 mt-1 w-25" onClick={Restart}>Reset</button>
               : ""
             }
+
           </div>
         </form>
 
@@ -128,12 +130,12 @@ export default function Game() {
         }
         
       </div>
-
-        {
-          correctGuess ? 
-          <Victory id="victory" championKey={champions[0][0].championKey} champion={champions[0][0].guessedChampion} tries={guesses.length} />
-          : ""
-        }
+        
+      {
+        correctGuess ? 
+        <Victory id="victory" championKey={champions[0][0].championKey} champion={champions[0][0].guessedChampion} tries={guesses.length} />
+        : ""
+      }
     </div>
   )
 }
