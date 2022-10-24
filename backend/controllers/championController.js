@@ -85,12 +85,21 @@ const GetAllChampions = (req, res) => {
 
 const GetPartialSimilarites = (currentGuess, correctChampion) => {
 
-
     const guessPos = currentGuess.split(",").sort()
     const correctPos = correctChampion.split(",").sort()
 
     if(guessPos.length === correctPos.length){
-        if(guessPos[0] === correctPos[0]){
+        let matches = 0
+
+        for(let i = 0; i < guessPos.length; i++){
+            for(let j = 0; j < correctPos.length; j++){
+                if(guessPos[i] === correctPos[j]){
+                    matches++
+                }
+            }
+        }
+
+        if(matches === guessPos.length){
             return true
         }
     }
@@ -102,7 +111,6 @@ const GetPartialSimilarites = (currentGuess, correctChampion) => {
             }
         }
     }
-
     return false
 }
 
