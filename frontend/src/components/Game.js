@@ -29,7 +29,7 @@ export default function Game() {
 
     FetchChampions();
 
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const FetchChampions = () => {
 
