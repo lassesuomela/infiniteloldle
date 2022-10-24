@@ -38,8 +38,8 @@ export default function NewUser() {
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <div className="container ">
-            <h4 className="text-center pb-4">Please enter your nickname</h4>
+        <div className="container">
+            <h4 className="text-center pb-4 mb-4 pt-4">Please enter your nickname</h4>
             <div className="searchBox">
                 <form className="form-control row g-3 mb-4 w-25" onSubmit={createToken}>
                     <input type="text" className="form-control" id="nickname" placeholder="Nickname" onChange={e => setNickname(e.target.value)}/>

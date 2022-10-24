@@ -96,13 +96,11 @@ export default function Game() {
   }
   
   return (
-    <div className="container main">
+    <div className="container main pt-4">
 
-      <div className="text-center pb-3">
-        <h4>Start guessing your champion</h4>
-      </div>
+      <h3 className="text-center pb-3">Start guessing your champion</h3>
 
-      <div className="searchBox mt-3 mb-3">
+      <div className="searchBox mt-4 mb-3">
 
         <form className="form-control row g-3 mb-4 w-25" onSubmit={Guess} id="guess-form">
 
@@ -113,10 +111,10 @@ export default function Game() {
           />
 
           <div className="d-flex justify-content-evenly">
-            <button className="btn btn-primary mb-3 mt-1 w-25">Guess</button>
+            <button className="btn btn-dark mb-3 mt-1 w-25">Guess</button>
             {
               correctGuess ? 
-              <button className="btn btn-dark mb-3 mt-1 w-25" onClick={Restart}>Reset</button>
+              <button className="btn btn-light mb-3 mt-1 w-25" onClick={Restart}>Reset</button>
               : ""
             }
 
