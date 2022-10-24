@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Titles from "./GameTitle";
 import ChampionDetails from "./ChampionDetails";
@@ -18,7 +19,14 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
+
+    if(!token){
+      navigate("/register");
+    }
+
     FetchChampions();
 
   }, [])
