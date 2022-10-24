@@ -1,18 +1,24 @@
-import Header from "./components/Header";
-import Game from "./components/Game";
-import Footer from "./components/Footer";
-import NewUser from "./components/NewUser";
 import "./Game.css";
 import "./Main.css";
 
+import { Routes, Route } from "react-router-dom";
+
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Game from "./components/Game";
+
 function App() {
   return (
-    <div className="container">
+    <>
       <Header />
-      <NewUser />
-      <Game />
+        <div className="container">
+          <Routes>
+            <Route path="/" element={<Game />} />
+          </Routes>
+        </div>
       <Footer />
-    </div>
+    </>
+    
   );
 }
 
