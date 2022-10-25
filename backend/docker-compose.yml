@@ -1,0 +1,52 @@
+version: '3'
+services:
+
+  # Nginx will proxy requests to Nodejs server
+  frontend-reverse-proxy:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: loldle-frontend:latest
+    container_name: frontend-reverse-proxy
+    network_mode: "host"
+    depends_on:
+      - lodle-api
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /root/ohire/frontend/lassesuomela.com.pem:/root/ohire/frontend/lassesuomela.com.pem
+      - /root/ohire/frontend/lassesuomela.com.key:/root/ohire/frontend/lassesuomela.com.key
+
+  # Nodejs backend
+  loldle-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: loldle-api:latest
+    container_name: loldle-api
+    network_mode: "host"
+    ports:
+      - 8080:8080
+    restart: on-failure
+    environment:
+      - DOCKER_APP_PORT=8080
+
+  # MySql server
+  loldle-mysql:
+    build:
+      context: ./mysql-docker
+      dockerfile: Dockerfile
+    image: loldle-mysql:latest
+    container_name: loldle-mysql
+    network_mode: "host"
+    ports:
+      - 3306:3306
+    restart: on-failure
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - loldle-mysql:/var/lib/mysql
+volumes:
+  loldle-mysql:
