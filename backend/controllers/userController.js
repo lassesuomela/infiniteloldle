@@ -56,7 +56,7 @@ const CheckToken = (req, res) => {
     const token = req.token;
 
     user.fetchByToken(token, (err, result) => {
-        if (result[0]){
+        if (result && result[0]){
             res.json({status:"success", message:"Token is valid"})
         }else{
             res.json({status:"error", message:"Token is not valid"})

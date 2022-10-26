@@ -2,13 +2,19 @@ const scoreboard = require("../models/scoreboardModel")
 
 const TopAllTime = (req, res) => {
     scoreboard.getByScoreCount((err, result) => {
+
+        if(!result){
+            res.json({status:"error", error:"No results found", scores: []})
+        }
+
+	console.log(result)
         result.forEach(data => {
 
             let score;
             if(data.solvedChampion && data.solvedChampion.length > 1){
                 score = data.solvedChampion.split(",").length;
             }else{
-                score = 1;
+                score = 0;
             }
 
             data["score"] = score;

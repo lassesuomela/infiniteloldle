@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
 
-const url = "http://localhost:8081/api";
+const url = "https://www.infiniteloldle.com/api";
 
 export default function ScoreBoardData() {
 

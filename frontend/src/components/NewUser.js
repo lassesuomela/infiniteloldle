@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const url = "http://localhost:8081/api";
+const url = "https://www.infiniteloldle.com/api";
 
 const token = localStorage.getItem("token");
 axios.defaults.headers.common['authorization'] = "Bearer " + token;
