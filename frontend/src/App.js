@@ -3,11 +3,11 @@ import "./Main.css";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Game from "./components/Game";
-import Scoreboard from "./views/Scoreboard";
-import Register from "./views/Register";
+import Header from "./components/header";
+import Footer from "./components/footer";
+import Game from "./components/game";
+import Scoreboard from "./views/scoreboard";
+import Register from "./views/register";
 
 function App() {
   return (

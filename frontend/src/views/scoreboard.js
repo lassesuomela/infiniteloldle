@@ -1,5 +1,5 @@
 import React from 'react';
-import ScoreBoardData from "../components/ScoreBoardData";
+import ScoreBoardData from "../components/scoreBoardData";
 
 export default function ScoreBoard() {
 

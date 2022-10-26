@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Titles from "./GameTitle";
-import ChampionDetails from "./ChampionDetails";
+import Titles from "./gameTitle";
+import ChampionDetails from "./championDetails";
 import Select from 'react-select';
-import Victory from "./Victory";
+import Victory from "./victory";
 
 const url = "https://www.infiniteloldle.com/api";
 const token = localStorage.getItem("token");
