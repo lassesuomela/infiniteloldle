@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-frontend:
 
     runs-on: ubuntu-latest
 
@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Run npm ci and npm run build
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
@@ -23,7 +23,24 @@ jobs:
         cache-dependency-path: ./frontend/package-lock.json
     - run: npm ci
       working-directory: ./frontend
-    - run: cd ./frontend/src/components && ls
     - run: npm run build
       working-directory: ./frontend
-    
+  
+  deploy:
+    needs: build-frontend
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Pulling from GIT, building images and running them
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_PORT }}
+        script: |
+          cd ${{ secrets.REMOTE_PATH }}
+          git pull
+          cd ./backend
+          chmod +x ./restart.sh
+          ./restart.sh
