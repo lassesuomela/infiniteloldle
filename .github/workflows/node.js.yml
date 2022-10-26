@@ -26,30 +26,8 @@ jobs:
     - run: npm run build
       working-directory: ./frontend
   
-  build-backend:
-    needs: build-frontend
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Run npm ci and npm start
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: ./backend/package-lock.json
-    - run: npm ci
-      working-directory: ./backend
-    - run: npm start
-      working-directory: ./backend
-  
   deploy:
-    needs: [build-frontend, build-backend]
+    needs: build-frontend
     name: Deploy
     runs-on: ubuntu-latest
     steps:
