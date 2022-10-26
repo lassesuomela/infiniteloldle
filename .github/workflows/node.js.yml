@@ -23,6 +23,11 @@ jobs:
         cache-dependency-path: ./frontend/package-lock.json
     - run: npm ci
       working-directory: ./frontend
-    - run: cat ./frontend/src/views/Scoreboard.js
-    - run: npm run build
-      working-directory: ./frontend
+    - run: |
+        pwd \
+        ls \
+        cd ./frontend/src/views \
+        ls \
+        cd .. \
+        cd .. \
+        npm run build
