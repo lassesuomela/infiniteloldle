@@ -42,4 +42,5 @@ jobs:
           cd ${{ secrets.REMOTE_PATH }}
           git pull
           cd ./backend
+          chmod +x ./restart.sh
           ./restart.sh
