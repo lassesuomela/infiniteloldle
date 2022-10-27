@@ -27,9 +27,11 @@ export default function Game() {
 
     axios.get(url + "/champions").then(response => {
 
-      const data = response.data.champions;
-
-      setValidGuesses(data);
+      if(response.data.status === "success"){
+        const data = response.data.champions;
+  
+        setValidGuesses(data);
+      }
 
     }).catch(error => {
       console.log(error);
@@ -54,7 +56,7 @@ export default function Game() {
 
     setGuesses(guesses => [...guesses, currentGuess]);
 
-    axios.post(url + "/guess", {guess:currentGuess}).then(response => {
+    axios.post(url + "/guess", {guess:currentGuess}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
 
       const correct = response.data.correctGuess;
 

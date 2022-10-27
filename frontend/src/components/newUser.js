@@ -1,30 +1,25 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
 
 const url = "http://localhost:8081/api";
-
-const token = localStorage.getItem("token");
-axios.defaults.headers.common['authorization'] = "Bearer " + token;
 
 export default function NewUser() {
 
     const [nickname, setNickname] = useState("");
     const [isShown, setIsShown] = useState(true);
     
-    const navigate = useNavigate();
-
     const createToken = (e) => {
         e.preventDefault();
 
         axios.post(url + "/user", {nickname}).then(response => {
 
-            console.log(response);
-            localStorage.setItem("token", response.data.token)
-
-            setIsShown(false)
+            if(!localStorage.getItem("token")){
+                localStorage.setItem("token", response.data.token)
+    
+                setIsShown(false)
+            }
         }).catch(error => {
             console.log(error);
         })
@@ -32,9 +27,9 @@ export default function NewUser() {
 
     useEffect(() => {
 
-        axios.get(url + "/user").then(response => {
+        axios.get(url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
             if(response.data.status === "success") {
-                navigate("/");
+                setIsShown(false)
             }
         }).catch(error => {
             console.log(error);
@@ -57,7 +52,7 @@ export default function NewUser() {
 
                 <div className="pt-2 d-flex justify-content-center">
                     <form className="row g-3 p-1 w-50" onSubmit={createToken}>
-                        <input type="text" className="form-control" id="nickname" placeholder="Anonymous" onChange={e => setNickname(e.target.value)}/>
+                        <input type="text" className="form-control" id="nickname" placeholder="Anonymous" onChange={e => setNickname(e.target.value)} maxLength="30"/>
                         <div className="text-center">
                             <button className="btn btn-dark mb-2">Save</button>
                         </div>

@@ -16,7 +16,11 @@ const Create = (req, res) => {
 
         token = token.toString("base64");
 
-        const {nickname} = req.body;
+        let {nickname} = req.body;
+
+        if(nickname.length > 30){
+            nickname = nickname.substring(0,30);
+        }
 
         champion.getAllIds((err, data) => {
             if(err) {

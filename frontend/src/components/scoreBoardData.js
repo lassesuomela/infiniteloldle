@@ -8,7 +8,6 @@ export default function ScoreBoardData() {
     const [players, setPlayers] = useState([]);
     const [playerData, setPlayerData] = useState("");
 
-
     useEffect(() => {
         axios.get(url + "/scoreboard")
         .then(response => {
@@ -24,13 +23,14 @@ export default function ScoreBoardData() {
             return;
         }
 
-        axios.get(url + "/user")
+        axios.get(url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
         .then(response => {
 
-            const data = response.data.player;
-
-            console.log(data);
-            setPlayerData(data);
+            if(response.data.status === "success"){
+                const data = response.data.player;
+    
+                setPlayerData(data);
+            }
         
         }).catch(error => {
             console.log(error);
