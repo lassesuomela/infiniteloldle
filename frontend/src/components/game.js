@@ -6,7 +6,7 @@ import Select from 'react-select';
 import Victory from "./victory";
 import NewUser from "./newUser";
 
-const url = "http://localhost:8081/api";
+const url = "https://www.infiniteloldle.com/api";
 
 export default function Game() {
 
