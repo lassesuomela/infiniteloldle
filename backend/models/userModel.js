@@ -8,7 +8,7 @@ const user = {
         return db.query("UPDATE users SET currentChampion = ?, solvedChampion = ? WHERE token = ?", [data.currentChampion, data.solvedChampions, data.token], cb)
     },
     fetchByToken: (token, cb) => {
-        return db.query("SELECT currentChampion, solvedChampion FROM users WHERE token = ?", [token], cb)
+        return db.query("SELECT nickname, solvedChampion, timestamp FROM users WHERE token = ?", [token], cb)
     }
     
 }

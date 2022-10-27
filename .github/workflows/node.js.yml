@@ -44,4 +44,3 @@ jobs:
           cd ./backend
           chmod +x ./restart.sh
           ./restart.sh
-          logout

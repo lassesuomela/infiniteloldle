@@ -5,7 +5,7 @@ export default function Header() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark mb-5">
       <div className="container-fluid">
-        <img src={"./favicon.png"} className="m-2" />
+        <img src={"./favicon.png"} className="m-2" alt="Logo"/>
         <Link className="navbar-brand" to="/">Infiniteloldle</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>

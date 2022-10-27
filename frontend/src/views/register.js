@@ -5,7 +5,7 @@ import NewUser from "../components/newUser";
 export default function Register() {
   return (
     <>
-        <NewUser />
+      <NewUser />
     </>
   )
 }
