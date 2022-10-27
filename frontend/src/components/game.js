@@ -1,15 +1,12 @@
 import React, {useState, useEffect} from 'react'
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Titles from "./gameTitle";
 import ChampionDetails from "./championDetails";
 import Select from 'react-select';
 import Victory from "./victory";
+import NewUser from "./newUser";
 
 const url = "http://localhost:8081/api";
-const token = localStorage.getItem("token");
-
-axios.defaults.headers.common['authorization'] = "Bearer " + token;
 
 export default function Game() {
 
@@ -18,14 +15,9 @@ export default function Game() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-
-  const navigate = useNavigate();
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
   useEffect(() => {
-
-    if(!token){
-      navigate("/register");
-    }
 
     FetchChampions();
 
@@ -91,16 +83,16 @@ export default function Game() {
     setCorrectGuess(false);
   }
 
-  if(!token){
-    return "";
-  }
-  
   return (
     <div className="container main pt-4">
 
       <h3 className="text-center pb-3">Start guessing your champion</h3>
 
-      <div className="searchBox mt-4 mb-3">
+      {
+        !token ? <NewUser /> : ""
+      }
+
+      <div className="d-flex justify-content-center mt-4 mb-3">
 
         <form className="form-control row g-3 mb-4 w-25" onSubmit={Guess} id="guess-form">
 

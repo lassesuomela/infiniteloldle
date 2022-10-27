@@ -13,6 +13,7 @@ export default function Victory(props) {
                 onHide={() => setIsShown(false)}
                 size="lg"
                 centered
+                id="victoryModal"
             >
 
                 <Modal.Body>

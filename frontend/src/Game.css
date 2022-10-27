@@ -26,11 +26,6 @@ p, small {
     width: 10ch;
 }
 
-.searchBox {
-    display: flex;
-    justify-content: center;
-}
-
 .correct{
     background-color: #28a745;
 }
@@ -61,11 +56,12 @@ p, small {
     font-size: 1.1em;
 }
 
-.modal-header {
+
+#victoryModal .modal-header {
     border: none;
 }
 
-.modal-content {
+#victoryModal .modal-content {
     background-color: transparent;
     border: none;
 }

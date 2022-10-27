@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Modal from 'react-bootstrap/Modal';
 
 const url = "http://localhost:8081/api";
 
@@ -11,6 +12,7 @@ axios.defaults.headers.common['authorization'] = "Bearer " + token;
 export default function NewUser() {
 
     const [nickname, setNickname] = useState("");
+    const [isShown, setIsShown] = useState(true);
     
     const navigate = useNavigate();
 
@@ -18,9 +20,11 @@ export default function NewUser() {
         e.preventDefault();
 
         axios.post(url + "/user", {nickname}).then(response => {
+
+            console.log(response);
             localStorage.setItem("token", response.data.token)
 
-            navigate("/");
+            setIsShown(false)
         }).catch(error => {
             console.log(error);
         })
@@ -38,16 +42,29 @@ export default function NewUser() {
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <div className="container">
-            <h4 className="text-center pb-4 mb-4 pt-4">Please enter your nickname</h4>
-            <div className="searchBox">
-                <form className="form-control row g-3 mb-4 w-25" onSubmit={createToken}>
-                    <input type="text" className="form-control" id="nickname" placeholder="Nickname" onChange={e => setNickname(e.target.value)}/>
-                    <div className="text-center">
-                        <button className="btn btn-dark mb-3 mt-1 w-25">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <>
+            <Modal
+                show={isShown}
+                centered
+                backdrop="static"
+                keyboard={false}
+            >
+            <Modal.Body>
+                <div className="container text-center">
+                    <h4 className="p-2">Please enter your nickname</h4>
+                    <small>Or leave it blank</small>
+                </div>
+
+                <div className="pt-2 d-flex justify-content-center">
+                    <form className="row g-3 p-1 w-50" onSubmit={createToken}>
+                        <input type="text" className="form-control" id="nickname" placeholder="Anonymous" onChange={e => setNickname(e.target.value)}/>
+                        <div className="text-center">
+                            <button className="btn btn-dark mb-2">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </Modal.Body>
+            </Modal>
+        </>
     );
 }

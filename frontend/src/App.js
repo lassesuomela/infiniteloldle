@@ -7,7 +7,6 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 import Game from "./components/game";
 import Scoreboard from "./views/scoreboard";
-import Register from "./views/register";
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
         <div className="container">
           <Routes>
             <Route path="/" element={<Game />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/scoreboard" element={<Scoreboard />} />
             <Route path="*" element={<Navigate to="/"/>} />
           </Routes>

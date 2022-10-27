@@ -23,11 +23,13 @@ export default function ScoreBoardData() {
         if(!localStorage.getItem("token")){
             return;
         }
-        
+
         axios.get(url + "/user")
         .then(response => {
 
             const data = response.data.player;
+
+            console.log(data);
             setPlayerData(data);
         
         }).catch(error => {
