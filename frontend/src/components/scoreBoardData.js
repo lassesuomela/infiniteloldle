@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
 
-const url = "https://www.infiniteloldle.com/api";
+const url = "http://localhost:8081/api";
 
 export default function ScoreBoardData() {
 
     const [players, setPlayers] = useState([]);
-    const [playerData, setPlayerData] = useState([]);
+    const [playerData, setPlayerData] = useState("");
 
 
     useEffect(() => {
@@ -56,9 +56,9 @@ export default function ScoreBoardData() {
             </tbody>
 
             <td>???</td>
-            <td>{playerData.nickname}</td>
-            <td>{playerData.score}</td>
-            <td>{playerData.timestamp}</td>
+            <td>{playerData.nickname || "-"}</td>
+            <td>{playerData.score || "-"}</td>
+            <td>{playerData.timestamp || "-"}</td>
         </table>
     )
 }

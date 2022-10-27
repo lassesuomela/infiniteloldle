@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const url = "https://www.infiniteloldle.com/api";
+const url = "http://localhost:8081/api";
 
 const token = localStorage.getItem("token");
 axios.defaults.headers.common['authorization'] = "Bearer " + token;
@@ -44,7 +44,7 @@ export default function NewUser() {
                 <form className="form-control row g-3 mb-4 w-25" onSubmit={createToken}>
                     <input type="text" className="form-control" id="nickname" placeholder="Nickname" onChange={e => setNickname(e.target.value)}/>
                     <div className="text-center">
-                        <button className="btn btn-primary mb-3 mt-1 w-25">Save</button>
+                        <button className="btn btn-dark mb-3 mt-1 w-25">Save</button>
                     </div>
                 </form>
             </div>

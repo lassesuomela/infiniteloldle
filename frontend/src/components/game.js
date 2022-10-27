@@ -6,7 +6,7 @@ import ChampionDetails from "./championDetails";
 import Select from 'react-select';
 import Victory from "./victory";
 
-const url = "https://www.infiniteloldle.com/api";
+const url = "http://localhost:8081/api";
 const token = localStorage.getItem("token");
 
 axios.defaults.headers.common['authorization'] = "Bearer " + token;
