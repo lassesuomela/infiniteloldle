@@ -20,6 +20,10 @@ export default function ScoreBoardData() {
             console.log(error);
         })
 
+        if(!localStorage.getItem("token")){
+            return;
+        }
+        
         axios.get(url + "/user")
         .then(response => {
 

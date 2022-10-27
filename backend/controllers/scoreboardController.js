@@ -7,7 +7,6 @@ const TopAllTime = (req, res) => {
             res.json({status:"error", error:"No results found", scores: []})
         }
 
-	console.log(result)
         result.forEach(data => {
 
             let score;
