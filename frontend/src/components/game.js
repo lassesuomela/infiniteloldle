@@ -15,7 +15,6 @@ export default function Game() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("token"));
 
   useEffect(() => {
 
@@ -91,7 +90,7 @@ export default function Game() {
       <h3 className="text-center pb-3">Start guessing your champion</h3>
 
       {
-        !token ? <NewUser /> : ""
+        !localStorage.getItem("token") ? <NewUser /> : ""
       }
 
       <div className="d-flex justify-content-center mt-4 mb-3">
