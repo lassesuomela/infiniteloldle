@@ -4,7 +4,7 @@ const crypto = require("crypto")
 
 const Create = (req, res) => {
 
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const ip = req.ip || req.socket.remoteAddress || null;
 
     console.log(req.body);
 
@@ -37,7 +37,7 @@ const Create = (req, res) => {
                 token: token,
                 currentChampion: currentChampion["id"],
                 timestamp: new Date().toLocaleDateString("en"),
-                ip: ip
+                ip: ip[0]
             }
 
             console.log(data);

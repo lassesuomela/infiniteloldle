@@ -10,8 +10,9 @@ const morgan = require("morgan");
 const port = process.env.DOCKER_APP_PORT || 8081;
 
 const app = express();
-app.options("*", cors());
-app.use(cors({origin: "*"}));
+app.use(cors());
+
+app.set("trust proxy", true);
 
 app.use(helmet());
 app.use(express.json());
