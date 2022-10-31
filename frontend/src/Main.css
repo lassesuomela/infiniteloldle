@@ -9,3 +9,7 @@
     background-color: #1E2328;
     color: #F0E6D2;
 }
+
+.navbar img {
+    max-height: 3vw;
+}

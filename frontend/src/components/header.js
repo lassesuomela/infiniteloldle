@@ -16,6 +16,10 @@ export default function Header() {
           <ul className="navbar-nav">
 
             <li className="nav-item">
+              <Link className="nav-link" to="/">Quiz</Link>
+            </li>
+
+            <li className="nav-item">
               <Link className="nav-link" to="scoreboard">Scoreboard</Link>
             </li>
             
