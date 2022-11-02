@@ -4,7 +4,7 @@ const TopAllTime = (req, res) => {
     scoreboard.getByScoreCount((err, result) => {
 
         if(!result || result.length === 0) {
-            res.json({status:"error", error:"No results found", scores: []})
+            return res.json({status:"error", error:"No results found", scores: []})
         }
 
         result.forEach(data => {
