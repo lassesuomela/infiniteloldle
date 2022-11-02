@@ -27,7 +27,8 @@ const AddMoreData = (req, res) => {
         released: body.data[0].released.toString(),
         region: body.data[1].region.toString(),
         position: body.data[2].positions.toString(),
-        rangeType: body.data[3].rangeTypes.toString()
+        rangeType: body.data[3].rangeTypes.toString(),
+        damageType: body.data[4].damageType.toString(),
     }
 
     if(!body.champion || !body.data[0].released || !body.data[1].region || !body.data[2].positions || !body.data[3].rangeTypes){
@@ -155,6 +156,8 @@ const Guess = (req, res) => {
                 releaseYear: guessChampionData[0].released,
                 
                 genre: guessChampionData[0].genre,
+
+                damageType: guessChampionData[0].damageType,
             }
 
             const similarites = {
@@ -164,14 +167,13 @@ const Guess = (req, res) => {
                 
                 samePosition: GetPartialSimilarites(guessChampionData[0].position, correctChampionData[0].position),
 
-                // TODO: get partial data
                 sameRangeType: GetPartialSimilarites(guessChampionData[0].rangeType, correctChampionData[0].rangeType),
                 
-                // TODO: get partial data
                 sameRegion: GetPartialSimilarites(guessChampionData[0].region, correctChampionData[0].region),
                 
-                // TODO: get partial data
                 sameGenre: GetPartialSimilarites(guessChampionData[0].genre, correctChampionData[0].genre),
+
+                sameDamageType: GetPartialSimilarites(guessChampionData[0].damageType, correctChampionData[0].damageType),
             }
 
             console.log("Correct champion is: " + correctChampionData[0].name)
