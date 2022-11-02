@@ -3,7 +3,7 @@ const scoreboard = require("../models/scoreboardModel")
 const TopAllTime = (req, res) => {
     scoreboard.getByScoreCount((err, result) => {
 
-        if(!result){
+        if(!result || result.length === 0) {
             res.json({status:"error", error:"No results found", scores: []})
         }
 
