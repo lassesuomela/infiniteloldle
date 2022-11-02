@@ -18,7 +18,7 @@ p, small {
 
 .championData {
     border: 0.1em solid #010A13;
-    box-shadow: inset 0 0 1.4em #F0E6D2;
+    box-shadow: inset 0 0 0.6em #010A13;
     display: flex;
 }
 
@@ -36,6 +36,14 @@ p, small {
 
 .incorrect {
     background-color: #dc3545;
+}
+
+.incorrect-greater {
+    background-image: linear-gradient(#28a745, 60%, #dc3545);
+}
+
+.incorrect-less {
+    background-image: linear-gradient(#dc3545, 60%, #28a745);
 }
 
 .victory{
