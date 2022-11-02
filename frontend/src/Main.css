@@ -11,5 +11,7 @@
 }
 
 .navbar img {
-    max-height: 3vw;
+    min-height: 3vw;
+    max-height: 5vh;
+    padding-right: 1em;
 }

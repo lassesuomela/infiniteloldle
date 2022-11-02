@@ -56,7 +56,6 @@ p, small {
     font-size: 1.1em;
 }
 
-
 #victoryModal .modal-header {
     border: none;
 }
@@ -83,6 +82,10 @@ p, small {
     .championData:first-child{
         max-width: 7.5ch;
     }
+
+    #guess-form {
+        width: 50%;
+    }
 }
 
 @media only screen and (min-width: 992px) {
@@ -93,6 +96,10 @@ p, small {
     #gameTitle, .championData {
         font-size: 0.9em;
     }
+
+    #guess-form {
+        width: 40%;
+    }
     
 }
 
@@ -100,10 +107,18 @@ p, small {
     .championData:first-child{
         max-width: 8.5ch;
     }
+
+    #guess-form {
+        width: 35%;
+    }
 }
 
 @media only screen and (min-width: 1400px) {
     .championData:first-child{
         max-width: 10ch;
+    }
+
+    #guess-form {
+        width: 30%;
     }
 }

@@ -95,7 +95,7 @@ export default function Game() {
 
       <div className="d-flex justify-content-center mt-4 mb-3">
 
-        <form className="form-control row g-3 mb-4 w-25" onSubmit={Guess} id="guess-form">
+        <form className="form-control row g-3 mb-4" onSubmit={Guess} id="guess-form">
 
           <Select 
             options={validGuesses}
@@ -104,10 +104,10 @@ export default function Game() {
           />
 
           <div className="d-flex justify-content-evenly">
-            <button className="btn btn-dark mb-3 mt-1 w-25">Guess</button>
+            <button className="btn btn-dark mb-3 mt-1 min-vw-25">Guess</button>
             {
               correctGuess ? 
-              <button className="btn btn-light mb-3 mt-1 w-25" onClick={Restart}>Reset</button>
+              <button className="btn btn-light mb-3 mt-1 min-vw-25" onClick={Restart}>Reset</button>
               : ""
             }
 
