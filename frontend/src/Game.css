@@ -83,10 +83,6 @@ p, small {
         padding: 0;
     }
 
-    .col-1:first-child {
-        display: none;
-    }
-
     .championData:first-child{
         max-width: 7.5ch;
     }
