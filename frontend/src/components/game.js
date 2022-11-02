@@ -85,7 +85,7 @@ export default function Game() {
   }
 
   return (
-    <div className="container main pt-4">
+    <div className="container main pt-4 pb-5 mb-5">
 
       <h3 className="text-center pb-3">Start guessing your champion</h3>
 
