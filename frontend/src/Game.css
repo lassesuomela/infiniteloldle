@@ -65,3 +65,45 @@ p, small {
     background-color: transparent;
     border: none;
 }
+
+@media only screen and (min-width: 768px) {
+
+    #gameTitle, .championData {
+        font-size: 0.9em;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    .col-1:first-child {
+        display: none;
+    }
+
+    .championData:first-child{
+        max-width: 7.5ch;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    .championData:first-child{
+        max-width: 7.5ch;
+    }
+
+    #gameTitle, .championData {
+        font-size: 0.9em;
+    }
+    
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1400px){
+    .championData:first-child{
+        max-width: 8.5ch;
+    }
+}
+
+@media only screen and (min-width: 1400px) {
+    .championData:first-child{
+        max-width: 10ch;
+    }
+}

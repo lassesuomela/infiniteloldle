@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function GameTitle() {
   return (
-    <div className="container text-center">
+    <div className="container text-center" id="gameTitle">
         <div className="row">
             <div className="col-1"></div>
             <div className="col-1">
