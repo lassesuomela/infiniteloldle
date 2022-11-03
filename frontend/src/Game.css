@@ -73,6 +73,10 @@ p, small {
     border: none;
 }
 
+.regionText {
+    white-space: pre;
+}
+
 @media only screen and (min-width: 768px) {
 
     #gameTitle, .championData {

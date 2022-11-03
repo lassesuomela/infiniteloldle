@@ -27,7 +27,7 @@ export default function ChampionDetails(props) {
                 <span className="align-center">{props.releaseYear}</span>
             </div>
             <div className={"col-2 championData " + (props.similarites.sameRegion ? "correct" : "incorrect")} id="region">
-                <span className="align-center">{props.regions}</span>
+                <span className="align-center regionText">{props.regions.replace(/,/g, "\n")}</span>
             </div>
             <div className={"col-1 championData " + (props.similarites.sameDamageType ? "correct" : "incorrect")} id="region">
                 <span className="align-center">{props.damageType}</span>
