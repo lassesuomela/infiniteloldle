@@ -92,7 +92,15 @@ p, small {
     }
 
     #guess-form {
-        width: 50%;
+        width: 45%;
+    }
+
+    .col-1, .col-2 {
+        padding: 0em;
+    }
+
+    .container, .container-md, .container-sm {
+        max-width: 90vw;
     }
 }
 
@@ -108,7 +116,6 @@ p, small {
     #guess-form {
         width: 40%;
     }
-    
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1400px){
@@ -128,5 +135,9 @@ p, small {
 
     #guess-form {
         width: 30%;
+    }
+
+    .container, .container-md, .container-sm {
+        max-width: 60vw;
     }
 }
