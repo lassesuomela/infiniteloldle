@@ -136,7 +136,7 @@ const Guess = (req, res) => {
         champion.getByName(guess, (err, guessChampionData) => {
 
             if (!guessChampionData[0]){
-                return res.json({ status: "error", message: "Nothing found with that champion name"})
+                return res.json({status: "error", message: "Nothing found with that champion name"})
             }
 
             const champData = {
@@ -179,7 +179,7 @@ const Guess = (req, res) => {
             console.log("Correct champion is: " + correctChampionData[0].name)
 
             if(guess !== correctChampionData[0].name){
-                return res.json({status: "error", correctGuess: false, properties: [champData, similarites]})
+                return res.json({status: "success", correctGuess: false, properties: [champData, similarites]})
 
             }else{
                 // correct guess

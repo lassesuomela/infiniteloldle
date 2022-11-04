@@ -19,7 +19,10 @@ export default function Game() {
 
   useEffect(() => {
 
-    CheckToken();
+    if(localStorage.getItem("token")){
+      setIsValidToken(true);
+    }
+
     FetchChampions();
 
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -32,21 +35,6 @@ export default function Game() {
         const data = response.data.champions;
   
         setValidGuesses(data);
-      }
-
-    }).catch(error => {
-      console.log(error);
-    })
-  }
-
-  const CheckToken = () => {
-    axios.get(url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
-
-      if(response.data.status === "success"){
-  
-        setIsValidToken(true);
-      }else{
-        setIsValidToken(false);
       }
 
     }).catch(error => {
@@ -73,6 +61,12 @@ export default function Game() {
     setGuesses(guesses => [...guesses, currentGuess]);
 
     axios.post(url + "/guess", {guess:currentGuess}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
+
+      if(response.data.status !== "success"){
+        setIsValidToken(false);
+        Restart();
+        return;
+      }
 
       const correct = response.data.correctGuess;
 
