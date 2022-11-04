@@ -59,18 +59,7 @@ const CheckToken = (req, res) => {
     user.fetchByToken(token, (err, result) => {
         if (result && result[0]){
 
-            result.forEach(result => {
-
-                let score;
-                if(result.solvedChampion && result.solvedChampion.length > 1){
-                    score = result.solvedChampion.split(",").length;
-                }else{
-                    score = 0;
-                }
-    
-                result["score"] = score;
-                delete result["solvedChampion"];
-            })
+            delete result[0]["solvedChampions"];
 
             res.json({status:"success", message:"Token is valid", player: result[0]})
         }else{
