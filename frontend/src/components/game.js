@@ -64,7 +64,6 @@ export default function Game() {
 
       if(response.data.status !== "success"){
         setIsValidToken(false);
-        Restart();
         return;
       }
 
