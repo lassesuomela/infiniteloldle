@@ -15,9 +15,11 @@ export default function Game() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
+  const [isValidToken, setIsValidToken] = useState(false);
 
   useEffect(() => {
 
+    CheckToken();
     FetchChampions();
 
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -30,6 +32,21 @@ export default function Game() {
         const data = response.data.champions;
   
         setValidGuesses(data);
+      }
+
+    }).catch(error => {
+      console.log(error);
+    })
+  }
+
+  const CheckToken = () => {
+    axios.get(url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
+
+      if(response.data.status === "success"){
+  
+        setIsValidToken(true);
+      }else{
+        setIsValidToken(false);
       }
 
     }).catch(error => {
@@ -88,7 +105,7 @@ export default function Game() {
       <h3 className="text-center pb-3">Start guessing your champion</h3>
 
       {
-        !localStorage.getItem("token") ? <NewUser /> : ""
+        !isValidToken ? <NewUser /> : ""
       }
 
       <div className="d-flex justify-content-center mt-4 mb-3">
