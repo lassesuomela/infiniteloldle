@@ -77,6 +77,33 @@ p, small {
     white-space: pre;
 }
 
+.demo {
+    width: 4vw;
+    height: 4vw;
+    border: 0.1em solid #010A13;
+    box-shadow: inset 0 0 0.6em #010A13;
+}
+
+.demoCorrect {
+    background-color: #28a745;
+}
+
+.demoPartial {
+    background-color: #ffc107;
+}
+
+.demoIncorrect {
+    background-color: #dc3545;
+}
+
+.demoInoccrectGreater {
+    background-image: linear-gradient(#28a745, 60%, #dc3545);
+}
+
+.demoInoccrectLess {
+    background-image: linear-gradient(#dc3545, 60%, #28a745);
+}
+
 @media only screen and (min-width: 768px) {
 
     #gameTitle, .championData {
