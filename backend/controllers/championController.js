@@ -242,7 +242,7 @@ const Guess = (req, res) => {
                                 return res.json({status: "error", message: "Error on updating user data"})
                             }
             
-                            res.json({status: "success", correctGuess: true, properties: [champData, similarites]})
+                            res.json({status: "success", correctGuess: true, properties: [champData, similarites], title: correctChampionData[0].title})
                         })
                     })
                 })

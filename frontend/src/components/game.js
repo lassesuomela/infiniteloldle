@@ -16,6 +16,7 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
   const [isValidToken, setIsValidToken] = useState(false);
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
 
@@ -75,6 +76,7 @@ export default function Game() {
 
       if(correct){
         setCorrectGuess(true)
+        setTitle(response.data.title)
       }
 
     }).catch(error => {
@@ -139,7 +141,7 @@ export default function Game() {
         
       {
         correctGuess ? 
-        <Victory id="victory" championKey={champions[0][0].championKey} champion={champions[0][0].guessedChampion} tries={guesses.length} />
+        <Victory id="victory" championKey={champions[0][0].championKey} champion={champions[0][0].guessedChampion} tries={guesses.length} title={title} />
         : ""
       }
     </div>
