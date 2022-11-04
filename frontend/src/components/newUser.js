@@ -15,7 +15,7 @@ export default function NewUser() {
 
         axios.post(url + "/user", {nickname}).then(response => {
 
-            if(!localStorage.getItem("token")){
+            if(response.data.status === "success"){
                 localStorage.setItem("token", response.data.token)
     
                 setIsShown(false)
