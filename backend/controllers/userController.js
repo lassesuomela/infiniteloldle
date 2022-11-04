@@ -4,8 +4,6 @@ const crypto = require("crypto")
 
 const Create = (req, res) => {
 
-    const ip = req.ip || req.socket.remoteAddress || null;
-
     console.log(req.body);
 
     crypto.randomBytes(46, (err, token) => {
@@ -36,8 +34,7 @@ const Create = (req, res) => {
                 nickname: !nickname ? "Anonymous" : nickname,
                 token: token,
                 currentChampion: currentChampion["id"],
-                timestamp: new Date().toLocaleDateString("en"),
-                ip: ip[0]
+                timestamp: new Date().toLocaleDateString("en")
             }
 
             console.log(data);
