@@ -63,8 +63,6 @@ export default function Game() {
 
       setChampions(champions => [data, ...champions]);
 
-      console.log(champions)
-
       if(correct){
         setCorrectGuess(true)
       }

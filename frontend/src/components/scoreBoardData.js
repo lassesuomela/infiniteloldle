@@ -44,6 +44,7 @@ export default function ScoreBoardData() {
                 <tr>
                     <th>Rank</th>
                     <th>Nickname</th>
+                    <th>Prestige</th>
                     <th>Correct guesses</th>
                     <th>Registered</th>
                 </tr>
@@ -54,6 +55,7 @@ export default function ScoreBoardData() {
                     <tr>
                         <td>{i + 1}</td>
                         <td>{player.nickname}</td>
+                        <td>{player.prestige}</td>
                         <td>{player.score}</td>
                         <td>{player.timestamp}</td>
                     </tr>
@@ -63,6 +65,7 @@ export default function ScoreBoardData() {
 
             <td>???</td>
             <td>{playerData.nickname || "-"}</td>
+            <td>{playerData.prestige || "-"}</td>
             <td>{playerData.score || "-"}</td>
             <td>{playerData.timestamp || "-"}</td>
         </table>
