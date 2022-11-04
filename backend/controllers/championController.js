@@ -6,7 +6,7 @@ const Create = (req, res) => {
     const data = req.body;
 
     if(!data.name || !data.title || !data.resource || !data.skinCount || !data.spriteIds || !data.genre || !data.gender){
-        return res.json({ status:"error", message: "One or more fields must be provided"})
+        return res.json({status:"error", message: "One or more fields must be provided"})
     }
 
     champion.create(data, (err, result) => {
@@ -182,6 +182,8 @@ const Guess = (req, res) => {
                 return res.json({status: "error", correctGuess: false, properties: [champData, similarites]})
 
             }else{
+                // correct guess
+
                 champion.getAllIds((err, data) => {
                     if(err) {
                         console.log(err);
@@ -197,34 +199,42 @@ const Guess = (req, res) => {
     
                         let solvedChampions;
     
-                        if(result[0]["solvedChampion"]){
-                            solvedChampions = correctChampionData[0]["id"] + "," + result[0]["solvedChampion"];
+                        if(result[0]["solvedChampions"]){
+                            solvedChampions = correctChampionData[0]["id"] + "," + result[0]["solvedChampions"];
                         }else{
                             solvedChampions = correctChampionData[0]["id"];
                         }
-    
+
                         let solvedChamps;
-                        if(solvedChampions.length > 1){
+
+                        if(solvedChampions.length > 1 && solvedChampions.split(",").length > 1 && solvedChampions.split(",").length < data.length){
                             solvedChamps = solvedChampions.split(",");
+                        }else if(solvedChampions.length > 1 && solvedChampions.split(",").length >= data.length) {
+                            solvedChamps = "";
+                            solvedChampions = "";
+
+                            result[0]["prestige"]++;
                         }else {
                             solvedChamps = solvedChampions.toString();
                         }
-    
+
                         // remove solved champs from the all champions pool
                         const champPool = data.filter(id => {
                             return !solvedChamps.includes(id["id"].toString());
                         })
     
                         const random = Math.floor(Math.random() * champPool.length);
-            
+
                         const newChampion = champPool[random];
-    
+
                         let payload = {
                             currentChampion: newChampion["id"],
                             solvedChampions: solvedChampions,
-                            token: token
+                            prestige: result[0]["prestige"],
+                            score: result[0]["score"] += 1,
+                            token: token,
                         }
-    
+
                         user.update(payload, (err, result) => {
         
                             if(err) {
