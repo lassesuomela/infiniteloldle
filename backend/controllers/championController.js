@@ -89,6 +89,10 @@ const GetPartialSimilarites = (currentGuess, correctChampion) => {
     const guessPos = currentGuess.split(",").sort()
     const correctPos = correctChampion.split(",").sort()
 
+    console.log(guessPos);
+
+    console.log(correctPos);
+
     if(guessPos.length === correctPos.length){
         let matches = 0
 
@@ -105,6 +109,7 @@ const GetPartialSimilarites = (currentGuess, correctChampion) => {
         }
     }
 
+    // check for partial matches
     for (let i = 0; i < guessPos.length; i++) {
         for (let j = 0; j < correctPos.length; j++) {
             if(guessPos[i] === correctPos[j]){
@@ -112,6 +117,8 @@ const GetPartialSimilarites = (currentGuess, correctChampion) => {
             }
         }
     }
+
+    // no matches at all
     return false
 }
 

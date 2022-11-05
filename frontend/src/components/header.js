@@ -20,7 +20,7 @@ export default function Header() {
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="scoreboard">Scoreboard</Link>
+              <Link className="nav-link" to="leaderboard">Leaderboard</Link>
             </li>
           </ul>
           <ul className="navbar-nav ms-auto">

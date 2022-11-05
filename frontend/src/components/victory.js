@@ -5,6 +5,10 @@ export default function Victory(props) {
 
     const [isShown, setIsShown] = useState(true);
 
+    const Close = () => {
+        setIsShown(false);
+    }
+
     return (
 
         <>
@@ -28,12 +32,12 @@ export default function Victory(props) {
 
                                 <img src={"https://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/" + props.championKey + ".png"} alt={props.championKey} className="pb-3"/>
 
-                                <p className="mb-0">Champion was {props.champion}.</p>
+                                <h2>{props.champion}</h2>
 
                                 <p className="mb-1 smaller">{props.title}</p>
                                 <p className="smaller">It took {props.tries} tries</p>
 
-                                <small>Want to play again?</small>
+                                <button type="button" class="btn btn-dark" onClick={Close}>Play again</button>
                             </div>
                         </div>
                     </div>

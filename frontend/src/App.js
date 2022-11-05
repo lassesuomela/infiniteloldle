@@ -17,7 +17,7 @@ function App() {
         <div className="container">
           <Routes>
             <Route path="/" element={<Game />} />
-            <Route path="/scoreboard" element={<Scoreboard />} />
+            <Route path="/leaderboard" element={<Scoreboard />} />
             <Route path="/legal" element={<Legal />} />
             <Route path="/about" element={<About />} />
             <Route path="*" element={<Navigate to="/"/>} />
