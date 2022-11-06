@@ -153,6 +153,10 @@ p, small {
     #guess-form {
         width: 35%;
     }
+
+    #gameTitle, .championData {
+        font-size: 1em;
+    }
 }
 
 @media only screen and (min-width: 1400px) {
@@ -165,6 +169,10 @@ p, small {
     }
 
     .container, .container-md, .container-sm {
-        max-width: 60vw;
+        max-width: 70vw;
+    }
+
+    #gameTitle, .championData {
+        font-size: 1.1em;
     }
 }
