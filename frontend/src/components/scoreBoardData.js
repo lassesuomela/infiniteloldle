@@ -39,7 +39,7 @@ export default function ScoreBoardData() {
       }, [])
 
     return (
-        <table className="table table-striped">
+        <table className="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>Rank</th>
@@ -64,10 +64,10 @@ export default function ScoreBoardData() {
             </tbody>
 
             <td>???</td>
-            <td>{playerData.nickname || "-"}</td>
-            <td>{playerData.prestige || "-"}</td>
-            <td>{playerData.score || "-"}</td>
-            <td>{playerData.timestamp || "-"}</td>
+            <td>{playerData ? playerData.nickname : "-"}</td>
+            <td>{playerData ? playerData.prestige : "-"}</td>
+            <td>{playerData ? playerData.score : "-"}</td>
+            <td>{playerData ? playerData.timestamp : "-"}</td>
         </table>
     )
 }

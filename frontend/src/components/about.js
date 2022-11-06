@@ -2,7 +2,9 @@ import React from 'react'
 
 export default function About() {
   return (
-    <div>
+    <div id="about">
+        <h3>Inspiration</h3>
+        <p>This site is inspired by <a href="https://loldle.net">loldle.net</a>, a game where you have to guess League of Legends champions daily.</p>
         <h3>How to play</h3>
         
         <p>After you have created your nickname, you will be assigned a champion that you are trying to guess.</p>

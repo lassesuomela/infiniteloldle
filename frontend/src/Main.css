@@ -8,10 +8,17 @@
 .navbar {
     background-color: #1E2328;
     color: #F0E6D2;
+    font-size: 1.3em;
 }
 
 .navbar img {
     min-height: 3vw;
     max-height: 5vh;
     padding-right: 1em;
+}
+
+#about a {
+    color:#010A13;
+    font-weight: bold;
+    text-decoration: none;
 }
