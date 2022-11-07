@@ -370,7 +370,18 @@ const GuessSplash = (req, res) => {
             }
         })
     })
-} 
+}
+
+const GetSplashArt = (req, res) => {
+
+    const token = req.token;
+
+    user.fetchSplashArtByToken(token, (err, result) => {
+        console.log(result)
+
+        res.json({status: "success", result:result[0]})
+    })
+}
 
 module.exports = {
     Create,
@@ -378,5 +389,6 @@ module.exports = {
     AddChampionId,
     GetAllChampions,
     Guess,
-    GuessSplash
+    GuessSplash,
+    GetSplashArt
 }
