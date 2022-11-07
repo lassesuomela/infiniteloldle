@@ -30,23 +30,43 @@ const Create = (req, res) => {
 
             const currentChampion = data[random];
 
-            data = {
-                nickname: !nickname ? "Anonymous" : nickname,
-                token: token,
-                currentChampion: currentChampion["id"],
-                timestamp: new Date().toLocaleDateString("en")
-            }
+            const randomSplash = Math.floor(Math.random() * data.length);
 
-            console.log(data);
-        
-            user.create(data, (err, result) => {
+            const currentSplashChampion = data[randomSplash];
+
+            champion.getSplashById(currentSplashChampion["id"], (err, result) => {
 
                 if(err) {
                     console.log(err);
-                    return res.json({status:"error", message:"Error on fetching ids"})
+                    return res.json({status:"error", message:"Error on fetching splash art ids"})
                 }
 
-                res.json({status: "success", token: token})
+                const sprites = result[0]["spriteIds"].split(",");
+
+                const randomSpriteId = Math.floor(Math.random() * sprites.length);
+
+                const randomSprite = sprites[randomSpriteId];
+
+                data = {
+                    nickname: !nickname ? "Anonymous" : nickname,
+                    token: token,
+                    currentChampion: currentChampion["id"],
+                    currentSplashChampion: currentSplashChampion["id"],
+                    currentSplashId: parseInt(randomSprite),
+                    timestamp: new Date().toLocaleDateString("en")
+                }
+    
+                console.log(data);
+            
+                user.create(data, (err, result) => {
+    
+                    if(err) {
+                        console.log(err);
+                        return res.json({status:"error", message:"Error on fetching ids"})
+                    }
+    
+                    res.json({status: "success", token: token})
+                })
             })
         })
     })

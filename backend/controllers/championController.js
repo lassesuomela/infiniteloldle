@@ -256,6 +256,120 @@ const Guess = (req, res) => {
             }
         })
     })
+}
+
+const GuessSplash = (req, res) => {
+
+    const { guess } = req.body;
+
+    if (!guess) {
+        return res.json({status: "error", message: "Guess is required"});
+    }
+
+    const token = req.token;
+
+    champion.getSplashByToken(token, (err, correctChampionData) => {
+
+        if(!correctChampionData[0]){
+            return res.json({status: "error", message: "Token is invalid"})
+        }
+
+        // wrong guess return diff
+
+        champion.getByName(guess, (err, guessChampionData) => {
+
+            if (!guessChampionData[0]){
+                return res.json({status: "error", message: "Nothing found with that champion name"})
+            }
+
+            console.log("Correct champion is: " + correctChampionData[0].name)
+
+            if(guess !== correctChampionData[0].name){
+                return res.json({status: "success", correctGuess: false})
+
+            }else{
+                // correct guess
+
+                champion.getAllIds((err, data) => {
+                    if(err) {
+                        console.log(err);
+                        return res.json({status: "error", message: "Error on fetching champions ids"})
+                    }
+    
+                    user.fetchByToken(token, (err, userResult) => {
+    
+                        if(err) {
+                            console.log(err);
+                            return res.json({status: "error", message: "Error on fetching data with the token provided"})
+                        }
+    
+                        let solvedChampions;
+    
+                        if(userResult[0]["solvedSplashChampions"]){
+                            solvedChampions = correctChampionData[0]["id"] + "," + userResult[0]["solvedSplashChampions"];
+                        }else{
+                            solvedChampions = correctChampionData[0]["id"];
+                        }
+
+                        let solvedChamps;
+
+                        // separeate prestige system...
+                        // fix
+                        if(solvedChampions.length > 1 && solvedChampions.split(",").length > 1 && solvedChampions.split(",").length < data.length){
+                            solvedChamps = solvedChampions.split(",");
+                        }else if(solvedChampions.length > 1 && solvedChampions.split(",").length >= data.length) {
+                            solvedChamps = "";
+                            solvedChampions = "";
+
+                            userResult[0]["prestige"]++;
+                        }else {
+                            solvedChamps = solvedChampions.toString();
+                        }
+
+                        // remove solved champs from the all champions pool
+                        const champPool = data.filter(id => {
+                            return !solvedChamps.includes(id["id"].toString());
+                        })
+    
+                        const random = Math.floor(Math.random() * champPool.length);
+
+                        const newChampion = champPool[random];
+
+                        champion.getSplashById(newChampion["id"], (err, result) => {
+
+                            const sprites = result[0]["spriteIds"].split(",");
+
+                            const random = Math.floor(Math.random() * sprites.length);
+
+                            const randomSprite = sprites[random];
+
+                            let payload = {
+                                currentSplashChampion: newChampion["id"],
+                                solvedSplashChampions: solvedChampions,
+                                currentSplashId: parseInt(randomSprite),
+                                prestige: userResult[0]["prestige"],
+                                score: userResult[0]["score"] += 1,
+                                token: token,
+                            }
+
+                            console.log(payload)
+
+                            user.updateSplash(payload, (err, result) => {
+        
+                                if(err) {
+                                    console.log(err);
+                                    return res.json({status: "error", message: "Error on updating user data"})
+                                }
+                
+                                res.json({status: "success", correctGuess: true, championKey: correctChampionData[0].championKey, title: correctChampionData[0].title})
+                            })
+                            
+                        })
+                    })
+                })
+            }
+        })
+    })
 } 
 
 module.exports = {
@@ -263,5 +377,6 @@ module.exports = {
     AddMoreData,
     AddChampionId,
     GetAllChampions,
-    Guess
+    Guess,
+    GuessSplash
 }

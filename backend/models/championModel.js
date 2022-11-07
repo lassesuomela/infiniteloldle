@@ -19,8 +19,14 @@ const champion = {
     getByToken: (token, cb) =>{
         return db.query("SELECT users.currentChampion, champions.id, champions.name, champions.title, champions.resource, champions.position, champions.gender, champions.rangeType, champions.released, champions.region, champions.genre, champions.damageType FROM users JOIN champions ON champions.id = users.currentChampion WHERE users.token = ?", [token], cb)
     },
+    getSplashByToken: (token, cb) =>{
+        return db.query("SELECT users.currentSplashChampion, champions.id, champions.name, champions.title FROM users JOIN champions ON champions.id = users.currentSplashChampion WHERE users.token = ?", [token], cb)
+    },
     getByName: (name, cb) =>{
         return db.query("SELECT * FROM champions WHERE name = ?", [name], cb)
+    },
+    getSplashById: (id, cb) =>{
+        return db.query("SELECT spriteIds FROM champions where id = ?", [id], cb)
     }
 }
 
