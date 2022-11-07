@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from 'react-bootstrap/Modal';
 
-const url = "https://www.infiniteloldle.com/api";
+const url = "http://localhost:8081/api";
 
 export default function NewUser() {
 

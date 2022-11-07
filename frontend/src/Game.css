@@ -104,6 +104,16 @@ p, small {
     background-image: linear-gradient(#dc3545, 60%, #28a745);
 }
 
+#championsImgs {
+    max-width: 10vw;
+}
+
+#spriteContainer {
+    max-width: 30vw;
+    max-height: 30vh;
+    overflow: hidden;
+}
+
 @media only screen and (min-width: 768px) {
 
     #gameTitle, .championData {

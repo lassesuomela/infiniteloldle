@@ -9,6 +9,7 @@ import Game from "./components/game";
 import Scoreboard from "./views/scoreboard";
 import Legal from "./views/legal";
 import About from "./views/about";
+import Splash from "./views/splash";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <div className="container">
           <Routes>
             <Route path="/" element={<Game />} />
+            <Route path="/splash" element={<Splash />} />
             <Route path="/leaderboard" element={<Scoreboard />} />
             <Route path="/legal" element={<Legal />} />
             <Route path="/about" element={<About />} />

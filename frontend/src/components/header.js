@@ -16,7 +16,11 @@ export default function Header() {
           <ul className="navbar-nav">
 
             <li className="nav-item">
-              <Link className="nav-link" to="/">Play</Link>
+              <Link className="nav-link" to="/">Champions</Link>
+            </li>
+
+            <li className="nav-item">
+              <Link className="nav-link" to="/splash">Splash</Link>
             </li>
 
             <li className="nav-item">

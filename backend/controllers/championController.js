@@ -285,7 +285,7 @@ const GuessSplash = (req, res) => {
             console.log("Correct champion is: " + correctChampionData[0].name)
 
             if(guess !== correctChampionData[0].name){
-                return res.json({status: "success", correctGuess: false})
+                return res.json({status: "success", correctGuess: false, championKey: guessChampionData[0].championKey})
 
             }else{
                 // correct guess
@@ -361,7 +361,7 @@ const GuessSplash = (req, res) => {
                                     return res.json({status: "error", message: "Error on updating user data"})
                                 }
                 
-                                res.json({status: "success", correctGuess: true, championKey: correctChampionData[0].championKey, title: correctChampionData[0].title})
+                                res.json({status: "success", correctGuess: true, championKey: guessChampionData[0].championKey, title: correctChampionData[0].title})
                             })
                             
                         })

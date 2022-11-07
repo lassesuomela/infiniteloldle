@@ -14,7 +14,7 @@ const user = {
         return db.query("SELECT nickname, solvedChampions, currentSplashChampion, solvedSplashChampions, timestamp, prestige, score FROM users WHERE token = ?", [token], cb)
     },
     fetchSplashArtByToken: (token, cb) => {
-        return db.query("SELECT users.currentSplashChampion, users.currentSplashId, champions.name, champions.championKey FROM users JOIN champions ON champions.id = users.currentSplashChampion WHERE token = ?", [token], cb)
+        return db.query("SELECT users.currentSplashId, champions.championKey FROM users JOIN champions ON champions.id = users.currentSplashChampion WHERE token = ?", [token], cb)
     }
     
 }
