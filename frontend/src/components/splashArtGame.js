@@ -5,7 +5,7 @@ import NewUser from "./newUser";
 import Victory from "./victory";
 import ChampionImg from "./championImg";
 
-const url = "http://localhost:8081/api";
+const url = "https://www.infiniteloldle.com/api";
 
 export default function Game() {
 
