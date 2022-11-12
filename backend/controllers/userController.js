@@ -88,8 +88,42 @@ const CheckToken = (req, res) => {
     })
 }
 
+const ChangeNickname = (req, res) => {
+
+    let { nickname } = req.body;
+
+    if(!nickname) {
+        return res.json({status: "error", message: "Nickname is required"})
+    }
+
+    if(nickname.length > 30){
+        nickname = nickname.substring(0,30);
+    }
+
+    const data = {
+        nickname: nickname,
+        token: req.token,
+    }
+
+    user.changeNickname(data, (err, result) => {
+        if(err) {
+            console.log(err);
+            return res.json({status:"error", message:"Error on changing nickname"})
+        }
+
+        if(result.affectedRows !== 0){
+
+            return res.json({status: "success", message:"Nickname updated"})
+        }else{
+            return res.json({status: "error", message:"No user was found with that token"})
+
+        }
+    })
+}
+
 module.exports = {
     Create,
-    CheckToken
+    CheckToken,
+    ChangeNickname
 }
 

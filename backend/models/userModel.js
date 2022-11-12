@@ -15,6 +15,9 @@ const user = {
     },
     fetchSplashArtByToken: (token, cb) => {
         return db.query("SELECT users.currentSplashId, champions.championKey FROM users JOIN champions ON champions.id = users.currentSplashChampion WHERE token = ?", [token], cb)
+    },
+    changeNickname: (data, cb) => {
+        return db.query("UPDATE users SET nickname = ? WHERE token = ?", [data.nickname, data.token], cb)
     }
     
 }
