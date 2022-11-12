@@ -4,7 +4,7 @@ import SplashArtGame from "../components/splashArtGame";
 export default function Splash() {
   return (
     <div>
-        <SplashArtGame />
+      <SplashArtGame />
     </div>
   )
 }

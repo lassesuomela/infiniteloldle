@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from "react-router-dom";
+import Settings from "../components/settings";
 
 export default function Header() {
   return (
@@ -35,6 +36,8 @@ export default function Header() {
             <li className="nav-item">
               <Link className="nav-link" to="legal">Legal</Link>
             </li>
+
+            <Settings />
           </ul>
         </div>
       </div>
