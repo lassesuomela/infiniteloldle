@@ -13,16 +13,19 @@ export default function Settings() {
         setIsShown(!isShown);
     }
 
-    const ChangeNickname = () => {
+    const ChangeNickname = (e) => {
+
+        e.preventDefault();
+
         if(!newNickname){
             return;
         }
 
-        axios.put(url + "/user/nickname", {nickname: newNickname})
+        axios.put(url + "/user/nickname", {nickname: newNickname}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
         .then((response) => {
 
             console.log(response.data);
-            
+
             if(response.data.status === "success"){
                 ToggleState()
             }
