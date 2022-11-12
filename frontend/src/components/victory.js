@@ -17,7 +17,7 @@ export default function Victory(props) {
                 onHide={() => setIsShown(false)}
                 size="lg"
                 centered
-                id="victoryModal"
+                className="transparentModal"
             >
 
                 <Modal.Body>

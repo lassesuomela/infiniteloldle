@@ -64,11 +64,11 @@ p, small {
     font-size: 1.1em;
 }
 
-#victoryModal .modal-header {
+.transparentModal .modal-header {
     border: none;
 }
 
-#victoryModal .modal-content {
+.transparentModal .modal-content {
     background-color: transparent;
     border: none;
 }

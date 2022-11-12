@@ -1,15 +1,61 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Modal from 'react-bootstrap/Modal';
 
 export default function Settings() {
-  return (
-    <>
-    <div className="d-flex justify-content-end">
-        <button className="btn btn-dark darkBtn p-2 pb-0">
-            <span className="material-symbols-outlined ">
-            settings
-            </span>
-        </button>
-    </div>
-    </>
-  )
+
+    const [isShown, setIsShown] = useState(false);
+
+    const ToggleState = () => {
+        setIsShown(!isShown);
+    }
+
+    return (
+        <>
+            <div className="d-flex justify-content-end">
+                <button onClick={ToggleState} className="btn btn-dark darkBtn p-2 pb-0">
+                    <span className="material-symbols-outlined ">
+                    settings
+                    </span>
+                </button>
+            </div>
+
+            <Modal
+                show={isShown}
+                onHide={ToggleState}
+                size="lg"
+                centered
+                className="transparentModal"
+            >
+
+                <Modal.Body>
+                    <div className="container d-flex justify-content-center">
+                        <div className="card w-50 text-center">
+                            <Modal.Header closeButton>
+                            </Modal.Header>
+
+                            <h4 className="p-2">Change your nickname</h4>
+                            
+                            <div className="pt-2 d-flex justify-content-center border-dark">
+
+                                <div className="pb-2">
+                                    <form className="row g-3 p-1">
+                                        <input type="text" className="form-control" id="nickname" placeholder="New nickname" maxLength="30"/>
+                                        <div className="text-center">
+                                            <button className="btn btn-dark mb-2">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <h4 className="p-2">Delete your account</h4>
+                            <div className="pb-4">
+                                <button className="btn btn-danger mb-2">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </Modal.Body>
+            </Modal>
+        </>
+    )
 }
