@@ -68,14 +68,17 @@ export default function Settings() {
                 <Modal.Body>
                     <div className="container d-flex justify-content-center">
                         <div className="card w-50 text-center">
+
                             <Modal.Header closeButton>
                             </Modal.Header>
 
-                            <h4 className="p-2">Change your nickname</h4>
+                            <h3 className="pb-4">Settings</h3>
+
+                            <h4>Change your nickname</h4>
                             
                             <div className="pt-2 d-flex justify-content-center border-dark">
 
-                                <div className="pb-2">
+                                <div className="pb-3">
                                     <form className="row g-3 p-1" onSubmit={ChangeNickname}>
                                         <input type="text" className="form-control" id="nickname" placeholder="New nickname" maxLength="30" onChange={e => setNewNickname(e.target.value)}/>
                                         <div className="text-center">
