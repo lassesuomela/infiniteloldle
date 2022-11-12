@@ -1,12 +1,35 @@
+import axios from 'axios';
 import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
+
+const url = "https://www.infiniteloldle.com/api";
 
 export default function Settings() {
 
     const [isShown, setIsShown] = useState(false);
+    const [newNickname, setNewNickname] = useState("");
 
     const ToggleState = () => {
         setIsShown(!isShown);
+    }
+
+    const ChangeNickname = () => {
+        if(!newNickname){
+            return;
+        }
+
+        axios.put(url + "/user/nickname", {nickname: newNickname})
+        .then((response) => {
+
+            console.log(response.data);
+            
+            if(response.data.status === "success"){
+                ToggleState()
+            }
+
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
     return (
@@ -38,8 +61,8 @@ export default function Settings() {
                             <div className="pt-2 d-flex justify-content-center border-dark">
 
                                 <div className="pb-2">
-                                    <form className="row g-3 p-1">
-                                        <input type="text" className="form-control" id="nickname" placeholder="New nickname" maxLength="30"/>
+                                    <form className="row g-3 p-1" onSubmit={ChangeNickname}>
+                                        <input type="text" className="form-control" id="nickname" placeholder="New nickname" maxLength="30" onChange={e => setNewNickname(e.target.value)}/>
                                         <div className="text-center">
                                             <button className="btn btn-dark mb-2">Save</button>
                                         </div>
