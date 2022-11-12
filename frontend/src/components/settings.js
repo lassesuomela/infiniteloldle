@@ -33,6 +33,20 @@ export default function Settings() {
         })
     }
 
+    const DeleteUser = () => {
+
+        axios.delete(url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
+        .then((response) => {
+
+            if(response.data.status === "success"){
+                ToggleState()
+            }
+
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
     return (
         <>
             <div className="d-flex justify-content-end">
@@ -73,7 +87,7 @@ export default function Settings() {
 
                             <h4 className="p-2">Delete your account</h4>
                             <div className="pb-4">
-                                <button className="btn btn-danger mb-2">Delete</button>
+                                <button onClick={DeleteUser} className="btn btn-danger mb-2">Delete</button>
                             </div>
                         </div>
                     </div>
