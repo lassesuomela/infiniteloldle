@@ -121,9 +121,27 @@ const ChangeNickname = (req, res) => {
     })
 }
 
+const DeleteUser = (req, res) => {
+
+    user.deleteUser(req.token, (err, result) => {
+        if(err) {
+            console.log(err);
+            return res.json({status:"error", message:"Error on deleting account"})
+        }
+
+        if(result.affectedRows !== 0){
+
+            return res.json({status: "success", message:"Account deleted"})
+        }else{
+            return res.json({status: "error", message:"No user was found with that token"})
+        }
+    })
+}
+
 module.exports = {
     Create,
     CheckToken,
-    ChangeNickname
+    ChangeNickname,
+    DeleteUser
 }
 

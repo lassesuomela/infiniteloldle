@@ -18,6 +18,9 @@ const user = {
     },
     changeNickname: (data, cb) => {
         return db.query("UPDATE users SET nickname = ? WHERE token = ?", [data.nickname, data.token], cb)
+    },
+    deleteUser: (token, cb) => {
+        return db.query("DELETE FROM users WHERE token = ?", [token], cb)
     }
     
 }

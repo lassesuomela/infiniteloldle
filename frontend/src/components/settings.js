@@ -24,8 +24,6 @@ export default function Settings() {
         axios.put(url + "/user/nickname", {nickname: newNickname}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
         .then((response) => {
 
-            console.log(response.data);
-
             if(response.data.status === "success"){
                 ToggleState()
             }
