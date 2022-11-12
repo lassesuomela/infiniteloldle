@@ -117,9 +117,7 @@ p, small {
 .darkBtn {
     background-color: #1E2328;
 }
-.navbar-dark .navbar-nav .nav-link, .darkBtn {
-    color:#fff;
-}
+
 @media only screen and (min-width: 768px) {
 
     #gameTitle, .championData {
