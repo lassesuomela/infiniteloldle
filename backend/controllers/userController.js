@@ -4,8 +4,6 @@ const crypto = require("crypto")
 
 const Create = (req, res) => {
 
-    console.log(req.body);
-
     crypto.randomBytes(46, (err, token) => {
         if(err) {
             console.log(err);
@@ -56,8 +54,6 @@ const Create = (req, res) => {
                     timestamp: new Date().toLocaleDateString("en")
                 }
     
-                console.log(data);
-            
                 user.create(data, (err, result) => {
     
                     if(err) {
