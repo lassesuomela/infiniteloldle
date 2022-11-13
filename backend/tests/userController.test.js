@@ -16,11 +16,38 @@ describe("Testing userController routes", () => {
             .send(body)
 
             .then(res => {
-                expect(res.statusCode).toBe(200);
                 expect(res.body.status).toBe("success");
                 expect(res.body).toHaveProperty("token");
 
                 token = res.body.token;
+
+                done();
+            })
+    });
+
+    it("Checking if token is valid.", (done) => {
+
+        request(app)
+            .get("/api/user")
+            .set("Authorization", "Bearer " + token)
+
+            .then(res => {
+                expect(res.body.status).toBe("success");
+                expect(res.body).toHaveProperty("message");
+                expect(res.body).toHaveProperty("player");
+
+                done();
+            })
+    });
+
+    it("Checking if token is valid. With no token.", (done) => {
+
+        request(app)
+            .get("/api/user")
+
+            .then(res => {
+                expect(res.body.status).toBe("error");
+                expect(res.body).toHaveProperty("message");
 
                 done();
             })
@@ -43,6 +70,7 @@ describe("Testing userController routes", () => {
      
         request(app)
             .put("/api/user/nickname")
+            .set("Authorization", "Bearer " + token)
 
             .then(res => {
                 expect(res.body.status).toBe("error");
@@ -67,6 +95,33 @@ describe("Testing userController routes", () => {
                 expect(res.body.status).toBe("success");
                 expect(res.body).toHaveProperty("message");
                 expect(res.body.message).toBe("Nickname updated")
+
+                done();
+            })
+    });
+
+    it("Deleting user account, with valid token.", (done) => {
+
+        request(app)
+            .delete("/api/user")
+            .set("Authorization", "Bearer " + token)
+
+            .then(res => {
+                expect(res.body.status).toBe("success");
+                expect(res.body).toHaveProperty("message");
+
+                done();
+            })
+    });
+
+    it("Deleting user account, without token.", (done) => {
+
+        request(app)
+            .delete("/api/user")
+
+            .then(res => {
+                expect(res.body.status).toBe("error");
+                expect(res.body).toHaveProperty("message");
 
                 done();
             })
