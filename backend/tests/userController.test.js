@@ -1,8 +1,11 @@
 const app = require("../app");
 const request = require("supertest");
 
-describe("Creating new user", () => {
-    it("Should respond with status:success and have a token in the response body", (done) => {
+describe("Testing userController routes", () => {
+
+    let token = "";
+
+    it("Creating user account with nickname defined.", (done) => {
 
         const body = {
             nickname: "jestuser"
@@ -16,6 +19,54 @@ describe("Creating new user", () => {
                 expect(res.statusCode).toBe(200);
                 expect(res.body.status).toBe("success");
                 expect(res.body).toHaveProperty("token");
+
+                token = res.body.token;
+
+                done();
+            })
+    });
+
+    it("Creating user account without nickname.", (done) => {
+
+        request(app)
+            .post("/api/user")
+
+            .then(res => {
+                expect(res.body.status).toBe("success");
+                expect(res.body).toHaveProperty("token");
+
+                done();
+            })
+    });
+
+    it("Updating nickname, without nickname defined.", (done) => {
+     
+        request(app)
+            .put("/api/user/nickname")
+
+            .then(res => {
+                expect(res.body.status).toBe("error");
+                expect(res.body).toHaveProperty("message");
+
+                done();
+            })
+    });
+
+    it("Updating nickname, with nickname.", (done) => {
+
+        const body = {
+            nickname: "newNicknameJest"
+        }
+
+        request(app)
+            .put("/api/user/nickname")
+            .send(body)
+            .set("Authorization", "Bearer " + token)
+
+            .then(res => {
+                expect(res.body.status).toBe("success");
+                expect(res.body).toHaveProperty("message");
+                expect(res.body.message).toBe("Nickname updated")
 
                 done();
             })

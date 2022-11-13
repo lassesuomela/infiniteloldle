@@ -14,7 +14,7 @@ const Create = (req, res) => {
 
         let {nickname} = req.body;
 
-        if(nickname.length > 30){
+        if(nickname && nickname.length > 30){
             nickname = nickname.substring(0,30);
         }
 
@@ -53,7 +53,7 @@ const Create = (req, res) => {
                     currentSplashId: parseInt(randomSprite),
                     timestamp: new Date().toLocaleDateString("en")
                 }
-    
+
                 user.create(data, (err, result) => {
     
                     if(err) {
