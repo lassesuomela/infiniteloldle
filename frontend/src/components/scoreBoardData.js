@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
 
-const url = "https://www.infiniteloldle.com/api";
+import Config from "../configs/config";
 
 export default function ScoreBoardData() {
 
@@ -9,7 +9,7 @@ export default function ScoreBoardData() {
     const [playerData, setPlayerData] = useState("");
 
     useEffect(() => {
-        axios.get(url + "/scoreboard")
+        axios.get(Config.url + "/scoreboard")
         .then(response => {
 
             const data = response.data.scores;
@@ -23,7 +23,7 @@ export default function ScoreBoardData() {
             return;
         }
 
-        axios.get(url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
+        axios.get(Config.url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
         .then(response => {
 
             if(response.data.status === "success"){

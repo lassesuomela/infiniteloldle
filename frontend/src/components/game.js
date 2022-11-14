@@ -6,7 +6,7 @@ import Select from 'react-select';
 import Victory from "./victory";
 import NewUser from "./newUser";
 
-const url = "https://www.infiniteloldle.com/api";
+import Config from "../configs/config";
 
 export default function Game() {
 
@@ -30,7 +30,7 @@ export default function Game() {
 
   const FetchChampions = () => {
 
-    axios.get(url + "/champions").then(response => {
+    axios.get(Config.url + "/champions").then(response => {
 
       if(response.data.status === "success"){
         const data = response.data.champions;
@@ -61,7 +61,7 @@ export default function Game() {
 
     setGuesses(guesses => [...guesses, currentGuess]);
 
-    axios.post(url + "/guess", {guess:currentGuess}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
+    axios.post(Config.url + "/guess", {guess:currentGuess}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
 
       if(response.data.status !== "success"){
         setIsValidToken(false);

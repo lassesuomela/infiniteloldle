@@ -108,10 +108,9 @@ p, small {
     max-width: 10vw;
 }
 
-#spriteContainer {
-    max-width: 30vw;
-    max-height: 30vh;
-    overflow: hidden;
+#spriteContainer img{
+    width:40%;
+    filter: blur(1em);
 }
 
 .darkBtn {

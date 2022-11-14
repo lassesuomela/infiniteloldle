@@ -1,8 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
-
-const url = "https://www.infiniteloldle.com/api";
+import Config from "../configs/config";
 
 export default function Settings() {
 
@@ -21,7 +20,7 @@ export default function Settings() {
             return;
         }
 
-        axios.put(url + "/user/nickname", {nickname: newNickname}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
+        axios.put(Config.url + "/user/nickname", {nickname: newNickname}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
         .then((response) => {
 
             if(response.data.status === "success"){
@@ -35,7 +34,7 @@ export default function Settings() {
 
     const DeleteUser = () => {
 
-        axios.delete(url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
+        axios.delete(Config.url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
         .then((response) => {
 
             if(response.data.status === "success"){

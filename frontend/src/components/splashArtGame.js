@@ -4,8 +4,7 @@ import Select from 'react-select';
 import NewUser from "./newUser";
 import Victory from "./victory";
 import ChampionImg from "./championImg";
-
-const url = "https://www.infiniteloldle.com/api";
+import Config from "../configs/config";
 
 export default function Game() {
 
@@ -31,7 +30,7 @@ export default function Game() {
 
   const FetchChampions = () => {
 
-    axios.get(url + "/champions").then(response => {
+    axios.get(Config.url + "/champions").then(response => {
 
       if(response.data.status === "success"){
         const data = response.data.champions;
@@ -46,13 +45,17 @@ export default function Game() {
 
   const FetchSplashArt = () => {
 
-    axios.get(url + "/splash", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
+    axios.get(Config.url + "/splash", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
 
-        if(response.data.status === "success"){
+      if(response.data.status === "success"){
 
-            const url = "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + response.data.result.championKey + "_" + response.data.result.currentSplashId + ".jpg";
-            setSpriteUrl(url);
-        }
+        const url = "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + response.data.result.championKey + "_" + response.data.result.currentSplashId + ".jpg";
+        setSpriteUrl(url);
+
+        const spriteImg = document.getElementById("spriteImg");
+
+        spriteImg.style.filter = "blur(1em)";
+      }
 
     }).catch(error => {
       console.log(error);
@@ -77,7 +80,7 @@ export default function Game() {
 
     setGuesses(guesses => [...guesses, currentGuess]);
 
-    axios.post(url + "/splash", {guess:currentGuess}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
+    axios.post(Config.url + "/splash", {guess:currentGuess}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
 
       if(response.data.status !== "success"){
         setIsValidToken(false);
@@ -88,10 +91,7 @@ export default function Game() {
 
       const key = response.data.championKey;
 
-      console.log([key, isCorrect]);
-
       setChampions(champions => [[key, isCorrect], ...champions]);
-      console.log(champions);
 
       const spriteImg = document.getElementById("spriteImg");
 
@@ -99,11 +99,14 @@ export default function Game() {
         setCorrectGuess(true)
         setTitle(response.data.title)
 
-        spriteImg.style.width = "100%";
+        spriteImg.style.filter = "";
+
       }else{
-        if(spriteImg.style.width !== "100%" ){
-            spriteImg.style.width = 300 - (guesses.length + 1) * 25 + "%";
-        }
+        let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
+
+        blurVal -= blurVal * 0.2;
+        
+        spriteImg.style.filter = "blur(" + blurVal.toString() + "em)";
       }
 
     }).catch(error => {
@@ -113,10 +116,6 @@ export default function Game() {
   }
 
   const Restart = () => {
-
-    const spriteImg = document.getElementById("spriteImg");
-
-    spriteImg.style.width = "300%";
 
     FetchSplashArt();
     FetchChampions();
@@ -136,8 +135,8 @@ export default function Game() {
         !isValidToken ? <NewUser /> : ""
       }
 
-        <div className="container" id="spriteContainer">
-            <img src={spriteUrl} id="spriteImg" style={{"width":"300%"}} alt="Champion splash art" draggable="false"/>
+        <div className="container d-flex justify-content-center" id="spriteContainer">
+          <img src={spriteUrl} id="spriteImg" alt="Champion splash art." draggable="false"/>
         </div>
 
       <div className="d-flex justify-content-center mt-4 pt-3 mb-3">
@@ -164,18 +163,17 @@ export default function Game() {
         </div>
 
         <div id="championsImgs" className="container">
-            {
-                champions.map(champ =>(
-                    <ChampionImg championKey={champ[0]} isCorrect={champ[1]} />
-                ))
-            }
-        
+          {
+            champions.map(champ =>(
+              <ChampionImg championKey={champ[0]} isCorrect={champ[1]} />
+            ))
+          }
         </div>
             
         {
-            correctGuess ? 
-            <Victory id="victory" championKey={champions[0][0]} champion={currentGuess} tries={guesses.length} title={title} />
-            : ""
+          correctGuess ? 
+          <Victory id="victory" championKey={champions[0][0]} champion={currentGuess} tries={guesses.length} title={title} />
+          : ""
         }
     </div>
   )

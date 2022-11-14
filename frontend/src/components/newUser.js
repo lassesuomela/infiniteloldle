@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from 'react-bootstrap/Modal';
 
-const url = "https://www.infiniteloldle.com/api";
+import Config from "../configs/config";
 
 export default function NewUser() {
 
@@ -13,7 +13,7 @@ export default function NewUser() {
     const createToken = (e) => {
         e.preventDefault();
 
-        axios.post(url + "/user", {nickname}).then(response => {
+        axios.post(Config.url + "/user", {nickname}).then(response => {
 
             if(response.data.status === "success"){
                 localStorage.setItem("token", response.data.token)
@@ -27,7 +27,7 @@ export default function NewUser() {
 
     useEffect(() => {
 
-        axios.get(url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
+        axios.get(Config.url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
             if(response.data.status === "success") {
                 setIsShown(false)
             }
