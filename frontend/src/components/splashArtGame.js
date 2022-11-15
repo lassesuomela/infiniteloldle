@@ -53,11 +53,10 @@ export default function Game() {
         const url = "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + response.data.result.championKey + "_" + response.data.result.currentSplashId + ".jpg";
         setSpriteUrl(url);
 
+        setIsLoaded(true)
         const spriteImg = document.getElementById("spriteImg");
 
         spriteImg.style.filter = "blur(1em)";
-
-        setIsLoaded(true)
       }
 
     }).catch(error => {
@@ -70,12 +69,10 @@ export default function Game() {
     e.preventDefault();
 
     if(!currentGuess){
-      console.log("Input is needed");
       return;
     }
 
     if(guesses.indexOf(currentGuess) !== -1){
-      console.log("Duplicate");
       return;
     }
 
