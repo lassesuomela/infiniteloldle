@@ -50,7 +50,7 @@ export default function Settings() {
         <>
             <div className="d-flex justify-content-end">
                 <button onClick={ToggleState} className="btn btn-dark darkBtn p-2 pb-0">
-                    <span className="material-symbols-outlined ">
+                    <span className="material-symbols-outlined">
                     settings
                     </span>
                 </button>
@@ -66,7 +66,7 @@ export default function Settings() {
 
                 <Modal.Body>
                     <div className="container d-flex justify-content-center">
-                        <div className="card w-50 text-center">
+                        <div className="card text-center">
 
                             <Modal.Header closeButton>
                             </Modal.Header>

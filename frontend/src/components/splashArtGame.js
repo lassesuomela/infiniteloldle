@@ -16,6 +16,7 @@ export default function Game() {
   const [isValidToken, setIsValidToken] = useState(false);
   const [spriteUrl, setSpriteUrl] = useState("");
   const [title, setTitle] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
 
@@ -55,6 +56,8 @@ export default function Game() {
         const spriteImg = document.getElementById("spriteImg");
 
         spriteImg.style.filter = "blur(1em)";
+
+        setIsLoaded(true)
       }
 
     }).catch(error => {
@@ -117,6 +120,7 @@ export default function Game() {
 
   const Restart = () => {
 
+    setIsLoaded(false)
     FetchSplashArt();
     FetchChampions();
 
@@ -135,9 +139,13 @@ export default function Game() {
         !isValidToken ? <NewUser /> : ""
       }
 
-        <div className="container d-flex justify-content-center" id="spriteContainer">
-          <img src={spriteUrl} id="spriteImg" alt="Champion splash art." draggable="false"/>
-        </div>
+      {
+        isLoaded ? 
+          <div className="container d-flex justify-content-center" id="spriteContainer">
+            <img src={spriteUrl} id="spriteImg" alt="Champion splash art." draggable="false"/>
+          </div>
+        : ""
+      }
 
       <div className="d-flex justify-content-center mt-4 pt-3 mb-3">
 
