@@ -377,8 +377,16 @@ const GetSplashArt = (req, res) => {
     const token = req.token;
 
     user.fetchSplashArtByToken(token, (err, result) => {
-        console.log(result)
 
+        if(err) {
+            console.log(err);
+            return res.json({status: "error", message: "Error on fetching splash art"})
+        }
+
+        console.log(result)
+        if(!result){
+            return res.json({status: "error", message:"Splash art was not found for that token"})
+        }
         res.json({status: "success", result:result[0]})
     })
 }
