@@ -16,7 +16,6 @@ export default function Game() {
   const [isValidToken, setIsValidToken] = useState(false);
   const [spriteUrl, setSpriteUrl] = useState("");
   const [title, setTitle] = useState("");
-  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
 
@@ -53,7 +52,6 @@ export default function Game() {
         const url = "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + response.data.result.championKey + "_" + response.data.result.currentSplashId + ".jpg";
         setSpriteUrl(url);
 
-        setIsLoaded(true)
       }
 
     }).catch(error => {
@@ -114,7 +112,6 @@ export default function Game() {
 
   const Restart = () => {
 
-    setIsLoaded(false)
     FetchSplashArt();
     FetchChampions();
 
@@ -135,11 +132,7 @@ export default function Game() {
 
       <div className="container d-flex justify-content-center" id="spriteContainer">
 
-      {
-        isLoaded ? 
-        <img src={spriteUrl} id="spriteImg" alt="Champion splash art." draggable="false"/>
-        : ""
-      }
+      <img src={spriteUrl} id="spriteImg" alt="Champion splash art." draggable="false"/>
 
       </div>
 
