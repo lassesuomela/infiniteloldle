@@ -54,9 +54,6 @@ export default function Game() {
         setSpriteUrl(url);
 
         setIsLoaded(true)
-        const spriteImg = document.getElementById("spriteImg");
-
-        spriteImg.style.filter = "blur(1em)";
       }
 
     }).catch(error => {
@@ -136,13 +133,15 @@ export default function Game() {
         !isValidToken ? <NewUser /> : ""
       }
 
+      <div className="container d-flex justify-content-center" id="spriteContainer">
+
       {
         isLoaded ? 
-          <div className="container d-flex justify-content-center" id="spriteContainer">
-            <img src={spriteUrl} id="spriteImg" alt="Champion splash art." draggable="false"/>
-          </div>
+        <img src={spriteUrl} id="spriteImg" alt="Champion splash art." draggable="false"/>
         : ""
       }
+
+      </div>
 
       <div className="d-flex justify-content-center mt-4 pt-3 mb-3">
 
