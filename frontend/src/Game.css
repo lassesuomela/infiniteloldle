@@ -105,12 +105,16 @@ p, small {
 }
 
 #championsImgs {
-    max-width: 10vw;
+    max-width: 25vw;
+}
+
+#spriteContainer {
+    width: 40vw;
+    height: auto;
 }
 
 #spriteContainer img{
-    width:40%;
-    filter: blur(1em);
+    width:100%;
 }
 
 .darkBtn {
@@ -147,6 +151,15 @@ p, small {
         width: 100%;
     }
 
+    #spriteContainer {
+        width: 40vw;
+        height: auto;
+    }
+
+    #championsImgs {
+        max-width: 20vw;
+    }
+
 }
 
 @media only screen and (min-width: 992px) {
@@ -165,6 +178,11 @@ p, small {
     .transparentModal .card {
         width: 75%;
     }
+
+    #spriteContainer {
+        width: 40vw;
+        height: auto;
+    }
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1400px){
@@ -182,6 +200,15 @@ p, small {
 
     .transparentModal .card {
         width: 75%;
+    }
+
+    #spriteContainer {
+        width: 40vw;
+        height: auto;
+    }
+
+    #championsImgs {
+        max-width: 10vw;
     }
 }
 
@@ -204,5 +231,14 @@ p, small {
 
     .transparentModal .card {
         width: 75%;
+    }
+
+    #spriteContainer {
+        width: 30vw;
+        height: auto;
+    }
+
+    #championsImgs {
+        max-width: 12vw;
     }
 }

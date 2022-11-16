@@ -49,9 +49,11 @@ export default function Game() {
 
       if(response.data.status === "success"){
 
-        const url = "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + response.data.result.championKey + "_" + response.data.result.currentSplashId + ".jpg";
-        setSpriteUrl(url);
-
+        if(response.data.result){
+          
+          const url = "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + response.data.result.championKey + "_" + response.data.result.currentSplashId + ".jpg";
+          setSpriteUrl(url);
+        }
       }
 
     }).catch(error => {
@@ -100,7 +102,7 @@ export default function Game() {
         let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
 
         blurVal -= blurVal * 0.2;
-        
+
         spriteImg.style.filter = "blur(" + blurVal.toString() + "em)";
       }
 
@@ -111,6 +113,9 @@ export default function Game() {
   }
 
   const Restart = () => {
+
+    const spriteImg = document.getElementById("spriteImg");
+    spriteImg.style.filter = "blur(1.0em)";
 
     FetchSplashArt();
     FetchChampions();
@@ -130,9 +135,13 @@ export default function Game() {
         !isValidToken ? <NewUser /> : ""
       }
 
-      <div className="container d-flex justify-content-center" id="spriteContainer">
+      <div className="container d-flex justify-content-center shadow" id="spriteContainer">
 
-      <img src={spriteUrl} id="spriteImg" alt="Champion splash art." draggable="false"/>
+        {
+          spriteUrl ? 
+          <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Champion splash art." draggable="false"/>
+          : ""
+        }
 
       </div>
 
@@ -162,7 +171,7 @@ export default function Game() {
         <div id="championsImgs" className="container">
           {
             champions.map(champ =>(
-              <ChampionImg championKey={champ[0]} isCorrect={champ[1]} />
+              <ChampionImg key={champ[0].key} championKey={champ[0]} isCorrect={champ[1]} />
             ))
           }
         </div>

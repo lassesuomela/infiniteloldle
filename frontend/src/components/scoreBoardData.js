@@ -52,7 +52,7 @@ export default function ScoreBoardData() {
             <tbody>
             {
                 players.map((player, i) => (
-                    <tr>
+                    <tr key={player.nickname + i}>
                         <td>{i + 1}</td>
                         <td>{player.nickname}</td>
                         <td>{player.prestige}</td>
@@ -63,11 +63,15 @@ export default function ScoreBoardData() {
             }
             </tbody>
 
-            <td>???</td>
-            <td>{playerData ? playerData.nickname : "-"}</td>
-            <td>{playerData ? playerData.prestige : "-"}</td>
-            <td>{playerData ? playerData.score : "-"}</td>
-            <td>{playerData ? playerData.timestamp : "-"}</td>
+            <tbody>
+                <tr>
+                    <td>???</td>
+                    <td>{playerData ? playerData.nickname : "-"}</td>
+                    <td>{playerData ? playerData.prestige : "-"}</td>
+                    <td>{playerData ? playerData.score : "-"}</td>
+                    <td>{playerData ? playerData.timestamp : "-"}</td>
+                </tr>
+            </tbody>
         </table>
     )
 }
