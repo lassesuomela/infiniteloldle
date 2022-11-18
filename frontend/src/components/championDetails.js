@@ -7,7 +7,7 @@ export default function ChampionDetails(props) {
             <div className="row">
                 <div className="col-1">
 
-                    <img id="championImg" key={"/champions/" + props.championKey + ".png"} alt={props.championKey} className="championData mx-auto"/>
+                    <img id="championImg" key={props.championKey} src={"/champions/" + props.championKey + ".png"} alt={props.championKey} className="championData mx-auto"/>
                 
                 </div>
                 <div className={"col-1 championData " + (props.similarites.sameGender ? "correct" : "incorrect")} id="gender">
