@@ -30,7 +30,7 @@ export default function Victory(props) {
                             <div className="pb-5">
                                 <h1 className="pb-3">Victory!</h1>
 
-                                <img src={"https://ddragon.leagueoflegends.com/cdn/12.19.1/img/champion/" + props.championKey + ".png"} alt={props.championKey} className="pb-3"/>
+                                <img src={"/champions/" + props.championKey + ".png"} alt={props.championKey} className="pb-3"/>
 
                                 <h2>{props.champion}</h2>
 

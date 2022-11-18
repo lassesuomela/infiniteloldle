@@ -84,6 +84,18 @@ const GetAllChampions = (req, res) => {
     })
 }
 
+const GetAllChampionKeys = (req, res) => {
+
+    champion.getAllKeys((err, result) => {
+
+        if(err){
+            return res.json({status: "error", error: err})
+        }
+
+        res.json({status: "success", championKeys: result})
+    })
+}
+
 const GetPartialSimilarites = (currentGuess, correctChampion) => {
 
     const guessPos = currentGuess.split(",").sort()
@@ -398,5 +410,6 @@ module.exports = {
     GetAllChampions,
     Guess,
     GuessSplash,
-    GetSplashArt
+    GetSplashArt,
+    GetAllChampionKeys
 }
