@@ -51,7 +51,7 @@ export default function Game() {
 
         if(response.data.result){
           
-          const url = "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/" + response.data.result.championKey + "_" + response.data.result.currentSplashId + ".jpg";
+          const url = "/splash_arts/" + response.data.result.championKey + "_" + response.data.result.currentSplashId + ".jpg";
           setSpriteUrl(url);
         }
       }
