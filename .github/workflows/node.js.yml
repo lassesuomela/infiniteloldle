@@ -1,4 +1,4 @@
-name: Build
+name: Build & Deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
         
-  build-frontend:
+  Build-React:
 
     runs-on: ubuntu-latest
 
@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Run npm ci and npm run build
+    - name: Setup npm
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
@@ -27,12 +27,12 @@ jobs:
     - run: npm run build
       working-directory: ./frontend
   
-  deploy:
-    needs: build-frontend
+  Deploy:
+    needs: Build-React
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Pulling from GIT, building images and running them
+    - name: Pull from GitHub, build images and run them
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.REMOTE_HOST }}
