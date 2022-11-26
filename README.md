@@ -16,7 +16,9 @@
 
 [Wordle](https://www.nytimes.com/games/wordle/index.html) like site where users can guess League of Legends champions endlessly. Inspiration taken greatly from another worlde clone [loldle.net](https://loldle.net).
 
-Frontend is made with React and Bootstrap 5. Backend is made with Node.js and Express.js framework. Database is MySQL. Nginx is used as a webserver to serve frontend files and also to be reverse proxy to Express.js backend. Everything is packaged into Docker containers and those are managed with docker-compose. Created basic CI/CD pipeline with GitHub actions that builds frontend and deploys them to VPS.
+Frontend is made with React and Bootstrap 5. Backend is made with Node.js and Express.js framework. Database is MySQL. Nginx is used as a webserver to serve frontend files and also to act as a reverse proxy for the backend.
+
+Everything is packaged into Docker containers and those are managed with docker-compose.yml file in the backend directory. Created basic CI/CD pipeline with GitHub actions that builds frontend and deploys them to VPS.
 
 ## Demo
 Demo of this repository will be available at [https://www.infiniteloldle.com](https://www.infiniteloldle.com).
@@ -32,6 +34,7 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
   - `DB_PASSWORD=root`
   - `DB_DATABASE=loldle`
   - `TOKEN=some_secret_token_for_jwt_auth` # used only for importing data to database
+  - `NODE_ENV=dev` # used only for importing data to database
 - run `npm start` and the backend is running at [http://localhost:8081](http://localhost:8081)
 ---
 ## How to run frontend
