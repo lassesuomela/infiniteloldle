@@ -14,7 +14,9 @@
 
 ---
 
-Wordle like site where users can guess League of Legends champions endlessly. Frontend is made with React and Bootstrap 5. Backend is made with Node.js and Express.js framework. Database is MySQL. Nginx is used as a webserver to serve frontend files and also to be reverse proxy to Express.js backend. Everything is packaged into Docker containers and those are managed with docker-compose. Created basic CI/CD pipeline with GitHub actions that builds frontend and deploys them to VPS.
+[Wordle](https://www.nytimes.com/games/wordle/index.html) like site where users can guess League of Legends champions endlessly. Inspiration taken greatly from another worlde clone [loldle.net](https://loldle.net).
+
+Frontend is made with React and Bootstrap 5. Backend is made with Node.js and Express.js framework. Database is MySQL. Nginx is used as a webserver to serve frontend files and also to be reverse proxy to Express.js backend. Everything is packaged into Docker containers and those are managed with docker-compose. Created basic CI/CD pipeline with GitHub actions that builds frontend and deploys them to VPS.
 
 ## Demo
 Demo of this repository will be available at [https://www.infiniteloldle.com](https://www.infiniteloldle.com).
@@ -73,3 +75,9 @@ Legal page
 
 Settings menu
 ![Settings menu](screenshots/settings.png)
+
+# Legal disclaimer
+
+Infiniteloldle.com isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+
+Infiniteloldle.com was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
