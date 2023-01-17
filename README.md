@@ -46,6 +46,12 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
 - run `npm start` and the frontend is running at [http://localhost:3000](http://localhost:3000)
 
 ---
+
+## How to run tests
+- `cd ./backend`
+- run `npm test`
+
+---
 ## Screenshots below from the site
 
 First visit insert nickname
