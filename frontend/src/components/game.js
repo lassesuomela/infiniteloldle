@@ -8,6 +8,8 @@ import NewUser from "./newUser";
 
 import Config from "../configs/config";
 
+import {Helmet} from "react-helmet";
+
 export default function Game() {
 
   const [validGuesses, setValidGuesses] = useState([]);
@@ -96,6 +98,11 @@ export default function Game() {
 
   return (
     <div className="container main pt-4 pb-5 mb-5">
+
+      <Helmet>
+        <title>Infiniteloldle - LoL quiz - Champion game</title>
+        <meta name="description" content="Infiniteloldle.com - Guess League of Legends champions infinitely by their attributes." />
+      </Helmet>
 
       <h3 className="text-center pb-3">Start guessing your champion</h3>
 
