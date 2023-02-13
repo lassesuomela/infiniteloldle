@@ -32,6 +32,10 @@ const Create = (req, res) => {
 
             const currentSplashChampion = data[randomSplash];
 
+            if(!nickname){
+                nickname = "Teemo#" + Math.floor(Math.random() * 9999);
+            }
+
             champion.getSplashById(currentSplashChampion["id"], (err, result) => {
 
                 if(err) {
@@ -46,7 +50,7 @@ const Create = (req, res) => {
                 const randomSprite = sprites[randomSpriteId];
 
                 data = {
-                    nickname: !nickname ? "Anonymous" : nickname,
+                    nickname: nickname,
                     token: token,
                     currentChampion: currentChampion["id"],
                     currentSplashChampion: currentSplashChampion["id"],
