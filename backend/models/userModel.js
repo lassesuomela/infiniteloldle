@@ -11,7 +11,7 @@ const user = {
         return db.query("UPDATE users SET currentSplashChampion = ?, solvedSplashChampions = ?, currentSplashId = ?, prestige = ?, score = ? WHERE token = ?", [data.currentSplashChampion, data.solvedSplashChampions, data.currentSplashId, data.prestige, data.score, data.token], cb)
     },
     fetchByToken: (token, cb) => {
-        return db.query("SELECT nickname, solvedChampions, currentSplashChampion, solvedSplashChampions, timestamp, prestige, score FROM users WHERE token = ?", [token], cb)
+        return db.query("SELECT nickname, solvedChampions, currentSplashChampion, solvedSplashChampions, timestamp, prestige, score, country FROM users WHERE token = ?", [token], cb)
     },
     fetchSplashArtByToken: (token, cb) => {
         return db.query("SELECT users.currentSplashId, champions.championKey FROM users JOIN champions ON champions.id = users.currentSplashChampion WHERE token = ?", [token], cb)
