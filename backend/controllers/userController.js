@@ -76,6 +76,8 @@ const CheckToken = (req, res) => {
         if (result && result[0]){
 
             delete result[0]["solvedChampions"];
+            delete result[0]["currentSplashChampion"];
+            delete result[0]["solvedSplashChampions"];
 
             res.json({status:"success", message:"Token is valid", player: result[0]})
         }else{
