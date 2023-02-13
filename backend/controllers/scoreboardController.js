@@ -7,7 +7,7 @@ const TopAllTime = (req, res) => {
             return res.json({status:"error", error:"No results found", scores: []})
         }
 
-        res.json({status: "success", scores: result[0], playerCount: result[1]});
+        res.json({status: "success", scores: result[0], playerCount: result[1][0]["playerCount"]});
     })
 }
 

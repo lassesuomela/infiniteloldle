@@ -8,6 +8,11 @@ p, small {
     font-family: Spiegel;
 }
 
+.playerCount span {
+    font-family: "Beaufort for LOL";
+    font-size: 1em;
+}
+
 .main {
     padding-bottom: 8em;
 }

@@ -7,12 +7,15 @@ export default function ScoreBoardData() {
 
     const [players, setPlayers] = useState([]);
     const [playerData, setPlayerData] = useState("");
+    const [playerCount, setPlayerCount] = useState(0);
 
     useEffect(() => {
         axios.get(Config.url + "/scoreboard")
         .then(response => {
 
             const data = response.data.scores;
+
+            setPlayerCount(response.data.playerCount);
             setPlayers(data);
         
         }).catch(error => {
@@ -39,6 +42,7 @@ export default function ScoreBoardData() {
       }, [])
 
     return (
+        <>
         <table className="table table-striped table-hover">
             <thead>
                 <tr>
@@ -72,6 +76,12 @@ export default function ScoreBoardData() {
                     <td>{playerData ? playerData.timestamp : "-"}</td>
                 </tr>
             </tbody>
+
         </table>
+
+        <div className="playerCount">
+            <h5>Player count: <span>{playerCount}</span></h5>
+        </div>
+        </>
     )
 }

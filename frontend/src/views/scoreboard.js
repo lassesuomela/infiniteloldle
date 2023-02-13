@@ -16,7 +16,7 @@ export default function ScoreBoard() {
                 <h3 className="text-center pb-3 pt-4">Leaderboard</h3>
 
                 <div className="d-flex justify-content-center text-center">
-                    <div className="card p-5 w-75">
+                    <div className="card p-5 pb-2 w-75">
                         <ScoreBoardData/>
                     </div>
                 </div>
