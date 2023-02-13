@@ -63,7 +63,7 @@ export default function ScoreBoardData() {
                         <td>{player.nickname}</td>
                         <td>{player.prestige}</td>
                         <td>{player.score}</td>
-                        <td><ReactCountryFlag countryCode={player.country} svg /></td>
+                        <td>{player.country ? <ReactCountryFlag countryCode={player.country} svg /> : "n/a"}</td>
                         <td>{player.timestamp}</td>
                     </tr>
                 ))
@@ -76,7 +76,7 @@ export default function ScoreBoardData() {
                     <td>{playerData ? playerData.nickname : "-"}</td>
                     <td>{playerData ? playerData.prestige : "-"}</td>
                     <td>{playerData ? playerData.score : "-"}</td>
-                    <td><ReactCountryFlag countryCode={playerData.country} svg /></td>
+                    <td>{playerData.country ? <ReactCountryFlag countryCode={playerData.country} svg /> : "n/a"}</td>
                     <td>{playerData ? playerData.timestamp : "-"}</td>
                 </tr>
             </tbody>
