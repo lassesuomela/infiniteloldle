@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
+import ReactCountryFlag from "react-country-flag"
 
 import Config from "../configs/config";
 
@@ -50,6 +51,7 @@ export default function ScoreBoardData() {
                     <th>Nickname</th>
                     <th>Prestige</th>
                     <th>Correct guesses</th>
+                    <th>Country</th>
                     <th>Registered</th>
                 </tr>
             </thead>
@@ -61,6 +63,7 @@ export default function ScoreBoardData() {
                         <td>{player.nickname}</td>
                         <td>{player.prestige}</td>
                         <td>{player.score}</td>
+                        <td><ReactCountryFlag countryCode={player.country} svg /></td>
                         <td>{player.timestamp}</td>
                     </tr>
                 ))
@@ -73,6 +76,7 @@ export default function ScoreBoardData() {
                     <td>{playerData ? playerData.nickname : "-"}</td>
                     <td>{playerData ? playerData.prestige : "-"}</td>
                     <td>{playerData ? playerData.score : "-"}</td>
+                    <td><ReactCountryFlag countryCode={playerData.country} svg /></td>
                     <td>{playerData ? playerData.timestamp : "-"}</td>
                 </tr>
             </tbody>

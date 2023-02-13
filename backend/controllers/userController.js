@@ -1,6 +1,7 @@
-const user = require("../models/userModel")
-const champion = require("../models/championModel")
-const crypto = require("crypto")
+const user = require("../models/userModel");
+const champion = require("../models/championModel");
+const crypto = require("crypto");
+const geoip = require('geoip-lite');
 
 const Create = (req, res) => {
 
@@ -17,6 +18,12 @@ const Create = (req, res) => {
         if(nickname && nickname.length > 30){
             nickname = nickname.substring(0,30);
         }
+
+        const ip = req.ip;
+
+        const ipData = ip ? geoip.lookup(ip) : "";
+
+        const country = !ipData ? "n/a" : ipData.country;
 
         champion.getAllIds((err, data) => {
             if(err) {
@@ -55,7 +62,8 @@ const Create = (req, res) => {
                     currentChampion: currentChampion["id"],
                     currentSplashChampion: currentSplashChampion["id"],
                     currentSplashId: parseInt(randomSprite),
-                    timestamp: new Date().toLocaleDateString("en")
+                    timestamp: new Date().toLocaleDateString("en"),
+                    country: country
                 }
 
                 user.create(data, (err, result) => {
