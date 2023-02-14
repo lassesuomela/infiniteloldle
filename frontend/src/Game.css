@@ -130,6 +130,24 @@ p, small {
     background-color: #1E2328;
 }
 
+.scoreboard {
+    width: 75%;
+    padding: 3em 3em;
+    padding-bottom: 1em;
+}
+
+@media only screen and (min-width: 600px) {
+
+    .container, .container-md, .container-sm {
+        max-width: 100vw;
+    }
+
+    .scoreboard {
+        width: 100%;
+        padding: 2em 2em;
+    }
+}
+
 @media only screen and (min-width: 768px) {
 
     #gameTitle, .championData {
@@ -169,6 +187,9 @@ p, small {
         max-width: 20vw;
     }
 
+    .scoreboard {
+        width: 90%;
+    }
 }
 
 @media only screen and (min-width: 992px) {
