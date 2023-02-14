@@ -40,7 +40,7 @@ export default function ScoreBoardData() {
 
                     console.log("updating country");
 
-                    axios.put(Config.url + "/user/country", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
+                    axios.put(Config.url + "/user/country", {}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
                     .then(res => {
                         if(response.data.status === "success"){
                             return;
