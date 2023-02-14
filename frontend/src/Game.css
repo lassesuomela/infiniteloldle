@@ -8,6 +8,10 @@ p, small {
     font-family: Spiegel;
 }
 
+.playerCount h5 {
+    font-size: 1.1em;
+}
+
 .playerCount span {
     font-family: "Beaufort for LOL";
     font-size: 1em;

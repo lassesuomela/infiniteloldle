@@ -21,8 +21,10 @@ const user = {
     },
     deleteUser: (token, cb) => {
         return db.query("DELETE FROM users WHERE token = ?", [token], cb)
+    },
+    setCountry: (data, cb) => {
+        return db.query("UPDATE users SET country = ? WHERE token = ?", [data.country, data.token], cb)
     }
-    
 }
 
 module.exports = user;

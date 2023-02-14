@@ -34,6 +34,21 @@ export default function ScoreBoardData() {
                 const data = response.data.player;
     
                 setPlayerData(data);
+
+                if(!data.country){
+                    // do put request to server to update country code
+
+                    console.log("updating country");
+
+                    axios.put(Config.url + "/user/country", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
+                    .then(res => {
+                        if(response.data.status === "success"){
+                            return;
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                }
             }
         
         }).catch(error => {
@@ -50,7 +65,7 @@ export default function ScoreBoardData() {
                     <th>Rank</th>
                     <th>Nickname</th>
                     <th>Prestige</th>
-                    <th>Correct guesses</th>
+                    <th>Score</th>
                     <th>Country</th>
                     <th>Registered</th>
                 </tr>
@@ -63,7 +78,7 @@ export default function ScoreBoardData() {
                         <td>{player.nickname}</td>
                         <td>{player.prestige}</td>
                         <td>{player.score}</td>
-                        <td>{player.country ? <ReactCountryFlag countryCode={player.country} svg /> : "n/a"}</td>
+                        <td>{player.country ? <ReactCountryFlag countryCode={player.country} style={{fontSize: '2em'}} svg /> : "n/a"}</td>
                         <td>{player.timestamp}</td>
                     </tr>
                 ))
@@ -76,7 +91,7 @@ export default function ScoreBoardData() {
                     <td>{playerData ? playerData.nickname : "-"}</td>
                     <td>{playerData ? playerData.prestige : "-"}</td>
                     <td>{playerData ? playerData.score : "-"}</td>
-                    <td>{playerData.country ? <ReactCountryFlag countryCode={playerData.country} svg /> : "n/a"}</td>
+                    <td>{playerData.country ? <ReactCountryFlag countryCode={playerData.country} style={{fontSize: '2em'}} svg /> : "-"}</td>
                     <td>{playerData ? playerData.timestamp : "-"}</td>
                 </tr>
             </tbody>
@@ -84,7 +99,7 @@ export default function ScoreBoardData() {
         </table>
 
         <div className="playerCount">
-            <h5>Player count: <span>{playerCount}</span></h5>
+            <h5>Players registered: <span>{playerCount}</span></h5>
         </div>
         </>
     )

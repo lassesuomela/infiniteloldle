@@ -98,6 +98,38 @@ const CheckToken = (req, res) => {
     })
 }
 
+const ChangeCountry = (req, res) => {
+
+    const token = req.token;
+
+    const ip = req.ip;
+
+    const ipData = ip ? geoip.lookup(ip) : "";
+
+    const country = !ipData ? "n/a" : ipData.country;
+
+    const data = {
+        country: country,
+        token: token
+    }
+
+    user.setCountry(data, (err, result) => {
+        if(err) {
+            console.log(err);
+            return res.json({status:"error", message:"Error on setting country"})
+        }
+
+        if(result.affectedRows !== 0){
+
+            return res.json({status: "success", message:"Country updated"})
+        }else{
+            return res.json({status: "error", message:"No user was found with that token"})
+
+        }
+    })
+
+}
+
 const ChangeNickname = (req, res) => {
 
     let { nickname } = req.body;
@@ -152,6 +184,7 @@ module.exports = {
     Create,
     CheckToken,
     ChangeNickname,
-    DeleteUser
+    DeleteUser,
+    ChangeCountry
 }
 
