@@ -5,6 +5,7 @@ import NewUser from "./newUser";
 import Victory from "./victory";
 import ChampionImg from "./championImg";
 import Config from "../configs/config";
+import { InfinitySpin } from  "react-loader-spinner";
 
 export default function Game() {
 
@@ -126,6 +127,14 @@ export default function Game() {
     setCorrectGuess(false);
   }
 
+  if(!spriteUrl) {
+    return (
+      <div className="d-flex justify-content-center text-center">
+        <InfinitySpin width="10em" color="#2596be" />
+      </div>
+    );
+  }
+
   return (
     <div className="container main pt-4 pb-5 mb-5">
 
@@ -136,13 +145,7 @@ export default function Game() {
       }
 
       <div className="container d-flex justify-content-center shadow" id="spriteContainer">
-
-        {
-          spriteUrl ? 
-          <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Champion splash art." draggable="false"/>
-          : ""
-        }
-
+        <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Champion splash art." draggable="false"/>
       </div>
 
       <div className="d-flex justify-content-center mt-4 pt-3 mb-3">
