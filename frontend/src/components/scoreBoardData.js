@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
 import ReactCountryFlag from "react-country-flag"
-import { InfinitySpin } from  "react-loader-spinner";
 
 import Config from "../configs/config";
 
@@ -55,14 +54,6 @@ export default function ScoreBoardData() {
         })
 
       }, [])
-
-    if(!playerData) {
-        return (
-            <div className="d-flex justify-content-center text-center">
-            <InfinitySpin width="10em" color="#2596be" />
-            </div>
-        );
-    }
 
     return (
         <>
