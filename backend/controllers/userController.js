@@ -56,7 +56,7 @@ const Create = (req, res) => {
 
                 const randomSprite = sprites[randomSpriteId];
 
-                data = {
+                const userData = {
                     nickname: nickname,
                     token: token,
                     currentChampion: currentChampion["id"],
@@ -66,7 +66,7 @@ const Create = (req, res) => {
                     country: country
                 }
 
-                user.create(data, (err, result) => {
+                user.create(userData, (err, result) => {
     
                     if(err) {
                         console.log(err);
