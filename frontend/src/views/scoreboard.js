@@ -13,13 +13,7 @@ export default function ScoreBoard() {
                     <meta name="description" content="Infiniteloldle.com - Leaderboard of the top 10 players." />
                 </Helmet>
                 
-                <h3 className="text-center pb-3 pt-4">Leaderboard</h3>
-
-                <div className="d-flex justify-content-center text-center">
-                    <div className="card p-5 w-75">
-                        <ScoreBoardData/>
-                    </div>
-                </div>
+                <ScoreBoardData/>
             </div>
         </>
     )

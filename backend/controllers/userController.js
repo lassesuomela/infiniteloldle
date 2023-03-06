@@ -1,6 +1,7 @@
-const user = require("../models/userModel")
-const champion = require("../models/championModel")
-const crypto = require("crypto")
+const user = require("../models/userModel");
+const champion = require("../models/championModel");
+const crypto = require("crypto");
+const geoip = require('geoip-lite');
 
 const Create = (req, res) => {
 
@@ -18,6 +19,12 @@ const Create = (req, res) => {
             nickname = nickname.substring(0,30);
         }
 
+        const ip = req.ip;
+
+        const ipData = ip ? geoip.lookup(ip) : "";
+
+        const country = !ipData ? "n/a" : ipData.country;
+
         champion.getAllIds((err, data) => {
             if(err) {
                 console.log(err);
@@ -32,6 +39,10 @@ const Create = (req, res) => {
 
             const currentSplashChampion = data[randomSplash];
 
+            if(!nickname){
+                nickname = "Teemo#" + Math.floor(Math.random() * 9999);
+            }
+
             champion.getSplashById(currentSplashChampion["id"], (err, result) => {
 
                 if(err) {
@@ -45,16 +56,17 @@ const Create = (req, res) => {
 
                 const randomSprite = sprites[randomSpriteId];
 
-                data = {
-                    nickname: !nickname ? "Anonymous" : nickname,
+                const userData = {
+                    nickname: nickname,
                     token: token,
                     currentChampion: currentChampion["id"],
                     currentSplashChampion: currentSplashChampion["id"],
                     currentSplashId: parseInt(randomSprite),
-                    timestamp: new Date().toLocaleDateString("en")
+                    timestamp: new Date().toLocaleDateString("en"),
+                    country: country
                 }
 
-                user.create(data, (err, result) => {
+                user.create(userData, (err, result) => {
     
                     if(err) {
                         console.log(err);
@@ -76,12 +88,46 @@ const CheckToken = (req, res) => {
         if (result && result[0]){
 
             delete result[0]["solvedChampions"];
+            delete result[0]["currentSplashChampion"];
+            delete result[0]["solvedSplashChampions"];
 
             res.json({status:"success", message:"Token is valid", player: result[0]})
         }else{
             res.json({status:"error", message:"Token is not valid"})
         }
     })
+}
+
+const ChangeCountry = (req, res) => {
+
+    const token = req.token;
+
+    const ip = req.ip;
+
+    const ipData = ip ? geoip.lookup(ip) : "";
+
+    const country = !ipData ? "n/a" : ipData.country;
+
+    const data = {
+        country: country,
+        token: token
+    }
+
+    user.setCountry(data, (err, result) => {
+        if(err) {
+            console.log(err);
+            return res.json({status:"error", message:"Error on setting country"})
+        }
+
+        if(result.affectedRows !== 0){
+
+            return res.json({status: "success", message:"Country updated"})
+        }else{
+            return res.json({status: "error", message:"No user was found with that token"})
+
+        }
+    })
+
 }
 
 const ChangeNickname = (req, res) => {
@@ -138,6 +184,7 @@ module.exports = {
     Create,
     CheckToken,
     ChangeNickname,
-    DeleteUser
+    DeleteUser,
+    ChangeCountry
 }
 

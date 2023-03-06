@@ -136,13 +136,7 @@ export default function Game() {
       }
 
       <div className="container d-flex justify-content-center shadow" id="spriteContainer">
-
-        {
-          spriteUrl ? 
-          <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Champion splash art." draggable="false"/>
-          : ""
-        }
-
+        <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Champion splash art." draggable="false"/>
       </div>
 
       <div className="d-flex justify-content-center mt-4 pt-3 mb-3">

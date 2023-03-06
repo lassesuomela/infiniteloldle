@@ -43,6 +43,10 @@ export default function About() {
         <h4 className="pb-3 pt-4">Scoring system</h4>
 
         <p>You will be rewarded one point for each correct guess you make. After you have guessed every single champion in the game your prestige will increase. After that your champion pool is reset and every single champion in the game will be available in your champion pool.</p>
+
+        <h4 className="pb-3 pt-4">Contact Me</h4>
+        <p>If you want to contact me regarding this site. You can do that by emailing me at <a href="mailto:infiniteloldle@gmail.com">infiniteloldle@gmail.com</a>.</p>
+
     </div>
   )
 }

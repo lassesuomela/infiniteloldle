@@ -27,6 +27,8 @@ export default function NewUser() {
 
     useEffect(() => {
 
+        setNickname("Teemo#" + Math.floor(Math.random() * 9999));
+
         axios.get(Config.url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
             if(response.data.status === "success") {
                 setIsShown(false)
@@ -47,12 +49,12 @@ export default function NewUser() {
             <Modal.Body>
                 <div className="container text-center">
                     <h4 className="p-2">Please enter your nickname</h4>
-                    <small>Or leave it blank</small>
+                    <small>Or leave it blank and one will be provided</small>
                 </div>
 
                 <div className="pt-2 d-flex justify-content-center">
                     <form className="row g-3 p-1 w-50" onSubmit={createToken}>
-                        <input type="text" className="form-control" id="nickname" placeholder="Anonymous" onChange={e => setNickname(e.target.value)} maxLength="30"/>
+                        <input type="text" className="form-control" id="nickname" placeholder={nickname} onChange={e => setNickname(e.target.value)} maxLength="30"/>
                         <div className="text-center">
                             <button className="btn btn-dark mb-2">Save</button>
                         </div>
