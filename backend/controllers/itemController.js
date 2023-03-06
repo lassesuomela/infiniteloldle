@@ -121,8 +121,26 @@ const GetItemSprite = (req, res) => {
     })
 }
 
+const GetAllItems = (req, res) => {
+
+    item.getAllNames((err, result) => {
+
+        if(err){
+            return res.json({status: "error", error: err})
+        }
+
+        const items = [];
+        result.forEach(item => {
+            items.push({label:item["name"], value:item["name"]});
+        });
+
+        res.json({status: "success", items: items})
+    })
+}
+
 module.exports = {
     Create,
     GuessItem,
-    GetItemSprite
+    GetItemSprite,
+    GetAllItems
 }
