@@ -20,6 +20,7 @@ const auth = require("./configs/auth");
 const token = require("./configs/token");
 
 const championRoutes = require("./routes/championRoutes");
+const itemRoutes = require("./routes/itemRoutes");
 const userRoutes = require("./routes/userRoutes");
 const createUserRoutes = require("./routes/createUserRoutes");
 const gameRoutes = require("./routes/gameRoutes");
@@ -36,5 +37,6 @@ app.use("/api", userRoutes);
 app.use("/api", guessRoutes);
 
 app.use("/api", auth, championRoutes);
+app.use("/api", auth, itemRoutes);
 
 module.exports = app;
