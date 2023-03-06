@@ -2,7 +2,7 @@ const db = require('../configs/db');
 
 const user = {
     create: (data, cb) =>{
-        return db.query("INSERT INTO users (nickname, token, currentChampion, timestamp, currentSplashChampion, currentSplashId, country) VALUES (?, ?, ?, ?, ?, ?, ?)", [data.nickname, data.token, data.currentChampion, data.timestamp, data.currentSplashChampion, data.currentSplashId, data.country], cb)
+        return db.query("INSERT INTO users (nickname, token, currentChampion, timestamp, currentSplashChampion, currentSplashId, country, currentItemId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [data.nickname, data.token, data.currentChampion, data.timestamp, data.currentSplashChampion, data.currentSplashId, data.country, data.currentItemId], cb)
     },
     update: (data, cb) =>{
         return db.query("UPDATE users SET currentChampion = ?, solvedChampions = ?, prestige = ?, score = ? WHERE token = ?", [data.currentChampion, data.solvedChampions, data.prestige, data.score, data.token], cb)
