@@ -101,7 +101,7 @@ export default function Game() {
       }else{
         let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
 
-        blurVal -= blurVal * 0.2;
+        blurVal -= blurVal * 0.4;
 
         spriteImg.style.filter = "blur(" + blurVal.toString() + "em)";
       }

@@ -122,8 +122,13 @@ p, small {
     height: auto;
 }
 
-#spriteContainer img{
+#spriteContainer img, #itemContainer img{
     width:100%;
+}
+
+#itemContainer {
+    width: 30vw;
+    height: auto;
 }
 
 .darkBtn {
@@ -145,6 +150,11 @@ p, small {
     .scoreboard {
         width: 100%;
         padding: 2em 2em;
+    }
+
+    #itemContainer {
+        width: 40vw;
+        height: auto;
     }
 }
 
@@ -183,6 +193,11 @@ p, small {
         height: auto;
     }
 
+    #itemContainer {
+        width: 40vw;
+        height: auto;
+    }
+
     #championsImgs {
         max-width: 20vw;
     }
@@ -213,6 +228,11 @@ p, small {
         width: 40vw;
         height: auto;
     }
+
+    #itemContainer {
+        width: 30vw;
+        height: auto;
+    }
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1400px){
@@ -234,6 +254,11 @@ p, small {
 
     #spriteContainer {
         width: 40vw;
+        height: auto;
+    }
+
+    #itemContainer {
+        width: 30vw;
         height: auto;
     }
 
@@ -265,6 +290,11 @@ p, small {
 
     #spriteContainer {
         width: 30vw;
+        height: auto;
+    }
+
+    #itemContainer {
+        width: 20vw;
         height: auto;
     }
 

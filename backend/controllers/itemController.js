@@ -36,7 +36,7 @@ const GuessItem = (req, res) => {
         }
 
         if(guess !== data[0].name){
-            return res.json({status: "success", correctGuess: false})
+            return res.json({status: "success", correctGuess: false, itemId:data[0].itemId, name: data[0].name})
         }
         // correct guess
 

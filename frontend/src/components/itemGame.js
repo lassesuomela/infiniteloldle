@@ -15,7 +15,6 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [isValidToken, setIsValidToken] = useState(false);
   const [spriteUrl, setSpriteUrl] = useState("");
-  const [title, setTitle] = useState("");
 
   useEffect(() => {
 
@@ -95,14 +94,13 @@ export default function Game() {
 
       if(isCorrect){
         setCorrectGuess(true)
-        setTitle(response.data.title)
 
         spriteImg.style.filter = "";
 
       }else{
         let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
 
-        blurVal -= blurVal * 0.2;
+        blurVal -= blurVal * 0.4;
 
         spriteImg.style.filter = "blur(" + blurVal.toString() + "em)";
       }
@@ -136,8 +134,8 @@ export default function Game() {
         !isValidToken ? <NewUser /> : ""
       }
 
-      <div className="container d-flex justify-content-center shadow" id="spriteContainer">
-        <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Champion splash art." draggable="false"/>
+      <div className="container d-flex justify-content-center shadow" id="itemContainer">
+        <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Item sprite." draggable="false"/>
       </div>
 
       <div className="d-flex justify-content-center mt-4 pt-3 mb-3">
@@ -173,7 +171,7 @@ export default function Game() {
             
         {
           correctGuess ? 
-          <Victory id="victory" championKey={champions[0][0]} champion={currentGuess} tries={guesses.length} title={title} />
+          <Victory id="victory" championKey={champions[0][0]} champion={currentGuess} tries={guesses.length} isItem={true}/>
           : ""
         }
     </div>
