@@ -1,5 +1,6 @@
 const user = require("../models/userModel");
 const champion = require("../models/championModel");
+const item = require("../models/itemModel");
 const crypto = require("crypto");
 const geoip = require('geoip-lite');
 
@@ -28,7 +29,7 @@ const Create = (req, res) => {
         champion.getAllIds((err, data) => {
             if(err) {
                 console.log(err);
-                return res.json({status:"error", message:"Error on fetching ids"})
+                return res.json({status:"error", message:"Error on fetching champion ids"})
             }
 
             const random = Math.floor(Math.random() * data.length);
@@ -39,41 +40,53 @@ const Create = (req, res) => {
 
             const currentSplashChampion = data[randomSplash];
 
-            if(!nickname){
-                nickname = "Teemo#" + Math.floor(Math.random() * 9999);
-            }
-
-            champion.getSplashById(currentSplashChampion["id"], (err, result) => {
-
+            item.getAllIds((err, itemData) => {
                 if(err) {
                     console.log(err);
-                    return res.json({status:"error", message:"Error on fetching splash art ids"})
+                    return res.json({status:"error", message:"Error on fetching item ids"})
                 }
 
-                const sprites = result[0]["spriteIds"].split(",");
+                const randomItemIdx = Math.floor(Math.random() * itemData.length);
 
-                const randomSpriteId = Math.floor(Math.random() * sprites.length);
+                const currentItemId = itemData[randomItemIdx];
 
-                const randomSprite = sprites[randomSpriteId];
-
-                const userData = {
-                    nickname: nickname,
-                    token: token,
-                    currentChampion: currentChampion["id"],
-                    currentSplashChampion: currentSplashChampion["id"],
-                    currentSplashId: parseInt(randomSprite),
-                    timestamp: new Date().toLocaleDateString("en"),
-                    country: country
+                if(!nickname){
+                    nickname = "Teemo#" + Math.floor(Math.random() * 9999);
                 }
-
-                user.create(userData, (err, result) => {
+    
+                champion.getSplashById(currentSplashChampion["id"], (err, result) => {
     
                     if(err) {
                         console.log(err);
-                        return res.json({status:"error", message:"Error on fetching ids"})
+                        return res.json({status:"error", message:"Error on fetching splash art ids"})
                     }
     
-                    res.json({status: "success", token: token})
+                    const sprites = result[0]["spriteIds"].split(",");
+    
+                    const randomSpriteId = Math.floor(Math.random() * sprites.length);
+    
+                    const randomSprite = sprites[randomSpriteId];
+    
+                    const userData = {
+                        nickname: nickname,
+                        token: token,
+                        currentChampion: currentChampion["id"],
+                        currentSplashChampion: currentSplashChampion["id"],
+                        currentSplashId: parseInt(randomSprite),
+                        timestamp: new Date().toLocaleDateString("en"),
+                        country: country,
+                        currentItemId: currentItemId["itemId"]
+                    };
+    
+                    user.create(userData, (err, result) => {
+        
+                        if(err) {
+                            console.log(err);
+                            return res.json({status:"error", message:"Error on fetching ids"})
+                        }
+        
+                        res.json({status: "success", token: token})
+                    })
                 })
             })
         })

@@ -10,6 +10,7 @@ import Scoreboard from "./views/scoreboard";
 import Legal from "./views/legal";
 import About from "./views/about";
 import Splash from "./views/splash";
+import Item from "./views/item";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Game />} />
             <Route path="/splash" element={<Splash />} />
+            <Route path="/item" element={<Item />} />
             <Route path="/leaderboard" element={<Scoreboard />} />
             <Route path="/legal" element={<Legal />} />
             <Route path="/about" element={<About />} />
