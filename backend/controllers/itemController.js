@@ -35,9 +35,18 @@ const GuessItem = (req, res) => {
             return res.json({status: "error", message: "Token is invalid"})
         }
 
+        // wrong guess
         if(guess !== data[0].name){
-            return res.json({status: "success", correctGuess: false, itemId:data[0].itemId, name: data[0].name})
+
+            item.getIdByName(guess, (err, guessItemData) => {
+
+                if(!data[0]){
+                    return res.json({status: "error", message: "No item with that name"})
+                }
+                return res.json({status: "success", correctGuess: false, itemId:guessItemData[0].itemId})
+            })
         }
+
         // correct guess
 
         item.getAllIds((err, itemData) => {
@@ -96,7 +105,6 @@ const GuessItem = (req, res) => {
     
                     res.json({status: "success", correctGuess: true, name: data[0].name, itemId: data[0].itemId})
                 })
-                    
             })
         })
     })

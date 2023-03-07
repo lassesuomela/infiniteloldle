@@ -13,6 +13,9 @@ const item = {
     getItemByToken: (token, cb) =>{
         db.query("SELECT itemId, name FROM items JOIN users ON items.itemId = users.currentItemId WHERE users.token = ?", [token], cb)
     },
+    getIdByName: (name, cb) =>{
+        db.query("SELECT itemId FROM items WHERE name = ?", [name], cb)
+    }
 }
 
 module.exports = item;

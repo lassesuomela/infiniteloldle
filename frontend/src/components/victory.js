@@ -35,7 +35,10 @@ export default function Victory(props) {
                                 <h2>{props.champion}</h2>
 
                                 <p className="mb-1 smaller">{props.title}</p>
-                                <p className="smaller">It took {props.tries} tries</p>
+
+                                {
+                                    props.tries > 1 ? <p className="smaller">It took {props.tries} tries</p> : <p className="smaller">First try</p>
+                                }
 
                                 <button type="button" class="btn btn-dark" onClick={Close}>Play again</button>
                             </div>
