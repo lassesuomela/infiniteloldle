@@ -136,6 +136,10 @@ p, small {
     padding-bottom: 1em;
 }
 
+#itemImg {
+    width: 100%;
+}
+
 @media only screen and (min-width: 600px) {
 
     .container, .container-md, .container-sm {

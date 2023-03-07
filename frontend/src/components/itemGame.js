@@ -137,7 +137,7 @@ export default function Game() {
       }
 
       <div className="container d-flex justify-content-center shadow" id="spriteContainer">
-        <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Champion splash art." draggable="false"/>
+        <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Item sprite." draggable="false"/>
       </div>
 
       <div className="d-flex justify-content-center mt-4 pt-3 mb-3">
@@ -166,14 +166,15 @@ export default function Game() {
         <div id="championsImgs" className="container">
           {
             champions.map(item =>(
-              <ItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
+              console.log(item)
+              //<ItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
             ))
           }
         </div>
             
         {
           correctGuess ? 
-          <Victory id="victory" championKey={champions[0][0]} champion={currentGuess} tries={guesses.length} title={title} />
+          <Victory id="victory" championKey={champions[0][0]} champion={currentGuess} tries={guesses.length} isItem={true}/>
           : ""
         }
     </div>
