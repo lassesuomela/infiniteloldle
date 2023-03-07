@@ -77,7 +77,7 @@ export default function Game() {
 
     setGuesses(guesses => [...guesses, currentGuess]);
 
-    axios.post(Config.url + "/splash", {guess:currentGuess}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
+    axios.post(Config.url + "/item", {guess:currentGuess}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}}).then(response => {
 
       if(response.data.status !== "success"){
         setIsValidToken(false);
