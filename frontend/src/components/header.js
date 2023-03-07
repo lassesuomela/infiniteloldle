@@ -25,6 +25,10 @@ export default function Header() {
             </li>
 
             <li className="nav-item">
+              <Link className="nav-link" to="/item">Item</Link>
+            </li>
+
+            <li className="nav-item">
               <Link className="nav-link" to="leaderboard">Leaderboard</Link>
             </li>
           </ul>
