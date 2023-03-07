@@ -15,7 +15,6 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [isValidToken, setIsValidToken] = useState(false);
   const [spriteUrl, setSpriteUrl] = useState("");
-  const [title, setTitle] = useState("");
 
   useEffect(() => {
 
@@ -95,7 +94,6 @@ export default function Game() {
 
       if(isCorrect){
         setCorrectGuess(true)
-        setTitle(response.data.title)
 
         spriteImg.style.filter = "";
 
@@ -166,8 +164,7 @@ export default function Game() {
         <div id="championsImgs" className="container">
           {
             champions.map(item =>(
-              console.log(item)
-              //<ItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
+              <ItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
             ))
           }
         </div>
