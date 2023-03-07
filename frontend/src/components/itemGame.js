@@ -134,7 +134,7 @@ export default function Game() {
         !isValidToken ? <NewUser /> : ""
       }
 
-      <div className="container d-flex justify-content-center shadow" id="spriteContainer">
+      <div className="container d-flex justify-content-center shadow" id="itemContainer">
         <img src={spriteUrl} style={{"filter":"blur(1.0em)"}} className="rounded p-4" id="spriteImg" alt="Item sprite." draggable="false"/>
       </div>
 
