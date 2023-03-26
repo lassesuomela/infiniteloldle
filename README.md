@@ -72,6 +72,12 @@ Image gets clearer when user guesses wrong
 Correct champion guess on splash art game
 ![Correct champion guess on splash art game](screenshots/splash_correct.png)
 
+Item guessing game
+![Item guessing game](screenshots/items_game.png)
+
+Items guessing game correct answer
+![Items guessing game correct answer](screenshots/item_correct.png)
+
 Leaderboard page
 ![Leaderboard page](screenshots/top10.png)
 
@@ -80,7 +86,6 @@ About page
 
 Rest of the about page
 ![Rest of the about page](screenshots/about_2.png)
-
 
 Legal page
 ![Legal page](screenshots/legal.png)
