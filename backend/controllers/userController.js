@@ -3,6 +3,7 @@ const champion = require("../models/championModel");
 const item = require("../models/itemModel");
 const crypto = require("crypto");
 const geoip = require("geoip-lite");
+const cache = require("../middleware/cache");
 
 const Create = (req, res) => {
   crypto.randomBytes(46, (err, token) => {
@@ -105,6 +106,13 @@ const Create = (req, res) => {
 const CheckToken = (req, res) => {
   const token = req.token;
 
+  const key = req.path + ":" + token;
+
+  if (cache.checkCache(key)) {
+    res.set("X-CACHE", "HIT");
+    return res.json(cache.getCache(key));
+  }
+
   user.fetchByToken(token, (err, result) => {
     if (result && result[0]) {
       delete result[0]["solvedChampions"];
@@ -113,11 +121,14 @@ const CheckToken = (req, res) => {
       delete result[0]["solvedItemIds"];
       delete result[0]["currentItemId"];
 
-      res.json({
+      const response = {
         status: "success",
         message: "Token is valid",
         player: result[0],
-      });
+      };
+
+      cache.saveCache(key, response);
+      res.json(response);
     } else {
       res.json({ status: "error", message: "Token is not valid" });
     }
