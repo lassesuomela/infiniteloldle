@@ -16,8 +16,12 @@ const saveCache = (key, value) => {
   cache.set(key, value);
 };
 
-const deleteCache = (key, value) => {
-  cache.del(key, value);
+const deleteCache = (key) => {
+  cache.del(key);
 };
 
-module.exports = { getCache, checkCache, saveCache, deleteCache };
+const changeTTL = (key, ttl) => {
+  cache.ttl(key, ttl);
+};
+
+module.exports = { changeTTL, getCache, checkCache, saveCache, deleteCache };
