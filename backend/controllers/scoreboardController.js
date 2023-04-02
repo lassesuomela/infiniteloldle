@@ -3,6 +3,7 @@ const cache = require("../middleware/cache");
 
 const TopAllTime = (req, res) => {
   if (cache.checkCache(req.path)) {
+    res.set("X-CACHE", "HIT");
     return res.json(cache.getCache(req.path));
   }
 
