@@ -14,9 +14,9 @@ app.use(helmet());
 app.use(express.json());
 app.use(morgan("dev"));
 
-const auth = require("./configs/auth");
-const token = require("./configs/token");
-const requestTracker = require("./configs/requestTracker");
+const auth = require("./middleware/auth");
+const token = require("./middleware/token");
+const requestTracker = require("./middleware/requestTracker");
 
 const championRoutes = require("./routes/championRoutes");
 const itemRoutes = require("./routes/itemRoutes");
