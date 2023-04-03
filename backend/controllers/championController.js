@@ -91,7 +91,7 @@ const GetAllChampions = (req, res) => {
   const key = req.path;
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", cache.getTtl(key));
+    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
 
     return res.json(cache.getCache(key));
   }
