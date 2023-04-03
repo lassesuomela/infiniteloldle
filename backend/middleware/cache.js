@@ -8,6 +8,10 @@ const getCache = (key) => {
   }
 };
 
+const getTtl = (key) => {
+  return cache.getTtl(key);
+};
+
 const checkCache = (key) => {
   return cache.has(key);
 };
@@ -24,4 +28,11 @@ const changeTTL = (key, ttl) => {
   cache.ttl(key, ttl);
 };
 
-module.exports = { changeTTL, getCache, checkCache, saveCache, deleteCache };
+module.exports = {
+  getTtl,
+  changeTTL,
+  getCache,
+  checkCache,
+  saveCache,
+  deleteCache,
+};

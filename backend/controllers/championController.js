@@ -88,9 +88,12 @@ const AddChampionId = (req, res) => {
 };
 
 const GetAllChampions = (req, res) => {
-  if (cache.checkCache(req.path)) {
+  const key = req.path;
+  if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
-    return res.json(cache.getCache(req.path));
+    res.set("X-CACHE-REMAINING", cache.getTtl(key));
+
+    return res.json(cache.getCache(key));
   }
   champion.getAllNames((err, result) => {
     if (err) {
@@ -103,8 +106,8 @@ const GetAllChampions = (req, res) => {
     });
 
     const response = { status: "success", champions: champions };
-    cache.saveCache(req.path, response);
-    cache.changeTTL(req.path, 3600);
+    cache.saveCache(key, response);
+    cache.changeTTL(key, 3600);
 
     res.json(response);
   });
@@ -123,10 +126,6 @@ const GetAllChampionKeys = (req, res) => {
 const GetPartialSimilarites = (currentGuess, correctChampion) => {
   const guessPos = currentGuess.split(",").sort();
   const correctPos = correctChampion.split(",").sort();
-
-  console.log(guessPos);
-
-  console.log(correctPos);
 
   if (guessPos.length === correctPos.length) {
     let matches = 0;
@@ -367,8 +366,6 @@ const GuessSplash = (req, res) => {
           message: "Nothing found with that champion name",
         });
       }
-
-      console.log("Correct champion is: " + correctChampionData[0].name);
 
       if (guess !== correctChampionData[0].name) {
         return res.json({

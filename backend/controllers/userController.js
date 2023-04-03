@@ -110,6 +110,7 @@ const CheckToken = (req, res) => {
 
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
+    res.set("X-CACHE-REMAINING", cache.getTtl(key));
     return res.json(cache.getCache(key));
   }
 

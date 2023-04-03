@@ -101,7 +101,7 @@ export default function ScoreBoardData() {
                     </table>
 
                     <div className="playerCount">
-                        <h5>Players registered: <span>{playerCount}</span></h5>
+                        <h5>Players: <span>{playerCount}</span></h5>
                     </div>
                 </div>
             </div>

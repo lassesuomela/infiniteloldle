@@ -151,9 +151,11 @@ const GetItemSprite = (req, res) => {
 };
 
 const GetAllItems = (req, res) => {
-  if (cache.checkCache(req.path)) {
+  const key = req.path;
+  if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
-    return res.json(cache.getCache(req.path));
+    res.set("X-CACHE-REMAINING", cache.getTtl(key));
+    return res.json(cache.getCache(key));
   }
   item.getAllNames((err, result) => {
     if (err) {
@@ -166,8 +168,8 @@ const GetAllItems = (req, res) => {
     });
 
     const response = { status: "success", items: items };
-    cache.saveCache(req.path, response);
-    cache.changeTTL(req.path, 3600);
+    cache.saveCache(key, response);
+    cache.changeTTL(key, 3600);
 
     res.json(response);
   });
