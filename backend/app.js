@@ -25,6 +25,7 @@ const createUserRoutes = require("./routes/createUserRoutes");
 const gameRoutes = require("./routes/gameRoutes");
 const guessRoutes = require("./routes/guessRoutes");
 const scoreboardRoutes = require("./routes/scoreboardRoutes");
+const statsRoutes = require("./routes/statsRoutes");
 
 app.use(requestTracker);
 
@@ -39,5 +40,6 @@ app.use("/api", guessRoutes);
 
 app.use("/api", auth, championRoutes);
 app.use("/api", auth, itemRoutes);
+app.use("/api", auth, statsRoutes);
 
 module.exports = app;
