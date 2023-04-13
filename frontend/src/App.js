@@ -11,25 +11,26 @@ import Legal from "./views/legal";
 import About from "./views/about";
 import Splash from "./views/splash";
 import Item from "./views/item";
+import Stats from "./views/stats";
 
 function App() {
   return (
     <>
       <Header />
-        <div className="container">
-          <Routes>
-            <Route path="/" element={<Game />} />
-            <Route path="/splash" element={<Splash />} />
-            <Route path="/item" element={<Item />} />
-            <Route path="/leaderboard" element={<Scoreboard />} />
-            <Route path="/legal" element={<Legal />} />
-            <Route path="/about" element={<About />} />
-            <Route path="*" element={<Navigate to="/"/>} />
-          </Routes>
-        </div>
+      <div className="container">
+        <Routes>
+          <Route path="/" element={<Game />} />
+          <Route path="/splash" element={<Splash />} />
+          <Route path="/item" element={<Item />} />
+          <Route path="/leaderboard" element={<Scoreboard />} />
+          <Route path="/legal" element={<Legal />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/stats" element={<Stats />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </div>
       <Footer />
     </>
-    
   );
 }
 

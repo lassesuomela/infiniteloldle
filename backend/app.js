@@ -32,6 +32,7 @@ app.use(requestTracker);
 app.use("/api", createUserRoutes);
 app.use("/api", scoreboardRoutes);
 app.use("/api", gameRoutes);
+app.use("/api", statsRoutes);
 
 app.use(token);
 
@@ -40,6 +41,5 @@ app.use("/api", guessRoutes);
 
 app.use("/api", auth, championRoutes);
 app.use("/api", auth, itemRoutes);
-app.use("/api", auth, statsRoutes);
 
 module.exports = app;

@@ -1,101 +1,108 @@
-import axios from 'axios';
-import React, { useState } from 'react'
-import Modal from 'react-bootstrap/Modal';
+import axios from "axios";
+import React, { useState } from "react";
+import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
 
 export default function Settings() {
+  const [isShown, setIsShown] = useState(false);
+  const [newNickname, setNewNickname] = useState("");
 
-    const [isShown, setIsShown] = useState(false);
-    const [newNickname, setNewNickname] = useState("");
+  const ToggleState = () => {
+    setIsShown(!isShown);
+  };
 
-    const ToggleState = () => {
-        setIsShown(!isShown);
+  const ChangeNickname = (e) => {
+    e.preventDefault();
+
+    if (!newNickname) {
+      return;
     }
 
-    const ChangeNickname = (e) => {
-
-        e.preventDefault();
-
-        if(!newNickname){
-            return;
+    axios
+      .put(
+        Config.url + "/user/nickname",
+        { nickname: newNickname },
+        {
+          headers: { authorization: "Bearer " + localStorage.getItem("token") },
         }
+      )
+      .then((response) => {
+        if (response.data.status === "success") {
+          ToggleState();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-        axios.put(Config.url + "/user/nickname", {nickname: newNickname}, {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
-        .then((response) => {
+  const DeleteUser = () => {
+    axios
+      .delete(Config.url + "/user", {
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          ToggleState();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-            if(response.data.status === "success"){
-                ToggleState()
-            }
+  return (
+    <>
+      <div className="d-flex justify-content-end">
+        <button onClick={ToggleState} className="btn btn-dark darkBtn p-2 pb-0">
+          <span className="material-symbols-outlined">settings</span>
+        </button>
+      </div>
 
-        }).catch((error) => {
-            console.log(error);
-        })
-    }
+      <Modal
+        show={isShown}
+        onHide={ToggleState}
+        size="lg"
+        centered
+        className="transparentModal"
+      >
+        <Modal.Body>
+          <div className="container d-flex justify-content-center">
+            <div className="card text-center">
+              <Modal.Header closeButton></Modal.Header>
 
-    const DeleteUser = () => {
+              <h3 className="pb-4">Settings</h3>
 
-        axios.delete(Config.url + "/user", {headers: {'authorization': 'Bearer ' + localStorage.getItem("token")}})
-        .then((response) => {
+              <h4>Change your nickname</h4>
 
-            if(response.data.status === "success"){
-                ToggleState()
-            }
-
-        }).catch((error) => {
-            console.log(error);
-        })
-    }
-
-    return (
-        <>
-            <div className="d-flex justify-content-end">
-                <button onClick={ToggleState} className="btn btn-dark darkBtn p-2 pb-0">
-                    <span className="material-symbols-outlined">
-                    settings
-                    </span>
-                </button>
-            </div>
-
-            <Modal
-                show={isShown}
-                onHide={ToggleState}
-                size="lg"
-                centered
-                className="transparentModal"
-            >
-
-                <Modal.Body>
-                    <div className="container d-flex justify-content-center">
-                        <div className="card text-center">
-
-                            <Modal.Header closeButton>
-                            </Modal.Header>
-
-                            <h3 className="pb-4">Settings</h3>
-
-                            <h4>Change your nickname</h4>
-                            
-                            <div className="pt-2 d-flex justify-content-center border-dark">
-
-                                <div className="pb-3">
-                                    <form className="row g-3 p-1" onSubmit={ChangeNickname}>
-                                        <input type="text" className="form-control" id="nickname" placeholder="New nickname" maxLength="30" onChange={e => setNewNickname(e.target.value)}/>
-                                        <div className="text-center">
-                                            <button className="btn btn-dark mb-2">Save</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <h4 className="p-2">Delete your account</h4>
-                            <div className="pb-4">
-                                <button onClick={DeleteUser} className="btn btn-danger mb-2">Delete</button>
-                            </div>
-                        </div>
+              <div className="pt-2 d-flex justify-content-center border-dark">
+                <div className="pb-3">
+                  <form className="row g-3 p-1" onSubmit={ChangeNickname}>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="nickname"
+                      placeholder="New nickname"
+                      maxLength="30"
+                      onChange={(e) => setNewNickname(e.target.value)}
+                    />
+                    <div className="text-center">
+                      <button className="btn btn-dark mb-2">Save</button>
                     </div>
-                    
-                </Modal.Body>
-            </Modal>
-        </>
-    )
+                  </form>
+                </div>
+              </div>
+
+              <h4 className="p-2">Delete your account</h4>
+              <div className="pb-4">
+                <button onClick={DeleteUser} className="btn btn-danger mb-2">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
 }
