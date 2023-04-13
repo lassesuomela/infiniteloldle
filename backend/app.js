@@ -4,8 +4,17 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit");
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // time window ms
+  max: 120, // limit
+  standardHeaders: false,
+  legacyHeaders: false,
+});
 
 const app = express();
+app.use(limiter);
 app.use(cors());
 
 app.set("trust proxy", true);
