@@ -4,12 +4,12 @@ const GetAll = (req, res) => {
   statsModel.getAll((err, result) => {
     if(err) {
       console.log(err);
-      return res.status(500).json({status:"error", msg:"No statistics data found"})
+      return res.status(500).json({status:"error", error:"No statistics data found"})
     }
     if (result[0].length === 0) {
-      return res.json({
+      return res.status(500).json({
         status: "error",
-        error: "No results found",
+        error: "No statistics data found",
       });
     }
 

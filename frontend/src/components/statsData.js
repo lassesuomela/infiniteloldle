@@ -26,11 +26,19 @@ export default function StatsData() {
       })
       .catch((error) => {
         console.log(error);
-        if(error.response.data.msg) {
-          setMsg(error.response.data.msg);
+        if(error.response.data.error) {
+          setMsg(error.response.data.error);
         }
       });
   }, []);
+
+  if(msg.length > 0) {
+    return (
+      <>
+        <h3 className="text-center">{msg}</h3>
+      </>
+    )
+  }
 
   const data = stats.map(stat => {
     return ({
@@ -39,15 +47,6 @@ export default function StatsData() {
       Requests: stat.requests,
     });
   })
-
-  if(msg.length > 0) {
-    console.log("asdsada");
-    return (
-    <>
-      <h3 className="text-center">{msg}</h3>
-    </>
-    )
-  }
 
   return (
     <>
