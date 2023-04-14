@@ -6,7 +6,7 @@ const GetAll = (req, res) => {
       console.log(err);
       return res.status(500).json({status:"error", error:"No statistics data found"})
     }
-    if (result[0].length === 0) {
+    if (!result) {
       return res.status(500).json({
         status: "error",
         error: "No statistics data found",
