@@ -1,4 +1,3 @@
-const db = require("../configs/db");
 const statsModel = require("../models/statsModel");
 
 let ips = [];
@@ -33,7 +32,7 @@ const track = (req, res, next) => {
   console.log(diff);
 
   if (diff > 86400000) {
-    // save to db after n seconds day = 86400000
+    // save to db after n seconds day = 86 400 000
     console.log("Saving to db");
 
     startDate = new Date();

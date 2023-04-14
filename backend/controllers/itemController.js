@@ -139,7 +139,7 @@ const GetItemSprite = (req, res) => {
       return res.json({ status: "error", message: "Error on fetching item" });
     }
 
-    if (!result) {
+    if (result.length === 0) {
       return res.json({
         status: "error",
         message: "Item was not found for that token",
