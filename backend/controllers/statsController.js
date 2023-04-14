@@ -1,6 +1,15 @@
 const statsModel = require("../models/statsModel");
+const cache = require("../middleware/cache");
 
 const GetAll = (req, res) => {
+
+  const key = req.path;
+  if (cache.checkCache(key)) {
+    res.set("X-CACHE", "HIT");
+    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
+    return res.json(cache.getCache(key));
+  }
+
   statsModel.getAll((err, result) => {
     if(err) {
       console.log(err);
@@ -29,6 +38,9 @@ const GetAll = (req, res) => {
       global_skin_count: globalSkinCount,
       player_stats: result[6]
     };
+
+    cache.saveCache(key, response);
+    cache.changeTTL(key, 3600);
 
     res.json(response);
   });
