@@ -41,7 +41,12 @@ export default function Header() {
               <Link className="nav-link" to="legal">Legal</Link>
             </li>
 
+            <li className="nav-item">
+              <Link className="nav-link" to="stats">Stats</Link>
+            </li>
+
             <Settings />
+
           </ul>
         </div>
       </div>
