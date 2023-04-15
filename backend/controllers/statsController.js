@@ -2,7 +2,6 @@ const statsModel = require("../models/statsModel");
 const cache = require("../middleware/cache");
 
 const GetAll = (req, res) => {
-
   const key = req.path;
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
@@ -11,9 +10,11 @@ const GetAll = (req, res) => {
   }
 
   statsModel.getAll((err, result) => {
-    if(err) {
+    if (err) {
       console.log(err);
-      return res.status(500).json({status:"error", error:"No statistics data found"})
+      return res
+        .status(500)
+        .json({ status: "error", error: "No statistics data found" });
     }
     if (!result) {
       return res.status(500).json({
@@ -24,9 +25,9 @@ const GetAll = (req, res) => {
 
     let globalSkinCount = 0;
 
-    result[5].forEach(champion => {
+    result[5].forEach((champion) => {
       globalSkinCount += champion.skinCount;
-    })
+    });
 
     const response = {
       status: "success",
@@ -37,7 +38,8 @@ const GetAll = (req, res) => {
       champion_count: result[4][0].champion_count,
       global_skin_count: globalSkinCount,
       player_stats: result[6],
-      cache: cache.getStats()
+      todays_players: result[7],
+      cache: cache.getStats(),
     };
 
     cache.saveCache(key, response);
