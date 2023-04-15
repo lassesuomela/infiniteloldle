@@ -20,8 +20,11 @@ export default function StatsData() {
           item_count: response.data.item_count,
           champion_count: response.data.champion_count,
           global_skin_count: response.data.global_skin_count,
-          player_stats: response.data.player_stats
+          player_stats: response.data.player_stats,
+          cache_stats: response.data.cache
         }
+
+        console.log(data);
         setOtherStat(data);
       })
       .catch((error) => {
@@ -51,9 +54,9 @@ export default function StatsData() {
   return (
     <>
       <h3 className="text-center pb-3 pt-4">Statistics</h3>
-      <div className="d-grid justify-content-center text-center">
+      <div className="d-grid justify-content-center text-center card p-5">
+        <h4 className="text-center pb-3 pt-4">Database</h4>
         <div className="d-flex justify-content-between pt-4 pb-4">
-
           <div>
             <h5>Registered users</h5>
             <p>{otherStat.register_count}</p>
@@ -74,6 +77,29 @@ export default function StatsData() {
           <div>
             <h5>Skin count</h5>
             <p>{otherStat.global_skin_count}</p>
+          </div>
+
+        </div>
+
+        <h4 className="text-center pb-3 pt-4">Cache</h4>
+
+        <div className="d-flex justify-content-between pt-4 pb-4">
+
+          <div>
+            <h5>Keys</h5>
+            <p>{otherStat.cache_stats ? otherStat.cache_stats["keys"] : "n/a"}</p>
+          </div>
+          <div>
+            <h5>Hits</h5>
+            <p>{otherStat.cache_stats ? otherStat.cache_stats["hits"] : "n/a"}</p>
+          </div>
+          <div>
+            <h5>Misses</h5>
+            <p>{otherStat.cache_stats ? otherStat.cache_stats["misses"] : "n/a"}</p>
+          </div>
+          <div>
+            <h5>Hit rate</h5>
+            <p>{!otherStat.cache_stats ? "n/a" : otherStat.cache_stats["misses"] !== 0 ? (otherStat.cache_stats["hits"] / otherStat.cache_stats["misses"] + "%") : "n/a"}</p>
           </div>
         </div>
         <h4>Requests per day</h4>
@@ -112,7 +138,6 @@ export default function StatsData() {
             <XAxis dataKey="nickname" />
             <YAxis />
             <Tooltip />
-            <Legend />
             <Line type="monotone" dataKey="score" stroke="#005A82" />
           </LineChart>
         </div>
