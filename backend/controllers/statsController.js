@@ -36,7 +36,8 @@ const GetAll = (req, res) => {
       item_count: result[3][0].item_count,
       champion_count: result[4][0].champion_count,
       global_skin_count: globalSkinCount,
-      player_stats: result[6]
+      player_stats: result[6],
+      cache: cache.getStats()
     };
 
     cache.saveCache(key, response);

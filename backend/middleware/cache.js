@@ -28,6 +28,10 @@ const changeTTL = (key, ttl) => {
   cache.ttl(key, ttl);
 };
 
+const getStats = () => {
+  return cache.getStats();
+}
+
 module.exports = {
   getTtl,
   changeTTL,
@@ -35,4 +39,5 @@ module.exports = {
   checkCache,
   saveCache,
   deleteCache,
+  getStats
 };
