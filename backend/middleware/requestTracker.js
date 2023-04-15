@@ -3,8 +3,6 @@ const statsModel = require("../models/statsModel");
 let ips = [];
 const stats = {};
 
-let startDate = new Date();
-
 const track = (req, res, next) => {
   const host = req.ip;
 
@@ -22,42 +20,32 @@ const track = (req, res, next) => {
 
   stats["requests"] += 1;
 
-  console.log(stats);
-
-  console.log(startDate);
-  console.log(new Date(new Date() + (new Date() - startDate)));
-
-  const diff = new Date(new Date() + (new Date() - startDate)) - startDate;
-
-  console.log(diff);
-
-  if (diff > 86400000) {
-    // save to db after n seconds day = 86 400 000
-    console.log("Saving to db");
-
-    startDate = new Date();
-
-    const data = {
-      date: new Date(),
-      dau: stats["dau"],
-      requests: stats["requests"],
-      mostActiveUsers: [].join(", ").toString(),
-    };
-
-    console.log(data);
-    // reset
-    stats["dau"] = 0;
-    stats["requests"] = 0;
-    ips = [];
-
-    statsModel.create(data, (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log("Success on saving stats to db");
-    });
-  }
   next();
 };
 
-module.exports = track;
+const saveStats = () => {
+  // save to db at 00:00
+  console.log("Saving to db");
+
+  const data = {
+    date: new Date(),
+    dau: stats["dau"],
+    requests: stats["requests"],
+    mostActiveUsers: [].join(", ").toString(),
+  };
+
+  console.log(data);
+  // reset
+  stats["dau"] = 0;
+  stats["requests"] = 0;
+  ips = [];
+
+  statsModel.create(data, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log("Successfully saved stats to db");
+  });
+};
+
+module.exports = { track, saveStats };

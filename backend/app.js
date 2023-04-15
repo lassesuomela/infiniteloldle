@@ -5,12 +5,17 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
+const schedule = require("node-schedule");
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // time window ms
   max: 120, // limit
   standardHeaders: false,
   legacyHeaders: false,
+});
+
+const job = schedule.scheduleJob("0 0 * * *", () => {
+  requestTracker.saveStats();
 });
 
 const app = express();
@@ -36,7 +41,7 @@ const guessRoutes = require("./routes/guessRoutes");
 const scoreboardRoutes = require("./routes/scoreboardRoutes");
 const statsRoutes = require("./routes/statsRoutes");
 
-app.use(requestTracker);
+app.use(requestTracker.track);
 
 app.use("/api", createUserRoutes);
 app.use("/api", scoreboardRoutes);
