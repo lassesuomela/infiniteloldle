@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Config from "../configs/config";
 import {
-  BarChart,
   Bar,
   LineChart,
   Line,
@@ -10,6 +9,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  ComposedChart,
+  Legend,
 } from "recharts";
 
 export default function StatsData() {
@@ -96,24 +97,41 @@ export default function StatsData() {
             <p>{otherStat.global_skin_count}</p>
           </div>
         </div>
-        <h4>Requests per day</h4>
+        <h4>Requests per day and daily active users</h4>
         <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={data}>
+          <ComposedChart data={data} width={1000} height={500}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
-            <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="Requests" stroke="#005A82" />
-          </LineChart>
-        </div>
-        <h4>Daily active users</h4>
-        <div className="pb-4 pt-2">
-          <BarChart width={1000} height={500} data={data}>
-            <Bar dataKey="DAU" fill="#005A82" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-          </BarChart>
+            <Legend />
+            <YAxis
+              yAxisId="left"
+              type="number"
+              dataKey="Requests"
+              name="Requests"
+              stroke="#005A82"
+            />
+            <YAxis
+              yAxisId="right"
+              type="number"
+              dataKey="DAU"
+              name="DAU"
+              orientation="right"
+              stroke="#0397AB"
+            />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="Requests"
+              stroke="#005A82"
+            />
+            <Bar
+              yAxisId="right"
+              dataKey="DAU"
+              fill="#0397AB"
+              fillOpacity={0.75}
+            />
+          </ComposedChart>
         </div>
         <h4>Top 50 players</h4>
         <div className="pb-4 pt-2">
