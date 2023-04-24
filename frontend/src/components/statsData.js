@@ -32,7 +32,7 @@ export default function StatsData() {
           champion_count: response.data.champion_count,
           global_skin_count: response.data.global_skin_count,
           player_stats: response.data.player_stats,
-          cache_stats: response.data.cache,
+          todays_player_count: response.data.todays_player_count,
         };
 
         console.log(data);
@@ -80,6 +80,10 @@ export default function StatsData() {
             <p>{otherStat.player_count}</p>
           </div>
           <div>
+            <h5>Registered today</h5>
+            <p>{otherStat.todays_player_count}</p>
+          </div>
+          <div>
             <h5>Item count</h5>
             <p>{otherStat.item_count}</p>
           </div>
@@ -87,45 +91,9 @@ export default function StatsData() {
             <h5>Champion count</h5>
             <p>{otherStat.champion_count}</p>
           </div>
-
           <div>
             <h5>Skin count</h5>
             <p>{otherStat.global_skin_count}</p>
-          </div>
-        </div>
-
-        <h4 className="text-center pb-3 pt-4">Cache</h4>
-
-        <div className="d-flex justify-content-between pt-4 pb-4">
-          <div>
-            <h5>Keys</h5>
-            <p>
-              {otherStat.cache_stats ? otherStat.cache_stats["keys"] : "n/a"}
-            </p>
-          </div>
-          <div>
-            <h5>Hits</h5>
-            <p>
-              {otherStat.cache_stats ? otherStat.cache_stats["hits"] : "n/a"}
-            </p>
-          </div>
-          <div>
-            <h5>Misses</h5>
-            <p>
-              {otherStat.cache_stats ? otherStat.cache_stats["misses"] : "n/a"}
-            </p>
-          </div>
-          <div>
-            <h5>Hit rate</h5>
-            <p>
-              {!otherStat.cache_stats
-                ? "n/a"
-                : otherStat.cache_stats["misses"] !== 0
-                ? otherStat.cache_stats["hits"] /
-                    otherStat.cache_stats["misses"] +
-                  "%"
-                : "n/a"}
-            </p>
           </div>
         </div>
         <h4>Requests per day</h4>

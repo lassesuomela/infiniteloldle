@@ -39,7 +39,7 @@ const GetAll = (req, res) => {
       global_skin_count: globalSkinCount,
       player_stats: result[6],
       todays_players: result[7],
-      cache: cache.getStats(),
+      todays_player_count: result[7].length,
     };
 
     cache.saveCache(key, response);

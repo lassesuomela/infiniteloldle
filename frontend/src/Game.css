@@ -8,6 +8,11 @@ p, small {
     font-family: Spiegel;
 }
 
+.playerCount {
+    display: flex;
+    justify-content: space-between;
+}
+
 .playerCount h5 {
     font-size: 1.1em;
 }

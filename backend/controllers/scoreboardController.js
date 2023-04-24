@@ -21,7 +21,8 @@ const TopAllTime = (req, res) => {
     const response = {
       status: "success",
       scores: result[0],
-      playerCount: result[1][0]["playerCount"],
+      registered_count: result[1][0]["registered_count"],
+      player_count: result[2][0]["player_count"],
     };
 
     cache.saveCache(key, response);

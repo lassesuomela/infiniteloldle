@@ -8,6 +8,7 @@ export default function ScoreBoardData() {
   const [players, setPlayers] = useState([]);
   const [playerData, setPlayerData] = useState("");
   const [playerCount, setPlayerCount] = useState(0);
+  const [registeredCount, setRegisteredCount] = useState(0);
 
   useEffect(() => {
     axios
@@ -15,7 +16,8 @@ export default function ScoreBoardData() {
       .then((response) => {
         const data = response.data.scores;
 
-        setPlayerCount(response.data.playerCount);
+        setPlayerCount(response.data.player_count);
+        setRegisteredCount(response.data.registered_count);
         setPlayers(data);
       })
       .catch((error) => {
@@ -130,6 +132,9 @@ export default function ScoreBoardData() {
           <div className="playerCount">
             <h5>
               Players: <span>{playerCount}</span>
+            </h5>
+            <h5>
+              Registered: <span>{registeredCount}</span>
             </h5>
           </div>
         </div>
