@@ -8,8 +8,8 @@ const rateLimit = require("express-rate-limit");
 const schedule = require("node-schedule");
 
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // time window ms
-  max: 120, // limit
+  windowMs: 15 * 60 * 1000,
+  max: 450,
   standardHeaders: false,
   legacyHeaders: false,
 });
