@@ -243,8 +243,6 @@ const Guess = (req, res) => {
         ),
       };
 
-      console.log("Correct champion is: " + correctChampionData[0].name);
-
       if (guess !== correctChampionData[0].name) {
         return res.json({
           status: "success",
@@ -451,8 +449,6 @@ const GuessSplash = (req, res) => {
                 score: (userResult[0]["score"] += 1),
                 token: token,
               };
-
-              console.log(payload);
 
               user.updateSplash(payload, (err, result) => {
                 if (err) {

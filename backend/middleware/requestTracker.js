@@ -1,4 +1,5 @@
 const statsModel = require("../models/statsModel");
+const cache = require("./cache");
 
 let ips = [];
 const stats = {};
@@ -34,7 +35,7 @@ const saveStats = () => {
     mostActiveUsers: [].join(", ").toString(),
   };
 
-  console.log(data);
+  cache.deleteCache("/stats");
   // reset
   stats["dau"] = 0;
   stats["requests"] = 0;
