@@ -2,8 +2,8 @@ import React from "react";
 
 export default function Legal() {
   return (
-    <div>
-      <div>
+    <div id="legal">
+      <div id="disclaimer">
         <h2>Disclaimer</h2>
         <p>
           Infiniteloldle.com isn't endorsed by Riot Games and doesn't reflect
@@ -20,7 +20,7 @@ export default function Legal() {
         </p>
       </div>
 
-      <div>
+      <div id="privacy">
         <h2>Privacy Policy</h2>
         <p>Effective Date: 21.05.2023</p>
         <p>

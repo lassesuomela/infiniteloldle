@@ -17,10 +17,14 @@
     padding-right: 1em;
 }
 
-#about a {
+#about a, #disclaimer a, #privacy a {
     color:#010A13;
     font-weight: bold;
     text-decoration: none;
+}
+
+#legal li {
+    font-family: Spiegel;
 }
 
 .navbar-dark .navbar-nav .nav-link, .darkBtn {
