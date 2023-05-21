@@ -1,52 +1,77 @@
-import React from 'react'
+import React from "react";
 
 export default function About() {
   return (
     <div id="about">
-        <h3>Inspiration</h3>
-        <p>This site is inspired by <a href="https://loldle.net">loldle.net</a>, a game where you have to guess League of Legends champions daily.</p>
-        <h3>How to play</h3>
-        
-        <p>After you have created your nickname, you will be assigned a champion that you are trying to guess.</p>
-        <p>In the text box you can start typing your champions name and press enter or click the champion you want, to select it as your guess. After that click Guess button to send your guess.</p>
-        <p>If your guess was actually correct or not will be determined by the colors below.</p>
+      <h3>Inspiration</h3>
+      <p>
+        This site is inspired by <a href="https://loldle.net">loldle.net</a>, a
+        game where you have to guess League of Legends champions daily.
+      </p>
+      <h3>How to play</h3>
 
-        <p>After you guess correctly, the champion will be removed from your champion pool and you will not get the same champion again. Only after you have guessed every single champion will your champion pool reset.</p>
-        
-        <h4 className="pb-3">Meaning of the colors</h4>
+      <p>
+        After you have created your nickname, you will be assigned a champion
+        that you are trying to guess.
+      </p>
+      <p>
+        In the text box you can start typing your champions name and press enter
+        or click the champion you want, to select it as your guess. After that
+        click Guess button to send your guess.
+      </p>
+      <p>
+        If your guess was actually correct or not will be determined by the
+        colors below.
+      </p>
 
-        <div className="d-flex pb-2 align-items-center">
-            <div className="demo demoCorrect"></div>
-            <p className="my-auto mx-auto">Correct guess</p>
-        </div>
+      <p>
+        After you guess correctly, the champion will be removed from your
+        champion pool and you will not get the same champion again. Only after
+        you have guessed every single champion will your champion pool reset.
+      </p>
 
-        <div className="d-flex pb-2 align-items-center">
-            <div className="demo demoInoccrectGreater"></div>
-            <p className="my-auto mx-auto">Correct value is higher</p>
-        </div>
+      <h4 className="pb-3">Meaning of the colors</h4>
 
-        <div className="d-flex pb-2 align-items-center">
-            <div className="demo demoPartial"></div>
-            <p className="my-auto mx-auto">Value is partially correct</p>
-        </div>
+      <div className="d-flex pb-2 align-items-center">
+        <div className="demo demoCorrect"></div>
+        <p className="my-auto mx-auto">Correct guess</p>
+      </div>
 
-        <div className="d-flex pb-2 align-items-center">
-            <div className="demo demoInoccrectLess"></div>
-            <p className="my-auto mx-auto">Correct value is lower</p>
-        </div>
+      <div className="d-flex pb-2 align-items-center">
+        <div className="demo demoInoccrectGreater"></div>
+        <p className="my-auto mx-auto">Correct value is higher</p>
+      </div>
 
-        <div className="d-flex">
-            <div className="demo demoIncorrect"></div>
-            <p className="my-auto mx-auto">Incorrect guess</p>
-        </div>
+      <div className="d-flex pb-2 align-items-center">
+        <div className="demo demoPartial"></div>
+        <p className="my-auto mx-auto">Value is partially correct</p>
+      </div>
 
-        <h4 className="pb-3 pt-4">Scoring system</h4>
+      <div className="d-flex pb-2 align-items-center">
+        <div className="demo demoInoccrectLess"></div>
+        <p className="my-auto mx-auto">Correct value is lower</p>
+      </div>
 
-        <p>You will be rewarded one point for each correct guess you make. After you have guessed every single champion in the game your prestige will increase. After that your champion pool is reset and every single champion in the game will be available in your champion pool.</p>
+      <div className="d-flex">
+        <div className="demo demoIncorrect"></div>
+        <p className="my-auto mx-auto">Incorrect guess</p>
+      </div>
 
-        <h4 className="pb-3 pt-4">Contact Me</h4>
-        <p>If you want to contact me regarding this site. You can do that by emailing me at <a href="mailto:infiniteloldle@gmail.com">infiniteloldle@gmail.com</a>.</p>
+      <h4 className="pb-3 pt-4">Scoring system</h4>
 
+      <p>
+        You will be rewarded one point for each correct guess you make. After
+        you have guessed every single champion in the game your prestige will
+        increase. After that your champion pool is reset and every single
+        champion in the game will be available in your champion pool.
+      </p>
+
+      <h4 className="pb-3 pt-4">Contact Us</h4>
+      <p>
+        If you want to contact us regarding this site. You can do that by
+        emailing{" "}
+        <a href="mailto:infiniteloldle@gmail.com">infiniteloldle@gmail.com</a>.
+      </p>
     </div>
-  )
+  );
 }
