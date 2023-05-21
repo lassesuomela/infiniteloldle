@@ -31,7 +31,7 @@ const GetAll = (req, res) => {
 
     const response = {
       status: "success",
-      stats: result[0],
+      stats: result[0].reverse(),
       register_count: result[1][0].user_count,
       player_count: result[2][0].player_count,
       item_count: result[3][0].item_count,
