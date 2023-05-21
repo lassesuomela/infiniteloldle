@@ -3,6 +3,7 @@ import axios from "axios";
 import Config from "../configs/config";
 import {
   Bar,
+  BarChart,
   LineChart,
   Line,
   XAxis,
@@ -17,6 +18,7 @@ export default function StatsData() {
   const [stats, setStats] = useState([]);
   const [otherStat, setOtherStat] = useState([]);
   const [newPlayers, setNewPlayers] = useState([]);
+  const [playerCountries, setPlayerCountries] = useState([]);
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
@@ -25,6 +27,7 @@ export default function StatsData() {
       .then((response) => {
         setStats(response.data.stats);
         setNewPlayers(response.data.todays_players);
+        setPlayerCountries(response.data.top_countries);
 
         const data = {
           register_count: response.data.register_count,
@@ -143,7 +146,7 @@ export default function StatsData() {
             <Line type="monotone" dataKey="score" stroke="#005A82" />
           </LineChart>
         </div>
-        <h4>25 of newest players from today</h4>
+        <h4>Newest players from today</h4>
         <div className="pb-4 pt-2">
           <LineChart width={1000} height={500} data={newPlayers}>
             <CartesianGrid strokeDasharray="2 2" />
@@ -152,6 +155,21 @@ export default function StatsData() {
             <Tooltip />
             <Line type="monotone" dataKey="score" stroke="#005A82" />
           </LineChart>
+        </div>
+        <h4>Top 20 countries</h4>
+        <div className="pb-4 pt-2">
+          <BarChart
+            width={1000}
+            height={500}
+            data={playerCountries}
+            layout="vertical"
+          >
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis type="number" />
+            <YAxis dataKey="Country" type="category" />
+            <Tooltip />
+            <Bar dataKey="Players" fill="#005A82" />
+          </BarChart>
         </div>
       </div>
     </>

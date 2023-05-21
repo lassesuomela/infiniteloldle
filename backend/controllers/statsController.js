@@ -3,6 +3,7 @@ const cache = require("../middleware/cache");
 
 const GetAll = (req, res) => {
   const key = req.path;
+
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
     res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
@@ -29,6 +30,16 @@ const GetAll = (req, res) => {
       globalSkinCount += champion.skinCount;
     });
 
+    let countries = [];
+
+    result[8].forEach((data) => {
+      console.log(data);
+
+      if (data.Country !== null) {
+        countries.push(data);
+      }
+    });
+
     const response = {
       status: "success",
       stats: result[0].reverse(),
@@ -40,6 +51,7 @@ const GetAll = (req, res) => {
       player_stats: result[6],
       todays_players: result[7],
       todays_player_count: result[7].length,
+      top_countries: countries,
     };
 
     cache.saveCache(key, response);
