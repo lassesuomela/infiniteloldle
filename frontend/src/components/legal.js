@@ -106,6 +106,16 @@ export default function Legal() {
           child, please contact us immediately, and we will take steps to delete
           the information promptly.
         </p>
+        <h3>GDPR Compliance</h3>
+        <p>
+          If you are located in the European Economic Area (EEA), you have
+          certain rights under the General Data Protection Regulation (GDPR)
+          regarding your personal information. These rights include the right to
+          access, rectify, or erase your personal data, as well as the right to
+          restrict or object to certain processing activities. To exercise these
+          rights, please contact us using the contact information provided
+          below.
+        </p>
         <h3>Changes to this Privacy Policy</h3>
         <p>
           We may update this Privacy Policy from time to time to reflect changes
