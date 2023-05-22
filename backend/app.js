@@ -34,6 +34,7 @@ const requestTracker = require("./middleware/requestTracker");
 
 const championRoutes = require("./routes/championRoutes");
 const itemRoutes = require("./routes/itemRoutes");
+const oldItemRoutes = require("./routes/oldItemRoutes");
 const userRoutes = require("./routes/userRoutes");
 const createUserRoutes = require("./routes/createUserRoutes");
 const gameRoutes = require("./routes/gameRoutes");
@@ -55,5 +56,6 @@ app.use("/api", guessRoutes);
 
 app.use("/api", auth, championRoutes);
 app.use("/api", auth, itemRoutes);
+app.use("/api", auth, oldItemRoutes);
 
 module.exports = app;

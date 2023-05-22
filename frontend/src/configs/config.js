@@ -1,5 +1,5 @@
 const config = {
-  url: "https://www.infiniteloldle.com/api",
+  url: "http://localhost:8081/api",
 };
 
 module.exports = config;
