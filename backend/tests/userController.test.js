@@ -37,6 +37,19 @@ describe("Testing userController routes", () => {
       });
   });
 
+  it("Checking if token is valid with invalid token.", (done) => {
+    request(app)
+      .get("/api/user")
+      .set("Authorization", "Bearer " + "invalid token type")
+
+      .then((res) => {
+        expect(res.body.status).toBe("error");
+        expect(res.body).toHaveProperty("message");
+
+        done();
+      });
+  });
+
   it("Checking if token is valid. With no token.", (done) => {
     request(app)
       .get("/api/user")
@@ -77,6 +90,26 @@ describe("Testing userController routes", () => {
   it("Updating nickname, with nickname.", (done) => {
     const body = {
       nickname: "newNicknameJest",
+    };
+
+    request(app)
+      .put("/api/user/nickname")
+      .send(body)
+      .set("Authorization", "Bearer " + token)
+
+      .then((res) => {
+        expect(res.body.status).toBe("success");
+        expect(res.body).toHaveProperty("message");
+        expect(res.body.message).toBe("Nickname updated");
+
+        done();
+      });
+  });
+
+  it("Updating nickname, with too long nickname.", (done) => {
+    const body = {
+      nickname:
+        "newNicknameJestnewNicknameJestnewNicknameJestnewNicknameJestnewNicknameJestnewNicknameJestnewNicknameJest",
     };
 
     request(app)

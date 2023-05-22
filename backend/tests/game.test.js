@@ -17,6 +17,18 @@ describe("Testing routes needed for playing the game", () => {
       });
   });
 
+  it("Fetching all old items.", (done) => {
+    request(app)
+      .get("/api/oldItems")
+
+      .then((res) => {
+        expect(res.body.status).toBe("success");
+        expect(res.body).toHaveProperty("items");
+
+        done();
+      });
+  });
+
   // champions
 
   it("Fetching all champions.", (done) => {
@@ -31,7 +43,6 @@ describe("Testing routes needed for playing the game", () => {
       });
   });
 
-  // token is needed
   it("Fetching users item id with no token provided.", (done) => {
     request(app)
       .get("/api/item")
@@ -68,7 +79,7 @@ describe("Testing routes needed for playing the game", () => {
       });
   });
 
-  // create test user to test
+  // create test user to test with
   let token = "";
   it("Creating user account with nickname defined.", (done) => {
     const body = {
@@ -89,6 +100,7 @@ describe("Testing routes needed for playing the game", () => {
       });
   });
 
+  // token is needed
   it("Fetching users item id.", (done) => {
     request(app)
       .get("/api/item")
@@ -182,6 +194,75 @@ describe("Testing routes needed for playing the game", () => {
         expect(res.body).toHaveProperty("result");
         expect(res.body.result).toHaveProperty("currentSplashId");
         expect(res.body.result).toHaveProperty("championKey");
+
+        done();
+      });
+  });
+
+  it("Guessing splash art with token with no body.", (done) => {
+    request(app)
+      .post("/api/splash")
+      .set("Authorization", "Bearer " + token)
+
+      .then((res) => {
+        expect(res.body.status).toBe("error");
+        expect(res.body).toHaveProperty("message");
+
+        done();
+      });
+  });
+
+  it("Guessing splash art with token with fake token.", (done) => {
+    const body = {
+      guess: "Teemo",
+    };
+
+    request(app)
+      .post("/api/splash")
+      .set("Authorization", "Bearer " + "token")
+      .send(body)
+
+      .then((res) => {
+        expect(res.body.status).toBe("error");
+        expect(res.body).toHaveProperty("message");
+
+        done();
+      });
+  });
+
+  it("Guessing splash art with token with body.", (done) => {
+    const body = {
+      guess: "Teemo",
+    };
+
+    request(app)
+      .post("/api/splash")
+      .set("Authorization", "Bearer " + token)
+      .send(body)
+
+      .then((res) => {
+        expect(res.body.status).toBe("success");
+        expect(res.body).toHaveProperty("correctGuess");
+        expect(res.body).toHaveProperty("championKey");
+        expect(res.body.championKey).toEqual(body.guess);
+
+        done();
+      });
+  });
+
+  it("Guessing splash art with token with body and nonexistant champ.", (done) => {
+    const body = {
+      guess: "asdasdadad",
+    };
+
+    request(app)
+      .post("/api/splash")
+      .set("Authorization", "Bearer " + token)
+      .send(body)
+
+      .then((res) => {
+        expect(res.body.status).toBe("error");
+        expect(res.body).toHaveProperty("message");
 
         done();
       });

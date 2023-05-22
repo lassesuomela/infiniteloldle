@@ -32,15 +32,6 @@ const Create = (req, res) => {
 const AddMoreData = (req, res) => {
   const body = req.body;
 
-  const data = {
-    name: body.champion,
-    released: body.data[0].released.toString(),
-    region: body.data[1].region.toString(),
-    position: body.data[2].positions.toString(),
-    rangeType: body.data[3].rangeTypes.toString(),
-    damageType: body.data[4].damageType.toString(),
-  };
-
   if (
     !body.champion ||
     !body.data[0].released ||
@@ -53,6 +44,15 @@ const AddMoreData = (req, res) => {
       message: "One or more fields must be provided",
     });
   }
+
+  const data = {
+    name: body.champion,
+    released: body.data[0].released.toString(),
+    region: body.data[1].region.toString(),
+    position: body.data[2].positions.toString(),
+    rangeType: body.data[3].rangeTypes.toString(),
+    damageType: body.data[4].damageType.toString(),
+  };
 
   champion.addMoreData(data, (err, result) => {
     if (err) {
@@ -76,8 +76,6 @@ const AddChampionId = (req, res) => {
       message: "One or more fields must be provided",
     });
   }
-
-  console.log(data.key, data.name);
 
   champion.addChampionId(data, (err, result) => {
     if (err) {

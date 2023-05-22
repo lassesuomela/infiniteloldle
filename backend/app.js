@@ -54,8 +54,8 @@ app.use(token);
 app.use("/api", userRoutes);
 app.use("/api", guessRoutes);
 
-app.use("/api", auth, championRoutes);
-app.use("/api", auth, itemRoutes);
-app.use("/api", auth, oldItemRoutes);
+app.use("/dev/api/", auth, championRoutes);
+app.use("/dev/api/", auth, itemRoutes);
+app.use("/dev/api/", auth, oldItemRoutes);
 
 module.exports = app;
