@@ -486,7 +486,6 @@ const GetSplashArt = (req, res) => {
       });
     }
 
-    console.log(result);
     if (!result) {
       return res.json({
         status: "error",

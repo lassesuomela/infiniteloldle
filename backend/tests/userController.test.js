@@ -2,128 +2,119 @@ const app = require("../app");
 const request = require("supertest");
 
 describe("Testing userController routes", () => {
+  let token = "";
 
-    let token = "";
+  it("Creating user account with nickname defined.", (done) => {
+    const body = {
+      nickname: "jestuser",
+    };
 
-    it("Creating user account with nickname defined.", (done) => {
+    request(app)
+      .post("/api/user")
+      .send(body)
 
-        const body = {
-            nickname: "jestuser"
-        }
+      .then((res) => {
+        expect(res.body.status).toBe("success");
+        expect(res.body).toHaveProperty("token");
 
-        request(app)
-            .post("/api/user")
-            .send(body)
+        token = res.body.token;
 
-            .then(res => {
-                expect(res.body.status).toBe("success");
-                expect(res.body).toHaveProperty("token");
+        done();
+      });
+  });
 
-                token = res.body.token;
+  it("Checking if token is valid.", (done) => {
+    request(app)
+      .get("/api/user")
+      .set("Authorization", "Bearer " + token)
 
-                done();
-            })
-    });
+      .then((res) => {
+        expect(res.body.status).toBe("success");
+        expect(res.body).toHaveProperty("message");
+        expect(res.body).toHaveProperty("player");
 
-    it("Checking if token is valid.", (done) => {
+        done();
+      });
+  });
 
-        request(app)
-            .get("/api/user")
-            .set("Authorization", "Bearer " + token)
+  it("Checking if token is valid. With no token.", (done) => {
+    request(app)
+      .get("/api/user")
 
-            .then(res => {
-                expect(res.body.status).toBe("success");
-                expect(res.body).toHaveProperty("message");
-                expect(res.body).toHaveProperty("player");
+      .then((res) => {
+        expect(res.body.status).toBe("error");
+        expect(res.body).toHaveProperty("message");
 
-                done();
-            })
-    });
+        done();
+      });
+  });
 
-    it("Checking if token is valid. With no token.", (done) => {
+  it("Creating user account without nickname.", (done) => {
+    request(app)
+      .post("/api/user")
 
-        request(app)
-            .get("/api/user")
+      .then((res) => {
+        expect(res.body.status).toBe("success");
+        expect(res.body).toHaveProperty("token");
 
-            .then(res => {
-                expect(res.body.status).toBe("error");
-                expect(res.body).toHaveProperty("message");
+        done();
+      });
+  });
 
-                done();
-            })
-    });
+  it("Updating nickname, without nickname defined.", (done) => {
+    request(app)
+      .put("/api/user/nickname")
+      .set("Authorization", "Bearer " + token)
 
-    it("Creating user account without nickname.", (done) => {
+      .then((res) => {
+        expect(res.body.status).toBe("error");
+        expect(res.body).toHaveProperty("message");
 
-        request(app)
-            .post("/api/user")
+        done();
+      });
+  });
 
-            .then(res => {
-                expect(res.body.status).toBe("success");
-                expect(res.body).toHaveProperty("token");
+  it("Updating nickname, with nickname.", (done) => {
+    const body = {
+      nickname: "newNicknameJest",
+    };
 
-                done();
-            })
-    });
+    request(app)
+      .put("/api/user/nickname")
+      .send(body)
+      .set("Authorization", "Bearer " + token)
 
-    it("Updating nickname, without nickname defined.", (done) => {
-     
-        request(app)
-            .put("/api/user/nickname")
-            .set("Authorization", "Bearer " + token)
+      .then((res) => {
+        expect(res.body.status).toBe("success");
+        expect(res.body).toHaveProperty("message");
+        expect(res.body.message).toBe("Nickname updated");
 
-            .then(res => {
-                expect(res.body.status).toBe("error");
-                expect(res.body).toHaveProperty("message");
+        done();
+      });
+  });
 
-                done();
-            })
-    });
+  it("Deleting user account, with valid token.", (done) => {
+    request(app)
+      .delete("/api/user")
+      .set("Authorization", "Bearer " + token)
 
-    it("Updating nickname, with nickname.", (done) => {
+      .then((res) => {
+        expect(res.body.status).toBe("success");
+        expect(res.body).toHaveProperty("message");
 
-        const body = {
-            nickname: "newNicknameJest"
-        }
+        done();
+      });
+  });
 
-        request(app)
-            .put("/api/user/nickname")
-            .send(body)
-            .set("Authorization", "Bearer " + token)
+  it("Deleting user account, without token.", (done) => {
+    request(app)
+      .delete("/api/user")
 
-            .then(res => {
-                expect(res.body.status).toBe("success");
-                expect(res.body).toHaveProperty("message");
-                expect(res.body.message).toBe("Nickname updated")
+      .then((res) => {
+        expect(res.body.status).toBe("error");
+        expect(res.body).toHaveProperty("message");
 
-                done();
-            })
-    });
-
-    it("Deleting user account, with valid token.", (done) => {
-
-        request(app)
-            .delete("/api/user")
-            .set("Authorization", "Bearer " + token)
-
-            .then(res => {
-                expect(res.body.status).toBe("success");
-                expect(res.body).toHaveProperty("message");
-
-                done();
-            })
-    });
-
-    it("Deleting user account, without token.", (done) => {
-
-        request(app)
-            .delete("/api/user")
-
-            .then(res => {
-                expect(res.body.status).toBe("error");
-                expect(res.body).toHaveProperty("message");
-
-                done();
-            })
-    });
+        done();
+      });
+  });
 });

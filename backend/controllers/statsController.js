@@ -33,8 +33,6 @@ const GetAll = (req, res) => {
     let countries = [];
 
     result[8].forEach((data) => {
-      console.log(data);
-
       if (data.Country !== null) {
         countries.push(data);
       }
