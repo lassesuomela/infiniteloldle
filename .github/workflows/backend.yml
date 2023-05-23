@@ -1,0 +1,54 @@
+name: Build Docker Compose and run backend Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+      DB_PASSWORD: 73d31c80-68ab-4ea2-8c79-ee18e64af3ff
+      DB_DATABASE: loldle
+      TOKEN: 85af92c5-e8d9-4936-8603-bf3a6354da57
+      NODE_ENV: dev
+      ENV: dev
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install docker-compose
+
+      - name: Build and run Docker Compose
+        run: |
+          docker-compose up --build -d
+
+      - name: Wait for services to start
+        run: |
+          sleep 10
+
+      - name: Run npm tests in Docker container
+        id: test
+        run: |
+          docker-compose exec my-service npm test || echo "::set-output name=result::failed"
+
+      - name: Stop and remove containers
+        run: |
+          docker-compose down
+
+      - name: Check test result
+        run: |
+          if [[ "${{ steps.test.outputs.result }}" == "failed" ]]; then
+            echo "Tests failed!"
+            exit 1
+          else
+            echo "Tests passed!"
+          fi
