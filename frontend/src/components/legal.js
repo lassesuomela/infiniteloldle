@@ -62,12 +62,8 @@ export default function Legal() {
           authenticate you when you access our services. You have the ability to
           change your nickname at any time.
         </p>
-        <h5>2. Communication and Account Management</h5>
-        <p>
-          We may use your contact information to communicate with you regarding
-          your account, services, updates, and other relevant information. You
-          have the option to delete your account at any time.
-        </p>
+        <h5>2. Account Management</h5>
+        <p>You have the option to delete your account at any time.</p>
         <h3>Data Storage and Security</h3>
         <h5>1. Data Retention</h5>
         <p>
