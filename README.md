@@ -40,6 +40,7 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
   - `NODE_ENV=dev` # used only for importing data to database
 - run `npm start` and the backend is running at [http://localhost:8081](http://localhost:8081)
 ---
+
 ## How to run frontend
 - `cd ./frontend`
 - run `npm i`
