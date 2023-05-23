@@ -29,7 +29,7 @@ jobs:
 
       - name: Build and run Docker Compose
         run: |
-          docker-compose up --build -d
+          docker-compose -f backend/docker-compose.yml up --build -d
 
       - name: Wait for services to start
         run: |
@@ -38,7 +38,7 @@ jobs:
       - name: Run npm tests in Docker container
         id: test
         run: |
-          docker-compose exec my-service npm test || echo "::set-output name=result::failed"
+          docker-compose -f backend/docker-compose.yml exec loldle-api npm test || echo "::set-output name=result::failed"
 
       - name: Stop and remove containers
         run: |
