@@ -50,7 +50,7 @@ const GetAll = (req, res) => {
       global_skin_count: globalSkinCount,
       player_stats: result[6],
       todays_players: result[7],
-      todays_player_count: result[7].length,
+      todays_player_count: result[9][0].count,
       top_countries: countries,
     };
 
