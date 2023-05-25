@@ -14,7 +14,7 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-const job = schedule.scheduleJob("0 0 * * *", () => {
+const job = schedule.scheduleJob("59 23 * * *", () => {
   requestTracker.saveStats();
 });
 

@@ -52,6 +52,7 @@ const GetAll = (req, res) => {
       todays_players: result[7],
       todays_player_count: result[9][0].count,
       top_countries: countries,
+      user_data: result[10],
     };
 
     cache.saveCache(key, response);
