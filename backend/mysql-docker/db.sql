@@ -131,6 +131,8 @@ CREATE TABLE `statistics` (
   `dau` int NOT NULL DEFAULT '0',
   `requests` int NOT NULL DEFAULT '0',
   `mostActiveUsers` varchar(60) NOT NULL,
+  `players` int NOT NULL,
+  `users` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
