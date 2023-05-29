@@ -1,45 +1,47 @@
 version: "3"
 services:
-  # Nginx will proxy requests to Nodejs server
   loldle-frontend:
     build:
       context: ../frontend
       dockerfile: Dockerfile
     image: loldle-frontend:latest
     container_name: loldle-frontend
-    network_mode: "host"
     depends_on:
       - loldle-api
+    ports:
+      - 80:80
+      - 443:443
     restart: unless-stopped
     volumes:
       - /root/infiniteloldle/frontend/infiniteloldle.com.pem:/root/infiniteloldle/frontend/infiniteloldle.com.pem
       - /root/infiniteloldle/frontend/infiniteloldle.com.key:/root/infiniteloldle/frontend/infiniteloldle.com.key
 
-  # Nodejs backend
   loldle-api:
     build:
       context: .
       dockerfile: Dockerfile
     image: loldle-api:latest
     container_name: loldle-api
-    network_mode: "host"
+    ports:
+      - 8080:8080
     restart: unless-stopped
     environment:
       - DOCKER_APP_PORT=8080
 
-  # MySql server
   loldle-mysql:
     build:
       context: ./mysql-docker
       dockerfile: Dockerfile
     image: loldle-mysql:latest
     container_name: loldle-mysql
-    network_mode: "host"
+    ports:
+      - 3306:3306
     restart: unless-stopped
     environment:
       - MYSQL_DATABASE=${DB_DATABASE}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     volumes:
       - loldle-mysql:/var/lib/mysql
+
 volumes:
   loldle-mysql:
