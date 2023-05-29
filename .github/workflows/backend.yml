@@ -36,19 +36,13 @@ jobs:
           sleep 10
 
       - name: Run npm tests in Docker container
-        id: test
+        id: tests
         run: |
-          docker-compose -f backend/docker-compose.yml exec loldle-api npm test || echo "::set-output name=result::failed"
+          docker-compose -f backend/docker-compose.yml exec loldle-api npm test
 
       - name: Stop and remove containers
         run: |
           docker-compose -f backend/docker-compose.yml down
 
-      - name: Check test result
-        run: |
-          if [[ "${{ steps.test.outputs.result }}" == "failed" ]]; then
-            echo "Tests failed!"
-            exit 1
-          else
-            echo "Tests passed!"
-          fi
+      - name: Check test status
+        run: exit ${{ steps.tests.outcome }}
