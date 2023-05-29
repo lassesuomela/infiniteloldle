@@ -7,11 +7,9 @@ services:
       dockerfile: Dockerfile
     image: loldle-frontend:latest
     container_name: loldle-frontend
+    network_mode: "host"
     depends_on:
       - loldle-api
-    ports:
-      - 80:80
-      - 443:443
     restart: unless-stopped
     volumes:
       - /root/infiniteloldle/frontend/infiniteloldle.com.pem:/root/infiniteloldle/frontend/infiniteloldle.com.pem
@@ -24,8 +22,7 @@ services:
       dockerfile: Dockerfile
     image: loldle-api:latest
     container_name: loldle-api
-    ports:
-      - 8080:8080
+    network_mode: "host"
     restart: unless-stopped
     environment:
       - DOCKER_APP_PORT=8080
@@ -37,8 +34,7 @@ services:
       dockerfile: Dockerfile
     image: loldle-mysql:latest
     container_name: loldle-mysql
-    ports:
-      - 3306:3306
+    network_mode: "host"
     restart: unless-stopped
     environment:
       - MYSQL_DATABASE=${DB_DATABASE}
