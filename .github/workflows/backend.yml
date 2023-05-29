@@ -38,7 +38,7 @@ jobs:
       - name: Run npm tests in Docker container
         id: tests
         run: |
-          docker-compose -f backend/docker-compose.yml exec loldle-api npm test
+          docker exec loldle-api npm test
 
       - name: Stop and remove containers
         run: |
