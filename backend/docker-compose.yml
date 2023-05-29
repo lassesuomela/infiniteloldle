@@ -1,6 +1,5 @@
-version: '3'
+version: "3"
 services:
-
   # Nginx will proxy requests to Nodejs server
   loldle-frontend:
     build:
@@ -8,7 +7,6 @@ services:
       dockerfile: Dockerfile
     image: loldle-frontend:latest
     container_name: loldle-frontend
-    network_mode: "host"
     depends_on:
       - loldle-api
     ports:
@@ -26,7 +24,6 @@ services:
       dockerfile: Dockerfile
     image: loldle-api:latest
     container_name: loldle-api
-    network_mode: "host"
     ports:
       - 8080:8080
     restart: unless-stopped
@@ -40,7 +37,6 @@ services:
       dockerfile: Dockerfile
     image: loldle-mysql:latest
     container_name: loldle-mysql
-    network_mode: "host"
     ports:
       - 3306:3306
     restart: unless-stopped
