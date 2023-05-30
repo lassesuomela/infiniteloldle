@@ -1,4 +1,8 @@
 version: "3"
+
+networks:
+  mynetwork:
+
 services:
   loldle-api:
     build:
@@ -11,6 +15,8 @@ services:
     restart: unless-stopped
     environment:
       - DOCKER_APP_PORT=8080
+    networks:
+      - mynetwork
 
   loldle-mysql:
     build:
@@ -27,11 +33,13 @@ services:
     volumes:
       - loldle-mysql:/var/lib/mysql
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$DB_PASSWORD
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$DB_PASSWORD
       start_period: 5s
       interval: 5s
       timeout: 5s
       retries: 55
+    networks:
+      - mynetwork
 
 volumes:
   loldle-mysql:
