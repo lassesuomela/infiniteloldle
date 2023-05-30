@@ -5,18 +5,18 @@ on:
     branches:
       - main
 
+env:
+  DB_HOST: loldle-mysql
+  DB_USERNAME: root
+  DB_PASSWORD: 73d31c80-68ab-4ea2-8c79-ee18e64af3ff
+  DB_DATABASE: loldle
+  TOKEN: 85af92c5-e8d9-4936-8603-bf3a6354da57
+  NODE_ENV: dev
+  ENV: dev
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
-    env:
-      DB_HOST: loldle-mysql
-      DB_USERNAME: root
-      DB_PASSWORD: 73d31c80-68ab-4ea2-8c79-ee18e64af3ff
-      DB_DATABASE: loldle
-      TOKEN: 85af92c5-e8d9-4936-8603-bf3a6354da57
-      NODE_ENV: dev
-      ENV: dev
 
     steps:
       - name: Checkout code
