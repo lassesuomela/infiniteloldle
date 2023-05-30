@@ -5,11 +5,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-<<<<<<< Updated upstream
-    "test": "jest --forceExit"
-=======
     "test": "jest --detectOpenHandles --runInBand --forceExit"
->>>>>>> Stashed changes
   },
   "dependencies": {
     "cors": "^2.8.5",
