@@ -41,7 +41,16 @@ jobs:
         run: |
           docker ps
 
-      - name: Check status
+      - name: Run tests and check status
+        id: tests
+        run: |
+          docker exec loldle-api npm test
+
+      - name: Check test status
+        run: |
+          exit ${{ steps.tests.outcome }}
+
+      - name: Check test logs
         run: |
           docker logs loldle-api
 
