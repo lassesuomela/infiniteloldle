@@ -32,42 +32,18 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
-      - name: Build and run Docker Compose
+      - name: Build and run Docker containers
         run: |
           docker-compose -f backend/docker-compose.test.yml up --build -d
 
       - name: Wait for services to start
         run: |
-          sleep 30
-
-      - name: Check status
-        run: |
-          docker ps
-
-      - name: Check status api
-        run: |
-          docker logs loldle-api
-
-      - name: Check status mysql
-        run: |
-          docker logs loldle-mysql
+          sleep 20
 
       - name: Run tests and check status
         id: tests
         run: |
           docker exec loldle-api npm test
-
-      - name: Wait
-        run: |
-          sleep 15
-
-      - name: Check logs api
-        run: |
-          docker logs loldle-api
-
-      - name: Check test status
-        run: |
-          exit ${{ steps.tests.outcome }}
 
       - name: Stop and remove containers
         run: |
