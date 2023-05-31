@@ -28,24 +28,32 @@ const saveStats = () => {
   // save to db at 00:00
   console.log("Saving to db");
 
-  const data = {
-    date: new Date(),
-    dau: stats["dau"],
-    requests: stats["requests"],
-    mostActiveUsers: [].join(", ").toString(),
-  };
-
-  cache.deleteCache("/stats");
-  // reset
-  stats["dau"] = 0;
-  stats["requests"] = 0;
-  ips = [];
-
-  statsModel.create(data, (err, result) => {
+  statsModel.getUsersAndPlayers((err, data2) => {
     if (err) {
       console.log(err);
     }
-    console.log("Successfully saved stats to db");
+
+    const data = {
+      date: new Date(),
+      dau: stats["dau"],
+      requests: stats["requests"],
+      mostActiveUsers: [].join(", ").toString(),
+      users: data2[0][0].user_count,
+      players: data2[1][0].player_count,
+    };
+
+    statsModel.create(data, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log("Successfully saved stats to db");
+
+      cache.deleteCache("/stats");
+      // reset
+      stats["dau"] = 0;
+      stats["requests"] = 0;
+      ips = [];
+    });
   });
 };
 

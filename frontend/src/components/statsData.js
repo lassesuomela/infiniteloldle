@@ -146,6 +146,17 @@ export default function StatsData() {
             <Line type="monotone" dataKey="score" stroke="#005A82" />
           </LineChart>
         </div>
+        <h4>Users and players from past 30 days</h4>
+        <div className="pb-4 pt-2">
+          <LineChart width={1000} height={500} data={newPlayers}>
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="players" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="users" stroke="#82ca9d" />
+          </LineChart>
+        </div>
         <h4>Newest players from today</h4>
         <div className="pb-4 pt-2">
           <LineChart width={1000} height={500} data={newPlayers}>
