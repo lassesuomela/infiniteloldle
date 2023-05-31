@@ -4,24 +4,6 @@ networks:
   mynetwork:
 
 services:
-  loldle-frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    image: loldle-frontend:latest
-    container_name: loldle-frontend
-    depends_on:
-      - loldle-api
-    ports:
-      - 80:80
-      - 443:443
-    restart: unless-stopped
-    volumes:
-      - /root/infiniteloldle/frontend/infiniteloldle.com.pem:/root/infiniteloldle/frontend/infiniteloldle.com.pem
-      - /root/infiniteloldle/frontend/infiniteloldle.com.key:/root/infiniteloldle/frontend/infiniteloldle.com.key
-    networks:
-      - mynetwork
-
   loldle-api:
     build:
       context: .
@@ -55,7 +37,7 @@ services:
       start_period: 5s
       interval: 5s
       timeout: 5s
-      retries: 55
+      retries: 10
     networks:
       - mynetwork
 

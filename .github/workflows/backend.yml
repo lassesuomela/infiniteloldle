@@ -9,46 +9,42 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    env:
-      DB_HOST: 127.0.0.1
-      DB_USERNAME: root
-      DB_PASSWORD: 73d31c80-68ab-4ea2-8c79-ee18e64af3ff
-      DB_DATABASE: loldle
-      TOKEN: 85af92c5-e8d9-4936-8603-bf3a6354da57
-      NODE_ENV: dev
-      ENV: dev
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Create env file
+        run: |
+          touch backend/.env
+          echo DB_HOST=${{ secrets.TEST_DB_HOST }} >> backend/.env
+          echo DB_USERNAME=${{ secrets.TEST_DB_USERNAME }} >> backend/.env
+          echo DB_PASSWORD=${{ secrets.TEST_DB_PASSWORD }} >> backend/.env
+          echo DB_DATABASE=${{ secrets.TEST_DB_DATABASE }} >> backend/.env
+          echo TOKEN=${{ secrets.TEST_TOKEN }} >> backend/.env
+          echo NODE_ENV=${{ secrets.TEST_NODE_ENV }} >> backend/.env
+          echo ENV=${{ secrets.TEST_ENV }} >> backend/.env
+          cat backend/.env
+
       - name: Set up Docker Compose
         run: |
           sudo apt-get update
-          sudo apt-get -y install docker-compose
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
 
-      - name: Build and run Docker Compose
+      - name: Build and run Docker containers
         run: |
-          docker-compose -f backend/docker-compose.yml up --build -d
+          docker-compose -f backend/docker-compose.test.yml up --build -d
 
       - name: Wait for services to start
         run: |
-          sleep 10
+          sleep 20
 
-      - name: Run npm tests in Docker container
-        id: test
+      - name: Run tests and check status
+        id: tests
         run: |
-          docker-compose -f backend/docker-compose.yml exec loldle-api npm test || echo "::set-output name=result::failed"
+          docker exec loldle-api npm test
 
       - name: Stop and remove containers
         run: |
-          docker-compose -f backend/docker-compose.yml down
-
-      - name: Check test result
-        run: |
-          if [[ "${{ steps.test.outputs.result }}" == "failed" ]]; then
-            echo "Tests failed!"
-            exit 1
-          else
-            echo "Tests passed!"
-          fi
+          docker-compose -f backend/docker-compose.test.yml down
