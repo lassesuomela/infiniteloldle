@@ -33,7 +33,7 @@ export default function Victory(props) {
                       ? "/old_items/"
                       : "/champions/") +
                     props.championKey +
-                    ".png"
+                    ".webp"
                   }
                   alt={props.champion}
                   className="pb-3"
