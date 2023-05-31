@@ -47,7 +47,7 @@ export default function Game() {
       .then((response) => {
         if (response.data.status === "success") {
           if (response.data.result) {
-            const url = "/old_items/" + response.data.result + ".png";
+            const url = "/old_items/" + response.data.result + ".webp";
             setSpriteUrl(url);
           }
         }
