@@ -5,6 +5,15 @@ on:
     branches:
       - main
 
+env:
+  DB_HOST: ${{ secrets.TEST_DB_HOST }}
+  DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+  DB_DATABASE: ${{ secrets.TEST_DB_DATABASE }}
+  TOKEN: ${{ secrets.TEST_TOKEN }}
+  NODE_ENV: ${{ secrets.TEST_NODE_ENV }}
+  ENV: ${{ secrets.TEST_ENV }}
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -31,6 +40,14 @@ jobs:
       - name: Check status
         run: |
           docker ps
+
+      - name: Check status api
+        run: |
+          docker logs loldle-api
+
+      - name: Check status mysql
+        run: |
+          docker logs loldle-mysql
 
       - name: Run tests and check status
         id: tests
