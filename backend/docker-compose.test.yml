@@ -7,7 +7,7 @@ services:
   loldle-api:
     build:
       context: .
-      dockerfile: Dockerfile.test
+      dockerfile: Dockerfile
     image: loldle-api:latest
     container_name: loldle-api
     ports:
