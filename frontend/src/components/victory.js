@@ -27,7 +27,11 @@ export default function Victory(props) {
 
                 <img
                   src={
-                    (props.isItem ? "/items/" : "/champions/") +
+                    (props.isItem
+                      ? "/items/"
+                      : props.isOldItem
+                      ? "/old_items/"
+                      : "/champions/") +
                     props.championKey +
                     ".webp"
                   }
