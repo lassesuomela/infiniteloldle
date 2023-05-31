@@ -11,7 +11,7 @@ export default function OldItemImg(props) {
       <img
         id="itemImg"
         key={props.itemId}
-        src={"/old_items/" + props.itemId + ".png"}
+        src={"/old_items/" + props.itemId + ".webp"}
         alt={props.name}
         className="championData mx-auto"
       />
