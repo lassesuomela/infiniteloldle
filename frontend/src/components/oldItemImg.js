@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ChampionDetails(props) {
+export default function OldItemImg(props) {
   return (
     <div
       className={
@@ -9,10 +9,10 @@ export default function ChampionDetails(props) {
       }
     >
       <img
-        id="championImg"
-        key={props.championKey}
-        src={"/champions/" + props.championKey + ".webp"}
-        alt={props.championKey}
+        id="itemImg"
+        key={props.itemId}
+        src={"/old_items/" + props.itemId + ".png"}
+        alt={props.name}
         className="championData mx-auto"
       />
     </div>

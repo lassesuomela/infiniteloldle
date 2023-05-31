@@ -51,6 +51,10 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
 - `cd ./backend`
 - run `npm test`
 
+## Code coverage
+
+![Code coverage](screenshots/backend_coverage.png)
+
 ---
 ## Screenshots below from the site
 

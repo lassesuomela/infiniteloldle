@@ -3,7 +3,7 @@ import axios from "axios";
 import Select from "react-select";
 import NewUser from "./newUser";
 import Victory from "./victory";
-import ItemImg from "./itemImg";
+import OldItemImg from "./oldItemImg";
 import Config from "../configs/config";
 
 export default function Game() {
@@ -26,7 +26,7 @@ export default function Game() {
 
   const FetchItems = () => {
     axios
-      .get(Config.url + "/items")
+      .get(Config.url + "/oldItems")
       .then((response) => {
         if (response.data.status === "success") {
           const data = response.data.items;
@@ -41,13 +41,13 @@ export default function Game() {
 
   const FetchItemImage = () => {
     axios
-      .get(Config.url + "/item", {
+      .get(Config.url + "/oldItem", {
         headers: { authorization: "Bearer " + localStorage.getItem("token") },
       })
       .then((response) => {
         if (response.data.status === "success") {
           if (response.data.result) {
-            const url = "/items/" + response.data.result + ".webp";
+            const url = "/old_items/" + response.data.result + ".png";
             setSpriteUrl(url);
           }
         }
@@ -74,7 +74,7 @@ export default function Game() {
 
     axios
       .post(
-        Config.url + "/item",
+        Config.url + "/oldItem",
         { guess: currentGuess },
         {
           headers: { authorization: "Bearer " + localStorage.getItem("token") },
@@ -128,7 +128,7 @@ export default function Game() {
 
   return (
     <div className="container main pt-4 pb-5 mb-5">
-      <h3 className="text-center pb-3">Which item is this?</h3>
+      <h3 className="text-center pb-3">Which removed item is this?</h3>
 
       {!isValidToken ? <NewUser /> : ""}
 
@@ -176,7 +176,7 @@ export default function Game() {
 
       <div id="championsImgs" className="container">
         {champions.map((item) => (
-          <ItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
+          <OldItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
         ))}
       </div>
 
@@ -186,7 +186,7 @@ export default function Game() {
           championKey={champions[0][0]}
           champion={currentGuess}
           tries={guesses.length}
-          isItem={true}
+          isOldItem={true}
         />
       ) : (
         ""

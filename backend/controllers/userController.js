@@ -1,6 +1,7 @@
 const user = require("../models/userModel");
 const champion = require("../models/championModel");
 const item = require("../models/itemModel");
+const oldItem = require("../models/oldItemModel");
 const crypto = require("crypto");
 const geoip = require("geoip-lite");
 const cache = require("../middleware/cache");
@@ -75,27 +76,44 @@ const Create = (req, res) => {
 
           const randomSprite = sprites[randomSpriteId];
 
-          const userData = {
-            nickname: nickname,
-            token: token,
-            currentChampion: currentChampion["id"],
-            currentSplashChampion: currentSplashChampion["id"],
-            currentSplashId: parseInt(randomSprite),
-            timestamp: new Date().toLocaleDateString("en"),
-            country: country,
-            currentItemId: currentItemId["itemId"],
-          };
-
-          user.create(userData, (err, result) => {
+          oldItem.getAllIds((err, oldItemData) => {
             if (err) {
               console.log(err);
               return res.json({
                 status: "error",
-                message: "Error on fetching ids",
+                message: "Error on fetching old item ids",
               });
             }
 
-            res.json({ status: "success", token: token });
+            const randomOldItemIdx = Math.floor(
+              Math.random() * oldItemData.length
+            );
+
+            const currentOldItemId = oldItemData[randomOldItemIdx];
+
+            const userData = {
+              nickname: nickname,
+              token: token,
+              currentChampion: currentChampion["id"],
+              currentSplashChampion: currentSplashChampion["id"],
+              currentSplashId: parseInt(randomSprite),
+              timestamp: new Date().toLocaleDateString("en"),
+              country: country,
+              currentItemId: currentItemId["itemId"],
+              currentOldItemId: currentOldItemId["id"],
+            };
+
+            user.create(userData, (err, result) => {
+              if (err) {
+                console.log(err);
+                return res.json({
+                  status: "error",
+                  message: "Error on fetching ids",
+                });
+              }
+
+              res.json({ status: "success", token: token });
+            });
           });
         });
       });
