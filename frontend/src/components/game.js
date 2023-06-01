@@ -102,10 +102,12 @@ export default function Game() {
   return (
     <div className="container main pt-4 pb-5 mb-5">
       <Helmet>
-        <title>Infiniteloldle - LoL quiz - Champion game</title>
+        <title>
+          Infiniteloldle - Ultimate LoL quiz - Champion guessing game
+        </title>
         <meta
           name="description"
-          content="Infiniteloldle.com - Guess League of Legends champions infinitely."
+          content="The ultimate quiz game for League of Legends enthusiasts. Guess League of Legends champions infinitely."
         />
       </Helmet>
 
