@@ -1,4 +1,4 @@
-name: Build Docker Compose and run backend Tests
+name: Build containers and run backend tests
 
 on:
   pull_request:
