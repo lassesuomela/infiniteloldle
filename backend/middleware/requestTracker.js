@@ -25,7 +25,7 @@ const track = (req, res, next) => {
 };
 
 const saveStats = () => {
-  // save to db at 00:00
+  // save to db at 23:55
   console.log("Saving to db");
 
   statsModel.getUsersAndPlayers((err, data2) => {

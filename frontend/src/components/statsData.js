@@ -37,9 +37,9 @@ export default function StatsData() {
           global_skin_count: response.data.global_skin_count,
           player_stats: response.data.player_stats,
           todays_player_count: response.data.todays_player_count,
+          user_data: response.data.user_data,
         };
 
-        console.log(data);
         setOtherStat(data);
       })
       .catch((error) => {
@@ -69,12 +69,23 @@ export default function StatsData() {
     };
   });
 
+  const userData = otherStat.user_data.map((stat) => {
+    return {
+      date: new Date(stat.date).toLocaleDateString(undefined, {
+        month: "numeric",
+        day: "numeric",
+      }),
+      Users: stat.users,
+      Players: stat.players,
+    };
+  });
+
   return (
     <>
       <h3 className="text-center pb-3 pt-4">Statistics</h3>
       <div className="d-grid justify-content-center text-center card p-5">
         <h4 className="text-center pb-3 pt-4">Database</h4>
-        <div className="d-flex justify-content-between pt-4 pb-4">
+        <div className="d-flex justify-content-between">
           <div>
             <h5>Registered users</h5>
             <p>{otherStat.register_count}</p>
@@ -88,12 +99,22 @@ export default function StatsData() {
             <p>{otherStat.todays_player_count}</p>
           </div>
           <div>
+            <h5>DAU/MAU</h5>
+            <p>tbd</p>
+          </div>
+        </div>
+        <div className="d-flex justify-content-between pt-4 pb-4">
+          <div>
+            <h5>Champion count</h5>
+            <p>{otherStat.champion_count}</p>
+          </div>
+          <div>
             <h5>Item count</h5>
             <p>{otherStat.item_count}</p>
           </div>
           <div>
-            <h5>Champion count</h5>
-            <p>{otherStat.champion_count}</p>
+            <h5>Old item count</h5>
+            <p>tbd</p>
           </div>
           <div>
             <h5>Skin count</h5>
@@ -148,13 +169,13 @@ export default function StatsData() {
         </div>
         <h4>Users and players from past 30 days</h4>
         <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={newPlayers}>
+          <LineChart width={1000} height={500} data={userData}>
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="players" stroke="#82ca9d" />
-            <Line type="monotone" dataKey="users" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="Players" stroke="#005A82" />
+            <Line type="monotone" dataKey="Users" stroke="#0397AB" />
           </LineChart>
         </div>
         <h4>Newest players from today</h4>
