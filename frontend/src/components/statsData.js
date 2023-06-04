@@ -38,6 +38,8 @@ export default function StatsData() {
           player_stats: response.data.player_stats,
           todays_player_count: response.data.todays_player_count,
           user_data: response.data.user_data,
+          dau: response.data.dau,
+          mau: response.data.mau,
         };
 
         setOtherStat(data);
@@ -100,7 +102,7 @@ export default function StatsData() {
           </div>
           <div>
             <h5>DAU/MAU</h5>
-            <p>tbd</p>
+            <p>{((otherStat.dau / otherStat.mau) * 100).toFixed(2)} %</p>
           </div>
         </div>
         <div className="d-flex justify-content-between pt-4 pb-4">
