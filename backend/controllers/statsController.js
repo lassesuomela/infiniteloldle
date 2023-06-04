@@ -58,6 +58,7 @@ const GetAll = (req, res) => {
       user_data: result[10].reverse(),
       dau: result[0].reverse()[0].dau,
       mau: mau,
+      old_item_count: result[11][0].old_item_count,
     };
 
     cache.saveCache(key, response);

@@ -40,6 +40,7 @@ export default function StatsData() {
           user_data: response.data.user_data,
           dau: response.data.dau,
           mau: response.data.mau,
+          old_item_count: response.data.old_item_count,
         };
 
         setOtherStat(data);
@@ -116,7 +117,7 @@ export default function StatsData() {
           </div>
           <div>
             <h5>Old item count</h5>
-            <p>tbd</p>
+            <p>{otherStat.old_item_count}</p>
           </div>
           <div>
             <h5>Skin count</h5>
