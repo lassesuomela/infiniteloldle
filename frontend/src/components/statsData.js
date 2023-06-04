@@ -15,21 +15,21 @@ import {
 } from "recharts";
 
 export default function StatsData() {
-  const [stats, setStats] = useState([]);
   const [otherStat, setOtherStat] = useState([]);
   const [newPlayers, setNewPlayers] = useState([]);
   const [playerCountries, setPlayerCountries] = useState([]);
+  const [userData, setUserData] = useState([]);
+  const [data, setData] = useState([]);
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
     axios
       .get(Config.url + "/stats")
       .then((response) => {
-        setStats(response.data.stats);
         setNewPlayers(response.data.todays_players);
         setPlayerCountries(response.data.top_countries);
 
-        const data = {
+        const otherStats = {
           register_count: response.data.register_count,
           player_count: response.data.player_count,
           item_count: response.data.item_count,
@@ -43,7 +43,33 @@ export default function StatsData() {
           old_item_count: response.data.old_item_count,
         };
 
-        setOtherStat(data);
+        setOtherStat(otherStats);
+
+        const data = response.data.stats.map((stat) => {
+          return {
+            date: new Date(stat.date).toLocaleDateString(undefined, {
+              month: "numeric",
+              day: "numeric",
+            }),
+            DAU: stat.dau,
+            Requests: stat.requests,
+          };
+        });
+
+        setData(data);
+
+        const userData = otherStats.user_data.map((stat) => {
+          return {
+            date: new Date(stat.date).toLocaleDateString(undefined, {
+              month: "numeric",
+              day: "numeric",
+            }),
+            Users: stat.users,
+            Players: stat.players,
+          };
+        });
+
+        setUserData(userData);
       })
       .catch((error) => {
         console.log(error);
@@ -60,28 +86,6 @@ export default function StatsData() {
       </>
     );
   }
-
-  const data = stats.map((stat) => {
-    return {
-      date: new Date(stat.date).toLocaleDateString(undefined, {
-        month: "numeric",
-        day: "numeric",
-      }),
-      DAU: stat.dau,
-      Requests: stat.requests,
-    };
-  });
-
-  const userData = otherStat.user_data.map((stat) => {
-    return {
-      date: new Date(stat.date).toLocaleDateString(undefined, {
-        month: "numeric",
-        day: "numeric",
-      }),
-      Users: stat.users,
-      Players: stat.players,
-    };
-  });
 
   return (
     <>
