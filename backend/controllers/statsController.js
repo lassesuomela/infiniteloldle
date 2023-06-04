@@ -38,6 +38,11 @@ const GetAll = (req, res) => {
       }
     });
 
+    let mau = 0;
+    result[0].forEach((count) => {
+      mau += count["dau"];
+    });
+
     const response = {
       status: "success",
       stats: result[0].reverse(),
@@ -50,7 +55,10 @@ const GetAll = (req, res) => {
       todays_players: result[7],
       todays_player_count: result[9][0].count,
       top_countries: countries,
-      user_data: result[10],
+      user_data: result[10].reverse(),
+      dau: result[0].reverse()[0].dau,
+      mau: mau,
+      old_item_count: result[11][0].old_item_count,
     };
 
     cache.saveCache(key, response);
