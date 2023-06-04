@@ -102,6 +102,10 @@ export default function StatsData() {
             <p>{otherStat.todays_player_count}</p>
           </div>
           <div>
+            <h5>MAU</h5>
+            <p>{otherStat.mau}</p>
+          </div>
+          <div>
             <h5>DAU/MAU</h5>
             <p>{((otherStat.dau / otherStat.mau) * 100).toFixed(2)} %</p>
           </div>
