@@ -37,6 +37,7 @@ export default function StatsData() {
           global_skin_count: response.data.global_skin_count,
           player_stats: response.data.player_stats,
           todays_player_count: response.data.todays_player_count,
+          yesterdays_player_count: response.data.yesterdays_player_count,
           user_data: response.data.user_data,
           dau: response.data.dau,
           mau: response.data.mau,
@@ -104,6 +105,10 @@ export default function StatsData() {
           <div>
             <h5>Registered today</h5>
             <p>{otherStat.todays_player_count}</p>
+          </div>
+          <div>
+            <h5>Registered yesterday</h5>
+            <p>{otherStat.yesterdays_player_count}</p>
           </div>
           <div>
             <h5>MAU</h5>

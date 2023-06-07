@@ -22,6 +22,7 @@ describe("Testing stats routes", () => {
         expect(res.body).toHaveProperty("dau");
         expect(res.body).toHaveProperty("mau");
         expect(res.body).toHaveProperty("old_item_count");
+        expect(res.body).toHaveProperty("yesterdays_player_count");
 
         done();
       });
