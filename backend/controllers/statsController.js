@@ -54,6 +54,7 @@ const GetAll = (req, res) => {
       player_stats: result[6].reverse(),
       todays_players: result[7].reverse(),
       todays_player_count: result[9][0].count,
+      yesterdays_player_count: result[12][0].count,
       top_countries: countries,
       user_data: result[10].reverse(),
       dau: result[0].reverse()[0].dau,
