@@ -45,14 +45,14 @@ const GetAll = (req, res) => {
 
     const response = {
       status: "success",
-      stats: result[0].reverse(),
+      stats: result[0],
       register_count: result[1][0].user_count,
       player_count: result[2][0].player_count,
       item_count: result[3][0].item_count,
       champion_count: result[4][0].champion_count,
       global_skin_count: globalSkinCount,
-      player_stats: result[6],
-      todays_players: result[7],
+      player_stats: result[6].reverse(),
+      todays_players: result[7].reverse(),
       todays_player_count: result[9][0].count,
       top_countries: countries,
       user_data: result[10].reverse(),

@@ -8,7 +8,6 @@ describe("Testing stats routes", () => {
 
       .then((res) => {
         expect(res.body.status).toBe("success");
-
         expect(res.body).toHaveProperty("champion_count");
         expect(res.body).toHaveProperty("global_skin_count");
         expect(res.body).toHaveProperty("item_count");
@@ -19,6 +18,10 @@ describe("Testing stats routes", () => {
         expect(res.body).toHaveProperty("todays_player_count");
         expect(res.body).toHaveProperty("todays_players");
         expect(res.body).toHaveProperty("top_countries");
+        expect(res.body).toHaveProperty("user_data");
+        expect(res.body).toHaveProperty("dau");
+        expect(res.body).toHaveProperty("mau");
+        expect(res.body).toHaveProperty("old_item_count");
 
         done();
       });
