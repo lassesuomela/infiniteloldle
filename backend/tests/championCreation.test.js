@@ -73,11 +73,8 @@ describe("Testing champion data insertion to db", () => {
       .send(body)
 
       .then((res) => {
-        console.log(res.body);
-
         expect(res.body.status).toBe("success");
         expect(res.body).toHaveProperty("message");
-
         done();
       });
   });
