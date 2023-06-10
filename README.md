@@ -39,6 +39,7 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
   - `DB_DATABASE=loldle`
   - `TOKEN=some_secret_token_for_jwt_auth` # used only for importing data to database
   - `NODE_ENV=dev` # used only for importing data to database
+  - `ENV=dev` # used only for importing data to database
 - run `npm start` and the backend is running at [http://localhost:8081](http://localhost:8081)
 ---
 ## How to run frontend
