@@ -10,7 +10,6 @@
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
 [![Build](https://github.com/lassesuomela/infiniteloldle/actions/workflows/node.js.yml/badge.svg)](https://github.com/lassesuomela/infiniteloldle/actions/workflows/node.js.yml)
-[![Build containers and run backend tests](https://github.com/lassesuomela/infiniteloldle/actions/workflows/backend.yml/badge.svg)](https://github.com/lassesuomela/infiniteloldle/actions/workflows/backend.yml)
 ![Demo website](https://img.shields.io/website?down_message=Offline&label=Demo&up_message=Online&url=https%3A%2F%2Finfiniteloldle.com)
 
 ---
