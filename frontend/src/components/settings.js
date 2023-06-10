@@ -94,6 +94,22 @@ export default function Settings() {
                 </div>
               </div>
 
+              <h4 className="p-2">Change current guess targets</h4>
+              <div className="pb-4 d-flex justify-content-center gap-2">
+                <button onClick={null} className="btn btn-warning mb-2">
+                  Champion
+                </button>
+                <button onClick={null} className="btn btn-warning mb-2">
+                  Splash art
+                </button>
+                <button onClick={null} className="btn btn-warning mb-2">
+                  Item
+                </button>
+                <button onClick={null} className="btn btn-warning mb-2">
+                  Removed item
+                </button>
+              </div>
+
               <h4 className="p-2">Delete your account</h4>
               <div className="pb-4">
                 <button onClick={DeleteUser} className="btn btn-danger mb-2">
