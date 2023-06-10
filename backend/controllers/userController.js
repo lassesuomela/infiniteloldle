@@ -5,6 +5,7 @@ const oldItem = require("../models/oldItemModel");
 const crypto = require("crypto");
 const geoip = require("geoip-lite");
 const cache = require("../middleware/cache");
+const oldItemModel = require("../models/oldItemModel");
 
 const Create = (req, res) => {
   crypto.randomBytes(46, (err, token) => {
@@ -242,10 +243,306 @@ const DeleteUser = (req, res) => {
   });
 };
 
+const ChangeChampionGuess = (req, res) => {
+  const token = req.token;
+  champion.getAllIds((err, data) => {
+    if (err) {
+      console.log(err);
+      return res.json({
+        status: "error",
+        message: "Error on fetching champions ids",
+      });
+    }
+
+    user.fetchByToken(token, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.json({
+          status: "error",
+          message: "Error on fetching data with the token provided",
+        });
+      }
+
+      let solvedChampions = result[0]["solvedChampions"];
+      let solvedChamps, champPool;
+
+      if (solvedChampions) {
+        if (
+          solvedChampions.length > 1 &&
+          solvedChampions.split(",").length > 1 &&
+          solvedChampions.split(",").length < data.length
+        ) {
+          solvedChamps = solvedChampions.split(",");
+        } else {
+          solvedChamps = solvedChampions.toString();
+        }
+
+        // remove solved champs from the all champions pool
+        champPool = data.filter((id) => {
+          return !solvedChamps.includes(id["id"].toString());
+        });
+      } else {
+        champPool = data.map((id) => {
+          return id;
+        });
+      }
+
+      const random = Math.floor(Math.random() * champPool.length);
+
+      const newChampion = champPool[random];
+
+      let payload = {
+        currentChampion: newChampion["id"],
+        solvedChampions: solvedChampions,
+        prestige: result[0]["prestige"],
+        score: result[0]["score"],
+        token: token,
+      };
+
+      user.update(payload, (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.json({
+            status: "error",
+            message: "Error on updating user data",
+          });
+        }
+
+        res.json({
+          status: "success",
+          message: "Changed guess to champion game",
+        });
+      });
+    });
+  });
+};
+
+const ChangeSplashGuess = (req, res) => {
+  const token = req.token;
+  champion.getAllIds((err, data) => {
+    if (err) {
+      console.log(err);
+      return res.json({
+        status: "error",
+        message: "Error on fetching champions ids",
+      });
+    }
+
+    user.fetchByToken(token, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.json({
+          status: "error",
+          message: "Error on fetching data with the token provided",
+        });
+      }
+
+      let solvedChampions = result[0]["solvedChampions"];
+      let solvedChamps, champPool;
+
+      if (solvedChampions) {
+        if (
+          solvedChampions.length > 1 &&
+          solvedChampions.split(",").length > 1 &&
+          solvedChampions.split(",").length < data.length
+        ) {
+          solvedChamps = solvedChampions.split(",");
+        } else {
+          solvedChamps = solvedChampions.toString();
+        }
+
+        // remove solved champs from the all champions pool
+        champPool = data.filter((id) => {
+          return !solvedChamps.includes(id["id"].toString());
+        });
+      } else {
+        champPool = data.map((id) => {
+          return id;
+        });
+      }
+
+      const random = Math.floor(Math.random() * champPool.length);
+
+      const newChampion = champPool[random];
+
+      let payload = {
+        currentChampion: newChampion["id"],
+        solvedChampions: solvedChampions,
+        prestige: result[0]["prestige"],
+        score: result[0]["score"],
+        token: token,
+      };
+
+      user.update(payload, (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.json({
+            status: "error",
+            message: "Error on updating user data",
+          });
+        }
+
+        res.json({
+          status: "success",
+          message: "Changed guess to champion game",
+        });
+      });
+    });
+  });
+};
+const ChangeItemGuess = (req, res) => {
+  const token = req.token;
+  champion.getAllIds((err, data) => {
+    if (err) {
+      console.log(err);
+      return res.json({
+        status: "error",
+        message: "Error on fetching champions ids",
+      });
+    }
+
+    user.fetchByToken(token, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.json({
+          status: "error",
+          message: "Error on fetching data with the token provided",
+        });
+      }
+
+      let solvedChampions = result[0]["solvedChampions"];
+      let solvedChamps, champPool;
+
+      if (solvedChampions) {
+        if (
+          solvedChampions.length > 1 &&
+          solvedChampions.split(",").length > 1 &&
+          solvedChampions.split(",").length < data.length
+        ) {
+          solvedChamps = solvedChampions.split(",");
+        } else {
+          solvedChamps = solvedChampions.toString();
+        }
+
+        // remove solved champs from the all champions pool
+        champPool = data.filter((id) => {
+          return !solvedChamps.includes(id["id"].toString());
+        });
+      } else {
+        champPool = data.map((id) => {
+          return id;
+        });
+      }
+
+      const random = Math.floor(Math.random() * champPool.length);
+
+      const newChampion = champPool[random];
+
+      let payload = {
+        currentChampion: newChampion["id"],
+        solvedChampions: solvedChampions,
+        prestige: result[0]["prestige"],
+        score: result[0]["score"],
+        token: token,
+      };
+
+      user.update(payload, (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.json({
+            status: "error",
+            message: "Error on updating user data",
+          });
+        }
+
+        res.json({
+          status: "success",
+          message: "Changed guess to champion game",
+        });
+      });
+    });
+  });
+};
+const ChangeoldItemGuess = (req, res) => {
+  const token = req.token;
+
+  // correct guess
+
+  oldItemModel.getAllIds((err, itemData) => {
+    if (err) {
+      console.log(err);
+      return res.json({
+        status: "error",
+        message: "Error on fetching item ids",
+      });
+    }
+
+    user.fetchByToken(token, (err, userResult) => {
+      if (err) {
+        console.log(err);
+        return res.json({
+          status: "error",
+          message: "Error on fetching data with the token provided",
+        });
+      }
+
+      let solvedItemIds = userResult[0]["solvedOldItemIds"];
+      let solvedItemsArray, itemPool;
+
+      if (solvedItemIds) {
+        if (solvedItemIds && solvedItemIds.length > 1) {
+          solvedItemsArray = solvedItemIds.split(",");
+        } else if (!solvedItemIds) {
+          solvedItemsArray = "";
+        } else {
+          solvedItemsArray = solvedItemIds.toString();
+        }
+        itemPool = itemData.filter((item) => {
+          return !solvedItemsArray.includes(item["id"].toString());
+        });
+      } else {
+        itemPool = itemData.map((item) => {
+          return item;
+        });
+      }
+
+      const random = Math.floor(Math.random() * itemPool.length);
+
+      const newItem = itemPool[random];
+
+      const payload = {
+        currentOldItemId: newItem["id"],
+        solvedOldItemIds: solvedItemsArray ? solvedItemsArray.toString() : null,
+        score: userResult[0]["score"],
+        prestige: userResult[0]["prestige"],
+        token: token,
+      };
+
+      user.updateOldItem(payload, (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.json({
+            status: "error",
+            message: "Error on updating user data",
+          });
+        }
+
+        res.json({
+          status: "success",
+          message: "Changed old item guess",
+        });
+      });
+    });
+  });
+};
 module.exports = {
   Create,
   CheckToken,
   ChangeNickname,
   DeleteUser,
   ChangeCountry,
+  ChangeChampionGuess,
+  ChangeSplashGuess,
+  ChangeItemGuess,
+  ChangeoldItemGuess,
 };
