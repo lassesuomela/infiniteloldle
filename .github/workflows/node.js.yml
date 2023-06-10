@@ -1,0 +1,95 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+
+jobs:
+        
+  Build-React:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup npm
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: ./frontend/package-lock.json
+    - run: npm ci
+      working-directory: ./frontend
+    - run: npm run build
+      working-directory: ./frontend
+
+  Build-Containers-Run-Tests:
+    needs: Build-React
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create env file
+        run: |
+          touch backend/.env
+          echo DB_HOST=${{ secrets.TEST_DB_HOST }} >> backend/.env
+          echo DB_USERNAME=${{ secrets.TEST_DB_USERNAME }} >> backend/.env
+          echo DB_PASSWORD=${{ secrets.TEST_DB_PASSWORD }} >> backend/.env
+          echo DB_DATABASE=${{ secrets.TEST_DB_DATABASE }} >> backend/.env
+          echo TOKEN=${{ secrets.TEST_TOKEN }} >> backend/.env
+          echo NODE_ENV=${{ secrets.TEST_NODE_ENV }} >> backend/.env
+          echo ENV=${{ secrets.TEST_ENV }} >> backend/.env
+          cat backend/.env
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
+      - name: Build and run Docker containers
+        run: |
+          docker-compose -f backend/docker-compose.test.yml up --build -d
+
+      - name: Wait for services to start
+        run: |
+          sleep 20
+
+      - name: Run tests and check status
+        id: tests
+        run: |
+          docker exec loldle-api npm test
+
+      - name: Stop and remove containers
+        run: |
+          docker-compose -f backend/docker-compose.test.yml down
+
+  Deploy:
+    needs: Build-Containers-Run-Tests
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Pull from GitHub, build images and run them
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.REMOTE_PORT }}
+        script: |
+          cd ${{ secrets.REMOTE_PATH }}
+          git pull
+          cd ./backend
+          chmod +x ./restart.sh
+          ./restart.sh
+          exit

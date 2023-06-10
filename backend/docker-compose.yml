@@ -1,0 +1,73 @@
+version: "3"
+
+networks:
+  mynetwork:
+
+services:
+  loldle-frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: loldle-frontend:latest
+    container_name: loldle-frontend
+    depends_on:
+      - loldle-api
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+    volumes:
+      - /root/infiniteloldle/frontend/infiniteloldle.com.pem:/root/infiniteloldle/frontend/infiniteloldle.com.pem
+      - /root/infiniteloldle/frontend/infiniteloldle.com.key:/root/infiniteloldle/frontend/infiniteloldle.com.key
+    networks:
+      - mynetwork
+    healthcheck:
+      test: nc -z -v localhost 80
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  loldle-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: loldle-api:latest
+    container_name: loldle-api
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    environment:
+      - DOCKER_APP_PORT=8080
+    networks:
+      - mynetwork
+    healthcheck:
+      test: wget -nv -t1 --spider http://localhost:8080
+      interval: 15s
+      timeout: 5s
+      retries: 1
+
+  loldle-mysql:
+    build:
+      context: ./mysql-docker
+      dockerfile: Dockerfile
+    image: loldle-mysql:latest
+    container_name: loldle-mysql
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - loldle-mysql:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$DB_PASSWORD
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mynetwork
+
+volumes:
+  loldle-mysql:

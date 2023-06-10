@@ -1,0 +1,36 @@
+
+#footer {
+    font-family: Spiegel;
+    padding-top: 0.5em;
+    background-color: white
+}
+
+.navbar {
+    background-color: #1E2328;
+    color: #F0E6D2;
+    font-size: 1.3em;
+}
+
+.navbar img {
+    min-height: 3vw;
+    max-height: 5vh;
+    padding-right: 1em;
+}
+
+#about a, #disclaimer a, #privacy a {
+    color:#010A13;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#legal li {
+    font-family: Spiegel;
+}
+
+.navbar-dark .navbar-nav .nav-link, .darkBtn {
+    color:#fff;
+}
+
+.navbar-brand {
+    font-size: 1.4em;
+}

@@ -1,0 +1,309 @@
+span {
+    font-family: Spiegel;
+    font-size: 1.2em;
+    margin: auto;
+}
+
+p, small {
+    font-family: Spiegel;
+}
+
+.playerCount {
+    display: flex;
+    justify-content: space-between;
+}
+
+.playerCount h5 {
+    font-size: 1.1em;
+}
+
+.playerCount span {
+    font-family: "Beaufort for LOL";
+    font-size: 1em;
+}
+
+.main {
+    padding-bottom: 8em;
+}
+
+.breakWord {
+    word-spacing: 100vw;
+}
+
+.championData {
+    border: 0.1em solid #010A13;
+    box-shadow: inset 0 0 0.6em #010A13;
+    display: flex;
+}
+
+.championData:first-child{
+    width: 10ch;
+}
+
+.correct{
+    background-color: #28a745;
+}
+
+.partial {
+    background-color: #ffc107;
+}
+
+.incorrect {
+    background-color: #dc3545;
+}
+
+.incorrect-greater {
+    background-image: linear-gradient(#28a745, 60%, #dc3545);
+}
+
+.incorrect-less {
+    background-image: linear-gradient(#dc3545, 60%, #28a745);
+}
+
+.victory{
+    display: flex;
+    justify-content: center;
+}
+
+.victory p {
+    font-size: 1.4em;
+}
+
+.victory > .card {
+    color: #fff;
+    background-image: linear-gradient(#408140, #5cb85c);
+}
+
+.victory .smaller {
+    font-size: 1.1em;
+}
+
+.transparentModal .modal-header {
+    border: none;
+}
+
+.transparentModal .modal-content {
+    background-color: transparent;
+    border: none;
+}
+
+.regionText {
+    white-space: pre;
+}
+
+.demo {
+    width: 4vw;
+    height: 4vw;
+    border: 0.1em solid #010A13;
+    box-shadow: inset 0 0 0.6em #010A13;
+}
+
+.demoCorrect {
+    background-color: #28a745;
+}
+
+.demoPartial {
+    background-color: #ffc107;
+}
+
+.demoIncorrect {
+    background-color: #dc3545;
+}
+
+.demoInoccrectGreater {
+    background-image: linear-gradient(#28a745, 60%, #dc3545);
+}
+
+.demoInoccrectLess {
+    background-image: linear-gradient(#dc3545, 60%, #28a745);
+}
+
+#championsImgs {
+    max-width: 25vw;
+}
+
+#spriteContainer {
+    width: 40vw;
+    height: auto;
+}
+
+#spriteContainer img, #itemContainer img{
+    width:100%;
+}
+
+#itemContainer {
+    width: 30vw;
+    height: auto;
+}
+
+.darkBtn {
+    background-color: #1E2328;
+}
+
+.scoreboard {
+    width: 75%;
+    padding: 3em 3em;
+    padding-bottom: 1em;
+}
+
+@media only screen and (min-width: 600px) {
+
+    .container, .container-md, .container-sm {
+        max-width: 100vw;
+    }
+
+    .scoreboard {
+        width: 100%;
+        padding: 2em 2em;
+    }
+
+    #itemContainer {
+        width: 40vw;
+        height: auto;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+
+    #gameTitle, .championData {
+        font-size: 0.9em;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    .championData:first-child{
+        max-width: 7.5ch;
+    }
+
+    #guess-form {
+        width: 45%;
+    }
+
+    .col-1, .col-2 {
+        padding: 0em;
+    }
+
+    .container, .container-md, .container-sm {
+        max-width: 90vw;
+    }
+
+    .transparentModal .card {
+        width: 100%;
+    }
+
+    #spriteContainer {
+        width: 40vw;
+        height: auto;
+    }
+
+    #itemContainer {
+        width: 40vw;
+        height: auto;
+    }
+
+    #championsImgs {
+        max-width: 20vw;
+    }
+
+    .scoreboard {
+        width: 90%;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    .championData:first-child{
+        max-width: 7.5ch;
+    }
+
+    #gameTitle, .championData {
+        font-size: 0.9em;
+    }
+
+    #guess-form {
+        width: 40%;
+    }
+
+    .transparentModal .card {
+        width: 75%;
+    }
+
+    #spriteContainer {
+        width: 40vw;
+        height: auto;
+    }
+
+    #itemContainer {
+        width: 30vw;
+        height: auto;
+    }
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1400px){
+    .championData:first-child{
+        max-width: 8.5ch;
+    }
+
+    #guess-form {
+        width: 35%;
+    }
+
+    #gameTitle, .championData {
+        font-size: 1em;
+    }
+
+    .transparentModal .card {
+        width: 75%;
+    }
+
+    #spriteContainer {
+        width: 40vw;
+        height: auto;
+    }
+
+    #itemContainer {
+        width: 30vw;
+        height: auto;
+    }
+
+    #championsImgs {
+        max-width: 10vw;
+    }
+}
+
+@media only screen and (min-width: 1400px) {
+    .championData:first-child{
+        max-width: 10ch;
+    }
+
+    #guess-form {
+        width: 30%;
+    }
+
+    .container, .container-md, .container-sm {
+        max-width: 70vw;
+    }
+
+    #gameTitle, .championData {
+        font-size: 1.1em;
+    }
+
+    .transparentModal .card {
+        width: 75%;
+    }
+
+    #spriteContainer {
+        width: 30vw;
+        height: auto;
+    }
+
+    #itemContainer {
+        width: 20vw;
+        height: auto;
+    }
+
+    #championsImgs {
+        max-width: 12vw;
+    }
+}
