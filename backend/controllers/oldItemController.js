@@ -107,7 +107,9 @@ const GuessItem = (req, res) => {
 
           const payload = {
             currentOldItemId: newItem["id"],
-            solvedOldItemIds: solvedItemsArray.toString(),
+            solvedOldItemIds: solvedItemsArray
+              ? solvedItemsArray.toString()
+              : null,
             score: (userResult[0]["score"] += 1),
             prestige: userResult[0]["prestige"],
             token: token,

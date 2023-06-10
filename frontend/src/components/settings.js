@@ -52,6 +52,42 @@ export default function Settings() {
       });
   };
 
+  const ChangeGuessChampion = () => {
+    ChangeGuess("champion");
+  };
+
+  const ChangeGuessSplash = () => {
+    ChangeGuess("splash");
+  };
+
+  const ChangeGuessItem = () => {
+    ChangeGuess("item");
+  };
+
+  const ChangeGuessOldItem = () => {
+    ChangeGuess("oldItem");
+  };
+
+  const ChangeGuess = (type) => {
+    axios
+      .put(
+        Config.url + "/user/" + type,
+        {},
+        {
+          headers: { authorization: "Bearer " + localStorage.getItem("token") },
+        }
+      )
+      .then((response) => {
+        if (response.data.status === "success") {
+          console.log(response.data);
+          ToggleState();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <>
       <div className="d-flex justify-content-end">
@@ -96,16 +132,28 @@ export default function Settings() {
 
               <h4 className="p-2">Change current guess targets</h4>
               <div className="pb-4 d-flex justify-content-center gap-2">
-                <button onClick={null} className="btn btn-warning mb-2">
+                <button
+                  onClick={ChangeGuessChampion}
+                  className="btn btn-warning mb-2"
+                >
                   Champion
                 </button>
-                <button onClick={null} className="btn btn-warning mb-2">
+                <button
+                  onClick={ChangeGuessSplash}
+                  className="btn btn-warning mb-2"
+                >
                   Splash art
                 </button>
-                <button onClick={null} className="btn btn-warning mb-2">
+                <button
+                  onClick={ChangeGuessItem}
+                  className="btn btn-warning mb-2"
+                >
                   Item
                 </button>
-                <button onClick={null} className="btn btn-warning mb-2">
+                <button
+                  onClick={ChangeGuessOldItem}
+                  className="btn btn-warning mb-2"
+                >
                   Removed item
                 </button>
               </div>
