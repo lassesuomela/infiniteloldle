@@ -21,6 +21,11 @@ services:
       - /root/infiniteloldle/frontend/infiniteloldle.com.key:/root/infiniteloldle/frontend/infiniteloldle.com.key
     networks:
       - mynetwork
+    healthcheck:
+      test: nc -z -v localhost 80
+      interval: 15s
+      timeout: 5s
+      retries: 10
 
   loldle-api:
     build:
@@ -35,6 +40,11 @@ services:
       - DOCKER_APP_PORT=8080
     networks:
       - mynetwork
+    healthcheck:
+      test: wget -nv -t1 --spider http://localhost:8080
+      interval: 15s
+      timeout: 5s
+      retries: 1
 
   loldle-mysql:
     build:
@@ -52,10 +62,10 @@ services:
       - loldle-mysql:/var/lib/mysql
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u root --password=$DB_PASSWORD
-      start_period: 5s
-      interval: 5s
+      start_period: 10s
+      interval: 10s
       timeout: 5s
-      retries: 55
+      retries: 10
     networks:
       - mynetwork
 
