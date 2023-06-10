@@ -5,13 +5,15 @@ import { Helmet } from "react-helmet";
 export default function ScoreBoard() {
   return (
     <>
-      <div className="container">
+      <div className="container pb-5">
         <Helmet>
           <title>Infiniteloldle - Statistics</title>
           <meta name="description" content="Infiniteloldle.com - Statistics" />
         </Helmet>
 
-        <StatsData />
+        <div className="pb-5">
+          <StatsData />
+        </div>
       </div>
     </>
   );
