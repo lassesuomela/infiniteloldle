@@ -44,6 +44,7 @@ export default function Settings() {
       .then((response) => {
         if (response.data.status === "success") {
           ToggleState();
+          localStorage.removeItem("token");
         }
       })
       .catch((error) => {
