@@ -328,7 +328,7 @@ const ChangeSplashGuess = (req, res) => {
       });
     }
 
-    user.fetchByToken(token, (err, result) => {
+    user.fetchByToken(token, (err, userResult) => {
       if (err) {
         console.log(err);
         return res.json({
@@ -337,9 +337,8 @@ const ChangeSplashGuess = (req, res) => {
         });
       }
 
-      let solvedChampions = result[0]["solvedChampions"];
+      let solvedChampions = userResult[0]["solvedSplashChampions"];
       let solvedChamps, champPool;
-
       if (solvedChampions) {
         if (
           solvedChampions.length > 1 &&
@@ -347,6 +346,14 @@ const ChangeSplashGuess = (req, res) => {
           solvedChampions.split(",").length < data.length
         ) {
           solvedChamps = solvedChampions.split(",");
+        } else if (
+          solvedChampions.length > 1 &&
+          solvedChampions.split(",").length >= data.length
+        ) {
+          solvedChamps = "";
+          solvedChampions = "";
+
+          userResult[0]["prestige"]++;
         } else {
           solvedChamps = solvedChampions.toString();
         }
@@ -356,7 +363,7 @@ const ChangeSplashGuess = (req, res) => {
           return !solvedChamps.includes(id["id"].toString());
         });
       } else {
-        champPool = data.map((id) => {
+        champPool = data.filter((id) => {
           return id;
         });
       }
@@ -365,26 +372,35 @@ const ChangeSplashGuess = (req, res) => {
 
       const newChampion = champPool[random];
 
-      let payload = {
-        currentChampion: newChampion["id"],
-        solvedChampions: solvedChampions,
-        prestige: result[0]["prestige"],
-        score: result[0]["score"],
-        token: token,
-      };
+      champion.getSplashById(newChampion["id"], (err, result) => {
+        const sprites = result[0]["spriteIds"].split(",");
 
-      user.update(payload, (err, result) => {
-        if (err) {
-          console.log(err);
-          return res.json({
-            status: "error",
-            message: "Error on updating user data",
+        const random = Math.floor(Math.random() * sprites.length);
+
+        const randomSprite = sprites[random];
+
+        let payload = {
+          currentSplashChampion: newChampion["id"],
+          solvedSplashChampions: solvedChampions,
+          currentSplashId: parseInt(randomSprite),
+          prestige: userResult[0]["prestige"],
+          score: userResult[0]["score"],
+          token: token,
+        };
+
+        user.updateSplash(payload, (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.json({
+              status: "error",
+              message: "Error on updating user data",
+            });
+          }
+
+          res.json({
+            status: "success",
+            message: "Changed splash guess",
           });
-        }
-
-        res.json({
-          status: "success",
-          message: "Changed guess to champion game",
         });
       });
     });
@@ -392,16 +408,16 @@ const ChangeSplashGuess = (req, res) => {
 };
 const ChangeItemGuess = (req, res) => {
   const token = req.token;
-  champion.getAllIds((err, data) => {
+  item.getAllIds((err, itemData) => {
     if (err) {
       console.log(err);
       return res.json({
         status: "error",
-        message: "Error on fetching champions ids",
+        message: "Error on fetching item ids",
       });
     }
 
-    user.fetchByToken(token, (err, result) => {
+    user.fetchByToken(token, (err, userResult) => {
       if (err) {
         console.log(err);
         return res.json({
@@ -410,43 +426,38 @@ const ChangeItemGuess = (req, res) => {
         });
       }
 
-      let solvedChampions = result[0]["solvedChampions"];
-      let solvedChamps, champPool;
+      let solvedItemIds = userResult[0]["solvedItemIds"];
 
-      if (solvedChampions) {
-        if (
-          solvedChampions.length > 1 &&
-          solvedChampions.split(",").length > 1 &&
-          solvedChampions.split(",").length < data.length
-        ) {
-          solvedChamps = solvedChampions.split(",");
+      let solvedItemsArray, itemPool;
+      if (solvedItemIds) {
+        if (solvedItemIds && solvedItemIds.length > 1) {
+          solvedItemsArray = solvedItemIds.split(",");
         } else {
-          solvedChamps = solvedChampions.toString();
+          solvedItemsArray = solvedItemIds.toString();
         }
-
-        // remove solved champs from the all champions pool
-        champPool = data.filter((id) => {
-          return !solvedChamps.includes(id["id"].toString());
+        itemPool = itemData.filter((item) => {
+          return !solvedItemsArray.includes(item["itemId"].toString());
         });
       } else {
-        champPool = data.map((id) => {
-          return id;
+        itemPool = itemData.map((item) => {
+          return item;
         });
       }
+      // TODO: add prestige stuff
 
-      const random = Math.floor(Math.random() * champPool.length);
+      const random = Math.floor(Math.random() * itemPool.length);
 
-      const newChampion = champPool[random];
+      const newItem = itemPool[random];
 
-      let payload = {
-        currentChampion: newChampion["id"],
-        solvedChampions: solvedChampions,
-        prestige: result[0]["prestige"],
-        score: result[0]["score"],
+      const payload = {
+        currentItemId: newItem["itemId"],
+        solvedItemIds: solvedItemsArray ? solvedItemsArray.toString() : null,
+        score: userResult[0]["score"],
+        prestige: userResult[0]["prestige"],
         token: token,
       };
 
-      user.update(payload, (err, result) => {
+      user.updateItem(payload, (err, result) => {
         if (err) {
           console.log(err);
           return res.json({
@@ -457,7 +468,7 @@ const ChangeItemGuess = (req, res) => {
 
         res.json({
           status: "success",
-          message: "Changed guess to champion game",
+          message: "Changed item guess",
         });
       });
     });
