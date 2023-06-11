@@ -45,6 +45,7 @@ export default function Settings() {
         if (response.data.status === "success") {
           ToggleState();
           localStorage.removeItem("token");
+          window.location.reload();
         }
       })
       .catch((error) => {
@@ -81,6 +82,7 @@ export default function Settings() {
         if (response.data.status === "success") {
           console.log(response.data);
           ToggleState();
+          window.location.reload();
         }
       })
       .catch((error) => {
