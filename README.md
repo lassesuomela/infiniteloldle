@@ -32,15 +32,30 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
 - run `npm i`
 - install sql scheme with `*.sql` file
 - create ".env" file and populate it with your credentials
-  - `DB_HOST=localhost`
-  - `DB_USERNAME=root`
-  - `DB_PASSWORD=root`
-  - `DB_DATABASE=loldle`
-  - `TOKEN=some_secret_token_for_jwt_auth` # used only for importing data to database
-  - `NODE_ENV=dev` # used only for importing data to database
-  - `ENV=dev` # used only for importing data to database
+  
+      DB_HOST=loldle-mysql
+      DB_USERNAME=root
+      DB_PASSWORD=root
+      DB_DATABASE=loldle
+      TOKEN=some_secret_token_for_jwt_auth # used only for importing data to database
+      NODE_ENV=dev # used only for importing data to database otherwise use production
+      ENV=dev # used only for importing data to database otherwise use production
+  
 - run `npm start` and the backend is running at [http://localhost:8081](http://localhost:8081)
 ---
+## Prepare images for frontend
+
+All images should be in webp format. You can use scripts in populateDBScripts folder to get all images that you need. They might need some tinkering.
+
+Folder structure should look like this:
+
+    └── frontend/
+      └── public/
+          ├── champions # champion icons ie. Aatrox.webp
+          ├── items # item icons ie. 1001.webp
+          ├── old_items # old item icons ie. Abyssal_Scepter.webp
+          └── splash_arts # champion splash arts ie. Aatrox_0.webp # 0 indicates the splash art id
+
 ## How to run frontend
 - `cd ./frontend`
 - run `npm i`
