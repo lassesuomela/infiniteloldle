@@ -132,7 +132,7 @@ export default function Settings() {
                 </div>
               </div>
 
-              <h4 className="p-2">Change current guess targets</h4>
+              <h4 className="p-2">Reroll</h4>
               <div className="pb-4 d-flex justify-content-center gap-2">
                 <button
                   onClick={ChangeGuessChampion}
