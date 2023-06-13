@@ -57,12 +57,12 @@ export default function Legal() {
         <p>
           The information collected during account registration, including the
           nickname and country code, is used to create your account and
-          authenticate you when you access our services. You have the ability to
-          change your nickname at any time.
+          authenticate you when you access our services.
         </p>
         <h5>2. Account Management</h5>
         <p>
-          You have the option to delete your account at any time from settings.
+          You have the option to delete your account at any time from settings
+          and also you have the ability to change your nickname at any time.
         </p>
         <h5>3. Keeping track of statistics</h5>
         <p>
@@ -72,9 +72,9 @@ export default function Legal() {
         <h3>Data Storage and Security</h3>
         <h5>1. Data Retention</h5>
         <p>
-          We will retain your personal information only for as long as necessary
-          to fulfill the purposes outlined in this Privacy Policy, unless a
-          longer retention period is required or permitted by law.
+          We will retain your personal information for as long as you have an
+          account. Because you are not able to play games in this site without
+          an account. You have an option to delete your account at any time.
         </p>
         <p>
           Tracking site statistic data is done using part of users token. Part
@@ -90,6 +90,11 @@ export default function Legal() {
           storage over the internet is entirely secure, and we cannot guarantee
           the absolute security of your data.
         </p>
+        <h5>3. Location of datacenters</h5>
+        <p>
+          Datacenters which host our servers and the data in it for the site are
+          currenlty located in EU.
+        </p>
         <h3>Third-Party Services</h3>
         <h5>1. Third-Party Analytics</h5>
         <p>
@@ -98,6 +103,16 @@ export default function Legal() {
           collect and analyze information about your use of the website,
           including cookies and usage data, to provide insights and improve our
           services.
+        </p>
+        <p>List of third parties we are using:</p>
+        <ul>
+          <li>Google Analytics (site analytics)</li>
+          <li>Google AdSense (ads)</li>
+          <li>Cloudflare (security and image caching)</li>
+        </ul>
+        <p>
+          Some of these services might be located outside of EU. Their privacy
+          polices can be found from their sites.
         </p>
         <h5>2. Third-Party Links</h5>
         <p>
@@ -118,11 +133,11 @@ export default function Legal() {
         <p>
           If you are located in the European Economic Area (EEA), you have
           certain rights under the General Data Protection Regulation (GDPR)
-          regarding your personal information. These rights include the right to
-          access, rectify, or erase your personal data, as well as the right to
-          restrict or object to certain processing activities. To exercise these
-          rights, please contact us using the contact information provided
-          below.
+          regarding your personal information. These rights include but not
+          limited to: the right to access, rectify, or erase your personal data,
+          as well as the right to restrict or object to certain processing
+          activities. To exercise these rights, please contact us using the
+          contact information provided below.
         </p>
         <h3>Changes to this Privacy Policy</h3>
         <p>
