@@ -57,7 +57,7 @@ const GetAll = (req, res) => {
       yesterdays_player_count: result[12][0].count,
       top_countries: countries,
       user_data: result[10].reverse(),
-      dau: result[0].reverse()[0].dau,
+      dau: result[0][0].dau,
       mau: mau,
       old_item_count: result[11][0].old_item_count,
     };

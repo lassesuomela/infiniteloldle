@@ -1,26 +1,31 @@
 const statsModel = require("../models/statsModel");
 const cache = require("./cache");
 
-let ips = [];
+let tokens = [];
 const stats = {};
 
-const track = (req, res, next) => {
-  const host = req.ip;
-
-  if (stats["dau"] === undefined) {
-    stats["dau"] = 0;
-  }
+const trackRequests = (req, res, next) => {
   if (stats["requests"] === undefined) {
     stats["requests"] = 0;
   }
 
-  if (ips.indexOf(host) === -1) {
-    stats["dau"] += 1;
-    ips.push(host);
+  stats["requests"] += 1;
+  next();
+};
+
+const trackDAU = (req, res, next) => {
+  if (stats["dau"] === undefined) {
+    stats["dau"] = 0;
   }
 
-  stats["requests"] += 1;
+  if (req.token !== undefined && req.token !== null) {
+    const token = req.token.substring(0, 20);
 
+    if (tokens.indexOf(token) === -1) {
+      stats["dau"] += 1;
+      tokens.push(token);
+    }
+  }
   next();
 };
 
@@ -52,9 +57,9 @@ const saveStats = () => {
       // reset
       stats["dau"] = 0;
       stats["requests"] = 0;
-      ips = [];
+      tokens = [];
     });
   });
 };
 
-module.exports = { track, saveStats };
+module.exports = { trackRequests, saveStats, trackDAU };

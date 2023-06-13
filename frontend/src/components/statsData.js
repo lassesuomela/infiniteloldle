@@ -46,7 +46,7 @@ export default function StatsData() {
 
         setOtherStat(otherStats);
 
-        const data = response.data.stats.map((stat) => {
+        const data = response.data.stats.reverse().map((stat) => {
           return {
             date: new Date(stat.date).toLocaleDateString(undefined, {
               month: "numeric",

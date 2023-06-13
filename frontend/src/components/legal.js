@@ -22,7 +22,7 @@ export default function Legal() {
 
       <div id="privacy">
         <h2>Privacy Policy</h2>
-        <p>Effective Date: 21.05.2023</p>
+        <p>Effective Date: 13.06.2023</p>
         <p>
           This Privacy Policy describes how Infiniteloldle.com ("we," "us," or
           "our") collects, uses, stores, and protects the personal information
@@ -39,10 +39,8 @@ export default function Legal() {
         <ul>
           <li>Nickname (optional)</li>
           <li>
-            Country code (retrieved from user's IP address using{" "}
-            <a href="https://www.npmjs.com/package/geoip-lite">geoip-lite</a>{" "}
-            which uses <a href="https://www.maxmind.com">MaxMind</a> for GeoIP
-            data, [we don't store users IP addresses])
+            Country code (retrieved from user's IP address, [we don't store
+            users IP addresses in database])
           </li>
         </ul>
         <h5>2. Automatically Collected Information</h5>
@@ -63,13 +61,26 @@ export default function Legal() {
           change your nickname at any time.
         </p>
         <h5>2. Account Management</h5>
-        <p>You have the option to delete your account at any time.</p>
+        <p>
+          You have the option to delete your account at any time from settings.
+        </p>
+        <h5>3. Keeping track of statistics</h5>
+        <p>
+          Part of the token is used as unique value when keeping track of unique
+          daily active users.
+        </p>
         <h3>Data Storage and Security</h3>
         <h5>1. Data Retention</h5>
         <p>
           We will retain your personal information only for as long as necessary
           to fulfill the purposes outlined in this Privacy Policy, unless a
           longer retention period is required or permitted by law.
+        </p>
+        <p>
+          Tracking site statistic data is done using part of users token. Part
+          of the token is stored in memory to differentiate unique users. At
+          midnight this memory is wiped and count of unique users and count of
+          requests is stored in database.
         </p>
         <h5>2. Data Security</h5>
         <p>

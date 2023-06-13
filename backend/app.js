@@ -42,7 +42,7 @@ const guessRoutes = require("./routes/guessRoutes");
 const scoreboardRoutes = require("./routes/scoreboardRoutes");
 const statsRoutes = require("./routes/statsRoutes");
 
-app.use(requestTracker.track);
+app.use(requestTracker.trackRequests);
 
 app.use("/api", createUserRoutes);
 app.use("/api", scoreboardRoutes);
@@ -50,6 +50,7 @@ app.use("/api", gameRoutes);
 app.use("/api", statsRoutes);
 
 app.use(token);
+app.use(requestTracker.trackDAU);
 
 app.use("/api", userRoutes);
 app.use("/api", guessRoutes);
