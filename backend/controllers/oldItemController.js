@@ -176,7 +176,7 @@ const GetAllItems = (req, res) => {
 
     const response = { status: "success", items: items };
     cache.saveCache(key, response);
-    cache.changeTTL(key, 3600);
+    cache.changeTTL(key, 3600 * 6);
 
     res.json(response);
   });

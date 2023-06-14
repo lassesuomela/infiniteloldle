@@ -3,7 +3,6 @@ const champion = require("../models/championModel");
 const item = require("../models/itemModel");
 const oldItem = require("../models/oldItemModel");
 const crypto = require("crypto");
-const geoip = require("geoip-lite");
 const cache = require("../middleware/cache");
 const oldItemModel = require("../models/oldItemModel");
 
@@ -22,11 +21,7 @@ const Create = (req, res) => {
       nickname = nickname.substring(0, 30);
     }
 
-    const ip = req.ip;
-
-    const ipData = ip ? geoip.lookup(ip) : "";
-
-    const country = !ipData ? null : ipData.country;
+    const country = req.get("cf-ipcountry");
 
     champion.getAllIds((err, data) => {
       if (err) {
@@ -140,6 +135,8 @@ const CheckToken = (req, res) => {
       delete result[0]["solvedSplashChampions"];
       delete result[0]["solvedItemIds"];
       delete result[0]["currentItemId"];
+      delete result[0]["currentOldItemId"];
+      delete result[0]["solvedOldItemIds"];
 
       const response = {
         status: "success",
@@ -158,11 +155,7 @@ const CheckToken = (req, res) => {
 const ChangeCountry = (req, res) => {
   const token = req.token;
 
-  const ip = req.ip;
-
-  const ipData = ip ? geoip.lookup(ip) : "";
-
-  const country = !ipData ? "n/a" : ipData.country;
+  const country = req.get("cf-ipcountry");
 
   const data = {
     country: country,

@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
+import Cookies from "universal-cookie";
 
 import Config from "../configs/config";
 
@@ -28,6 +29,11 @@ export default function NewUser() {
 
   useEffect(() => {
     setNickname("Teemo#" + Math.floor(Math.random() * 9999));
+    const cookies = new Cookies();
+    const isValidToken = cookies.get("isValidToken");
+    if (isValidToken) {
+      return;
+    }
 
     axios
       .get(Config.url + "/user", {
@@ -35,10 +41,18 @@ export default function NewUser() {
       })
       .then((response) => {
         if (response.data.status === "success") {
+          cookies.remove("isValidToken");
+          cookies.set("isValidToken", true, {
+            path: "/",
+            maxAge: 86400,
+            sameSite: "strict",
+            secure: true,
+          });
           setIsShown(false);
         }
       })
       .catch((error) => {
+        cookies.remove("isValidToken");
         console.log(error);
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

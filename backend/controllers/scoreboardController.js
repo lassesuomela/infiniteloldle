@@ -26,7 +26,7 @@ const TopAllTime = (req, res) => {
     };
 
     cache.saveCache(key, response);
-    cache.changeTTL(key, 120);
+    cache.changeTTL(key, 300);
 
     res.json(response);
   });

@@ -105,7 +105,7 @@ const GetAllChampions = (req, res) => {
 
     const response = { status: "success", champions: champions };
     cache.saveCache(key, response);
-    cache.changeTTL(key, 3600);
+    cache.changeTTL(key, 3600 * 6);
 
     res.json(response);
   });
