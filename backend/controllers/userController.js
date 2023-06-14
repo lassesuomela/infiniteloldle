@@ -3,7 +3,6 @@ const champion = require("../models/championModel");
 const item = require("../models/itemModel");
 const oldItem = require("../models/oldItemModel");
 const crypto = require("crypto");
-const geoip = require("geoip-lite");
 const cache = require("../middleware/cache");
 const oldItemModel = require("../models/oldItemModel");
 
