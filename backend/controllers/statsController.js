@@ -63,7 +63,7 @@ const GetAll = (req, res) => {
     };
 
     cache.saveCache(key, response);
-    cache.changeTTL(key, 3600);
+    cache.changeTTL(key, 600);
 
     res.json(response);
   });
