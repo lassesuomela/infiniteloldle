@@ -22,11 +22,15 @@ const Create = (req, res) => {
       nickname = nickname.substring(0, 30);
     }
 
+    /*
     const ip = req.ip;
-
     const ipData = ip ? geoip.lookup(ip) : "";
-
     const country = !ipData ? null : ipData.country;
+    */
+
+    console.log(JSON.stringify(req.headers));
+    const country = req.get("HTTP_CF_IPCOUNTRY");
+    console.log(country);
 
     champion.getAllIds((err, data) => {
       if (err) {
@@ -158,11 +162,13 @@ const CheckToken = (req, res) => {
 const ChangeCountry = (req, res) => {
   const token = req.token;
 
+  /*
   const ip = req.ip;
-
   const ipData = ip ? geoip.lookup(ip) : "";
-
   const country = !ipData ? "n/a" : ipData.country;
+  */
+
+  const country = req.get("HTTP_CF_IPCOUNTRY");
 
   const data = {
     country: country,
