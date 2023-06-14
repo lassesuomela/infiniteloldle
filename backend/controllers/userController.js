@@ -136,6 +136,8 @@ const CheckToken = (req, res) => {
       delete result[0]["solvedSplashChampions"];
       delete result[0]["solvedItemIds"];
       delete result[0]["currentItemId"];
+      delete result[0]["currentOldItemId"];
+      delete result[0]["solvedOldItemIds"];
 
       const response = {
         status: "success",
