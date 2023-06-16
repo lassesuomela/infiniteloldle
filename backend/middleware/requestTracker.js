@@ -21,6 +21,38 @@ const trackDAU = (req, res, next) => {
   if (req.token !== undefined && req.token !== null) {
     const token = req.token.substring(0, 20);
 
+    let reqsByToken = cache.getCache(token);
+
+    if (reqsByToken === undefined) {
+      reqsByToken = {};
+    }
+
+    if (reqsByToken["requests"] === undefined) {
+      reqsByToken["requests"] = 0;
+    }
+
+    reqsByToken["requests"] += 1;
+
+    if (reqsByToken["timeBetweenReqs"] === undefined) {
+      reqsByToken["timeBetweenReqs"] = {
+        current: new Date(),
+        previous: null,
+        difference: null,
+      };
+    } else {
+      reqsByToken["timeBetweenReqs"]["previous"] =
+        reqsByToken["timeBetweenReqs"]["current"];
+      reqsByToken["timeBetweenReqs"]["current"] = new Date();
+
+      const previousTime = reqsByToken["timeBetweenReqs"]["previous"];
+      const currentTime = reqsByToken["timeBetweenReqs"]["current"];
+      const timeDiff = (currentTime - previousTime) / 1000;
+      reqsByToken["timeBetweenReqs"]["difference"] = timeDiff;
+    }
+
+    console.log(reqsByToken);
+    cache.saveCache(token, reqsByToken);
+
     if (tokens.indexOf(token) === -1) {
       stats["dau"] += 1;
       tokens.push(token);
