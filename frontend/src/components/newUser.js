@@ -4,7 +4,7 @@ import Config from "../configs/config";
 
 export default function NewUser() {
   const cookies = new Cookies();
-  if (cookies.get("isValidToken")) {
+  if (cookies.get("isValidToken") && localStorage.getItem("token")) {
     return;
   }
   if (!localStorage.getItem("token")) {

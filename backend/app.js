@@ -26,7 +26,7 @@ app.set("trust proxy", true);
 
 app.use(helmet());
 app.use(express.json());
-app.use(morgan("dev"));
+app.use(morgan("combined"));
 
 const auth = require("./middleware/auth");
 const token = require("./middleware/token");
