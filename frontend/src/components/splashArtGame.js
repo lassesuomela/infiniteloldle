@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
-import NewUser from "./newUser";
 import Victory from "./victory";
 import ChampionImg from "./championImg";
 import Config from "../configs/config";
@@ -12,15 +11,10 @@ export default function Game() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-  const [isValidToken, setIsValidToken] = useState(false);
   const [spriteUrl, setSpriteUrl] = useState("");
   const [title, setTitle] = useState("");
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      setIsValidToken(true);
-    }
-
     FetchChampions();
     FetchSplashArt();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -75,7 +69,6 @@ export default function Game() {
     }
 
     setValidGuesses(validGuesses.filter((item) => item.label !== currentGuess));
-
     setGuesses((guesses) => [...guesses, currentGuess]);
 
     axios
@@ -88,12 +81,10 @@ export default function Game() {
       )
       .then((response) => {
         if (response.data.status !== "success") {
-          setIsValidToken(false);
           return;
         }
 
         const isCorrect = response.data.correctGuess;
-
         const key = response.data.championKey;
 
         setChampions((champions) => [[key, isCorrect], ...champions]);
@@ -135,8 +126,6 @@ export default function Game() {
   return (
     <div className="container main pt-4 pb-5 mb-5">
       <h3 className="text-center pb-3">Whose splash art is this?</h3>
-
-      {!isValidToken ? <NewUser /> : ""}
 
       <div
         className="container d-flex justify-content-center shadow"

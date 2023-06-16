@@ -4,7 +4,6 @@ import Titles from "./gameTitle";
 import ChampionDetails from "./championDetails";
 import Select from "react-select";
 import Victory from "./victory";
-import NewUser from "./newUser";
 
 import Config from "../configs/config";
 
@@ -16,14 +15,9 @@ export default function Game() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-  const [isValidToken, setIsValidToken] = useState(false);
   const [title, setTitle] = useState("");
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      setIsValidToken(true);
-    }
-
     FetchChampions();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -46,17 +40,14 @@ export default function Game() {
     e.preventDefault();
 
     if (!currentGuess) {
-      console.log("Input is needed");
       return;
     }
 
     if (guesses.indexOf(currentGuess) !== -1) {
-      console.log("Duplicate");
       return;
     }
 
     setValidGuesses(validGuesses.filter((item) => item.label !== currentGuess));
-
     setGuesses((guesses) => [...guesses, currentGuess]);
 
     axios
@@ -69,12 +60,9 @@ export default function Game() {
       )
       .then((response) => {
         if (response.data.status !== "success") {
-          setIsValidToken(false);
           return;
         }
-
         const correct = response.data.correctGuess;
-
         const data = response.data.properties;
 
         setChampions((champions) => [data, ...champions]);
@@ -112,8 +100,6 @@ export default function Game() {
       </Helmet>
 
       <h3 className="text-center pb-3">Start guessing your champion</h3>
-
-      {!isValidToken ? <NewUser /> : ""}
 
       <div className="d-flex justify-content-center mt-4 mb-3">
         <form
