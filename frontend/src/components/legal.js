@@ -279,6 +279,13 @@ export default function Legal() {
                 verifying the user's identity for subsequent interactions.
               </td>
             </tr>
+            <tr>
+              <td>createNewUser</td>
+              <td>
+                Used to instruct browser to send create new account request when
+                account is deleted and user wants to create new account
+              </td>
+            </tr>
           </tbody>
         </table>
         <h5>Advertisement or analytics:</h5>

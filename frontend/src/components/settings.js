@@ -90,6 +90,11 @@ export default function Settings() {
       });
   };
 
+  const CreateUser = () => {
+    localStorage.setItem("createNewUser", true);
+    window.location.reload();
+  };
+
   return (
     <>
       <div className="d-flex justify-content-end">
@@ -112,60 +117,85 @@ export default function Settings() {
 
               <h3 className="pb-4">Settings</h3>
 
-              <h4>Change your nickname</h4>
+              {localStorage.getItem("token") ? (
+                <>
+                  <h4>Change your nickname</h4>
 
-              <div className="pt-2 d-flex justify-content-center border-dark">
-                <div className="pb-3">
-                  <form className="row g-3 p-1" onSubmit={ChangeNickname}>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="nickname"
-                      placeholder="New nickname"
-                      maxLength="30"
-                      onChange={(e) => setNewNickname(e.target.value)}
-                    />
-                    <div className="text-center">
-                      <button className="btn btn-dark mb-2">Save</button>
+                  <div className="pt-2 d-flex justify-content-center border-dark">
+                    <div className="pb-3">
+                      <form className="row g-3 p-1" onSubmit={ChangeNickname}>
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="nickname"
+                          placeholder="New nickname"
+                          maxLength="30"
+                          onChange={(e) => setNewNickname(e.target.value)}
+                        />
+                        <div className="text-center">
+                          <button className="btn btn-dark mb-2">Save</button>
+                        </div>
+                      </form>
                     </div>
-                  </form>
-                </div>
-              </div>
+                  </div>
 
-              <h4 className="p-2">Reroll</h4>
-              <div className="pb-4 d-flex justify-content-center gap-2">
-                <button
-                  onClick={ChangeGuessChampion}
-                  className="btn btn-warning mb-2"
-                >
-                  Champion
-                </button>
-                <button
-                  onClick={ChangeGuessSplash}
-                  className="btn btn-warning mb-2"
-                >
-                  Splash art
-                </button>
-                <button
-                  onClick={ChangeGuessItem}
-                  className="btn btn-warning mb-2"
-                >
-                  Item
-                </button>
-                <button
-                  onClick={ChangeGuessOldItem}
-                  className="btn btn-warning mb-2"
-                >
-                  Removed item
-                </button>
-              </div>
+                  <h4 className="p-2">Reroll</h4>
+                  <div className="pb-4 d-flex justify-content-center gap-2">
+                    <button
+                      onClick={ChangeGuessChampion}
+                      className="btn btn-warning mb-2"
+                    >
+                      Champion
+                    </button>
+                    <button
+                      onClick={ChangeGuessSplash}
+                      className="btn btn-warning mb-2"
+                    >
+                      Splash art
+                    </button>
+                    <button
+                      onClick={ChangeGuessItem}
+                      className="btn btn-warning mb-2"
+                    >
+                      Item
+                    </button>
+                    <button
+                      onClick={ChangeGuessOldItem}
+                      className="btn btn-warning mb-2"
+                    >
+                      Removed item
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
 
-              <h4 className="p-2">Delete your account</h4>
-              <div className="pb-4">
-                <button onClick={DeleteUser} className="btn btn-danger mb-2">
-                  Delete
-                </button>
-              </div>
+              {localStorage.getItem("token") ? (
+                <>
+                  <h4 className="p-2">Delete your account</h4>
+                  <div className="pb-4">
+                    <button
+                      onClick={DeleteUser}
+                      className="btn btn-danger mb-2"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h4 className="p-2">Create new account</h4>
+                  <div className="pb-4">
+                    <button
+                      onClick={CreateUser}
+                      className="btn btn-success mb-2"
+                    >
+                      Create
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </Modal.Body>
