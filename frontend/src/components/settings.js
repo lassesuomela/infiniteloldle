@@ -90,6 +90,10 @@ export default function Settings() {
       });
   };
 
+  const CreateUser = () => {
+    localStorage.setItem("createNewUser", true);
+  };
+
   return (
     <>
       <div className="d-flex justify-content-end">
@@ -160,12 +164,31 @@ export default function Settings() {
                 </button>
               </div>
 
-              <h4 className="p-2">Delete your account</h4>
-              <div className="pb-4">
-                <button onClick={DeleteUser} className="btn btn-danger mb-2">
-                  Delete
-                </button>
-              </div>
+              {localStorage.getItem("token") ? (
+                <>
+                  <h4 className="p-2">Delete your account</h4>
+                  <div className="pb-4">
+                    <button
+                      onClick={DeleteUser}
+                      className="btn btn-danger mb-2"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h4 className="p-2">Create new account</h4>
+                  <div className="pb-4">
+                    <button
+                      onClick={CreateUser}
+                      className="btn btn-success mb-2"
+                    >
+                      Create
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </Modal.Body>

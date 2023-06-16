@@ -29,13 +29,14 @@ export default function NewUser() {
       console.log(error);
     });
 
-  if (!localStorage.getItem("token")) {
+  if (!localStorage.getItem("token") && localStorage.getItem("createNewUser")) {
     const nickname = "Teemo#" + Math.floor(Math.random() * 9999);
     axios
       .post(Config.url + "/user", { nickname })
       .then((response) => {
         if (response.data.status === "success") {
           localStorage.setItem("token", response.data.token);
+          localStorage.removeItem("createNewUser");
           cookies.set("isValidToken", true, {
             path: "/",
             maxAge: 86400,
