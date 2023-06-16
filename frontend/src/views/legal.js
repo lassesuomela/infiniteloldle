@@ -6,7 +6,7 @@ export default function Legal() {
   return (
     <div className="container pb-5">
       <Helmet>
-        <title>Infiniteloldle - Legal disclaimer</title>
+        <title>Infiniteloldle - Legal disclaimer - Privacy policy</title>
         <meta
           name="description"
           content="Infiniteloldle.com - Legal disclaimer and privacy policy section."
