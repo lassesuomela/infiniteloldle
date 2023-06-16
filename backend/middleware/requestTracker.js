@@ -56,10 +56,10 @@ const trackDAU = (req, res, next) => {
       reqsByToken["timeBetweenReqs"]["difference"] = timeDiff;
 
       if (reqsByToken["timeBetweenReqs"]["difference"] !== undefined) {
-        reqsByToken["timeBetweenReqs"]["differences"].push(timeDiff); // Store the time difference in the array
+        reqsByToken["timeBetweenReqs"]["differences"].push(timeDiff);
 
         if (reqsByToken["timeBetweenReqs"]["differences"].length > 10) {
-          reqsByToken["timeBetweenReqs"]["differences"].shift(); // Remove the oldest time difference
+          reqsByToken["timeBetweenReqs"]["differences"].shift();
         }
 
         const averages = reqsByToken["timeBetweenReqs"]["differences"];
@@ -70,7 +70,7 @@ const trackDAU = (req, res, next) => {
       }
 
       reqsByToken["isLikelyBot"] =
-        reqsByToken["timeBetweenReqs"]["average"] < 1 ? true : false;
+        reqsByToken["timeBetweenReqs"]["average"] < 0.8 ? true : false;
     }
 
     console.log(reqsByToken);

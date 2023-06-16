@@ -7,6 +7,28 @@ export default function NewUser() {
   if (cookies.get("isValidToken") && localStorage.getItem("token")) {
     return;
   }
+  axios
+    .get(Config.url + "/user", {
+      headers: { authorization: "Bearer " + localStorage.getItem("token") },
+    })
+    .then((response) => {
+      if (response.data.status === "success") {
+        cookies.remove("isValidToken");
+        cookies.set("isValidToken", true, {
+          path: "/",
+          maxAge: 86400,
+          sameSite: "strict",
+          secure: true,
+        });
+      } else {
+        cookies.remove("isValidToken");
+      }
+    })
+    .catch((error) => {
+      cookies.remove("isValidToken");
+      console.log(error);
+    });
+
   if (!localStorage.getItem("token")) {
     const nickname = "Teemo#" + Math.floor(Math.random() * 9999);
     axios
@@ -27,24 +49,4 @@ export default function NewUser() {
         console.log(error);
       });
   }
-
-  axios
-    .get(Config.url + "/user", {
-      headers: { authorization: "Bearer " + localStorage.getItem("token") },
-    })
-    .then((response) => {
-      if (response.data.status === "success") {
-        cookies.remove("isValidToken");
-        cookies.set("isValidToken", true, {
-          path: "/",
-          maxAge: 86400,
-          sameSite: "strict",
-          secure: true,
-        });
-      }
-    })
-    .catch((error) => {
-      cookies.remove("isValidToken");
-      console.log(error);
-    });
 }
