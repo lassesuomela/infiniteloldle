@@ -92,6 +92,7 @@ export default function Settings() {
 
   const CreateUser = () => {
     localStorage.setItem("createNewUser", true);
+    window.location.reload();
   };
 
   return (
