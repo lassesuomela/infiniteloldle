@@ -31,6 +31,10 @@ const trackDAU = (req, res, next) => {
       reqsByToken["requests"] = 0;
     }
 
+    if (reqsByToken["token"] === undefined) {
+      reqsByToken["token"] = token;
+    }
+
     reqsByToken["requests"] += 1;
 
     if (reqsByToken["timeBetweenReqs"] === undefined) {
@@ -38,6 +42,7 @@ const trackDAU = (req, res, next) => {
         current: new Date(),
         previous: null,
         difference: null,
+        differences: [],
       };
     } else {
       reqsByToken["timeBetweenReqs"]["previous"] =
@@ -47,7 +52,25 @@ const trackDAU = (req, res, next) => {
       const previousTime = reqsByToken["timeBetweenReqs"]["previous"];
       const currentTime = reqsByToken["timeBetweenReqs"]["current"];
       const timeDiff = (currentTime - previousTime) / 1000;
+
       reqsByToken["timeBetweenReqs"]["difference"] = timeDiff;
+
+      if (reqsByToken["timeBetweenReqs"]["difference"] !== undefined) {
+        reqsByToken["timeBetweenReqs"]["differences"].push(timeDiff); // Store the time difference in the array
+
+        if (reqsByToken["timeBetweenReqs"]["differences"].length > 10) {
+          reqsByToken["timeBetweenReqs"]["differences"].shift(); // Remove the oldest time difference
+        }
+
+        const averages = reqsByToken["timeBetweenReqs"]["differences"];
+        const sum = averages.reduce((total, timeDiff) => total + timeDiff, 0);
+        const averageTime = sum / averages.length;
+
+        reqsByToken["timeBetweenReqs"]["average"] = averageTime;
+      }
+
+      reqsByToken["isLikelyBot"] =
+        reqsByToken["timeBetweenReqs"]["average"] < 1 ? true : false;
     }
 
     console.log(reqsByToken);
@@ -58,6 +81,7 @@ const trackDAU = (req, res, next) => {
       tokens.push(token);
     }
   }
+
   next();
 };
 
