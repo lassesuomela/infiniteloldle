@@ -286,6 +286,13 @@ export default function Legal() {
                 account is deleted and user wants to create new account
               </td>
             </tr>
+            <tr>
+              <td>userDeleted</td>
+              <td>
+                Used to instruct browser to not send create new account request
+                when account is deleted
+              </td>
+            </tr>
           </tbody>
         </table>
         <h5>Advertisement or analytics:</h5>
