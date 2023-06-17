@@ -7,29 +7,34 @@ export default function NewUser() {
   if (cookies.get("isValidToken") && localStorage.getItem("token")) {
     return;
   }
-  axios
-    .get(Config.url + "/user", {
-      headers: { authorization: "Bearer " + localStorage.getItem("token") },
-    })
-    .then((response) => {
-      if (response.data.status === "success") {
+  if (localStorage.getItem("token")) {
+    axios
+      .get(Config.url + "/user", {
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          cookies.remove("isValidToken");
+          cookies.set("isValidToken", true, {
+            path: "/",
+            maxAge: 86400,
+            sameSite: "strict",
+            secure: true,
+          });
+        } else {
+          cookies.remove("isValidToken");
+        }
+      })
+      .catch((error) => {
         cookies.remove("isValidToken");
-        cookies.set("isValidToken", true, {
-          path: "/",
-          maxAge: 86400,
-          sameSite: "strict",
-          secure: true,
-        });
-      } else {
-        cookies.remove("isValidToken");
-      }
-    })
-    .catch((error) => {
-      cookies.remove("isValidToken");
-      console.log(error);
-    });
+        console.log(error);
+      });
+  }
 
-  if (!localStorage.getItem("token") && localStorage.getItem("createNewUser")) {
+  if (
+    (!localStorage.getItem("token") && localStorage.getItem("createNewUser")) ||
+    (!localStorage.getItem("token") && !localStorage.getItem("userDeleted"))
+  ) {
     const nickname = "Teemo#" + Math.floor(Math.random() * 9999);
     axios
       .post(Config.url + "/user", { nickname })

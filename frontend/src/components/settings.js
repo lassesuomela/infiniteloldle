@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
+import Cookies from "universal-cookie";
 
 export default function Settings() {
   const [isShown, setIsShown] = useState(false);
@@ -45,6 +46,9 @@ export default function Settings() {
         if (response.data.status === "success") {
           ToggleState();
           localStorage.removeItem("token");
+          localStorage.setItem("userDeleted", true);
+          const cookies = new Cookies();
+          cookies.remove("isValidToken");
           window.location.reload();
         }
       })
