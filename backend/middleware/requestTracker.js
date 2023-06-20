@@ -21,6 +21,7 @@ const trackDAU = (req, res, next) => {
   if (req.token !== undefined && req.token !== null) {
     const token = req.token.substring(0, 20);
 
+    /*
     let reqsByToken = cache.getCache(token);
 
     if (reqsByToken === undefined) {
@@ -75,7 +76,7 @@ const trackDAU = (req, res, next) => {
 
     console.log(reqsByToken);
     cache.saveCache(token, reqsByToken);
-
+    */
     if (tokens.indexOf(token) === -1) {
       stats["dau"] += 1;
       tokens.push(token);
