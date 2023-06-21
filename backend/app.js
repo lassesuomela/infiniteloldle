@@ -31,6 +31,7 @@ app.use(morgan("combined"));
 const auth = require("./middleware/auth");
 const token = require("./middleware/token");
 const requestTracker = require("./middleware/requestTracker");
+const waf = require("./middleware/waf");
 
 const championRoutes = require("./routes/championRoutes");
 const itemRoutes = require("./routes/itemRoutes");
@@ -42,6 +43,7 @@ const guessRoutes = require("./routes/guessRoutes");
 const scoreboardRoutes = require("./routes/scoreboardRoutes");
 const statsRoutes = require("./routes/statsRoutes");
 
+app.use(waf.checkRequest);
 app.use(requestTracker.trackRequests);
 
 app.use("/api", createUserRoutes);
