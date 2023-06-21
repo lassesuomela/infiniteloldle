@@ -41,7 +41,7 @@ services:
     networks:
       - mynetwork
     healthcheck:
-      test: wget -nv -t1 --spider http://localhost:8080
+      test: 'wget --header="User-Agent: Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.11 Infiniteloldle.com Health-Check" -nv -t1 --spider http://localhost:8080'
       interval: 15s
       timeout: 5s
       retries: 1
