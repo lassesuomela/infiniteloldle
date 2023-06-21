@@ -1,6 +1,11 @@
+require("dotenv").config();
 const Parser = require("ua-parser-js");
 
 const checkRequest = (req, res, next) => {
+  if (process.env.ENV === "dev") {
+    next();
+    return;
+  }
   const ua = req.get("User-Agent");
   if (ua === undefined || ua === "-") {
     return res.status(444);
