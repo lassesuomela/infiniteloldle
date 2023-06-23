@@ -105,6 +105,16 @@ const GuessItem = (req, res) => {
 
           const newItem = itemPool[random];
 
+          if (newItem === undefined) {
+            console.log("ERROR, no newItem");
+            console.log(req.body);
+            console.log(req.headers);
+            console.log(req.token);
+            console.log(itemPool);
+            console.log(itemPool.length);
+            console.log(random);
+          }
+
           const payload = {
             currentOldItemId: newItem["id"],
             solvedOldItemIds: solvedItemsArray

@@ -308,6 +308,16 @@ const Guess = (req, res) => {
 
             const newChampion = champPool[random];
 
+            if (newChampion === undefined) {
+              console.log("ERROR, no new champion");
+              console.log(req.body);
+              console.log(req.headers);
+              console.log(req.token);
+              console.log(champPool);
+              console.log(champPool.length);
+              console.log(random);
+            }
+
             let payload = {
               currentChampion: newChampion["id"],
               solvedChampions: solvedChampions,
@@ -439,7 +449,17 @@ const GuessSplash = (req, res) => {
 
               const randomSprite = sprites[random];
 
-              let payload = {
+              if (randomSprite === undefined) {
+                console.log("ERROR, no random sprite");
+                console.log(req.body);
+                console.log(req.headers);
+                console.log(req.token);
+                console.log(sprites);
+                console.log(sprites.length);
+                console.log(random);
+              }
+
+              const payload = {
                 currentSplashChampion: newChampion["id"],
                 solvedSplashChampions: solvedChampions,
                 currentSplashId: parseInt(randomSprite),
