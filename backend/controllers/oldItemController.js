@@ -41,7 +41,7 @@ const GuessItem = (req, res) => {
     // wrong guess
     if (guess !== data[0].name) {
       oldItemModel.getIdByName(guess, (err, guessItemData) => {
-        if (!data[0]) {
+        if (!guessItemData[0]) {
           return res.json({
             status: "error",
             message: "No item with that name",
