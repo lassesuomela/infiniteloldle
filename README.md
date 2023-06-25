@@ -14,15 +14,15 @@
 
 ---
 
-[Wordle](https://www.nytimes.com/games/wordle/index.html) like site where users can guess League of Legends champions endlessly. Inspiration taken greatly from another worlde clone [loldle.net](https://loldle.net).
+[Wordle](https://www.nytimes.com/games/wordle/index.html) like site where users can guess League of Legends champions endlessly. Inspiration taken greatly from another worlde clone that focuses on LoL [loldle.net](https://loldle.net).
 
-Frontend is made with React and Bootstrap 5. Backend is made with Node.js and Express.js framework. Database is MySQL. Nginx is used as a webserver to serve frontend files and also to act as a reverse proxy for the backend.
+Frontend is made with React and Bootstrap 5. Backend is made with Node.js and Express.js framework. Database is MySQL. Nginx is used as a webserver to serve frontend files, images etc and also to act as a reverse proxy for the backend.
 
-Everything is packaged into Docker containers and those are managed with docker-compose.yml file in the backend directory. Created basic CI/CD pipeline with GitHub actions that builds frontend and deploys them to VPS.
+Everything is packaged into Docker containers and those are managed with docker-compose.yml file in the backend directory. Created basic CI/CD pipeline with GitHub actions that builds docker images and runs tests on them and also builds frontend and deploys them to VPS.
 
-Python was used gather champion data via web scraping and doing API requests.
+Python was used gather champion data via web scraping and doing API requests to DDragon.
 
-Jest was used to make couple tests to backend.
+Jest was used to make some tests to backend.
 ## Demo
 Demo of this repository will be available at [https://www.infiniteloldle.com](https://www.infiniteloldle.com).
 
@@ -45,7 +45,7 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
 ---
 ## Prepare images for frontend
 
-All images should be in webp format. You can use scripts in populateDBScripts folder to get all images that you need. They might need some tinkering.
+All images should be in webp format (excluding favicon). You can use scripts in populateDBScripts folder to get all images that you need. They might need some tinkering.
 
 Folder structure should look like this:
 
