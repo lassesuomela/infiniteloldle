@@ -100,7 +100,7 @@ const GuessItem = (req, res) => {
 
           const newItem = itemPool[random];
 
-          if (newItem === undefined) {
+          if (newItem === undefined || newItem["itemId"]) {
             console.log("ERROR, no newItem");
             console.log(req.body);
             console.log(req.headers);
@@ -108,6 +108,7 @@ const GuessItem = (req, res) => {
             console.log(itemPool);
             console.log(itemPool.length);
             console.log(random);
+            console.log(newItem);
           }
 
           const payload = {
