@@ -104,13 +104,13 @@ const saveStats = () => {
       players: data2[1][0].player_count,
     };
 
-    statsModel.create(data, (err, result) => {
+    statsModel.create(data, async (err, result) => {
       if (err) {
         console.log(err);
       }
       console.log("Successfully saved stats to db");
 
-      cache.deleteCache("/stats");
+      await cache.deleteCache("/stats");
       // reset
       stats["dau"] = 0;
       stats["requests"] = 0;

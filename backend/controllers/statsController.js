@@ -1,16 +1,14 @@
 const statsModel = require("../models/statsModel");
 const cache = require("../middleware/cache");
 
-const GetAll = (req, res) => {
+const GetAll = async (req, res) => {
   const key = req.path;
 
-  if (cache.checkCache(key)) {
-    res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
-    return res.json(cache.getCache(key));
+  if (await cache.checkCache(key)) {
+    return res.json(await cache.getCache(key));
   }
 
-  statsModel.getAll((err, result) => {
+  statsModel.getAll(async (err, result) => {
     if (err) {
       console.log(err);
       return res
@@ -62,8 +60,8 @@ const GetAll = (req, res) => {
       old_item_count: result[11][0].old_item_count,
     };
 
-    cache.saveCache(key, response);
-    cache.changeTTL(key, 600);
+    await cache.saveCache(key, response);
+    await cache.changeTTL(key, 600);
 
     res.json(response);
   });

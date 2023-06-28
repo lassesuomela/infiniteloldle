@@ -88,13 +88,7 @@ const AddChampionId = (req, res) => {
 const GetAllChampions = async (req, res) => {
   const key = req.path;
   if (await cache.checkCache(key)) {
-    res.set("X-CACHE", "HIT");
-    res.set(
-      "X-CACHE-REMAINING",
-      new Date(await cache.getTtl(key)).toISOString()
-    );
-
-    return res.json(cache.getCache(key));
+    return res.json(await cache.getCache(key));
   }
   champion.getAllNames(async (err, result) => {
     if (err) {

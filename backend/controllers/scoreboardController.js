@@ -1,15 +1,13 @@
 const scoreboard = require("../models/scoreboardModel");
 const cache = require("../middleware/cache");
 
-const TopAllTime = (req, res) => {
+const TopAllTime = async (req, res) => {
   const key = req.path;
-  if (cache.checkCache(key)) {
-    res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
-    return res.json(cache.getCache(key));
+  if (await cache.checkCache(key)) {
+    return res.json(await cache.getCache(key));
   }
 
-  scoreboard.getByScoreCount((err, result) => {
+  scoreboard.getByScoreCount(async (err, result) => {
     if (!result || result.length === 0) {
       return res.json({
         status: "error",
@@ -25,8 +23,8 @@ const TopAllTime = (req, res) => {
       player_count: result[2][0]["player_count"],
     };
 
-    cache.saveCache(key, response);
-    cache.changeTTL(key, 300);
+    await cache.saveCache(key, response);
+    await cache.changeTTL(key, 300);
 
     res.json(response);
   });

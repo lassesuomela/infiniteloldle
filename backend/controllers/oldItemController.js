@@ -12,8 +12,6 @@ const Create = (req, res) => {
     });
   }
 
-  console.log(data);
-
   oldItemModel.create(data, (err, result) => {
     if (err) {
       console.log(err);
@@ -167,14 +165,12 @@ const GetItemSprite = (req, res) => {
   });
 };
 
-const GetAllItems = (req, res) => {
+const GetAllItems = async (req, res) => {
   const key = req.path;
-  if (cache.checkCache(key)) {
-    res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
-    return res.json(cache.getCache(key));
+  if (await cache.checkCache(key)) {
+    return res.json(await cache.getCache(key));
   }
-  oldItemModel.getAllNames((err, result) => {
+  oldItemModel.getAllNames(async (err, result) => {
     if (err) {
       return res.json({ status: "error", error: err });
     }
@@ -185,8 +181,8 @@ const GetAllItems = (req, res) => {
     });
 
     const response = { status: "success", items: items };
-    cache.saveCache(key, response);
-    cache.changeTTL(key, 3600 * 6);
+    await cache.saveCache(key, response);
+    await cache.changeTTL(key, 3600 * 6);
 
     res.json(response);
   });

@@ -117,18 +117,16 @@ const Create = (req, res) => {
   });
 };
 
-const CheckToken = (req, res) => {
+const CheckToken = async (req, res) => {
   const token = req.token;
 
   const key = req.path + ":" + token;
 
-  if (cache.checkCache(key)) {
-    res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
-    return res.json(cache.getCache(key));
+  if (await cache.checkCache(key)) {
+    return res.json(await cache.getCache(key));
   }
 
-  user.fetchByToken(token, (err, result) => {
+  user.fetchByToken(token, async (err, result) => {
     if (result && result[0]) {
       delete result[0]["solvedChampions"];
       delete result[0]["currentSplashChampion"];
@@ -144,7 +142,7 @@ const CheckToken = (req, res) => {
         player: result[0],
       };
 
-      cache.saveCache(key, response);
+      await cache.saveCache(key, response);
       res.json(response);
     } else {
       res.json({ status: "error", message: "Token is not valid" });
