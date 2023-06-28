@@ -12,6 +12,10 @@ const getCache = async (key) => {
   if (!client.isOpen) {
     await client.connect();
   }
+  const value = JSON.parse(await client.hGet("cache", key));
+  if (value === undefined || value === null) {
+    return null;
+  }
   return JSON.parse(await client.hGet("cache", key));
 };
 
@@ -20,6 +24,9 @@ const getTtl = async (key) => {
     await client.connect();
   }
   const ttl = await client.ttl(`cache:${key}`);
+  if (ttl === undefined || ttl === null) {
+    return null;
+  }
   return ttl;
 };
 
@@ -27,9 +34,11 @@ const checkCache = async (key) => {
   if (!client.isOpen) {
     await client.connect();
   }
-  const is = await client.hExists("cache", key);
-  console.log(is);
-  return is;
+  const value = await client.hExists("cache", key);
+  if (value === undefined || value === null) {
+    return null;
+  }
+  return value;
 };
 
 const saveCache = async (key, value) => {
