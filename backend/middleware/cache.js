@@ -9,32 +9,44 @@ const client = redis.createClient({
 client.on("error", (err) => console.log("Redis Client Error", err));
 
 const getCache = async (key) => {
-  await client.connect();
+  if (!client.isOpen) {
+    await client.connect();
+  }
   return JSON.parse(await client.hGet("cache", key));
 };
 
 const getTtl = async (key) => {
-  await client.connect();
+  if (!client.isOpen) {
+    await client.connect();
+  }
   return await client.ttl(`cache:${key}`);
 };
 
 const checkCache = async (key) => {
-  await client.connect();
+  if (!client.isOpen) {
+    await client.connect();
+  }
   return await client.hExists("cache", key);
 };
 
 const saveCache = async (key, value) => {
-  await client.connect();
+  if (!client.isOpen) {
+    await client.connect();
+  }
   await client.hSet("cache", key, JSON.stringify(value));
 };
 
 const deleteCache = async (key) => {
-  await client.connect();
+  if (!client.isOpen) {
+    await client.connect();
+  }
   await client.hDel("cache", key);
 };
 
 const changeTTL = async (key, ttl) => {
-  await client.connect();
+  if (!client.isOpen) {
+    await client.connect();
+  }
   await client.expire(`cache:${key}`, ttl);
 };
 
