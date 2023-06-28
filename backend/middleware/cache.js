@@ -1,36 +1,42 @@
-const NodeCache = require("node-cache");
-const cache = new NodeCache({ stdTTL: 60, checkperiod: 30 });
+const redis = require("redis");
+const client = redis.createClient({
+  legacyMode: true,
+  socket: {
+    port: 6379,
+    host: "redis",
+  },
+});
+client.on("error", (err) => console.log("Redis Client Error", err));
 
-const getCache = (key) => {
-  const value = cache.get(key);
-  if (value !== undefined) {
-    return value;
-  }
+const getCache = async (key) => {
+  await client.connect();
+  return await client.hGet("cache", key);
 };
 
-const getTtl = (key) => {
-  return cache.getTtl(key);
+const getTtl = async (key) => {
+  await client.connect();
+  return await client.ttl(`cache:${key}`);
 };
 
-const checkCache = (key) => {
-  return cache.has(key);
+const checkCache = async (key) => {
+  await client.connect();
+  return await client.hExists("cache", key);
 };
 
-const saveCache = (key, value) => {
-  cache.set(key, value);
+const saveCache = async (key, value) => {
+  await client.connect();
+  await client.hSet("cache", key, value);
 };
 
-const deleteCache = (key) => {
-  cache.del(key);
+const deleteCache = async (key) => {
+  await client.connect();
+  await client.hDel("cache", key);
 };
 
-const changeTTL = (key, ttl) => {
-  cache.ttl(key, ttl);
+const changeTTL = async (key, ttl) => {
+  await client.connect();
+  await client.expire(`cache:${key}`, ttl);
 };
-
-const getStats = () => {
-  return cache.getStats();
-}
 
 module.exports = {
   getTtl,
@@ -39,5 +45,4 @@ module.exports = {
   checkCache,
   saveCache,
   deleteCache,
-  getStats
 };
