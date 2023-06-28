@@ -23,7 +23,7 @@ const trackDAU = async (req, res, next) => {
 
     let reqsByToken = await cache.getCache(token);
 
-    if (reqsByToken === undefined) {
+    if (reqsByToken === undefined || reqsByToken === null) {
       reqsByToken = {};
     }
 
