@@ -10,7 +10,7 @@ client.on("error", (err) => console.log("Redis Client Error", err));
 
 const getCache = async (key) => {
   await client.connect();
-  return await client.hGet("cache", key);
+  return JSON.parse(await client.hGet("cache", key));
 };
 
 const getTtl = async (key) => {
@@ -25,7 +25,7 @@ const checkCache = async (key) => {
 
 const saveCache = async (key, value) => {
   await client.connect();
-  await client.hSet("cache", key, value);
+  await client.hSet("cache", key, JSON.stringify(value));
 };
 
 const deleteCache = async (key) => {
