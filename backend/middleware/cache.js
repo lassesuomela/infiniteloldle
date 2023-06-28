@@ -19,14 +19,17 @@ const getTtl = async (key) => {
   if (!client.isOpen) {
     await client.connect();
   }
-  return await client.ttl(`cache:${key}`);
+  const ttl = await client.ttl(`cache:${key}`);
+  return ttl;
 };
 
 const checkCache = async (key) => {
   if (!client.isOpen) {
     await client.connect();
   }
-  return await client.hExists("cache", key);
+  const is = await client.hExists("cache", key);
+  console.log(is);
+  return is;
 };
 
 const saveCache = async (key, value) => {
