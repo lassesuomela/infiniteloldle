@@ -36,9 +36,9 @@ const checkCache = async (key) => {
   }
   const value = await client.hExists("cache", key);
   if (value === undefined || value === null) {
-    return null;
+    return false;
   }
-  return value;
+  return true;
 };
 
 const saveCache = async (key, value) => {
