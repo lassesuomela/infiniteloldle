@@ -34,6 +34,7 @@ const saveCache = async (key, value) => {
     await client.connect();
   }
   await client.hSet("cache", key, JSON.stringify(value));
+  await changeTTL(key, 60);
 };
 
 const deleteCache = async (key) => {
