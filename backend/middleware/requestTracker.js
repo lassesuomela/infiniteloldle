@@ -13,7 +13,7 @@ const trackRequests = (req, res, next) => {
   next();
 };
 
-const trackDAU = (req, res, next) => {
+const trackDAU = async (req, res, next) => {
   if (stats["dau"] === undefined) {
     stats["dau"] = 0;
   }
@@ -21,8 +21,7 @@ const trackDAU = (req, res, next) => {
   if (req.token !== undefined && req.token !== null) {
     const token = req.token.substring(0, 20);
 
-    /*
-    let reqsByToken = cache.getCache(token);
+    let reqsByToken = await cache.getCache(token);
 
     if (reqsByToken === undefined) {
       reqsByToken = {};
@@ -74,9 +73,12 @@ const trackDAU = (req, res, next) => {
         reqsByToken["timeBetweenReqs"]["average"] < 0.8 ? true : false;
     }
 
-    console.log(reqsByToken);
-    cache.saveCache(token, reqsByToken);
-    */
+    if (reqsByToken["isLikelyBot"] === true) {
+      reqsByToken["ip"] = req.ip;
+      console.log(reqsByToken);
+    }
+    await cache.saveCache(token, reqsByToken);
+
     if (tokens.indexOf(token) === -1) {
       stats["dau"] += 1;
       tokens.push(token);
