@@ -37,7 +37,7 @@ const checkCache = async (key) => {
   }
   const value = await client.hExists("cache", key);
   console.log("vlaue from redis ", value);
-  if (value === 0) {
+  if (value === 0 || value === null || value === undefined) {
     return false;
   }
   return true;

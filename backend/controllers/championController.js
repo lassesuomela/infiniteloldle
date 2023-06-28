@@ -85,15 +85,18 @@ const AddChampionId = (req, res) => {
   });
 };
 
-const GetAllChampions = (req, res) => {
+const GetAllChampions = async (req, res) => {
   const key = req.path;
-  if (cache.checkCache(key)) {
+  if (await cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
+    res.set(
+      "X-CACHE-REMAINING",
+      new Date(await cache.getTtl(key)).toISOString()
+    );
 
     return res.json(cache.getCache(key));
   }
-  champion.getAllNames((err, result) => {
+  champion.getAllNames(async (err, result) => {
     if (err) {
       return res.json({ status: "error", error: err });
     }
@@ -104,8 +107,8 @@ const GetAllChampions = (req, res) => {
     });
 
     const response = { status: "success", champions: champions };
-    cache.saveCache(key, response);
-    cache.changeTTL(key, 3600 * 6);
+    await cache.saveCache(key, response);
+    await cache.changeTTL(key, 3600 * 6);
 
     res.json(response);
   });
