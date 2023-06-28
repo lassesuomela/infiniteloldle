@@ -75,6 +75,7 @@ const trackDAU = async (req, res, next) => {
 
     if (reqsByToken["isLikelyBot"] === true) {
       reqsByToken["ip"] = req.ip;
+      console.log("likely bot");
       console.log(reqsByToken);
     }
     await cache.saveCache(token, reqsByToken);

@@ -32,11 +32,9 @@ const getTtl = async (key) => {
 
 const checkCache = async (key) => {
   if (!client.isOpen) {
-    console.log("connecting to redis");
     await client.connect();
   }
   const value = await client.hExists("cache", key);
-  console.log("vlaue from redis ", value);
   if (value === 0 || value === null || value === undefined) {
     return false;
   }
