@@ -86,15 +86,25 @@ const GuessItem = (req, res) => {
           }
 
           let solvedItemsArray;
-          if (solvedItemIds && solvedItemIds.length > 1) {
+          if (
+            solvedItemIds &&
+            solvedItemIds.length > 1 &&
+            solvedItemIds.split(",").length < itemData.length
+          ) {
             solvedItemsArray = solvedItemIds.split(",");
+          } else if (
+            solvedItemIds &&
+            solvedItemIds.length > 1 &&
+            solvedItemIds.split(",").length >= itemData.length
+          ) {
+            solvedItemIds = "";
+            solvedItemsArray = "";
+            userResult[0]["prestige"]++;
           } else if (!solvedItemIds) {
             solvedItemsArray = "";
           } else {
             solvedItemsArray = solvedItemIds.toString();
           }
-
-          // TODO: add prestige stuff
 
           // remove solved items from the all items pool
           const itemPool = itemData.filter((item) => {

@@ -83,8 +83,20 @@ const GuessItem = (req, res) => {
           }
 
           let solvedItemsArray;
-          if (solvedItemIds.length > 1) {
+          if (
+            solvedItemIds.length > 1 &&
+            solvedItemIds.split(",").length > 1 &&
+            solvedItemIds.split(",").length < itemData.length
+          ) {
             solvedItemsArray = solvedItemIds.split(",");
+          } else if (
+            solvedItemIds.length > 1 &&
+            solvedItemIds.split(",").length >= itemData.length
+          ) {
+            solvedItemIds = "";
+            solvedItemsArray = "";
+
+            userResult[0]["prestige"]++;
           } else {
             solvedItemsArray = solvedItemIds.toString();
           }
