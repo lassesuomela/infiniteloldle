@@ -31,15 +31,15 @@ const user = {
   },
   updateItem: (data, cb) => {
     return db.query(
-      "UPDATE users SET solvedItemIds = ? WHERE token = ?",
-      [data.solvedItemIds, data.token],
+      "UPDATE users SET currentItemId = ?, solvedItemIds = ? WHERE token = ?",
+      [data.currentItemId, data.solvedItemIds, data.token],
       cb
     );
   },
   updateOldItem: (data, cb) => {
     return db.query(
-      "UPDATE users SET solvedOldItemIds = ? WHERE token = ?",
-      [data.solvedOldItemIds, data.token],
+      "UPDATE users SET currentOldItemId = ?, solvedOldItemIds = ? WHERE token = ?",
+      [data.currentOldItemId, data.solvedOldItemIds, data.token],
       cb
     );
   },
