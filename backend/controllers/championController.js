@@ -335,6 +335,8 @@ const Guess = (req, res) => {
                 });
               }
 
+              cache.deleteCache("/user:" + token);
+
               res.json({
                 status: "success",
                 correctGuess: true,
@@ -476,6 +478,8 @@ const GuessSplash = (req, res) => {
                     message: "Error on updating user data",
                   });
                 }
+
+                cache.deleteCache("/user:" + token);
 
                 res.json({
                   status: "success",

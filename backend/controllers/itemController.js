@@ -140,6 +140,8 @@ const GuessItem = (req, res) => {
               });
             }
 
+            cache.deleteCache("/user:" + token);
+
             res.json({
               status: "success",
               correctGuess: true,
