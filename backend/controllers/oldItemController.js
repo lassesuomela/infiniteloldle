@@ -12,8 +12,6 @@ const Create = (req, res) => {
     });
   }
 
-  console.log(data);
-
   oldItemModel.create(data, (err, result) => {
     if (err) {
       console.log(err);
@@ -115,7 +113,7 @@ const GuessItem = (req, res) => {
 
           const newItem = itemPool[random];
 
-          if (newItem === undefined) {
+          if (itemPool.length === 0) {
             console.log("ERROR, no newItem");
             console.log(req.body);
             console.log(req.headers);
@@ -143,6 +141,8 @@ const GuessItem = (req, res) => {
                 message: "Error on updating user data",
               });
             }
+
+            cache.deleteCache("/user:" + token);
 
             res.json({
               status: "success",

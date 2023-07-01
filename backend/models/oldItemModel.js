@@ -21,6 +21,9 @@ const oldItem = {
   getIdByName: (name, cb) => {
     db.query("SELECT old_item_key FROM old_items WHERE name = ?", [name], cb);
   },
+  getNameById: (id, cb) => {
+    db.query("SELECT name FROM old_items WHERE id = ?", [id], cb);
+  },
   getAllIds: (cb) => {
     db.query("SELECT id FROM old_items", cb);
   },
