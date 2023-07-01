@@ -10,8 +10,8 @@ const user = {
   },
   updateSplash: (data, cb) => {
     return db.query(
-      "UPDATE users SET solvedSplashChampions = ? WHERE token = ?",
-      [data.solvedSplashChampions, data.token],
+      "UPDATE users SET currentSplashChampion = ?, solvedSplashChampions = ? WHERE token = ?",
+      [data.currentSplashChampion, data.solvedSplashChampions, data.token],
       cb
     );
   },

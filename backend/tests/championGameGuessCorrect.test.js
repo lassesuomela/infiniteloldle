@@ -3,7 +3,7 @@ const request = require("supertest");
 const userModel = require("../models/userModelTest");
 const championModel = require("../models/championModel");
 
-describe("Testing guessing correctly and prestige", () => {
+describe("Testing guessing champs correctly and prestige", () => {
   let token = "";
   it("Creating user account with nickname defined.", (done) => {
     const body = {
@@ -45,7 +45,7 @@ describe("Testing guessing correctly and prestige", () => {
       results.forEach((result) => {
         idList.push(result.id);
       });
-      const guessId = idList.pop();
+      const guessId = idList.shift();
       const guessedIds = idList.join(",");
 
       championModel.getNameById(guessId, (err, result) => {
