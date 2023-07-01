@@ -57,8 +57,6 @@ describe("Testing guessing legacy item correctly and prestige", () => {
             token: token,
           },
           (err, result) => {
-            console.log(err);
-
             const body = {
               guess: guess,
             };
