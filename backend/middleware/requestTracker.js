@@ -21,6 +21,11 @@ const trackDAU = async (req, res, next) => {
   if (req.token !== undefined && req.token !== null) {
     const token = req.token.substring(0, 20);
 
+    if (token === undefined) {
+      next();
+      return;
+    }
+
     let reqsByToken = await cache.getCache(token);
 
     if (reqsByToken === undefined || reqsByToken === null) {

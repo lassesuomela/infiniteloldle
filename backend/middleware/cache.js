@@ -16,7 +16,7 @@ const getCache = async (key) => {
   if (value === undefined || value === null) {
     return null;
   }
-  return JSON.parse(await client.hGet("cache", key));
+  return value;
 };
 
 const getTtl = async (key) => {
