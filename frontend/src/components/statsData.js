@@ -42,6 +42,7 @@ export default function StatsData() {
           dau: response.data.dau,
           mau: response.data.mau,
           old_item_count: response.data.old_item_count,
+          score_count_graph: response.data.score_count_graph,
         };
 
         setOtherStat(otherStats);
@@ -215,6 +216,21 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis type="number" />
             <YAxis dataKey="Country" type="category" />
+            <Tooltip />
+            <Bar dataKey="Players" fill="#005A82" />
+          </BarChart>
+        </div>
+        <h4>Score distribution graph</h4>
+        <div className="pb-4 pt-2">
+          <BarChart
+            width={1000}
+            height={500}
+            data={otherStat.score_count_graph}
+          >
+            <CartesianGrid strokeDasharray="2 2" />
+            <Legend />
+            <XAxis dataKey="score_range" type="category" />
+            <YAxis dataKey="Players" type="number" />
             <Tooltip />
             <Bar dataKey="Players" fill="#005A82" />
           </BarChart>

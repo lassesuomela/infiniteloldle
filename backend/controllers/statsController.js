@@ -60,6 +60,7 @@ const GetAll = (req, res) => {
       dau: result[0][0].dau,
       mau: mau,
       old_item_count: result[11][0].old_item_count,
+      score_count_graph: result[13],
     };
 
     cache.saveCache(key, response);
