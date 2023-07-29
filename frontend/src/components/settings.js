@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
 import Cookies from "universal-cookie";
+import { Tooltip } from "react-tooltip";
 
 export default function Settings() {
   const [isShown, setIsShown] = useState(false);
@@ -101,8 +102,14 @@ export default function Settings() {
 
   return (
     <>
-      <button onClick={ToggleState} className="btn btn-dark darkBtn p-2 pb-0">
+      <button
+        onClick={ToggleState}
+        className="btn btn-dark darkBtn p-2 pb-0"
+        data-tooltip-id="settings-tooltip"
+        data-tooltip-content="Settings"
+      >
         <span className="material-symbols-outlined">settings</span>
+        <Tooltip id="settings-tooltip" />
       </button>
 
       <Modal
