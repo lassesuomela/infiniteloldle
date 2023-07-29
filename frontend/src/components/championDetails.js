@@ -100,7 +100,11 @@ export default function ChampionDetails(props) {
         <div
           className={
             "col-2 championData " +
-            (props.similarites.sameRegion ? "correct" : "incorrect")
+            (props.similarites.sameRegion === "partial"
+              ? "partial"
+              : props.similarites.sameRegion
+              ? "correct"
+              : "incorrect")
           }
           id="region"
         >
@@ -111,7 +115,11 @@ export default function ChampionDetails(props) {
         <div
           className={
             "col-1 championData " +
-            (props.similarites.sameDamageType ? "correct" : "incorrect")
+            (props.similarites.sameDamageType === "partial"
+              ? "partial"
+              : props.similarites.sameDamageType
+              ? "correct"
+              : "incorrect")
           }
           id="region"
         >
