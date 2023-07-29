@@ -13,23 +13,12 @@ export default function StatsData() {
   const [triesPerDay, setTriesPerDay] = useState([]);
   const [firstTriesPerDay, setFirstTriesPerDay] = useState([]);
   const [scoresPerDay, setScoresPerDay] = useState([]);
-  const [noData, setNoData] = useState(false);
 
   useEffect(() => {
     const gamesPlayedData = localStorage.getItem("gamesPlayed");
     const triesPerDayData = localStorage.getItem("triesPerDay");
     const firstTriesPerDayData = localStorage.getItem("firstTriesPerDay");
     const scoresPerDayData = localStorage.getItem("scorePerDay");
-
-    if (
-      gamesPlayedData === null ||
-      firstTriesPerDayData === null ||
-      triesPerDayData === null ||
-      scoresPerDayData === null
-    ) {
-      setNoData(true);
-      return;
-    }
 
     setGamesPerDay(parse(gamesPlayedData));
     setTriesPerDay(parse(triesPerDayData));
@@ -38,6 +27,9 @@ export default function StatsData() {
   }, []);
 
   const parse = (data) => {
+    if (data === null) {
+      return [];
+    }
     const parsedData = JSON.parse(data);
     const days = Object.keys(parsedData);
 
@@ -54,16 +46,6 @@ export default function StatsData() {
     }
     return dataPoints;
   };
-
-  if (noData) {
-    return (
-      <>
-        <div className="d-flex justify-content-center">
-          <h2>No data available</h2>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
