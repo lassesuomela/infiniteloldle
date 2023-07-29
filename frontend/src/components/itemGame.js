@@ -4,6 +4,7 @@ import Select from "react-select";
 import Victory from "./victory";
 import ItemImg from "./itemImg";
 import Config from "../configs/config";
+import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -76,6 +77,7 @@ export default function Game() {
         if (response.data.status !== "success") {
           return;
         }
+        saveTries(1);
 
         const isCorrect = response.data.correctGuess;
 
@@ -87,8 +89,11 @@ export default function Game() {
         const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
+          if (guesses.length === 0) {
+            saveFirstTries();
+          }
+          saveGamesPlayed();
           setCorrectGuess(true);
-
           spriteImg.style.filter = "";
         } else {
           let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));

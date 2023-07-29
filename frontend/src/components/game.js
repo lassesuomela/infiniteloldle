@@ -4,7 +4,7 @@ import Titles from "./gameTitle";
 import ChampionDetails from "./championDetails";
 import Select from "react-select";
 import Victory from "./victory";
-
+import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import Config from "../configs/config";
 
 import { Helmet } from "react-helmet";
@@ -62,12 +62,18 @@ export default function Game() {
         if (response.data.status !== "success") {
           return;
         }
+        saveTries(1);
+
         const correct = response.data.correctGuess;
         const data = response.data.properties;
 
         setChampions((champions) => [data, ...champions]);
 
         if (correct) {
+          if (guesses.length === 0) {
+            saveFirstTries();
+          }
+          saveGamesPlayed();
           setCorrectGuess(true);
           setTitle(response.data.title);
         }
