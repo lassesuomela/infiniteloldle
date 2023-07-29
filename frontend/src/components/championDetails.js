@@ -123,7 +123,9 @@ export default function ChampionDetails(props) {
           }
           id="region"
         >
-          <span className="align-center">{props.damageType}</span>
+          <span className="align-center">
+            {props.damageType.replace(/,/g, " ")}
+          </span>
         </div>
       </div>
     </div>
