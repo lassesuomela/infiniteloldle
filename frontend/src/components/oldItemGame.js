@@ -4,6 +4,7 @@ import Select from "react-select";
 import Victory from "./victory";
 import OldItemImg from "./oldItemImg";
 import Config from "../configs/config";
+import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -78,6 +79,8 @@ export default function Game() {
           return;
         }
 
+        saveTries(1);
+
         const isCorrect = response.data.correctGuess;
 
         const itemId = response.data.itemId;
@@ -88,14 +91,15 @@ export default function Game() {
         const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
+          if (guesses.length === 0) {
+            saveFirstTries();
+          }
+          saveGamesPlayed();
           setCorrectGuess(true);
-
           spriteImg.style.filter = "";
         } else {
           let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
-
           blurVal -= blurVal * 0.4;
-
           spriteImg.style.filter = "blur(" + blurVal.toString() + "em)";
         }
       })
@@ -120,7 +124,7 @@ export default function Game() {
 
   return (
     <div className="container main pt-4 pb-5 mb-5">
-      <h3 className="text-center pb-3">Which removed item is this?</h3>
+      <h3 className="text-center pb-3">Which legacy item is this?</h3>
 
       <div
         className="container d-flex justify-content-center shadow"

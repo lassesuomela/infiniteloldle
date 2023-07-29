@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function Legal() {
+  const [isCopied, setIsCopied] = useState(false);
+
   return (
     <div id="legal">
       <div id="disclaimer">
@@ -477,9 +480,15 @@ export default function Legal() {
         <p>
           If you have any questions, concerns, or requests regarding this
           Privacy Policy or the privacy practices of Infiniteloldle.com, please
-          contact us at{" "}
-          <a href="mailto:infiniteloldle@gmail.com">infiniteloldle@gmail.com</a>
-          .
+          contact us at: <strong>infiniteloldle@gmail.com</strong>.{" "}
+          <CopyToClipboard text="infiniteloldle@gmail.com">
+            <button
+              className="btn btn-outline-dark"
+              onClick={() => setIsCopied(true)}
+            >
+              {isCopied ? "Copied!" : "Copy"}
+            </button>
+          </CopyToClipboard>
         </p>
         <p>
           Please review this Privacy Policy carefully. By using

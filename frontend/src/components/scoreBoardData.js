@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ReactCountryFlag from "react-country-flag";
+import { Tooltip } from "react-tooltip";
 
+import { saveScore } from "./saveStats";
 import Config from "../configs/config";
 
 export default function ScoreBoardData() {
@@ -36,6 +38,7 @@ export default function ScoreBoardData() {
         if (response.data.status === "success") {
           const data = response.data.player;
 
+          saveScore(response.data.player.score);
           setPlayerData(data);
 
           if (!data.country) {
@@ -92,11 +95,16 @@ export default function ScoreBoardData() {
                   <td>{player.score}</td>
                   <td>
                     {player.country !== "n/a" && player.country !== null ? (
-                      <ReactCountryFlag
-                        countryCode={player.country}
-                        style={{ fontSize: "1.5em" }}
-                        svg
-                      />
+                      <>
+                        <ReactCountryFlag
+                          countryCode={player.country}
+                          data-tooltip-id="country-tooltip"
+                          data-tooltip-content={player.country}
+                          style={{ fontSize: "1.5em" }}
+                          svg
+                        />
+                        <Tooltip id="country-tooltip" />
+                      </>
                     ) : (
                       "n/a"
                     )}

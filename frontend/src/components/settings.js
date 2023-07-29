@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
 import Cookies from "universal-cookie";
+import { Tooltip } from "react-tooltip";
 
 export default function Settings() {
   const [isShown, setIsShown] = useState(false);
@@ -101,11 +102,15 @@ export default function Settings() {
 
   return (
     <>
-      <div className="d-flex justify-content-end">
-        <button onClick={ToggleState} className="btn btn-dark darkBtn p-2 pb-0">
-          <span className="material-symbols-outlined">settings</span>
-        </button>
-      </div>
+      <button
+        onClick={ToggleState}
+        className="btn btn-dark darkBtn p-2 pb-0"
+        data-tooltip-id="settings-tooltip"
+        data-tooltip-content="Settings"
+      >
+        <span className="material-symbols-outlined">settings</span>
+        <Tooltip id="settings-tooltip" />
+      </button>
 
       <Modal
         show={isShown}
