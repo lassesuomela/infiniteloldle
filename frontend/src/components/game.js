@@ -114,16 +114,19 @@ export default function Game() {
           />
 
           <div className="d-flex justify-content-evenly">
-            <button className="btn btn-dark mb-3 mt-1 min-vw-25">Guess</button>
             {correctGuess ? (
-              <button
-                className="btn btn-light mb-3 mt-1 min-vw-25"
-                onClick={Restart}
-              >
-                Reset
-              </button>
+              <>
+                <button
+                  className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
+                  onClick={Restart}
+                >
+                  Reset
+                </button>
+              </>
             ) : (
-              ""
+              <button className="btn btn-dark mb-3 mt-1 min-vw-25">
+                Guess
+              </button>
             )}
           </div>
         </form>

@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function About() {
+  const [isCopied, setIsCopied] = useState(false);
   return (
     <div id="about">
       <h3>Inspiration</h3>
@@ -69,8 +71,15 @@ export default function About() {
       <h4 className="pb-3 pt-4">Contact Us</h4>
       <p>
         If you want to contact us regarding this site. You can do that by
-        emailing{" "}
-        <a href="mailto:infiniteloldle@gmail.com">infiniteloldle@gmail.com</a>.
+        sending email to <strong>infiniteloldle@gmail.com</strong>.{" "}
+        <CopyToClipboard text="infiniteloldle@gmail.com">
+          <button
+            className="btn btn-outline-dark"
+            onClick={() => setIsCopied(true)}
+          >
+            {isCopied ? "Copied!" : "Copy"}
+          </button>
+        </CopyToClipboard>
       </p>
     </div>
   );

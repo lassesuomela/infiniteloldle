@@ -101,11 +101,9 @@ export default function Settings() {
 
   return (
     <>
-      <div className="d-flex justify-content-end">
-        <button onClick={ToggleState} className="btn btn-dark darkBtn p-2 pb-0">
-          <span className="material-symbols-outlined">settings</span>
-        </button>
-      </div>
+      <button onClick={ToggleState} className="btn btn-dark darkBtn p-2 pb-0">
+        <span className="material-symbols-outlined">settings</span>
+      </button>
 
       <Modal
         show={isShown}

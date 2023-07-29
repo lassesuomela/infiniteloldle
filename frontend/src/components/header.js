@@ -56,25 +56,41 @@ export default function Header() {
             </li>
           </ul>
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="about">
-                About
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link className="nav-link" to="legal">
-                Legal
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link className="nav-link" to="stats">
-                Stats
-              </Link>
-            </li>
-
-            <Settings />
+            <div className="d-flex justify-content-start">
+              <button className="btn btn-dark darkBtn p-2 pb-0">
+                <li className="nav-item">
+                  <Link className="nav-link" to="about">
+                    <span className="material-symbols-outlined">help</span>
+                  </Link>
+                </li>
+              </button>
+              <button className="btn btn-dark darkBtn p-2 pb-0">
+                <li className="nav-item">
+                  <Link className="nav-link" to="legal">
+                    <span className="material-symbols-outlined">gavel</span>
+                  </Link>
+                </li>
+              </button>
+              <button className="btn btn-dark darkBtn p-2 pb-0">
+                <li className="nav-item">
+                  <Link className="nav-link" to="stats">
+                    <span className="material-symbols-outlined">
+                      leaderboard
+                    </span>
+                  </Link>
+                </li>
+              </button>
+              <button className="btn btn-dark darkBtn p-2 pb-0">
+                <li className="nav-item">
+                  <Link className="nav-link" to="stats">
+                    <span className="material-symbols-outlined">
+                      monitoring
+                    </span>
+                  </Link>
+                </li>
+              </button>
+              <Settings />
+            </div>
           </ul>
         </div>
       </div>
