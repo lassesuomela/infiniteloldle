@@ -120,7 +120,7 @@ export default function Game() {
 
   return (
     <div className="container main pt-4 pb-5 mb-5">
-      <h3 className="text-center pb-3">Which removed item is this?</h3>
+      <h3 className="text-center pb-3">Which legacy item is this?</h3>
 
       <div
         className="container d-flex justify-content-center shadow"

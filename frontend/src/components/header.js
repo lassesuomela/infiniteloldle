@@ -33,20 +33,20 @@ export default function Header() {
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="/splash">
+              <Link className="nav-link" to="/game/splash">
                 Splash
               </Link>
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="/item">
+              <Link className="nav-link" to="/game/item">
                 Item
               </Link>
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="/oldItem">
-                Removed item
+              <Link className="nav-link" to="/game/item/legacy">
+                Legacy item
               </Link>
             </li>
 
@@ -88,10 +88,8 @@ export default function Header() {
                 data-tooltip-content="My stats"
               >
                 <li className="nav-item">
-                  <Link className="nav-link" to="stats">
-                    <span className="material-symbols-outlined">
-                      leaderboard
-                    </span>
+                  <Link className="nav-link" to="stats/me">
+                    <span className="material-symbols-outlined">trophy</span>
                     <Tooltip id="stats-tooltip" />
                   </Link>
                 </li>
@@ -99,7 +97,7 @@ export default function Header() {
               <button
                 className="btn btn-dark darkBtn p-2 pb-0"
                 data-tooltip-id="data-tooltip"
-                data-tooltip-content="Global stats"
+                data-tooltip-content="Global statistics"
               >
                 <li className="nav-item">
                   <Link className="nav-link" to="stats">
