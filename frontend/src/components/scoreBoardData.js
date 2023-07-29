@@ -3,6 +3,7 @@ import axios from "axios";
 import ReactCountryFlag from "react-country-flag";
 import { Tooltip } from "react-tooltip";
 
+import { saveScore } from "./saveStats";
 import Config from "../configs/config";
 
 export default function ScoreBoardData() {
@@ -37,6 +38,7 @@ export default function ScoreBoardData() {
         if (response.data.status === "success") {
           const data = response.data.player;
 
+          saveScore(response.data.player.score);
           setPlayerData(data);
 
           if (!data.country) {
