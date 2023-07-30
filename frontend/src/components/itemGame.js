@@ -5,6 +5,7 @@ import Victory from "./victory";
 import ItemImg from "./itemImg";
 import Config from "../configs/config";
 import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
+import { Reroll } from "./reroll";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -160,6 +161,16 @@ export default function Game() {
                 onClick={Restart}
               >
                 Reset
+              </button>
+            ) : (
+              ""
+            )}
+            {!correctGuess && guesses.length >= 10 ? (
+              <button
+                className="btn btn-dark mb-3 mt-1 min-vw-25"
+                onClick={() => Reroll("item")}
+              >
+                Reroll
               </button>
             ) : (
               ""

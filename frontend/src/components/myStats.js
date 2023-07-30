@@ -107,7 +107,7 @@ export default function StatsData() {
           <div>
             <h5>Average guesses per game</h5>
             <p>
-              {totalGames !== 0 ? (totalGuesses / totalGames).toFixed(2) : 0}
+              {totalGames !== 0 ? (totalGuesses / totalGames).toFixed(0) : 0}
             </p>
           </div>
           <div>
@@ -118,7 +118,7 @@ export default function StatsData() {
             <h5>First tries rate</h5>
             <p>
               {totalGames !== 0
-                ? ((totalFirstTries / totalGames) * 100).toFixed(2)
+                ? ((totalFirstTries / totalGames) * 100).toFixed(0)
                 : 0}{" "}
               %
             </p>

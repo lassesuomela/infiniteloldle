@@ -4,6 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
 import Cookies from "universal-cookie";
 import { Tooltip } from "react-tooltip";
+import { Reroll } from "./reroll";
 
 export default function Settings() {
   const [isShown, setIsShown] = useState(false);
@@ -63,40 +64,19 @@ export default function Settings() {
   };
 
   const ChangeGuessChampion = () => {
-    ChangeGuess("champion");
+    Reroll("champion");
   };
 
   const ChangeGuessSplash = () => {
-    ChangeGuess("splash");
+    Reroll("splash");
   };
 
   const ChangeGuessItem = () => {
-    ChangeGuess("item");
+    Reroll("item");
   };
 
   const ChangeGuessOldItem = () => {
-    ChangeGuess("oldItem");
-  };
-
-  const ChangeGuess = (type) => {
-    axios
-      .put(
-        Config.url + "/user/" + type,
-        {},
-        {
-          headers: { authorization: "Bearer " + localStorage.getItem("token") },
-        }
-      )
-      .then((response) => {
-        if (response.data.status === "success") {
-          console.log(response.data);
-          ToggleState();
-          window.location.reload();
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    Reroll("oldItem");
   };
 
   const CreateUser = () => {
@@ -176,7 +156,7 @@ export default function Settings() {
                       onClick={ChangeGuessOldItem}
                       className="btn btn-warning mb-2"
                     >
-                      Removed item
+                      Legacy item
                     </button>
                   </div>
                 </>
