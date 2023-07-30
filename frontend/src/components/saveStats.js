@@ -1,7 +1,7 @@
 function saveStats(key, data) {
   const today = new Date().toISOString().split("T")[0];
 
-  if (isLocalStorageKeyExists(key)) {
+  if (localStorage.getItem(key) !== null) {
     // If the key already exists, update the data
     localStorage.setItem(key, JSON.stringify(data));
   } else {
@@ -68,10 +68,40 @@ function saveScore(score) {
   saveStats(key, existingData);
 }
 
-// Function to check if the key exists in localStorage
-function isLocalStorageKeyExists(key) {
-  return localStorage.getItem(key) !== null;
+function initValues() {
+  const keys = [
+    "scorePerDay",
+    "firstTriesPerDay",
+    "triesPerDay",
+    "gamesPlayed",
+  ];
+
+  const today = new Date().toISOString().split("T")[0];
+  const defaultData = {
+    value: 0,
+  };
+  const newData = { [today]: defaultData };
+
+  for (const key in keys) {
+    if (localStorage.getItem(keys[key]) === null) {
+      localStorage.setItem(keys[key], JSON.stringify(newData));
+      continue;
+    }
+
+    const existingData = JSON.parse(localStorage.getItem(keys[key]));
+
+    if (existingData[today] === undefined) {
+      existingData[today] = defaultData;
+      localStorage.setItem(keys[key], JSON.stringify(existingData));
+    }
+  }
 }
 
-// Export the saveStats function
-export { saveStats, saveGamesPlayed, saveTries, saveFirstTries, saveScore };
+export {
+  saveStats,
+  saveGamesPlayed,
+  saveTries,
+  saveFirstTries,
+  saveScore,
+  initValues,
+};

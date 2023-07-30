@@ -7,18 +7,39 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-
+import { initValues } from "./saveStats";
 export default function StatsData() {
   const [gamesPerDay, setGamesPerDay] = useState([]);
   const [triesPerDay, setTriesPerDay] = useState([]);
   const [firstTriesPerDay, setFirstTriesPerDay] = useState([]);
   const [scoresPerDay, setScoresPerDay] = useState([]);
+  const [noData, setNoData] = useState(false);
 
   useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      setNoData(true);
+      return;
+    }
+
     const gamesPlayedData = localStorage.getItem("gamesPlayed");
     const triesPerDayData = localStorage.getItem("triesPerDay");
     const firstTriesPerDayData = localStorage.getItem("firstTriesPerDay");
     const scoresPerDayData = localStorage.getItem("scorePerDay");
+
+    const today = new Date().toISOString().split("T")[0];
+
+    if (
+      gamesPlayedData === null ||
+      triesPerDayData === null ||
+      firstTriesPerDayData === null ||
+      scoresPerDayData === null ||
+      JSON.parse(gamesPlayedData)[today] === undefined ||
+      JSON.parse(triesPerDayData)[today] === undefined ||
+      JSON.parse(firstTriesPerDayData)[today] === undefined ||
+      JSON.parse(scoresPerDayData)[today] === undefined
+    ) {
+      initValues();
+    }
 
     setGamesPerDay(parse(gamesPlayedData));
     setTriesPerDay(parse(triesPerDayData));
@@ -38,14 +59,21 @@ export default function StatsData() {
     for (const day of days) {
       dataPoints.push({
         Dates: new Date(day).toLocaleDateString(navigator.language, {
-          month: "numeric",
-          day: "numeric",
+          dateStyle: "short",
         }),
         Value: parsedData[day].value,
       });
     }
     return dataPoints;
   };
+
+  if (noData) {
+    return (
+      <div className="d-flex justify-content-center">
+        <h2>No data available</h2>
+      </div>
+    );
+  }
 
   return (
     <>
