@@ -6,7 +6,7 @@ import Select from "react-select";
 import Victory from "./victory";
 import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import Config from "../configs/config";
-
+import { Reroll } from "./reroll";
 import { Helmet } from "react-helmet";
 
 export default function Game() {
@@ -133,6 +133,16 @@ export default function Game() {
               <button className="btn btn-dark mb-3 mt-1 min-vw-25">
                 Guess
               </button>
+            )}
+            {!correctGuess && guesses.length >= 10 ? (
+              <button
+                className="btn btn-dark mb-3 mt-1 min-vw-25"
+                onClick={() => Reroll("champion")}
+              >
+                Reroll
+              </button>
+            ) : (
+              ""
             )}
           </div>
         </form>
