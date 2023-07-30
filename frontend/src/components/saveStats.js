@@ -6,7 +6,7 @@ function saveStats(key, data) {
     localStorage.setItem(key, JSON.stringify(data));
   } else {
     // If the key does not exist, create a new entry
-    const dataToStore = { value: 0 };
+    const dataToStore = { value: 1 };
     const newData = { [today]: dataToStore };
     localStorage.setItem(key, JSON.stringify(newData));
   }

@@ -123,11 +123,16 @@ export default function ScoreBoardData() {
                 <td>
                   {playerData.country !== "n/a" &&
                   playerData.country !== null ? (
-                    <ReactCountryFlag
-                      countryCode={playerData.country}
-                      style={{ fontSize: "1.5em" }}
-                      svg
-                    />
+                    <>
+                      <ReactCountryFlag
+                        countryCode={playerData.country}
+                        data-tooltip-id="user-country-tooltip"
+                        data-tooltip-content={playerData.country}
+                        style={{ fontSize: "1.5em" }}
+                        svg
+                      />
+                      <Tooltip id="user-country-tooltip" />
+                    </>
                   ) : (
                     "-"
                   )}
