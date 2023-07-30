@@ -5,12 +5,21 @@ import Config from "../configs/config";
 import Cookies from "universal-cookie";
 import { Tooltip } from "react-tooltip";
 import { Reroll } from "./reroll";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function Settings() {
   const [isShown, setIsShown] = useState(false);
+  const [exportMode, setExportMode] = useState(false);
+  const [importMode, setImportMode] = useState(false);
   const [newNickname, setNewNickname] = useState("");
+  const [newToken, setNewToken] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
+  const [isValidToken, setIsValidToken] = useState(null);
 
   const ToggleState = () => {
+    setIsCopied(false);
+    setExportMode(false);
+    setImportMode(false);
     setIsShown(!isShown);
   };
 
@@ -84,6 +93,30 @@ export default function Settings() {
     window.location.reload();
   };
 
+  const saveToken = () => {
+    if (newToken.length !== 64) {
+      setIsValidToken(false);
+      return;
+    }
+
+    axios
+      .get(Config.url + "/user", {
+        headers: { authorization: "Bearer " + newToken },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          setIsValidToken(true);
+          localStorage.setItem("token", newToken);
+        }
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <>
       <button
@@ -114,7 +147,7 @@ export default function Settings() {
                 <>
                   <h4>Change your nickname</h4>
 
-                  <div className="pt-2 d-flex justify-content-center border-dark">
+                  <div className="pt-2 d-flex justify-content-center">
                     <div className="pb-3">
                       <form className="row g-3 p-1" onSubmit={ChangeNickname}>
                         <input
@@ -125,7 +158,7 @@ export default function Settings() {
                           maxLength="30"
                           onChange={(e) => setNewNickname(e.target.value)}
                         />
-                        <div className="text-center">
+                        <div>
                           <button className="btn btn-dark mb-2">Save</button>
                         </div>
                       </form>
@@ -158,6 +191,80 @@ export default function Settings() {
                     >
                       Legacy item
                     </button>
+                  </div>
+
+                  <div className="p-3">
+                    <h4>Export / import token</h4>
+                    <p>
+                      By exporting token you can move all progress over to the
+                      other device and continue progressing on multiple devices.
+                    </p>
+                    <div className="d-flex justify-content-center gap-2">
+                      <button
+                        onClick={() => {
+                          setExportMode(!exportMode);
+                          setImportMode(false);
+                        }}
+                        className="btn btn-dark mb-2"
+                      >
+                        Export
+                      </button>
+                      <button
+                        onClick={() => {
+                          setImportMode(!importMode);
+                          setExportMode(false);
+                        }}
+                        className="btn btn-success mb-2"
+                      >
+                        Import
+                      </button>
+                    </div>
+
+                    {exportMode ? (
+                      <>
+                        <p>Copy token</p>
+                        <CopyToClipboard text={localStorage.getItem("token")}>
+                          <button
+                            className="btn btn-outline-dark"
+                            onClick={() => setIsCopied(true)}
+                          >
+                            {isCopied ? "Copied!" : "Copy"}
+                          </button>
+                        </CopyToClipboard>
+                      </>
+                    ) : (
+                      ""
+                    )}
+
+                    {importMode ? (
+                      <>
+                        <p>Save exported token</p>
+                        <input
+                          value={newToken}
+                          className="form-control"
+                          placeholder="Token here"
+                          onChange={(e) => {
+                            setNewToken(e.target.value);
+                            setIsValidToken(null);
+                          }}
+                        ></input>
+                        <p className="pt-2">
+                          {isValidToken === true
+                            ? "Token is valid"
+                            : isValidToken === false
+                            ? "Token is not valid"
+                            : ""}
+                        </p>
+                        <button
+                          className="btn btn-outline-success mt-1"
+                          onClick={() => saveToken()}
+                        >
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </>
               ) : (
