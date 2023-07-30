@@ -47,6 +47,10 @@ export default function Settings() {
         if (response.data.status === "success") {
           ToggleState();
           localStorage.removeItem("token");
+          localStorage.removeItem("scorePerDay");
+          localStorage.removeItem("firstTriesPerDay");
+          localStorage.removeItem("triesPerDay");
+          localStorage.removeItem("gamesPlayed");
           localStorage.setItem("userDeleted", true);
           const cookies = new Cookies();
           cookies.remove("isValidToken");
