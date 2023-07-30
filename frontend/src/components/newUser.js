@@ -21,13 +21,14 @@ export default function NewUser() {
             sameSite: "strict",
             secure: true,
           });
+        } else if (response.data.message === "Token is not valid") {
+          localStorage.removeItem("token");
         } else {
           cookies.remove("isValidToken");
         }
       })
       .catch((error) => {
         cookies.remove("isValidToken");
-        console.log(error);
       });
   }
 
