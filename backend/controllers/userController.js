@@ -137,7 +137,10 @@ const CheckToken = (req, res) => {
       delete result[0][0]["currentItemId"];
       delete result[0][0]["currentOldItemId"];
       delete result[0][0]["solvedOldItemIds"];
-      result[0][0]["user_rank"] = result[1][0]["user_rank"];
+
+      result[0][0]["user_rank"] = result[1][0]
+        ? result[1][0]["user_rank"]
+        : "n/a";
       const response = {
         status: "success",
         message: "Token is valid",
