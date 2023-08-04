@@ -129,19 +129,19 @@ const CheckToken = (req, res) => {
   }
 
   user.fetchByToken(token, (err, result) => {
-    if (result && result[0]) {
-      delete result[0]["solvedChampions"];
-      delete result[0]["currentSplashChampion"];
-      delete result[0]["solvedSplashChampions"];
-      delete result[0]["solvedItemIds"];
-      delete result[0]["currentItemId"];
-      delete result[0]["currentOldItemId"];
-      delete result[0]["solvedOldItemIds"];
-
+    if (result && result[0][0]) {
+      delete result[0][0]["solvedChampions"];
+      delete result[0][0]["currentSplashChampion"];
+      delete result[0][0]["solvedSplashChampions"];
+      delete result[0][0]["solvedItemIds"];
+      delete result[0][0]["currentItemId"];
+      delete result[0][0]["currentOldItemId"];
+      delete result[0][0]["solvedOldItemIds"];
+      result[0][0]["user_rank"] = result[1][0]["user_rank"];
       const response = {
         status: "success",
         message: "Token is valid",
-        player: result[0],
+        player: result[0][0],
       };
 
       cache.saveCache(key, response);
