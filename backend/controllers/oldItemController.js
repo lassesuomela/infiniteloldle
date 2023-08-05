@@ -180,7 +180,10 @@ const GetItemSprite = (req, res) => {
 
     fs.readFile(imagePath, (err, data) => {
       if (err) {
-        return res.status(404).send("Image not found.");
+        return res.status(404).json({
+          status: "error",
+          message: "File not found",
+        });
       }
 
       return res.json({
