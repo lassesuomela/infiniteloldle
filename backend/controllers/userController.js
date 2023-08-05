@@ -128,7 +128,7 @@ const CheckToken = (req, res) => {
     return res.json(cache.getCache(key));
   }
 
-  user.fetchByToken(token, (err, result) => {
+  user.fetchByTokenForUserDataAPI(token, (err, result) => {
     if (result && result[0][0]) {
       delete result[0][0]["solvedChampions"];
       delete result[0][0]["currentSplashChampion"];
