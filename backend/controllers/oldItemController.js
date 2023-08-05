@@ -1,6 +1,8 @@
 const oldItemModel = require("../models/oldItemModel");
 const user = require("../models/userModel");
 const cache = require("../middleware/cache");
+const fs = require("fs");
+const path = require("path");
 
 const Create = (req, res) => {
   const data = req.body;
@@ -173,7 +175,22 @@ const GetItemSprite = (req, res) => {
       });
     }
 
-    res.json({ status: "success", result: result[0]["old_item_key"] });
+    const imageName = result[0]["old_item_key"] + ".webp";
+    const imagePath = path.join(__dirname, "../old_items", imageName);
+
+    fs.readFile(imagePath, (err, data) => {
+      if (err) {
+        return res.status(404).json({
+          status: "error",
+          message: "File not found",
+        });
+      }
+
+      return res.json({
+        status: "success",
+        result: data.toString("base64"),
+      });
+    });
   });
 };
 

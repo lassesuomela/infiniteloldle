@@ -13,7 +13,7 @@ export default function Game() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-  const [spriteUrl, setSpriteUrl] = useState("");
+  const [sprite, setSprite] = useState("");
 
   useEffect(() => {
     FetchItems();
@@ -43,8 +43,7 @@ export default function Game() {
       .then((response) => {
         if (response.data.status === "success") {
           if (response.data.result) {
-            const url = "/old_items/" + response.data.result + ".webp";
-            setSpriteUrl(url);
+            setSprite(response.data.result);
           }
         }
       })
@@ -132,7 +131,7 @@ export default function Game() {
         id="itemContainer"
       >
         <img
-          src={spriteUrl}
+          src={`data:image/webp;base64,${sprite}`}
           style={{ filter: "blur(1.0em)" }}
           className="rounded p-4"
           id="spriteImg"

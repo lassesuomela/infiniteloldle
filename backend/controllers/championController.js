@@ -1,6 +1,8 @@
 const champion = require("../models/championModel");
 const user = require("../models/userModel");
 const cache = require("../middleware/cache");
+const fs = require("fs");
+const path = require("path");
 const GetPartialSimilarites =
   require("../helpers/compare").GetPartialSimilarites;
 
@@ -483,7 +485,25 @@ const GetSplashArt = (req, res) => {
         message: "Splash art was not found for that token",
       });
     }
-    res.json({ status: "success", result: result[0] });
+
+    const imageName =
+      result[0].championKey + "_" + result[0].currentSplashId + ".webp";
+
+    const imagePath = path.join(__dirname, "../splash_arts", imageName);
+
+    fs.readFile(imagePath, (err, data) => {
+      if (err) {
+        return res.status(404).json({
+          status: "error",
+          message: "File not found",
+        });
+      }
+
+      return res.json({
+        status: "success",
+        result: data.toString("base64"),
+      });
+    });
   });
 };
 
