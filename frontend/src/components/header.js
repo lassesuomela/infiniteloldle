@@ -7,7 +7,7 @@ export default function Header() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark mb-5">
       <div className="container-fluid">
-        <img src={"./favicon.png"} className="m-2" alt="Logo" />
+        <img src={"/favicon.png"} className="m-2" alt="Logo" />
         <Link className="navbar-brand" to="/">
           Infiniteloldle
         </Link>

@@ -116,7 +116,7 @@ export default function ScoreBoardData() {
 
             <tbody>
               <tr>
-                <td>???</td>
+                <td>{playerData ? playerData.user_rank : "???"}</td>
                 <td>{playerData ? playerData.nickname : "-"}</td>
                 <td>{playerData ? playerData.prestige : "-"}</td>
                 <td>{playerData ? playerData.score : "-"}</td>
