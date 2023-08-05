@@ -13,7 +13,7 @@ export default function Game() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-  const [spriteUrl, setSpriteUrl] = useState("");
+  const [sprite, setSprite] = useState("");
   const [title, setTitle] = useState("");
 
   useEffect(() => {
@@ -44,13 +44,7 @@ export default function Game() {
       .then((response) => {
         if (response.data.status === "success") {
           if (response.data.result) {
-            const url =
-              "/splash_arts/" +
-              response.data.result.championKey +
-              "_" +
-              response.data.result.currentSplashId +
-              ".webp";
-            setSpriteUrl(url);
+            setSprite(response.data.result);
           }
         }
       })
@@ -139,7 +133,7 @@ export default function Game() {
         id="spriteContainer"
       >
         <img
-          src={spriteUrl}
+          src={`data:image/jpeg;base64,${sprite}`}
           style={{ filter: "blur(1.0em)" }}
           className="rounded p-4"
           id="spriteImg"
