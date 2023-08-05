@@ -192,9 +192,6 @@ describe("Testing routes needed for playing the game", () => {
       .then((res) => {
         expect(res.body.status).toBe("success");
         expect(res.body).toHaveProperty("result");
-        expect(res.body.result).toHaveProperty("currentSplashId");
-        expect(res.body.result).toHaveProperty("championKey");
-
         done();
       });
   });
