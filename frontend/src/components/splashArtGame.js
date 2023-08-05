@@ -133,7 +133,7 @@ export default function Game() {
         id="spriteContainer"
       >
         <img
-          src={`data:image/jpeg;base64,${sprite}`}
+          src={`data:image/webp;base64,${sprite}`}
           style={{ filter: "blur(1.0em)" }}
           className="rounded p-4"
           id="spriteImg"
