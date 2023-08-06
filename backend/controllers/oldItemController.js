@@ -178,7 +178,7 @@ const GetItemSprite = (req, res) => {
     const imageName = result[0]["old_item_key"] + ".webp";
 
     if (cache.checkCache(imageName)) {
-      const data = cache.get(imageName);
+      const data = cache.getCache(imageName);
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",

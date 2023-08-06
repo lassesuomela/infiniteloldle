@@ -490,7 +490,7 @@ const GetSplashArt = (req, res) => {
       result[0].championKey + "_" + result[0].currentSplashId + ".webp";
 
     if (cache.checkCache(imageName)) {
-      const data = cache.get(imageName);
+      const data = cache.getCache(imageName);
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",
