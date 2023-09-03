@@ -123,6 +123,10 @@ export default function Game() {
     setCorrectGuess(false);
   };
 
+  const customFilterOption = (option, inputValue) => {
+    return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
+  };
+
   return (
     <div className="container main pt-4 pb-5 mb-5">
       <h3 className="text-center pb-3">Which item is this?</h3>
@@ -151,6 +155,8 @@ export default function Game() {
             options={validGuesses}
             onChange={(selectedOption) => setGuess(selectedOption.value)}
             isDisabled={correctGuess}
+            placeholder="Type items name"
+            filterOption={customFilterOption}
           />
 
           <div className="d-flex justify-content-evenly">

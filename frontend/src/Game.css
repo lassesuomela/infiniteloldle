@@ -146,6 +146,27 @@ p, small {
     padding-bottom: 1em;
 }
 
+.select img {
+    padding: 0.1em;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+}
+
+.select input[type="text"] {
+    caret-color: transparent;
+}
+
+.select-option img {
+    height: 40px;
+    width: 40px;
+    margin-right: 1em;
+    margin-bottom: 0em;
+    margin-top: 0em;
+}
+.select-option span {
+    font-family: "Beaufort for LOL";
+}
+
 @media only screen and (min-width: 600px) {
 
     .container, .container-md, .container-sm {

@@ -93,6 +93,18 @@ export default function Game() {
     setCorrectGuess(false);
   };
 
+  const SelectStyles = {
+    singleValue: (provided) => ({
+      ...provided,
+      marginTop: "0.4em",
+      marginBottom: "0.4em",
+    }),
+  };
+
+  const customFilterOption = (option, inputValue) => {
+    return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
+  };
+
   return (
     <div className="container main pt-4 pb-5 mb-5">
       <Helmet>
@@ -114,9 +126,22 @@ export default function Game() {
           id="guess-form"
         >
           <Select
+            className="select"
             options={validGuesses}
             onChange={(selectedOption) => setGuess(selectedOption.value)}
             isDisabled={correctGuess}
+            styles={SelectStyles}
+            placeholder="Type champions name"
+            filterOption={customFilterOption}
+            formatOptionLabel={(data) => (
+              <div className="select-option">
+                <img
+                  src={"/champions/" + data.image + ".webp"}
+                  alt="Champion icon"
+                />
+                <span>{data.label}</span>
+              </div>
+            )}
           />
 
           <div className="d-flex justify-content-evenly">
