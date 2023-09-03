@@ -97,14 +97,18 @@ const GetAllChampions = (req, res) => {
 
     return res.json(cache.getCache(key));
   }
-  champion.getAllNames((err, result) => {
+  champion.getAllNamesAndKeys((err, result) => {
     if (err) {
       return res.json({ status: "error", error: err });
     }
 
-    let champions = [];
+    const champions = [];
     result.forEach((champ) => {
-      champions.push({ label: champ["name"], value: champ["name"] });
+      champions.push({
+        label: champ["name"],
+        value: champ["name"],
+        image: champ["championKey"],
+      });
     });
 
     const response = { status: "success", champions: champions };
