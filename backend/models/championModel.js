@@ -43,6 +43,9 @@ const champion = {
   getAllNames: (cb) => {
     db.query("SELECT name FROM champions", cb);
   },
+  getAllNamesAndKeys: (cb) => {
+    db.query("SELECT name, championKey FROM champions", cb);
+  },
   getAllKeys: (cb) => {
     db.query("SELECT championKey, spriteIds FROM champions", cb);
   },

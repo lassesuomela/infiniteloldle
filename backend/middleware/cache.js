@@ -2,10 +2,7 @@ const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 60, checkperiod: 30 });
 
 const getCache = (key) => {
-  const value = cache.get(key);
-  if (value !== undefined) {
-    return value;
-  }
+  return cache.get(key);
 };
 
 const getTtl = (key) => {
@@ -30,7 +27,7 @@ const changeTTL = (key, ttl) => {
 
 const getStats = () => {
   return cache.getStats();
-}
+};
 
 module.exports = {
   getTtl,
@@ -39,5 +36,5 @@ module.exports = {
   checkCache,
   saveCache,
   deleteCache,
-  getStats
+  getStats,
 };

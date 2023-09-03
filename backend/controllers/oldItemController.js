@@ -176,6 +176,20 @@ const GetItemSprite = (req, res) => {
     }
 
     const imageName = result[0]["old_item_key"] + ".webp";
+
+    if (cache.checkCache(imageName)) {
+      const data = cache.getCache(imageName);
+      res.set("X-CACHE", "HIT");
+      res.set(
+        "X-CACHE-REMAINING",
+        new Date(cache.getTtl(imageName)).toISOString()
+      );
+      return res.json({
+        status: "success",
+        result: data,
+      });
+    }
+
     const imagePath = path.join(__dirname, "../old_items", imageName);
 
     fs.readFile(imagePath, (err, data) => {
@@ -185,6 +199,9 @@ const GetItemSprite = (req, res) => {
           message: "File not found",
         });
       }
+
+      cache.saveCache(imageName, data.toString("base64"));
+      cache.changeTTL(imageName, 3600);
 
       return res.json({
         status: "success",

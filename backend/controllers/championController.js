@@ -97,14 +97,18 @@ const GetAllChampions = (req, res) => {
 
     return res.json(cache.getCache(key));
   }
-  champion.getAllNames((err, result) => {
+  champion.getAllNamesAndKeys((err, result) => {
     if (err) {
       return res.json({ status: "error", error: err });
     }
 
-    let champions = [];
+    const champions = [];
     result.forEach((champ) => {
-      champions.push({ label: champ["name"], value: champ["name"] });
+      champions.push({
+        label: champ["name"],
+        value: champ["name"],
+        image: champ["championKey"],
+      });
     });
 
     const response = { status: "success", champions: champions };
@@ -489,6 +493,19 @@ const GetSplashArt = (req, res) => {
     const imageName =
       result[0].championKey + "_" + result[0].currentSplashId + ".webp";
 
+    if (cache.checkCache(imageName)) {
+      const data = cache.getCache(imageName);
+      res.set("X-CACHE", "HIT");
+      res.set(
+        "X-CACHE-REMAINING",
+        new Date(cache.getTtl(imageName)).toISOString()
+      );
+      return res.json({
+        status: "success",
+        result: data,
+      });
+    }
+
     const imagePath = path.join(__dirname, "../splash_arts", imageName);
 
     fs.readFile(imagePath, (err, data) => {
@@ -498,6 +515,9 @@ const GetSplashArt = (req, res) => {
           message: "File not found",
         });
       }
+
+      cache.saveCache(imageName, data.toString("base64"));
+      cache.changeTTL(imageName, 3600);
 
       return res.json({
         status: "success",
