@@ -158,7 +158,7 @@ p, small {
 
 .select-option {
     display: flex;
-    align-items: start;
+    align-items: flex-start;
 }
 
 .select-option img {

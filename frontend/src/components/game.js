@@ -138,7 +138,7 @@ export default function Game() {
               <div className="select-option">
                 <LazyLoad offset={200}>
                   <img
-                    src={"/champions/" + data.image + ".webp"}
+                    src={"/40_40/champions/" + data.image + ".webp"}
                     alt="Champion icon"
                   />
                 </LazyLoad>
