@@ -8,6 +8,7 @@ import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import Config from "../configs/config";
 import { Reroll } from "./reroll";
 import { Helmet } from "react-helmet";
+import LazyLoad from "react-lazy-load";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -135,10 +136,12 @@ export default function Game() {
             filterOption={customFilterOption}
             formatOptionLabel={(data) => (
               <div className="select-option">
-                <img
-                  src={"/champions/" + data.image + ".webp"}
-                  alt="Champion icon"
-                />
+                <LazyLoad offset={200}>
+                  <img
+                    src={"/champions/" + data.image + ".webp"}
+                    alt="Champion icon"
+                  />
+                </LazyLoad>
                 <span>{data.label}</span>
               </div>
             )}

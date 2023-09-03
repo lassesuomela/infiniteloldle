@@ -156,6 +156,11 @@ p, small {
     caret-color: transparent;
 }
 
+.select-option {
+    display: flex;
+    align-items: start;
+}
+
 .select-option img {
     height: 40px;
     width: 40px;
@@ -164,6 +169,7 @@ p, small {
     margin-top: 0em;
 }
 .select-option span {
+    flex: 1;
     font-family: "Beaufort for LOL";
 }
 
