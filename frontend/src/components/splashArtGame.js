@@ -7,6 +7,7 @@ import Config from "../configs/config";
 import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import { Reroll } from "./reroll";
 import LazyLoad from "react-lazy-load";
+import { SelectStyles, customFilterOption } from "./selectStyles";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -123,18 +124,6 @@ export default function Game() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
-  };
-
-  const SelectStyles = {
-    singleValue: (provided) => ({
-      ...provided,
-      marginTop: "0.4em",
-      marginBottom: "0.4em",
-    }),
-  };
-
-  const customFilterOption = (option, inputValue) => {
-    return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
   };
 
   return (
