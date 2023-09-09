@@ -27,3 +27,6 @@ yarn-error.log*
 *.jpg
 *.jpeg
 *.webp
+
+!./public/*.ico
+!./public/*.webp
