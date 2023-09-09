@@ -6,6 +6,7 @@ import OldItemImg from "./oldItemImg";
 import Config from "../configs/config";
 import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import { Reroll } from "./reroll";
+import { customFilterOption, HoverSelectStyles } from "./selectStyles";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -122,10 +123,6 @@ export default function Game() {
     setCorrectGuess(false);
   };
 
-  const customFilterOption = (option, inputValue) => {
-    return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
-  };
-
   return (
     <div className="container main pt-4 pb-5 mb-5">
       <h3 className="text-center pb-3">Which legacy item is this?</h3>
@@ -156,6 +153,7 @@ export default function Game() {
             isDisabled={correctGuess}
             placeholder="Type items name"
             filterOption={customFilterOption}
+            styles={HoverSelectStyles}
           />
 
           <div className="d-flex justify-content-evenly">
