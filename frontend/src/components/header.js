@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Settings from "../components/settings";
+import Modifications from "../components/modifications";
 import { Tooltip } from "react-tooltip";
 
 export default function Header() {
@@ -108,6 +109,7 @@ export default function Header() {
                   </Link>
                 </li>
               </button>
+              <Modifications />
               <Settings />
             </div>
           </ul>

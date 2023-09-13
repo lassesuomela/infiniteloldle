@@ -169,25 +169,25 @@ export default function Settings() {
                   <div className="pb-4 d-flex justify-content-center gap-2">
                     <button
                       onClick={ChangeGuessChampion}
-                      className="btn btn-warning mb-2"
+                      className="btn btn-dark mb-2"
                     >
                       Champion
                     </button>
                     <button
                       onClick={ChangeGuessSplash}
-                      className="btn btn-warning mb-2"
+                      className="btn btn-dark mb-2"
                     >
                       Splash art
                     </button>
                     <button
                       onClick={ChangeGuessItem}
-                      className="btn btn-warning mb-2"
+                      className="btn btn-dark mb-2"
                     >
                       Item
                     </button>
                     <button
                       onClick={ChangeGuessOldItem}
-                      className="btn btn-warning mb-2"
+                      className="btn btn-dark mb-2"
                     >
                       Legacy item
                     </button>
