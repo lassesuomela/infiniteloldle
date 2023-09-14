@@ -5,28 +5,36 @@ import { Tooltip } from "react-tooltip";
 export default function Modifications() {
   const [isShown, setIsShown] = useState(false);
   const [isColorBlindMode, setIsColorBlindMode] = useState(false);
+  const [blurMode, setBlurMode] = useState("default");
 
-  // Todo: use effect read states from local storage
   useEffect(() => {
-    const _colorMode = localStorage.getItem("isColorBlindMode", false);
-    if (_colorMode !== null) {
-      setIsColorBlindMode(_colorMode);
+    const _colorMode = localStorage.getItem("isColorBlindMode");
+    if (_colorMode !== undefined || _colorMode !== null) {
+      setIsColorBlindMode(_colorMode === "true");
+    }
+    const _blurMode = localStorage.getItem("blurMode");
+    if (_blurMode !== undefined || _blurMode !== null) {
+      setBlurMode(_blurMode);
     }
   }, []);
-
-  const ToggleState = () => {
-    setIsShown(!isShown);
-  };
 
   const ToggleColorBlindMode = () => {
     setIsColorBlindMode(!isColorBlindMode);
     localStorage.setItem("isColorBlindMode", !isColorBlindMode);
   };
 
+  const ChangeBlurMode = (value) => {
+    if (value === blurMode) {
+      return;
+    }
+    setBlurMode(value);
+    localStorage.setItem("blurMode", value);
+  };
+
   return (
     <>
       <button
-        onClick={ToggleState}
+        onClick={() => setIsShown(!isShown)}
         className="btn btn-dark darkBtn p-2 pb-0"
         data-tooltip-id="modifications-tooltip"
         data-tooltip-content="Modifications"
@@ -37,7 +45,7 @@ export default function Modifications() {
 
       <Modal
         show={isShown}
-        onHide={ToggleState}
+        onHide={() => setIsShown(!isShown)}
         size="lg"
         centered
         className="transparentModal"
@@ -49,10 +57,28 @@ export default function Modifications() {
 
               <h3 className="pb-4">Modifications</h3>
 
-              <h5>Blur options</h5>
+              <h5>Change blur mode</h5>
               <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
-                <button className="btn btn-dark">Default</button>
-                <button className="btn btn-dark">Blocky</button>
+                <button
+                  className={
+                    blurMode === "default"
+                      ? "btn btn-dark"
+                      : "btn btn-outline-dark"
+                  }
+                  onClick={() => ChangeBlurMode("default")}
+                >
+                  Default
+                </button>
+                <button
+                  className={
+                    blurMode === "blocky"
+                      ? "btn btn-dark"
+                      : "btn btn-outline-dark"
+                  }
+                  onClick={() => ChangeBlurMode("blocky")}
+                >
+                  Blocky
+                </button>
               </div>
               <h5>Difficulty</h5>
               <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
@@ -63,14 +89,14 @@ export default function Modifications() {
               </div>
               <div className="pt-2 pb-3">
                 <h5>Colorblind mode</h5>
-                <div class="form-switch">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    onClick={() => ToggleColorBlindMode()}
-                  />
-                </div>
+                <button
+                  className={
+                    isColorBlindMode ? "btn btn-dark" : "btn btn-outline-dark"
+                  }
+                  onClick={() => ToggleColorBlindMode()}
+                >
+                  {isColorBlindMode ? "On" : "Off"}
+                </button>
               </div>
             </div>
           </div>
