@@ -17,10 +17,12 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
   const [title, setTitle] = useState("");
+  const [isColorBlindMode, setIsColorBlindMode] = useState(false);
 
   useEffect(() => {
     FetchChampions();
     FetchSplashArt();
+    setIsColorBlindMode(localStorage.getItem("isColorBlindMode") === "true");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const FetchChampions = () => {
@@ -203,6 +205,7 @@ export default function Game() {
             key={champ[0].key}
             championKey={champ[0]}
             isCorrect={champ[1]}
+            isColorBlindMode={isColorBlindMode}
           />
         ))}
       </div>
