@@ -57,7 +57,7 @@ export default function Modifications() {
 
               <h3 className="pb-4">Modifications</h3>
 
-              <h5>Change blur mode</h5>
+              <h5>Blur mode</h5>
               <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
                 <button
                   className={
