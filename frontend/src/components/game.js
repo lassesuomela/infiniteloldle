@@ -20,8 +20,11 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [title, setTitle] = useState("");
 
+  const [isColorBlindMode, setIsColorBlindMode] = useState(false);
+
   useEffect(() => {
     FetchChampions();
+    setIsColorBlindMode(localStorage.getItem("isColorBlindMode") === "true");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const FetchChampions = () => {
@@ -182,6 +185,7 @@ export default function Game() {
             regions={champ[0].region}
             damageType={champ[0].damageType}
             similarites={champ[1]}
+            isColorBlindMode={isColorBlindMode}
           />
         ))}
       </div>

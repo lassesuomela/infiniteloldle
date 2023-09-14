@@ -1,6 +1,9 @@
 import React from "react";
 
 export default function ChampionDetails(props) {
+  const checkColorBlindMode = () => {
+    return props.isColorBlindMode ? "cb-" : "";
+  };
   return (
     <div className="container text-center mb-2">
       <div className="row">
@@ -16,7 +19,9 @@ export default function ChampionDetails(props) {
         <div
           className={
             "col-1 championData " +
-            (props.similarites.sameGender ? "correct" : "incorrect")
+            (props.similarites.sameGender
+              ? checkColorBlindMode() + "correct"
+              : checkColorBlindMode() + "incorrect")
           }
           id="gender"
         >
@@ -31,7 +36,9 @@ export default function ChampionDetails(props) {
         <div
           className={
             "col-1 championData " +
-            (props.similarites.sameResource ? "correct" : "incorrect")
+            (props.similarites.sameResource
+              ? checkColorBlindMode() + "correct"
+              : checkColorBlindMode() + "incorrect")
           }
           id="resource"
         >
@@ -41,10 +48,10 @@ export default function ChampionDetails(props) {
           className={
             "col-1 championData " +
             (props.similarites.sameRangeType === "partial"
-              ? "partial"
+              ? checkColorBlindMode() + "partial"
               : props.similarites.sameRangeType
-              ? "correct"
-              : "incorrect")
+              ? checkColorBlindMode() + "correct"
+              : checkColorBlindMode() + "incorrect")
           }
           id="range"
         >
@@ -56,10 +63,10 @@ export default function ChampionDetails(props) {
           className={
             "col-2 championData " +
             (props.similarites.sameGenre === "partial"
-              ? "partial"
+              ? checkColorBlindMode() + "partial"
               : props.similarites.sameGenre
-              ? "correct"
-              : "incorrect")
+              ? checkColorBlindMode() + "correct"
+              : checkColorBlindMode() + "incorrect")
           }
           id="genre"
         >
@@ -71,10 +78,10 @@ export default function ChampionDetails(props) {
           className={
             "col-2 championData " +
             (props.similarites.samePosition === "partial"
-              ? "partial"
+              ? checkColorBlindMode() + "partial"
               : props.similarites.samePosition
-              ? "correct"
-              : "incorrect")
+              ? checkColorBlindMode() + "correct"
+              : checkColorBlindMode() + "incorrect")
           }
           id="position"
         >
@@ -86,11 +93,11 @@ export default function ChampionDetails(props) {
           className={
             "col-1 championData " +
             (props.similarites.sameReleaseYear === "="
-              ? "correct"
+              ? checkColorBlindMode() + "correct"
               : props.similarites.sameReleaseYear === "<"
-              ? "incorrect-less"
+              ? checkColorBlindMode() + "incorrect-less"
               : props.similarites.sameReleaseYear === ">"
-              ? "incorrect-greater"
+              ? checkColorBlindMode() + "incorrect-greater"
               : "")
           }
           id="released"
@@ -101,10 +108,10 @@ export default function ChampionDetails(props) {
           className={
             "col-2 championData " +
             (props.similarites.sameRegion === "partial"
-              ? "partial"
+              ? checkColorBlindMode() + "partial"
               : props.similarites.sameRegion
-              ? "correct"
-              : "incorrect")
+              ? checkColorBlindMode() + "correct"
+              : checkColorBlindMode() + "incorrect")
           }
           id="region"
         >
@@ -116,10 +123,10 @@ export default function ChampionDetails(props) {
           className={
             "col-1 championData " +
             (props.similarites.sameDamageType === "partial"
-              ? "partial"
+              ? checkColorBlindMode() + "partial"
               : props.similarites.sameDamageType
-              ? "correct"
-              : "incorrect")
+              ? checkColorBlindMode() + "correct"
+              : checkColorBlindMode() + "incorrect")
           }
           id="region"
         >

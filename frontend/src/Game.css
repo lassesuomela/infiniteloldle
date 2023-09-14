@@ -62,12 +62,32 @@ p, small {
     background-color: var(--wrong-color);
 }
 
+.cb-correct{
+    background-color: var(--cb-correct-color);
+}
+
+.cb-partial {
+    background-color: var(--cb-partial-color);
+}
+
+.cb-incorrect {
+    background-color: var(--cb-wrong-color);
+}
+
 .incorrect-greater {
     background-image: linear-gradient(var(--correct-color), 60%, var(--wrong-color));
 }
 
 .incorrect-less {
     background-image: linear-gradient(var(--wrong-color), 60%, var(--correct-color));
+}
+
+.cb-incorrect-greater {
+    background-image: linear-gradient(var(--cb-correct-color), 60%, var(--cb-wrong-color));
+}
+
+.cb-incorrect-less {
+    background-image: linear-gradient(var(--cb-wrong-color), 60%, var(--cb-correct-color));
 }
 
 .victory{
