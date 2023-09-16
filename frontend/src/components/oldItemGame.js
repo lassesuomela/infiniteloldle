@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Victory from "./victory";
-import OldItemImg from "./oldItemImg";
+import ItemImg from "./itemImg";
 import Config from "../configs/config";
 import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import { Reroll } from "./reroll";
@@ -15,10 +15,12 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
+  const [isColorBlindMode, setIsColorBlindMode] = useState(false);
 
   useEffect(() => {
     FetchItems();
     FetchItemImage();
+    setIsColorBlindMode(localStorage.getItem("isColorBlindMode") === "true");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const FetchItems = () => {
@@ -184,7 +186,13 @@ export default function Game() {
 
       <div id="championsImgs" className="container">
         {champions.map((item) => (
-          <OldItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
+          <ItemImg
+            itemId={item[0]}
+            name={item[1]}
+            isCorrect={item[2]}
+            path="/old_items/"
+            isColorBlindMode={isColorBlindMode}
+          />
         ))}
       </div>
 

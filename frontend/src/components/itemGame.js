@@ -16,9 +16,12 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [spriteUrl, setSpriteUrl] = useState("");
 
+  const [isColorBlindMode, setIsColorBlindMode] = useState(false);
+
   useEffect(() => {
     FetchItems();
     FetchItemImage();
+    setIsColorBlindMode(localStorage.getItem("isColorBlindMode") === "true");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const FetchItems = () => {
@@ -185,7 +188,13 @@ export default function Game() {
 
       <div id="championsImgs" className="container">
         {champions.map((item) => (
-          <ItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
+          <ItemImg
+            itemId={item[0]}
+            name={item[1]}
+            isCorrect={item[2]}
+            isColorBlindMode={isColorBlindMode}
+            path="/items/"
+          />
         ))}
       </div>
 
