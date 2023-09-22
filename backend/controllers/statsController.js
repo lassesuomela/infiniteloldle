@@ -6,7 +6,6 @@ const GetAll = (req, res) => {
 
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
     return res.json(cache.getCache(key));
   }
 
@@ -64,7 +63,8 @@ const GetAll = (req, res) => {
     };
 
     cache.saveCache(key, response);
-    cache.changeTTL(key, 600);
+    cache.changeTTL(key, 300);
+    res.set("X-CACHE", "MISS");
 
     res.json(response);
   });

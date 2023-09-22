@@ -179,7 +179,6 @@ const GetAllItems = (req, res) => {
   const key = req.path;
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
     return res.json(cache.getCache(key));
   }
   item.getAllNames((err, result) => {
@@ -194,7 +193,8 @@ const GetAllItems = (req, res) => {
 
     const response = { status: "success", items: items };
     cache.saveCache(key, response);
-    cache.changeTTL(key, 3600 * 6);
+    cache.changeTTL(key, 3600 * 12);
+    res.set("X-CACHE", "MISS");
 
     res.json(response);
   });
