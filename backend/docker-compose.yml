@@ -15,6 +15,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 8241:8241
     restart: unless-stopped
     volumes:
       - /root/infiniteloldle/frontend/infiniteloldle.com.pem:/root/infiniteloldle/frontend/infiniteloldle.com.pem
@@ -34,7 +35,7 @@ services:
     image: loldle-api:latest
     container_name: loldle-api
     ports:
-      - 8080:8080
+      - "127.0.0.1:8080:8080"
     restart: unless-stopped
     environment:
       - DOCKER_APP_PORT=8080
@@ -53,7 +54,7 @@ services:
     image: loldle-mysql:latest
     container_name: loldle-mysql
     ports:
-      - 3306:3306
+      - "127.0.0.1:3306:3306"
     restart: unless-stopped
     environment:
       - MYSQL_DATABASE=${DB_DATABASE}
