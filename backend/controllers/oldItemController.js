@@ -180,10 +180,6 @@ const GetItemSprite = (req, res) => {
     if (cache.checkCache(imageName)) {
       const data = cache.getCache(imageName);
       res.set("X-CACHE", "HIT");
-      res.set(
-        "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageName)).toISOString()
-      );
       return res.json({
         status: "success",
         result: data,
@@ -202,6 +198,7 @@ const GetItemSprite = (req, res) => {
 
       cache.saveCache(imageName, data.toString("base64"));
       cache.changeTTL(imageName, 3600);
+      res.set("X-CACHE", "MISS");
 
       return res.json({
         status: "success",
