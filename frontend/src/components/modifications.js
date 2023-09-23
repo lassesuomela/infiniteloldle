@@ -1,27 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { Tooltip } from "react-tooltip";
 import { useSelector, useDispatch } from "react-redux";
 
 export default function Modifications() {
   const [isShown, setIsShown] = useState(false);
-  const [blurMode, setBlurMode] = useState("default");
 
-  useEffect(() => {
-    const _blurMode = localStorage.getItem("blurMode");
-    if (_blurMode !== undefined || _blurMode !== null) {
-      setBlurMode(_blurMode);
-    }
-  }, []);
-
-  const ChangeBlurMode = (value) => {
-    if (value === blurMode) {
-      return;
-    }
-    setBlurMode(value);
-    localStorage.setItem("blurMode", value);
-  };
-
+  const blurMode = useSelector((state) => state.blurModeReducer.blurMode);
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
   );
@@ -29,6 +14,10 @@ export default function Modifications() {
   const toggleColorBlindMode = () => {
     dispatch({ type: "TOGGLE" });
     localStorage.setItem("isColorBlindMode", !isColorBlindMode);
+  };
+  const changeBlurMode = (type) => {
+    dispatch({ type: type });
+    localStorage.setItem("blurMode", type === "DEFAULT" ? "default" : "blocky");
   };
 
   return (
@@ -65,7 +54,7 @@ export default function Modifications() {
                       ? "btn btn-dark"
                       : "btn btn-outline-dark"
                   }
-                  onClick={() => ChangeBlurMode("default")}
+                  onClick={() => changeBlurMode("DEFAULT")}
                 >
                   Default
                 </button>
@@ -75,7 +64,7 @@ export default function Modifications() {
                       ? "btn btn-dark"
                       : "btn btn-outline-dark"
                   }
-                  onClick={() => ChangeBlurMode("blocky")}
+                  onClick={() => changeBlurMode("BLOCKY")}
                 >
                   Blocky
                 </button>
