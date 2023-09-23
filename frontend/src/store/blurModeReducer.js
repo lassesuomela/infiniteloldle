@@ -1,6 +1,6 @@
 const getInitialStateFromLocalStorage = () => {
   const storedState = localStorage.getItem("blurMode");
-  return { blurMode: storedState };
+  return { blurMode: storedState !== null ? storedState : "default" };
 };
 const initialState = getInitialStateFromLocalStorage();
 

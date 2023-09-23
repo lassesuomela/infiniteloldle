@@ -79,8 +79,11 @@ export default function Modifications() {
                       : "btn btn-outline-dark"
                   }
                   onClick={() => changeBlurMode("DEFAULT_BLUR")}
+                  data-tooltip-id="blur-tooltip"
+                  data-tooltip-content="Change blur mode of splash art games"
                 >
                   Default
+                  <Tooltip id="blur-tooltip" />
                 </button>
                 <button
                   className={
@@ -89,8 +92,11 @@ export default function Modifications() {
                       : "btn btn-outline-dark"
                   }
                   onClick={() => changeBlurMode("BLOCKY_BLUR")}
+                  data-tooltip-id="blur-tooltip"
+                  data-tooltip-content="Change blur mode of splash art games"
                 >
                   Blocky
+                  <Tooltip id="blur-tooltip" />
                 </button>
               </div>
               <h5>Difficulty</h5>
@@ -100,24 +106,33 @@ export default function Modifications() {
                     isMonochrome ? "btn btn-dark" : "btn btn-outline-dark"
                   }
                   onClick={() => toggleMonochrome()}
+                  data-tooltip-id="monochrome-tooltip"
+                  data-tooltip-content="Splash art, item and legacy item games icons are black and white"
                 >
                   Monochrome
+                  <Tooltip id="monochrome-tooltip" />
                 </button>
                 <button
                   className={
                     randomRotate ? "btn btn-dark" : "btn btn-outline-dark"
                   }
                   onClick={() => toggleRandomRotate()}
+                  data-tooltip-id="rotate-tooltip"
+                  data-tooltip-content="Splash art, item and legacy item games icons are rotated"
                 >
                   Random rotate
+                  <Tooltip id="rotate-tooltip" />
                 </button>
                 <button
                   className={
                     hideResource ? "btn btn-dark" : "btn btn-outline-dark"
                   }
                   onClick={() => toggleHideResource()}
+                  data-tooltip-id="resource-tooltip"
+                  data-tooltip-content="Champions game resource is limited to mana or manaless"
                 >
                   Simplify resource
+                  <Tooltip id="resource-tooltip" />
                 </button>
               </div>
               <div className="pt-2 pb-3">
@@ -127,8 +142,11 @@ export default function Modifications() {
                     isColorBlindMode ? "btn btn-dark" : "btn btn-outline-dark"
                   }
                   onClick={toggleColorBlindMode}
+                  data-tooltip-id="cb-tooltip"
+                  data-tooltip-content="Toggle colorblind mode to help differientiate colors"
                 >
                   {isColorBlindMode ? "On" : "Off"}
+                  <Tooltip id="cb-tooltip" />
                 </button>
               </div>
             </div>
