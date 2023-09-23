@@ -15,9 +15,12 @@ import OldItem from "./views/oldItem";
 import Stats from "./views/stats";
 import MyStats from "./views/myStats";
 
+import { Provider } from "react-redux";
+import store from "./store/store";
+
 function App() {
   return (
-    <>
+    <Provider store={store}>
       <Header />
       <div className="container">
         <Routes>
@@ -34,7 +37,7 @@ function App() {
         </Routes>
       </div>
       <Footer />
-    </>
+    </Provider>
   );
 }
 

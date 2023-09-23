@@ -1,27 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { Tooltip } from "react-tooltip";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function Modifications() {
   const [isShown, setIsShown] = useState(false);
-  const [isColorBlindMode, setIsColorBlindMode] = useState(false);
   const [blurMode, setBlurMode] = useState("default");
 
   useEffect(() => {
-    const _colorMode = localStorage.getItem("isColorBlindMode");
-    if (_colorMode !== undefined || _colorMode !== null) {
-      setIsColorBlindMode(_colorMode === "true");
-    }
     const _blurMode = localStorage.getItem("blurMode");
     if (_blurMode !== undefined || _blurMode !== null) {
       setBlurMode(_blurMode);
     }
   }, []);
-
-  const ToggleColorBlindMode = () => {
-    setIsColorBlindMode(!isColorBlindMode);
-    localStorage.setItem("isColorBlindMode", !isColorBlindMode);
-  };
 
   const ChangeBlurMode = (value) => {
     if (value === blurMode) {
@@ -29,6 +20,15 @@ export default function Modifications() {
     }
     setBlurMode(value);
     localStorage.setItem("blurMode", value);
+  };
+
+  const isColorBlindMode = useSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode
+  );
+  const dispatch = useDispatch();
+  const toggleColorBlindMode = () => {
+    dispatch({ type: "TOGGLE" });
+    localStorage.setItem("isColorBlindMode", !isColorBlindMode);
   };
 
   return (
@@ -93,7 +93,7 @@ export default function Modifications() {
                   className={
                     isColorBlindMode ? "btn btn-dark" : "btn btn-outline-dark"
                   }
-                  onClick={() => ToggleColorBlindMode()}
+                  onClick={toggleColorBlindMode}
                 >
                   {isColorBlindMode ? "On" : "Off"}
                 </button>
