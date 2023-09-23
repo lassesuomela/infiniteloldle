@@ -3,6 +3,7 @@ import colorBlindReducer from "./colorBlindReducer";
 import blurModeReducer from "./blurModeReducer";
 import hideResourceReducer from "./hideResourceReducer";
 import monochromeReducer from "./monochromeReducer";
+import randomRotateReducer from "./randomRotateReducer";
 import { combineReducers } from "redux";
 
 const reducer = combineReducers({
@@ -10,6 +11,7 @@ const reducer = combineReducers({
   blurModeReducer,
   hideResourceReducer,
   monochromeReducer,
+  randomRotateReducer,
 });
 const store = configureStore({ reducer });
 

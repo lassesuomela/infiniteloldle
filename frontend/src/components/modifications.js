@@ -16,6 +16,9 @@ export default function Modifications() {
   const isMonochrome = useSelector(
     (state) => state.monochromeReducer.isMonochrome
   );
+  const randomRotate = useSelector(
+    (state) => state.randomRotateReducer.randomRotate
+  );
   const dispatch = useDispatch();
   const toggleColorBlindMode = () => {
     dispatch({ type: "TOGGLE_COLOR_BLIND" });
@@ -35,6 +38,10 @@ export default function Modifications() {
   const toggleMonochrome = () => {
     dispatch({ type: "TOGGLE_MONOCHROME" });
     localStorage.setItem("isMonochrome", !isMonochrome);
+  };
+  const toggleRandomRotate = () => {
+    dispatch({ type: "TOGGLE_RANDOM_ROTATE" });
+    localStorage.setItem("randomRotate", !randomRotate);
   };
 
   return (
@@ -94,7 +101,12 @@ export default function Modifications() {
                 >
                   Monochrome
                 </button>
-                <button className="btn btn-dark">Random rotate</button>
+                <button
+                  className="btn btn-dark"
+                  onClick={() => toggleRandomRotate()}
+                >
+                  Random rotate
+                </button>
                 <button
                   className="btn btn-dark"
                   onClick={() => toggleHideResource()}
