@@ -96,22 +96,28 @@ export default function Modifications() {
               <h5>Difficulty</h5>
               <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
                 <button
-                  className="btn btn-dark"
+                  className={
+                    isMonochrome ? "btn btn-dark" : "btn btn-outline-dark"
+                  }
                   onClick={() => toggleMonochrome()}
                 >
                   Monochrome
                 </button>
                 <button
-                  className="btn btn-dark"
+                  className={
+                    randomRotate ? "btn btn-dark" : "btn btn-outline-dark"
+                  }
                   onClick={() => toggleRandomRotate()}
                 >
                   Random rotate
                 </button>
                 <button
-                  className="btn btn-dark"
+                  className={
+                    hideResource ? "btn btn-dark" : "btn btn-outline-dark"
+                  }
                   onClick={() => toggleHideResource()}
                 >
-                  {hideResource ? "Hide resource" : "Show resource"}
+                  Simplify resource
                 </button>
               </div>
               <div className="pt-2 pb-3">
