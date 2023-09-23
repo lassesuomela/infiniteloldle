@@ -49,7 +49,6 @@ const GetAll = (req, res) => {
     const userDelta = [];
     result[10].reverse();
     result[10].sort((a, b) => {
-      console.log(a, b);
       const userGain = a.users - b.users;
       const playerGain = a.players - b.players;
       const date = a.date;
