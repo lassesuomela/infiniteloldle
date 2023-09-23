@@ -9,6 +9,7 @@ import Config from "../configs/config";
 import { Reroll } from "./reroll";
 import { Helmet } from "react-helmet";
 import LazyLoad from "react-lazy-load";
+import { useSelector } from "react-redux";
 
 import { SelectStyles, customFilterOption } from "./selectStyles";
 
@@ -20,11 +21,12 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [title, setTitle] = useState("");
 
-  const [isColorBlindMode, setIsColorBlindMode] = useState(false);
+  const isColorBlindMode = useSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode
+  );
 
   useEffect(() => {
     FetchChampions();
-    setIsColorBlindMode(localStorage.getItem("isColorBlindMode") === "true");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const FetchChampions = () => {

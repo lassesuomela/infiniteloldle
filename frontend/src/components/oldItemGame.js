@@ -7,6 +7,7 @@ import Config from "../configs/config";
 import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import { Reroll } from "./reroll";
 import { customFilterOption, HoverSelectStyles } from "./selectStyles";
+import { useSelector } from "react-redux";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -15,12 +16,14 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
-  const [isColorBlindMode, setIsColorBlindMode] = useState(false);
+
+  const isColorBlindMode = useSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode
+  );
 
   useEffect(() => {
     FetchItems();
     FetchItemImage();
-    setIsColorBlindMode(localStorage.getItem("isColorBlindMode") === "true");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const FetchItems = () => {

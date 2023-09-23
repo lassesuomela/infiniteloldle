@@ -8,6 +8,7 @@ import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import { Reroll } from "./reroll";
 import LazyLoad from "react-lazy-load";
 import { SelectStyles, customFilterOption } from "./selectStyles";
+import { useSelector } from "react-redux";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -17,12 +18,14 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
   const [title, setTitle] = useState("");
-  const [isColorBlindMode, setIsColorBlindMode] = useState(false);
+
+  const isColorBlindMode = useSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode
+  );
 
   useEffect(() => {
     FetchChampions();
     FetchSplashArt();
-    setIsColorBlindMode(localStorage.getItem("isColorBlindMode") === "true");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const FetchChampions = () => {
