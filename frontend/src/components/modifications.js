@@ -13,6 +13,9 @@ export default function Modifications() {
   const hideResource = useSelector(
     (state) => state.hideResourceReducer.hideResource
   );
+  const isMonochrome = useSelector(
+    (state) => state.monochromeReducer.isMonochrome
+  );
   const dispatch = useDispatch();
   const toggleColorBlindMode = () => {
     dispatch({ type: "TOGGLE_COLOR_BLIND" });
@@ -24,7 +27,14 @@ export default function Modifications() {
   };
   const changeBlurMode = (type) => {
     dispatch({ type: type });
-    localStorage.setItem("blurMode", type === "DEFAULT" ? "default" : "blocky");
+    localStorage.setItem(
+      "blurMode",
+      type === "DEFAULT_BLUR" ? "default" : "blocky"
+    );
+  };
+  const toggleMonochrome = () => {
+    dispatch({ type: "TOGGLE_MONOCHROME" });
+    localStorage.setItem("isMonochrome", !isMonochrome);
   };
 
   return (
@@ -61,7 +71,7 @@ export default function Modifications() {
                       ? "btn btn-dark"
                       : "btn btn-outline-dark"
                   }
-                  onClick={() => changeBlurMode("DEFAULT")}
+                  onClick={() => changeBlurMode("DEFAULT_BLUR")}
                 >
                   Default
                 </button>
@@ -71,21 +81,25 @@ export default function Modifications() {
                       ? "btn btn-dark"
                       : "btn btn-outline-dark"
                   }
-                  onClick={() => changeBlurMode("BLOCKY")}
+                  onClick={() => changeBlurMode("BLOCKY_BLUR")}
                 >
                   Blocky
                 </button>
               </div>
               <h5>Difficulty</h5>
               <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
-                <button className="btn btn-dark">Monochrome</button>
+                <button
+                  className="btn btn-dark"
+                  onClick={() => toggleMonochrome()}
+                >
+                  Monochrome
+                </button>
                 <button className="btn btn-dark">Random rotate</button>
-                <button className="btn btn-dark">Zoom</button>
                 <button
                   className="btn btn-dark"
                   onClick={() => toggleHideResource()}
                 >
-                  {hideResource ? "Show resource" : "Hide resource"}
+                  {hideResource ? "Hide resource" : "Show resource"}
                 </button>
               </div>
               <div className="pt-2 pb-3">

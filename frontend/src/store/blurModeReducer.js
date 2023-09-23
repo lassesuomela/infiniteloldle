@@ -6,12 +6,12 @@ const initialState = getInitialStateFromLocalStorage();
 
 const blurModeReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "DEFAULT":
+    case "DEFAULT_BLUR":
       return {
         ...state,
         blurMode: "default",
       };
-    case "BLOCKY":
+    case "BLOCKY_BLUR":
       return {
         ...state,
         blurMode: "blocky",
