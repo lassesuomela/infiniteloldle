@@ -184,7 +184,7 @@ export default function StatsData() {
             <Line type="monotone" dataKey="score" stroke="#005A82" />
           </LineChart>
         </div>
-        <h4>Users and players from past 30 days</h4>
+        <h4>Gaining of users and players from past 30 days</h4>
         <div className="pb-4 pt-2">
           <LineChart width={1000} height={500} data={userData}>
             <CartesianGrid strokeDasharray="2 2" />

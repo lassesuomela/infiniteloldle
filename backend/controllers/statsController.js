@@ -42,6 +42,19 @@ const GetAll = (req, res) => {
       mau += count["dau"];
     });
 
+    // delete 0 scores
+    result[13].shift();
+
+    // calculate delta of users and players past 30 days
+    const userDelta = [];
+    result[10].reverse();
+    result[10].sort((a, b) => {
+      const userGain = a.users - b.users;
+      const playerGain = a.players - b.players;
+      const date = a.date;
+      userDelta.push({ users: userGain, players: playerGain, date: date });
+    });
+
     const response = {
       status: "success",
       stats: result[0],
@@ -55,7 +68,7 @@ const GetAll = (req, res) => {
       todays_player_count: result[9][0].count,
       yesterdays_player_count: result[12][0].count,
       top_countries: countries,
-      user_data: result[10].reverse(),
+      user_data: userDelta,
       dau: result[0][0].dau,
       mau: mau,
       old_item_count: result[11][0].old_item_count,
