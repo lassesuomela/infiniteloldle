@@ -8,7 +8,7 @@ const initialState = getInitialStateFromLocalStorage();
 
 const colorBlindModeReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "TOGGLE":
+    case "TOGGLE_COLOR_BLIND":
       return { ...state, isColorBlindMode: !state.isColorBlindMode };
     default:
       return state;

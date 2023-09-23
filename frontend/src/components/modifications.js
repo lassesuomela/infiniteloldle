@@ -10,10 +10,17 @@ export default function Modifications() {
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
   );
+  const hideResource = useSelector(
+    (state) => state.hideResourceReducer.hideResource
+  );
   const dispatch = useDispatch();
   const toggleColorBlindMode = () => {
-    dispatch({ type: "TOGGLE" });
+    dispatch({ type: "TOGGLE_COLOR_BLIND" });
     localStorage.setItem("isColorBlindMode", !isColorBlindMode);
+  };
+  const toggleHideResource = () => {
+    dispatch({ type: "TOGGLE_HIDE_RESOURCE" });
+    localStorage.setItem("hideResource", !hideResource);
   };
   const changeBlurMode = (type) => {
     dispatch({ type: type });
@@ -74,7 +81,12 @@ export default function Modifications() {
                 <button className="btn btn-dark">Monochrome</button>
                 <button className="btn btn-dark">Random rotate</button>
                 <button className="btn btn-dark">Zoom</button>
-                <button className="btn btn-dark">Hide resource</button>
+                <button
+                  className="btn btn-dark"
+                  onClick={() => toggleHideResource()}
+                >
+                  {hideResource ? "Show resource" : "Hide resource"}
+                </button>
               </div>
               <div className="pt-2 pb-3">
                 <h5>Colorblind mode</h5>
