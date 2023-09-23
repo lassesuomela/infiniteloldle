@@ -42,6 +42,9 @@ const GetAll = (req, res) => {
       mau += count["dau"];
     });
 
+    // delete 0 scores
+    result[13].shift();
+
     const response = {
       status: "success",
       stats: result[0],
