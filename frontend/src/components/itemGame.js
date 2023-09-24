@@ -21,6 +21,10 @@ export default function Game() {
     (state) => state.colorBlindReducer.isColorBlindMode
   );
 
+  const isMonochrome = useSelector(
+    (state) => state.monochromeReducer.isMonochrome
+  );
+
   useEffect(() => {
     FetchItems();
     FetchItemImage();
@@ -107,7 +111,9 @@ export default function Game() {
 
           blurVal -= blurVal * 0.4;
 
-          spriteImg.style.filter = "blur(" + blurVal.toString() + "em)";
+          spriteImg.style.filter = `blur(${blurVal.toString()}em) ${
+            isMonochrome ? "grayscale(1)" : ""
+          }`;
         }
       })
       .catch((error) => {
@@ -139,7 +145,9 @@ export default function Game() {
       >
         <img
           src={spriteUrl}
-          style={{ filter: "blur(1.0em)" }}
+          style={{
+            filter: `blur(1.0em) ${isMonochrome ? "grayscale(1)" : ""}`,
+          }}
           className="rounded p-4"
           id="spriteImg"
           alt="Item sprite."
