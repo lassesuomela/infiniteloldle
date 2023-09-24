@@ -23,6 +23,10 @@ export default function Game() {
     (state) => state.colorBlindReducer.isColorBlindMode
   );
 
+  const isMonochrome = useSelector(
+    (state) => state.monochromeReducer.isMonochrome
+  );
+
   useEffect(() => {
     FetchChampions();
     FetchSplashArt();
@@ -109,7 +113,9 @@ export default function Game() {
 
           blurVal -= blurVal * 0.4;
 
-          spriteImg.style.filter = "blur(" + blurVal.toString() + "em)";
+          spriteImg.style.filter = `blur(${blurVal.toString()}em) ${
+            isMonochrome ? "grayscale(1)" : ""
+          }`;
         }
       })
       .catch((error) => {
@@ -120,8 +126,9 @@ export default function Game() {
 
   const Restart = () => {
     const spriteImg = document.getElementById("spriteImg");
-    spriteImg.style.filter = "blur(1.0em)";
-
+    spriteImg.style.filter = `blur(1.0em) ${
+      isMonochrome ? "grayscale(1)" : ""
+    }`;
     FetchSplashArt();
     FetchChampions();
 
@@ -141,7 +148,9 @@ export default function Game() {
       >
         <img
           src={`data:image/webp;base64,${sprite}`}
-          style={{ filter: "blur(1.0em)" }}
+          style={{
+            filter: `blur(1.0em) ${isMonochrome ? "grayscale(1)" : ""}`,
+          }}
           className="rounded p-4"
           id="spriteImg"
           alt="Champion splash art."
