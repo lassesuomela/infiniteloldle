@@ -42,7 +42,13 @@ export default function ChampionDetails(props) {
           }
           id="resource"
         >
-          <span className="align-center">{props.resource}</span>
+          <span className="align-center">
+            {props.hideResource
+              ? props.resource === "Mana"
+                ? "Mana"
+                : "Manaless"
+              : props.resource}
+          </span>
         </div>
         <div
           className={

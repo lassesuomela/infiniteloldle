@@ -25,6 +25,10 @@ export default function Game() {
     (state) => state.colorBlindReducer.isColorBlindMode
   );
 
+  const hideResource = useSelector(
+    (state) => state.hideResourceReducer.hideResource
+  );
+
   useEffect(() => {
     FetchChampions();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -188,6 +192,7 @@ export default function Game() {
             damageType={champ[0].damageType}
             similarites={champ[1]}
             isColorBlindMode={isColorBlindMode}
+            hideResource={hideResource}
           />
         ))}
       </div>
