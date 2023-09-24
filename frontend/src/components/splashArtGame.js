@@ -27,6 +27,10 @@ export default function Game() {
     (state) => state.monochromeReducer.isMonochrome
   );
 
+  const randomRotate = useSelector(
+    (state) => state.randomRotateReducer.randomRotate
+  );
+
   useEffect(() => {
     FetchChampions();
     FetchSplashArt();
@@ -150,6 +154,7 @@ export default function Game() {
           src={`data:image/webp;base64,${sprite}`}
           style={{
             filter: `blur(1.0em) ${isMonochrome ? "grayscale(1)" : ""}`,
+            transform: `${randomRotate ? "rotate(180deg)" : ""}`,
           }}
           className="rounded p-4"
           id="spriteImg"

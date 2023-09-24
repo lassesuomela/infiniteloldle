@@ -80,7 +80,7 @@ export default function Modifications() {
                   }
                   onClick={() => changeBlurMode("DEFAULT_BLUR")}
                   data-tooltip-id="blur-tooltip"
-                  data-tooltip-content="Change blur mode of splash art games"
+                  data-tooltip-content="Change blur mode of splash art, item and legacy item to be default"
                 >
                   Default
                   <Tooltip id="blur-tooltip" />
@@ -93,7 +93,7 @@ export default function Modifications() {
                   }
                   onClick={() => changeBlurMode("BLOCKY_BLUR")}
                   data-tooltip-id="blur-tooltip"
-                  data-tooltip-content="Change blur mode of splash art games"
+                  data-tooltip-content="Change blur mode of splash art, item and legacy item to be pixelated"
                 >
                   Blocky
                   <Tooltip id="blur-tooltip" />
@@ -120,7 +120,7 @@ export default function Modifications() {
                   data-tooltip-id="rotate-tooltip"
                   data-tooltip-content="Splash art, item and legacy item games icons are rotated"
                 >
-                  Random rotate
+                  Rotate
                   <Tooltip id="rotate-tooltip" />
                 </button>
                 <button
