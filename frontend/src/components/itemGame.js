@@ -124,7 +124,9 @@ export default function Game() {
 
   const Restart = () => {
     const spriteImg = document.getElementById("spriteImg");
-    spriteImg.style.filter = "blur(1.0em)";
+    spriteImg.style.filter = `blur(1.0em) ${
+      isMonochrome ? "grayscale(1)" : ""
+    }`;
 
     FetchItemImage();
     FetchItems();
