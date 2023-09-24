@@ -148,6 +148,8 @@ const CheckToken = (req, res) => {
       };
 
       cache.saveCache(key, response);
+      res.set("X-CACHE", "MISS");
+
       res.json(response);
     } else {
       res.json({ status: "error", message: "Token is not valid" });
