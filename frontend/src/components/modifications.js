@@ -70,35 +70,37 @@ export default function Modifications() {
 
               <h3 className="pb-4">Modifications</h3>
 
-              <h5>Blur mode</h5>
-              <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
-                <button
-                  className={
-                    blurMode === "default"
-                      ? "btn btn-dark"
-                      : "btn btn-outline-dark"
-                  }
-                  onClick={() => changeBlurMode("DEFAULT_BLUR")}
-                  data-tooltip-id="blur-tooltip"
-                  data-tooltip-content="Change blur mode of splash art, item and legacy item to be default"
-                >
-                  Default
-                  <Tooltip id="blur-tooltip" />
-                </button>
-                <button
-                  className={
-                    blurMode === "blocky"
-                      ? "btn btn-dark"
-                      : "btn btn-outline-dark"
-                  }
-                  onClick={() => changeBlurMode("BLOCKY_BLUR")}
-                  data-tooltip-id="blur-tooltip"
-                  data-tooltip-content="Change blur mode of splash art, item and legacy item to be pixelated"
-                >
-                  Blocky
-                  <Tooltip id="blur-tooltip" />
-                </button>
-              </div>
+              {/*
+                <h5>Blur mode</h5>
+                <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
+                  <button
+                    className={
+                      blurMode === "default"
+                        ? "btn btn-dark"
+                        : "btn btn-outline-dark"
+                    }
+                    onClick={() => changeBlurMode("DEFAULT_BLUR")}
+                    data-tooltip-id="blur-tooltip"
+                    data-tooltip-content="Change blur mode of splash art, item and legacy item to be default"
+                  >
+                    Default
+                    <Tooltip id="blur-tooltip" />
+                  </button>
+                  <button
+                    className={
+                      blurMode === "blocky"
+                        ? "btn btn-dark"
+                        : "btn btn-outline-dark"
+                    }
+                    onClick={() => changeBlurMode("BLOCKY_BLUR")}
+                    data-tooltip-id="blur-tooltip"
+                    data-tooltip-content="Change blur mode of splash art, item and legacy item to be pixelated"
+                  >
+                    Blocky
+                    <Tooltip id="blur-tooltip" />
+                  </button>
+                </div>
+                */}
               <h5>Difficulty</h5>
               <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
                 <button

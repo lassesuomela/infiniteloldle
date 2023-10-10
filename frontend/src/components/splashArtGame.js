@@ -197,7 +197,7 @@ export default function Game() {
                 className="btn btn-light mb-3 mt-1 min-vw-25"
                 onClick={Restart}
               >
-                Reset
+                Next
               </button>
             ) : (
               ""
