@@ -5,7 +5,6 @@ const TopAllTime = (req, res) => {
   const key = req.path;
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
     return res.json(cache.getCache(key));
   }
 
@@ -26,7 +25,8 @@ const TopAllTime = (req, res) => {
     };
 
     cache.saveCache(key, response);
-    cache.changeTTL(key, 300);
+    cache.changeTTL(key, 60);
+    res.set("X-CACHE", "MISS");
 
     res.json(response);
   });
