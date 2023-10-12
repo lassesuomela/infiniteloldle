@@ -42,6 +42,7 @@ export default function Game() {
       .then((response) => {
         if (response.data.status === "success") {
           const data = response.data.champions;
+          data.sort((a, b) => a.label.localeCompare(b.label));
 
           setValidGuesses(data);
         }
