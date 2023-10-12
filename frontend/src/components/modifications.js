@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 export default function Modifications() {
   const [isShown, setIsShown] = useState(false);
 
-  const blurMode = useSelector((state) => state.blurModeReducer.blurMode);
+  /*   const blurMode = useSelector((state) => state.blurModeReducer.blurMode);*/
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
   );
@@ -28,13 +28,13 @@ export default function Modifications() {
     dispatch({ type: "TOGGLE_HIDE_RESOURCE" });
     localStorage.setItem("hideResource", !hideResource);
   };
-  const changeBlurMode = (type) => {
+  /* const changeBlurMode = (type) => {
     dispatch({ type: type });
     localStorage.setItem(
       "blurMode",
       type === "DEFAULT_BLUR" ? "default" : "blocky"
     );
-  };
+  }; */
   const toggleMonochrome = () => {
     dispatch({ type: "TOGGLE_MONOCHROME" });
     localStorage.setItem("isMonochrome", !isMonochrome);
