@@ -42,7 +42,7 @@ export default function Game() {
       .then((response) => {
         if (response.data.status === "success") {
           const data = response.data.champions;
-          data.sort((a, b) => a.label.localeCompare(b.label));
+          data.sort((a, b) => a.value.localeCompare(b.value));
           const transformedData = data.map((champion) => ({
             value: champion.value,
             label: champion.value,
