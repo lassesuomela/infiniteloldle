@@ -40,8 +40,12 @@ export default function Game() {
       .then((response) => {
         if (response.data.status === "success") {
           const data = response.data.items;
-
-          setValidGuesses(data);
+          data.sort((a, b) => a.value.localeCompare(b.value));
+          const transformedData = data.map((champion) => ({
+            value: champion.value,
+            label: champion.value,
+          }));
+          setValidGuesses(transformedData);
         }
       })
       .catch((error) => {
