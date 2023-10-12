@@ -1,3 +1,13 @@
+:root {
+    --correct-color: #28a745;
+    --partial-color: #ffc107;
+    --wrong-color: #dc3545;
+    --cb-correct-color: #3CB371;
+    --cb-partial-color: #FFD700;
+    --cb-wrong-color: #de74ff;
+    --dark-color: #010A13;
+}
+
 span {
     font-family: Spiegel;
     font-size: 1.2em;
@@ -31,8 +41,8 @@ p, small {
 }
 
 .championData {
-    border: 0.1em solid #010A13;
-    box-shadow: inset 0 0 0.6em #010A13;
+    border: 0.1em solid var(--dark-color);
+    box-shadow: inset 0 0 0.6em var(--dark-color);
     display: flex;
 }
 
@@ -41,23 +51,43 @@ p, small {
 }
 
 .correct{
-    background-color: #28a745;
+    background-color: var(--correct-color);
 }
 
 .partial {
-    background-color: #ffc107;
+    background-color: var(--partial-color);
 }
 
 .incorrect {
-    background-color: #dc3545;
+    background-color: var(--wrong-color);
+}
+
+.cb-correct{
+    background-color: var(--cb-correct-color);
+}
+
+.cb-partial {
+    background-color: var(--cb-partial-color);
+}
+
+.cb-incorrect {
+    background-color: var(--cb-wrong-color);
 }
 
 .incorrect-greater {
-    background-image: linear-gradient(#28a745, 60%, #dc3545);
+    background-image: linear-gradient(var(--correct-color), 60%, var(--wrong-color));
 }
 
 .incorrect-less {
-    background-image: linear-gradient(#dc3545, 60%, #28a745);
+    background-image: linear-gradient(var(--wrong-color), 60%, var(--correct-color));
+}
+
+.cb-incorrect-greater {
+    background-image: linear-gradient(var(--cb-correct-color), 60%, var(--cb-wrong-color));
+}
+
+.cb-incorrect-less {
+    background-image: linear-gradient(var(--cb-wrong-color), 60%, var(--cb-correct-color));
 }
 
 .victory{
@@ -94,28 +124,8 @@ p, small {
 .demo {
     width: 4vw;
     height: 4vw;
-    border: 0.1em solid #010A13;
-    box-shadow: inset 0 0 0.6em #010A13;
-}
-
-.demoCorrect {
-    background-color: #28a745;
-}
-
-.demoPartial {
-    background-color: #ffc107;
-}
-
-.demoIncorrect {
-    background-color: #dc3545;
-}
-
-.demoInoccrectGreater {
-    background-image: linear-gradient(#28a745, 60%, #dc3545);
-}
-
-.demoInoccrectLess {
-    background-image: linear-gradient(#dc3545, 60%, #28a745);
+    border: 0.1em solid var(--dark-color);
+    box-shadow: inset 0 0 0.6em var(--dark-color);
 }
 
 #championsImgs {

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -20,7 +21,7 @@
     "react-select": "^5.5.0",
     "react-tooltip": "^5.19.0",
     "recharts": "^2.5.0",
-    "redux": "^4.2.0",
+    "redux": "^4.2.1",
     "universal-cookie": "^4.0.4",
     "web-vitals": "^2.1.4"
   },

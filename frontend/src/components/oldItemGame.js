@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Victory from "./victory";
-import OldItemImg from "./oldItemImg";
+import ItemImg from "./itemImg";
 import Config from "../configs/config";
 import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import { Reroll } from "./reroll";
 import { customFilterOption, HoverSelectStyles } from "./selectStyles";
+import { useSelector } from "react-redux";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -15,6 +16,18 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
+
+  const isColorBlindMode = useSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode
+  );
+
+  const isMonochrome = useSelector(
+    (state) => state.monochromeReducer.isMonochrome
+  );
+
+  const randomRotate = useSelector(
+    (state) => state.randomRotateReducer.randomRotate
+  );
 
   useEffect(() => {
     FetchItems();
@@ -101,7 +114,9 @@ export default function Game() {
         } else {
           let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
           blurVal -= blurVal * 0.4;
-          spriteImg.style.filter = "blur(" + blurVal.toString() + "em)";
+          spriteImg.style.filter = `blur(${blurVal.toString()}em) ${
+            isMonochrome ? "grayscale(1)" : ""
+          }`;
         }
       })
       .catch((error) => {
@@ -112,7 +127,9 @@ export default function Game() {
 
   const Restart = () => {
     const spriteImg = document.getElementById("spriteImg");
-    spriteImg.style.filter = "blur(1.0em)";
+    spriteImg.style.filter = `blur(1.0em) ${
+      isMonochrome ? "grayscale(1)" : ""
+    }`;
 
     FetchItemImage();
     FetchItems();
@@ -133,7 +150,10 @@ export default function Game() {
       >
         <img
           src={`data:image/webp;base64,${sprite}`}
-          style={{ filter: "blur(1.0em)" }}
+          style={{
+            filter: `blur(1.0em) ${isMonochrome ? "grayscale(1)" : ""}`,
+            transform: `${randomRotate ? "rotate(180deg)" : ""}`,
+          }}
           className="rounded p-4"
           id="spriteImg"
           alt="Item sprite."
@@ -163,7 +183,7 @@ export default function Game() {
                 className="btn btn-light mb-3 mt-1 min-vw-25"
                 onClick={Restart}
               >
-                Reset
+                Next
               </button>
             ) : (
               ""
@@ -184,7 +204,13 @@ export default function Game() {
 
       <div id="championsImgs" className="container">
         {champions.map((item) => (
-          <OldItemImg itemId={item[0]} name={item[1]} isCorrect={item[2]} />
+          <ItemImg
+            itemId={item[0]}
+            name={item[1]}
+            isCorrect={item[2]}
+            path="/old_items/"
+            isColorBlindMode={isColorBlindMode}
+          />
         ))}
       </div>
 

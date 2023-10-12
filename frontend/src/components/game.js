@@ -9,6 +9,7 @@ import Config from "../configs/config";
 import { Reroll } from "./reroll";
 import { Helmet } from "react-helmet";
 import LazyLoad from "react-lazy-load";
+import { useSelector } from "react-redux";
 
 import { SelectStyles, customFilterOption } from "./selectStyles";
 
@@ -19,6 +20,14 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
   const [title, setTitle] = useState("");
+
+  const isColorBlindMode = useSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode
+  );
+
+  const hideResource = useSelector(
+    (state) => state.hideResourceReducer.hideResource
+  );
 
   useEffect(() => {
     FetchChampions();
@@ -144,7 +153,7 @@ export default function Game() {
                   className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
                   onClick={Restart}
                 >
-                  Reset
+                  Next
                 </button>
               </>
             ) : (
@@ -182,6 +191,8 @@ export default function Game() {
             regions={champ[0].region}
             damageType={champ[0].damageType}
             similarites={champ[1]}
+            isColorBlindMode={isColorBlindMode}
+            hideResource={hideResource}
           />
         ))}
       </div>
