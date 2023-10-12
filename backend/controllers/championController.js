@@ -103,7 +103,6 @@ const GetAllChampions = (req, res) => {
     const champions = [];
     result.forEach((champ) => {
       champions.push({
-        label: champ["name"],
         value: champ["name"],
         image: champ["championKey"],
       });

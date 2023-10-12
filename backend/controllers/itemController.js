@@ -188,7 +188,7 @@ const GetAllItems = (req, res) => {
 
     const items = [];
     result.forEach((item) => {
-      items.push({ label: item["name"], value: item["name"] });
+      items.push({ value: item["name"] });
     });
 
     const response = { status: "success", items: items };
