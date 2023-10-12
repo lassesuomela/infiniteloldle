@@ -188,12 +188,12 @@ const GetAllItems = (req, res) => {
 
     const items = [];
     result.forEach((item) => {
-      items.push({ label: item["name"], value: item["name"] });
+      items.push({ value: item["name"] });
     });
 
     const response = { status: "success", items: items };
     cache.saveCache(key, response);
-    cache.changeTTL(key, 3600 * 12);
+    cache.changeTTL(key, 3600 * 24);
     res.set("X-CACHE", "MISS");
 
     res.json(response);

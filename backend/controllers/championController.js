@@ -103,7 +103,6 @@ const GetAllChampions = (req, res) => {
     const champions = [];
     result.forEach((champ) => {
       champions.push({
-        label: champ["name"],
         value: champ["name"],
         image: champ["championKey"],
       });
@@ -111,7 +110,7 @@ const GetAllChampions = (req, res) => {
 
     const response = { status: "success", champions: champions };
     cache.saveCache(key, response);
-    cache.changeTTL(key, 3600 * 12);
+    cache.changeTTL(key, 3600 * 24);
     res.set("X-CACHE", "MISS");
     res.json(response);
   });
@@ -513,13 +512,13 @@ const GetSplashArt = (req, res) => {
           message: "File not found",
         });
       }
-
-      cache.saveCache(imageName, data.toString("base64"));
-      cache.changeTTL(imageName, 3600);
+      const base64 = data.toString("base64");
+      cache.saveCache(imageName, base64);
+      cache.changeTTL(imageName, 3600 * 6);
 
       return res.json({
         status: "success",
-        result: data.toString("base64"),
+        result: base64,
       });
     });
   });

@@ -196,13 +196,15 @@ const GetItemSprite = (req, res) => {
         });
       }
 
-      cache.saveCache(imageName, data.toString("base64"));
-      cache.changeTTL(imageName, 3600);
+      const base64 = data.toString("base64");
+
+      cache.saveCache(imageName, base64);
+      cache.changeTTL(imageName, 3600 * 6);
       res.set("X-CACHE", "MISS");
 
       return res.json({
         status: "success",
-        result: data.toString("base64"),
+        result: base64,
       });
     });
   });
@@ -222,7 +224,7 @@ const GetAllItems = (req, res) => {
 
     const items = [];
     result.forEach((item) => {
-      items.push({ label: item["name"], value: item["name"] });
+      items.push({ value: item["name"] });
     });
 
     const response = { status: "success", items: items };

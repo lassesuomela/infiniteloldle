@@ -39,8 +39,13 @@ export default function Game() {
       .then((response) => {
         if (response.data.status === "success") {
           const data = response.data.champions;
-
-          setValidGuesses(data);
+          data.sort((a, b) => a.value.localeCompare(b.value));
+          const transformedData = data.map((champion) => ({
+            value: champion.value,
+            label: champion.value,
+            image: champion.image,
+          }));
+          setValidGuesses(transformedData);
         }
       })
       .catch((error) => {
