@@ -10,9 +10,9 @@ export default function Modifications() {
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
   );
-  const hideResource = useSelector(
+  /* const hideResource = useSelector(
     (state) => state.hideResourceReducer.hideResource
-  );
+  ); */
   const isMonochrome = useSelector(
     (state) => state.monochromeReducer.isMonochrome
   );
@@ -24,10 +24,10 @@ export default function Modifications() {
     dispatch({ type: "TOGGLE_COLOR_BLIND" });
     localStorage.setItem("isColorBlindMode", !isColorBlindMode);
   };
-  const toggleHideResource = () => {
+  /* const toggleHideResource = () => {
     dispatch({ type: "TOGGLE_HIDE_RESOURCE" });
     localStorage.setItem("hideResource", !hideResource);
-  };
+  }; */
   /* const changeBlurMode = (type) => {
     dispatch({ type: type });
     localStorage.setItem(
@@ -125,7 +125,7 @@ export default function Modifications() {
                   Rotate
                   <Tooltip id="rotate-tooltip" />
                 </button>
-                <button
+                {/* <button
                   className={
                     hideResource ? "btn btn-dark" : "btn btn-outline-dark"
                   }
@@ -135,7 +135,7 @@ export default function Modifications() {
                 >
                   Simplify resource
                   <Tooltip id="resource-tooltip" />
-                </button>
+                </button> */}
               </div>
               <div className="pt-2 pb-3">
                 <h5>Colorblind mode</h5>
