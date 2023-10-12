@@ -128,26 +128,6 @@ p, small {
     box-shadow: inset 0 0 0.6em var(--dark-color);
 }
 
-.demoCorrect {
-    background-color: var(--correct-color);
-}
-
-.demoPartial {
-    background-color: var(--partial-color);
-}
-
-.demoIncorrect {
-    background-color: var(--wrong-color);
-}
-
-.demoInoccrectGreater {
-    background-image: linear-gradient(var(--correct-color), 60%, var(--wrong-color));
-}
-
-.demoInoccrectLess {
-    background-image: linear-gradient(var(--wrong-color), 60%, var(--correct-color));
-}
-
 #championsImgs {
     max-width: 25vw;
 }

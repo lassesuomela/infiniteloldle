@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useSelector } from "react-redux";
 
 export default function About() {
   const [isCopied, setIsCopied] = useState(false);
+  const isColorBlindMode = useSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode
+  );
   return (
     <div id="about">
       <h3>Inspiration</h3>
@@ -35,27 +39,31 @@ export default function About() {
       <h4 className="pb-3">Meaning of the colors</h4>
 
       <div className="d-flex pb-2 align-items-center">
-        <div className="demo demoCorrect"></div>
+        <div className={`demo ${isColorBlindMode ? "cb-" : ""}correct`}></div>
         <p className="my-auto mx-auto">Correct guess</p>
       </div>
 
       <div className="d-flex pb-2 align-items-center">
-        <div className="demo demoInoccrectGreater"></div>
+        <div
+          className={`demo ${isColorBlindMode ? "cb-" : ""}incorrect-greater`}
+        ></div>
         <p className="my-auto mx-auto">Correct value is higher</p>
       </div>
 
       <div className="d-flex pb-2 align-items-center">
-        <div className="demo demoPartial"></div>
+        <div className={`demo ${isColorBlindMode ? "cb-" : ""}partial`}></div>
         <p className="my-auto mx-auto">Value is partially correct</p>
       </div>
 
       <div className="d-flex pb-2 align-items-center">
-        <div className="demo demoInoccrectLess"></div>
+        <div
+          className={`demo ${isColorBlindMode ? "cb-" : ""}incorrect-less`}
+        ></div>
         <p className="my-auto mx-auto">Correct value is lower</p>
       </div>
 
       <div className="d-flex">
-        <div className="demo demoIncorrect"></div>
+        <div className={`demo ${isColorBlindMode ? "cb-" : ""}incorrect`}></div>
         <p className="my-auto mx-auto">Incorrect guess</p>
       </div>
 
