@@ -1,4 +1,4 @@
-# Readme 
+# Readme
 
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
@@ -23,16 +23,20 @@ Everything is packaged into Docker containers and those are managed with docker-
 Python was used gather champion data via web scraping and doing API requests to DDragon.
 
 Jest was used to make some tests to backend.
+
 ## Demo
+
 Demo of this repository will be available at [https://www.infiniteloldle.com](https://www.infiniteloldle.com).
 
 ---
+
 ## How to run backend
+
 - `cd ./backend`
 - run `npm i`
-- install sql scheme with `*.sql` file
+- import mysql dump to your mysql server from `backend/mysql-docker/db.sql`
 - create ".env" file and populate it with your credentials
-  
+
       DB_HOST=loldle-mysql
       DB_USERNAME=root
       DB_PASSWORD=root
@@ -40,9 +44,11 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
       TOKEN=some_secret_token_for_jwt_auth # used only for importing data to database
       NODE_ENV=dev # used only for importing data to database otherwise use production
       ENV=dev # used only for importing data to database otherwise use production
-  
-- run `npm start` and the backend is running at [http://localhost:8081](http://localhost:8081)
+
+- run `npm start` for node or `npm run dev` for nodemon and the backend is running at [http://localhost:8081](http://localhost:8081)
+
 ---
+
 ## Prepare images for frontend
 
 All images should be in webp format (excluding favicon). You can use scripts in populateDBScripts folder to get all images that you need. They might need some tinkering.
@@ -57,25 +63,25 @@ Folder structure should look like this:
           └── splash_arts # champion splash arts ie. Aatrox_0.webp # 0 indicates the splash art id
 
 ## How to run frontend
+
 - `cd ./frontend`
 - run `npm i`
 - run `npm start` and the frontend is running at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## How to run tests
+## How to run tests (only for backend)
+
 - `cd ./backend`
-- run `npm test`
+- run `npm test` runs tests with Jest
 
 ## Code coverage
 
 ![Code coverage](screenshots/backend_coverage.png)
 
 ---
-## Screenshots below from the site
 
-First visit insert nickname
-![First visit](screenshots/nickname.png)
+## Screenshots below from the site
 
 Guess champion game
 ![Couple guesses](screenshots/guesses.png)
