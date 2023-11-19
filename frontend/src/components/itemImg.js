@@ -1,4 +1,5 @@
 import React from "react";
+import { Tooltip } from "react-tooltip";
 
 export default function ItemImg(props) {
   const checkColorBlindMode = () => {
@@ -19,7 +20,10 @@ export default function ItemImg(props) {
         src={props.path + props.itemId + ".webp"}
         alt={props.name}
         className="championData mx-auto"
+        data-tooltip-id="item-tooltip"
+        data-tooltip-content={props.name}
       />
+      <Tooltip id="champion-tooltip" />
     </div>
   );
 }
