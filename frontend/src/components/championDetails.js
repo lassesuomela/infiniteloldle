@@ -61,7 +61,7 @@ export default function ChampionDetails(props) {
           }
           id="range"
         >
-          <span className="align-center">
+          <span className="align-center breakWord">
             {props.rangeTypes.replace(/,/g, " ")}
           </span>
         </div>
