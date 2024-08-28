@@ -506,6 +506,7 @@ const GetSplashArt = (req, res) => {
     const imagePath = path.join(__dirname, "../splash_arts", imageName);
 
     fs.readFile(imagePath, (err, data) => {
+      console.log(`FATAL: Image is missing for: ${imageName}`)
       if (err) {
         return res.status(404).json({
           status: "error",
