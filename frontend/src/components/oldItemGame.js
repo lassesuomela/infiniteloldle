@@ -178,6 +178,23 @@ export default function Game() {
             placeholder="Type items name"
             filterOption={customFilterOption}
             styles={HoverSelectStyles}
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 0,
+              colors: {
+                ...theme.colors,
+                primary25: "#1e2328", // select hover bg color
+                neutral0: "#181a1c", // bg
+                primary: "#1e2328", // active border and bg color of select
+                neutral20: "#353739",
+                primary50: "#353739",
+              },
+            })}
+            formatOptionLabel={(data) => (
+              <div className="select-option">
+                <span>{data.label}</span>
+              </div>
+            )}
           />
 
           <div className="d-flex justify-content-evenly">

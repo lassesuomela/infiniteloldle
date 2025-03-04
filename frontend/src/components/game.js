@@ -149,6 +149,18 @@ export default function Game() {
                 <span>{data.label}</span>
               </div>
             )}
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 0,
+              colors: {
+                ...theme.colors,
+                primary25: "#1e2328", // select hover bg color
+                neutral0: "#181a1c", // bg
+                primary: "#1e2328", // active border and bg color of select
+                neutral20: "#353739",
+                primary50: "#353739",
+              },
+            })}
           />
 
           <div className="d-flex justify-content-evenly">
