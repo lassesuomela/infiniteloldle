@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Header from "./components/header";
 import Footer from "./components/footer";
-import Game from "./components/game";
+import Game from "./components/games/game";
 import Scoreboard from "./views/scoreboard";
 import Legal from "./views/legal";
 import About from "./views/about";

@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
-import Victory from "./victory";
-import ItemImg from "./itemImg";
-import Config from "../configs/config";
-import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
-import { Reroll } from "./reroll";
+import Victory from "./components/victory";
+import ChampionImg from "./components/championImg";
+import Config from "../../configs/config";
 import {
+  saveGamesPlayed,
+  saveTries,
+  saveFirstTries,
+} from "../../utils/saveStats";
+import { Reroll } from "../../utils/reroll";
+import LazyLoad from "react-lazy-load";
+import {
+  SelectStyles,
   customFilterOption,
-  HoverSelectStyles,
   SelectTheme,
-} from "./selectStyles";
+} from "./styles/selectStyles";
 import { useSelector } from "react-redux";
 
 export default function Game() {
@@ -19,7 +24,8 @@ export default function Game() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-  const [spriteUrl, setSpriteUrl] = useState("");
+  const [sprite, setSprite] = useState("");
+  const [title, setTitle] = useState("");
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -34,20 +40,21 @@ export default function Game() {
   );
 
   useEffect(() => {
-    FetchItems();
-    FetchItemImage();
+    FetchChampions();
+    FetchSplashArt();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const FetchItems = () => {
+  const FetchChampions = () => {
     axios
-      .get(Config.url + "/items")
+      .get(Config.url + "/champions")
       .then((response) => {
         if (response.data.status === "success") {
-          const data = response.data.items;
+          const data = response.data.champions;
           data.sort((a, b) => a.value.localeCompare(b.value));
           const transformedData = data.map((champion) => ({
             value: champion.value,
             label: champion.value,
+            image: champion.image,
           }));
           setValidGuesses(transformedData);
         }
@@ -57,16 +64,15 @@ export default function Game() {
       });
   };
 
-  const FetchItemImage = () => {
+  const FetchSplashArt = () => {
     axios
-      .get(Config.url + "/item", {
+      .get(Config.url + "/splash", {
         headers: { authorization: "Bearer " + localStorage.getItem("token") },
       })
       .then((response) => {
         if (response.data.status === "success") {
           if (response.data.result) {
-            const url = "/items/" + response.data.result + ".webp";
-            setSpriteUrl(url);
+            setSprite(response.data.result);
           }
         }
       })
@@ -91,7 +97,7 @@ export default function Game() {
 
     axios
       .post(
-        Config.url + "/item",
+        Config.url + "/splash",
         { guess: currentGuess },
         {
           headers: { authorization: "Bearer " + localStorage.getItem("token") },
@@ -104,11 +110,9 @@ export default function Game() {
         saveTries(1);
 
         const isCorrect = response.data.correctGuess;
+        const key = response.data.championKey;
 
-        const itemId = response.data.itemId;
-        const name = response.data.name;
-
-        setChampions((champions) => [[itemId, name, isCorrect], ...champions]);
+        setChampions((champions) => [[key, isCorrect], ...champions]);
 
         const spriteImg = document.getElementById("spriteImg");
 
@@ -118,6 +122,8 @@ export default function Game() {
           }
           saveGamesPlayed();
           setCorrectGuess(true);
+          setTitle(response.data.title);
+
           spriteImg.style.filter = "";
         } else {
           let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
@@ -140,9 +146,8 @@ export default function Game() {
     spriteImg.style.filter = `blur(1.0em) ${
       isMonochrome ? "grayscale(1)" : ""
     }`;
-
-    FetchItemImage();
-    FetchItems();
+    FetchSplashArt();
+    FetchChampions();
 
     setGuesses([]);
     setChampions([]);
@@ -152,21 +157,21 @@ export default function Game() {
 
   return (
     <div className="container main pt-4 pb-5 mb-5">
-      <h3 className="text-center pb-3">Which item is this?</h3>
+      <h3 className="text-center pb-3">Whose splash art is this?</h3>
 
       <div
         className="container d-flex justify-content-center shadow"
-        id="itemContainer"
+        id="spriteContainer"
       >
         <img
-          src={spriteUrl}
+          src={`data:image/webp;base64,${sprite}`}
           style={{
             filter: `blur(1.0em) ${isMonochrome ? "grayscale(1)" : ""}`,
             transform: `${randomRotate ? "rotate(180deg)" : ""}`,
           }}
           className="rounded p-4"
           id="spriteImg"
-          alt="Item sprite."
+          alt="Champion splash art."
           draggable="false"
         />
       </div>
@@ -178,18 +183,25 @@ export default function Game() {
           id="guess-form"
         >
           <Select
+            className="select"
             options={validGuesses}
             onChange={(selectedOption) => setGuess(selectedOption.value)}
             isDisabled={correctGuess}
-            placeholder="Type items name"
+            styles={SelectStyles}
+            placeholder="Type champions name"
             filterOption={customFilterOption}
-            styles={HoverSelectStyles}
-            theme={SelectTheme}
             formatOptionLabel={(data) => (
               <div className="select-option">
+                <LazyLoad offset={200}>
+                  <img
+                    src={"/40_40/champions/" + data.image + ".webp"}
+                    alt="Champion icon"
+                  />
+                </LazyLoad>
                 <span>{data.label}</span>
               </div>
             )}
+            theme={SelectTheme}
           />
 
           <div className="d-flex justify-content-evenly">
@@ -208,7 +220,7 @@ export default function Game() {
             {!correctGuess && guesses.length >= 10 ? (
               <button
                 className="btn btn-dark mb-3 mt-1 min-vw-25"
-                onClick={() => Reroll("item")}
+                onClick={() => Reroll("splash")}
               >
                 Reroll
               </button>
@@ -220,13 +232,12 @@ export default function Game() {
       </div>
 
       <div id="championsImgs" className="container">
-        {champions.map((item) => (
-          <ItemImg
-            itemId={item[0]}
-            name={item[1]}
-            isCorrect={item[2]}
+        {champions.map((champ) => (
+          <ChampionImg
+            key={champ[0].key}
+            championKey={champ[0]}
+            isCorrect={champ[1]}
             isColorBlindMode={isColorBlindMode}
-            path="/items/"
           />
         ))}
       </div>
@@ -237,7 +248,7 @@ export default function Game() {
           championKey={champions[0][0]}
           champion={currentGuess}
           tries={guesses.length}
-          isItem={true}
+          title={title}
         />
       ) : (
         ""

@@ -3,7 +3,7 @@ import axios from "axios";
 import ReactCountryFlag from "react-country-flag";
 import { Tooltip } from "react-tooltip";
 
-import { saveScore } from "./saveStats";
+import { saveScore } from "../utils/saveStats";
 import Config from "../configs/config";
 import { getCountryName } from "../utils/resolveCountryCode";
 

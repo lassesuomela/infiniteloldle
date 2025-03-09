@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
-import Victory from "./victory";
-import ItemImg from "./itemImg";
-import Config from "../configs/config";
-import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
-import { Reroll } from "./reroll";
+import Victory from "./components/victory";
+import ItemImg from "./components/itemImg";
+import Config from "../../configs/config";
+import {
+  saveGamesPlayed,
+  saveTries,
+  saveFirstTries,
+} from "../../utils/saveStats";
+import { Reroll } from "../../utils/reroll";
 import {
   customFilterOption,
   HoverSelectStyles,
   SelectTheme,
-} from "./selectStyles";
+} from "./styles/selectStyles";
 import { useSelector } from "react-redux";
 
 export default function Game() {

@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { initValues } from "./saveStats";
+import { initValues } from "../utils/saveStats";
 
 export default function StatsData() {
   const [gamesPerDay, setGamesPerDay] = useState([]);

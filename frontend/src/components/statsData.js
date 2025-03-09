@@ -15,7 +15,10 @@ import {
 } from "recharts";
 
 import { getCountryName } from "../utils/resolveCountryCode";
-import { tooltipContainerStyle, tooltipTextStyle } from "./tooltipStyles";
+import {
+  tooltipContainerStyle,
+  tooltipTextStyle,
+} from "./styles/tooltipStyles";
 
 export default function StatsData() {
   const [otherStat, setOtherStat] = useState([]);

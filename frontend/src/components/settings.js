@@ -4,7 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
 import Cookies from "universal-cookie";
 import { Tooltip } from "react-tooltip";
-import { Reroll } from "./reroll";
+import { Reroll } from "../utils/reroll";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function Settings() {
