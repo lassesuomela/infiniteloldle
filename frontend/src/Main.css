@@ -41,6 +41,19 @@ body {
   font-size: 1.4em;
 }
 
-h3 {
+h2,
+h3,
+h4,
+h5,
+li {
+  color: var(--title-color);
+}
+
+p {
+  color: var(--title-color);
+}
+
+#about a,
+#legal a {
   color: var(--title-color);
 }

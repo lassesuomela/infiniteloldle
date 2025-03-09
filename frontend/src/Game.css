@@ -200,6 +200,11 @@ small {
   margin-bottom: 0.4em;
 }
 
+.card {
+  background-color: var(--primary-color);
+  border: 1px solid var(--secondary-color);
+}
+
 .select input[type="text"] {
   caret-color: transparent;
 }
