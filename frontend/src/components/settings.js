@@ -121,7 +121,7 @@ export default function Settings() {
     <>
       <button
         onClick={ToggleState}
-        className="btn btn-dark darkBtn p-2 pb-0"
+        className="btn btn-dark darkBtn p-2 pb-0 ps-3 pe-3"
         data-tooltip-id="settings-tooltip"
         data-tooltip-content="Settings"
       >
