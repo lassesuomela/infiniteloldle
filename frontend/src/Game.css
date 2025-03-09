@@ -9,6 +9,7 @@
   --primary-color: #181a1c;
   --secondary-color: #353739;
   --title-color: #fff;
+  --navbar-bg-color: #212529;
 }
 
 span {
@@ -172,6 +173,8 @@ small {
 }
 
 .scoreboard {
+  color: var(--title-color);
+  background-color: var(--primary-color);
   width: 75%;
   padding: 3em 3em;
   padding-bottom: 1em;

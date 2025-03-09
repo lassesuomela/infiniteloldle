@@ -10,8 +10,7 @@ body {
 }
 
 .navbar {
-  background-color: #1e2328;
-  color: #f0d2ee;
+  background-color: var(--navbar-bg-color);
   font-size: 1.3em;
 }
 
