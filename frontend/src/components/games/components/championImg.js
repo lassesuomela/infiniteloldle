@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ChampionDetails(props) {
+export default function ChampionImg(props) {
   const checkColorBlindMode = () => {
     return props.isColorBlindMode ? "cb-" : "";
   };

@@ -17,7 +17,7 @@ import {
 } from "./styles/selectStyles";
 import { useSelector } from "react-redux";
 
-export default function Game() {
+export default function OldItemGame() {
   const [validGuesses, setValidGuesses] = useState([]);
   const [champions, setChampions] = useState([]);
   const [guesses, setGuesses] = useState([]);
