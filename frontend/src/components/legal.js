@@ -17,7 +17,13 @@ export default function Legal() {
         </p>
         <p>
           Infiniteloldle.com was created under Riot Games'{" "}
-          <a href="https://www.riotgames.com/en/legal">Legal Jibber Jabber</a>{" "}
+          <a
+            href="https://www.riotgames.com/en/legal"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Legal Jibber Jabber
+          </a>{" "}
           policy using assets owned by Riot Games. Riot Games does not endorse
           or sponsor this project.
         </p>

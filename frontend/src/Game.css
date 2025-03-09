@@ -124,6 +124,7 @@ small {
 .victory > .card {
   color: #fff;
   background-image: linear-gradient(#408140, #5cb85c);
+  border: none;
 }
 
 .victory .smaller {
