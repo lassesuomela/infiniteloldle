@@ -225,7 +225,7 @@ export default function Settings() {
                         <p>Copy token</p>
                         <CopyToClipboard text={localStorage.getItem("token")}>
                           <button
-                            className="btn btn-outline-dark"
+                            className="btn btn-dark"
                             onClick={() => setIsCopied(true)}
                           >
                             {isCopied ? "Copied!" : "Copy"}

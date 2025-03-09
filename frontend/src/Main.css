@@ -57,3 +57,14 @@ p {
 #legal a {
   color: var(--title-color);
 }
+
+.form-control,
+.form-control:focus {
+  background-color: var(--primary-color);
+  border-color: var(--secondary-color);
+  color: var(--title-color);
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem var(--secondary-color);
+}
