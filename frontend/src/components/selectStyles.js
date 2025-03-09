@@ -39,5 +39,7 @@ export const SelectTheme = (theme) => ({
     primary: "#1e2328", // active border and bg color of select
     neutral20: "#353739",
     primary50: "#353739",
+    neutral5: "#1e2328", // active bg color
+    neutral10: "#353739", // active border color
   },
 });
