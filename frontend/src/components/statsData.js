@@ -269,7 +269,12 @@ export default function StatsData() {
             <XAxis dataKey="nickname" stroke="#A9B3B9" />
             <YAxis stroke="#A9B3B9" />
             <Tooltip content={<PlayerTooltip />} />
-            <Line type="monotone" dataKey="score" stroke="#4C9AFF" />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="score"
+              stroke="#4C9AFF"
+            />
           </LineChart>
         </div>
 
@@ -280,8 +285,18 @@ export default function StatsData() {
             <XAxis dataKey="date" stroke="#A9B3B9" />
             <YAxis stroke="#A9B3B9" />
             <Tooltip content={<UsersTooltip />} />
-            <Line type="monotone" dataKey="Players" stroke="#4C9AFF" />
-            <Line type="monotone" dataKey="Users" stroke="#2A9D8F" />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="Players"
+              stroke="#4C9AFF"
+            />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="Users"
+              stroke="#2A9D8F"
+            />
           </LineChart>
         </div>
 
@@ -292,7 +307,12 @@ export default function StatsData() {
             <XAxis dataKey="nickname" stroke="#A9B3B9" />
             <YAxis stroke="#A9B3B9" />
             <Tooltip content={<PlayerTooltip />} />
-            <Line type="monotone" dataKey="score" stroke="#4C9AFF" />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="score"
+              stroke="#4C9AFF"
+            />
           </LineChart>
         </div>
 
