@@ -181,6 +181,19 @@ small {
   padding-bottom: 1em;
 }
 
+.table th,
+.table td {
+  color: var(--title-color);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--navbar-bg-color);
+}
+
+.table-striped tbody tr {
+  border-bottom: 1px solid var(--navbar-bg-color);
+}
+
 .select img {
   padding: 0.1em;
   margin-top: 0.4em;
