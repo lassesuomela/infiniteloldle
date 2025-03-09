@@ -207,7 +207,7 @@ export default function SplashArtGame() {
           <div className="d-flex justify-content-evenly">
             {correctGuess ? (
               <button
-                className="btn btn-light mb-3 mt-1 min-vw-25"
+                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
                 onClick={Restart}
               >
                 Next
