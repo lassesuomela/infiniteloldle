@@ -191,7 +191,6 @@ export default function Game() {
           />
 
           <div className="d-flex justify-content-evenly">
-            <button className="btn btn-dark mb-3 mt-1 min-vw-25">Guess</button>
             {correctGuess ? (
               <button
                 className="btn btn-light mb-3 mt-1 min-vw-25"
@@ -200,7 +199,9 @@ export default function Game() {
                 Next
               </button>
             ) : (
-              ""
+              <button className="btn btn-dark mb-3 mt-1 min-vw-25">
+                Guess
+              </button>
             )}
             {!correctGuess && guesses.length >= 10 ? (
               <button
