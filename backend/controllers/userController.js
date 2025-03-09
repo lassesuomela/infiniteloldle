@@ -120,14 +120,6 @@ const Create = (req, res) => {
 const CheckToken = (req, res) => {
   const token = req.token;
 
-  const key = req.path + ":" + token;
-
-  if (cache.checkCache(key)) {
-    res.set("X-CACHE", "HIT");
-    res.set("X-CACHE-REMAINING", new Date(cache.getTtl(key)).toISOString());
-    return res.json(cache.getCache(key));
-  }
-
   user.fetchByTokenForUserDataAPI(token, (err, result) => {
     if (result && result[0][0]) {
       delete result[0][0]["solvedChampions"];
@@ -146,9 +138,6 @@ const CheckToken = (req, res) => {
         message: "Token is valid",
         player: result[0][0],
       };
-
-      cache.saveCache(key, response);
-      res.set("X-CACHE", "MISS");
 
       res.json(response);
     } else {
