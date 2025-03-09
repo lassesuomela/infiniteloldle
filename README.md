@@ -1,4 +1,4 @@
-# Readme 
+# Readme
 
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
@@ -23,16 +23,20 @@ Everything is packaged into Docker containers and those are managed with docker-
 Python was used gather champion data via web scraping and doing API requests to DDragon.
 
 Jest was used to make some tests to backend.
+
 ## Demo
+
 Demo of this repository will be available at [https://www.infiniteloldle.com](https://www.infiniteloldle.com).
 
 ---
+
 ## How to run backend
+
 - `cd ./backend`
 - run `npm i`
 - install sql scheme with `*.sql` file
 - create ".env" file and populate it with your credentials
-  
+
       DB_HOST=loldle-mysql
       DB_USERNAME=root
       DB_PASSWORD=root
@@ -40,9 +44,11 @@ Demo of this repository will be available at [https://www.infiniteloldle.com](ht
       TOKEN=some_secret_token_for_jwt_auth # used only for importing data to database
       NODE_ENV=dev # used only for importing data to database otherwise use production
       ENV=dev # used only for importing data to database otherwise use production
-  
+
 - run `npm start` and the backend is running at [http://localhost:8081](http://localhost:8081)
+
 ---
+
 ## Prepare images for frontend
 
 All images should be in webp format (excluding favicon). You can use scripts in populateDBScripts folder to get all images that you need. They might need some tinkering.
@@ -57,61 +63,93 @@ Folder structure should look like this:
           └── splash_arts # champion splash arts ie. Aatrox_0.webp # 0 indicates the splash art id
 
 ## How to run frontend
+
 - `cd ./frontend`
 - run `npm i`
 - run `npm start` and the frontend is running at [http://localhost:3000](http://localhost:3000)
 
----
+Frontend API config is in \frontend\src\configs\config.js
 
 ## How to run tests
+
 - `cd ./backend`
 - run `npm test`
 
 ## Code coverage
 
-![Code coverage](screenshots/backend_coverage.png)
+![Code coverage](screenshots/backend/coverage.png)
 
 ---
+
 ## Screenshots below from the site
 
-First visit insert nickname
-![First visit](screenshots/nickname.png)
+### Guess champion game
 
-Guess champion game
-![Couple guesses](screenshots/guesses.png)
+![Couple guesses](screenshots/frontend/guess_wrong.png)
 
-Guessed correclty
-![Guessed correclty](screenshots/guess_victory.png)
+### Guessed correclty
 
-Guess champion based on splash art
-![Guess champion based on splash art](screenshots/splash.png)
+![Guessed correclty](screenshots/frontend/guess_victory.png)
 
-Image gets clearer when user guesses wrong
-![Image gets clearer when user guesses wrong](screenshots/splash_failed_attempts.png)
+### Guess champion based on splash art
 
-Correct champion guess on splash art game
-![Correct champion guess on splash art game](screenshots/splash_correct.png)
+![Guess champion based on splash art](screenshots/frontend/splash_game.png)
 
-Item guessing game
-![Item guessing game](screenshots/items_game.png)
+### Correct champion guess on splash art game
 
-Items guessing game correct answer
-![Items guessing game correct answer](screenshots/item_correct.png)
+![Correct champion guess on splash art game](screenshots/frontend/guess_splash_victory.png)
 
-Leaderboard page
-![Leaderboard page](screenshots/top10.png)
+### Item guessing game
 
-About page
-![About page](screenshots/about.png)
+![Item guessing game](screenshots/frontend/guess_item.png)
 
-Rest of the about page
-![Rest of the about page](screenshots/about_2.png)
+### Item guessing game modified
 
-Legal page
-![Legal page](screenshots/legal.png)
+![Item guessing game](screenshots/frontend/guess_item_mod.png)
 
-Settings menu
-![Settings menu](screenshots/settings.png)
+### Items guessing game correct answer
+
+![Items guessing game correct answer](screenshots/frontend/guess_item_victory.png)
+
+### Legacy item game victory
+
+![Legacy item game](screenshots/frontend/legacy_game_victory.png)
+
+### Leaderboard page
+
+![Leaderboard page](screenshots/frontend/scoreboard.png)
+
+### About page
+
+![About page](screenshots/frontend/about_1.png)
+
+### Rest of the about page
+
+![Rest of the about page](screenshots/frontend/about_2.png)
+
+### Legal page
+
+![Legal page](screenshots/frontend/legal.png)
+
+### My stats
+
+![My stats 1](screenshots/frontend/my_stats_1.png)
+![My stats 2](screenshots/frontend/my_stats_2.png)
+
+### Global stats
+
+![Global stats 1](screenshots/frontend/stats_1.png)
+![Global stats 2](screenshots/frontend/stats_2.png)
+![Global stats 3](screenshots/frontend/stats_3.png)
+![Global stats 4](screenshots/frontend/stats_4.png)
+
+### Modifications
+
+![Modifications](screenshots/frontend/modifications.png)
+
+### Settings menu
+
+![Settings menu](screenshots/frontend/settings.png)
 
 # Legal disclaimer
 

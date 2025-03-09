@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import NewUser from "./components/newUser";
+import NewUser from "./utils/newUser";
 //import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 

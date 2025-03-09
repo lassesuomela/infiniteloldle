@@ -7,15 +7,14 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { initValues } from "./saveStats";
+import { initValues } from "../utils/saveStats";
+
 export default function StatsData() {
   const [gamesPerDay, setGamesPerDay] = useState([]);
   const [triesPerDay, setTriesPerDay] = useState([]);
   const [firstTriesPerDay, setFirstTriesPerDay] = useState([]);
   const [scoresPerDay, setScoresPerDay] = useState([]);
-
   const [noData, setNoData] = useState(false);
-
   const [totalGames, setTotalGames] = useState(0);
   const [totalGuesses, setTotalGuesses] = useState(0);
   const [totalFirstTries, setTotalFirstTries] = useState(0);
@@ -91,6 +90,26 @@ export default function StatsData() {
     );
   }
 
+  const StatsTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const { Dates, Value } = payload[0].payload;
+      return (
+        <div
+          style={{
+            backgroundColor: "#181a1c",
+            padding: "8px",
+            border: "1px solid #353739",
+            borderRadius: "0.2rem",
+          }}
+        >
+          <p style={{ margin: 0, color: "#fff" }}>Date: {Dates}</p>
+          <p style={{ margin: 0, color: "#fff" }}>Value: {Value}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <h3 className="text-center pb-3 pt-4">My stats</h3>
@@ -130,8 +149,8 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="Dates" />
             <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="Value" stroke="#005A82" />
+            <Tooltip content={<StatsTooltip />} />
+            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
           </LineChart>
         </div>
         <h4>Score development per day</h4>
@@ -140,8 +159,8 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="Dates" />
             <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="Value" stroke="#005A82" />
+            <Tooltip content={<StatsTooltip />} />
+            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
           </LineChart>
         </div>
         <h4>Guesses per day</h4>
@@ -150,8 +169,8 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="Dates" />
             <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="Value" stroke="#005A82" />
+            <Tooltip content={<StatsTooltip />} />
+            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
           </LineChart>
         </div>
         <h4>First tries per day</h4>
@@ -160,8 +179,8 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="Dates" />
             <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="Value" stroke="#005A82" />
+            <Tooltip content={<StatsTooltip />} />
+            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
           </LineChart>
         </div>
       </div>

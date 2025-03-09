@@ -17,7 +17,7 @@ export default function Legal() {
         </p>
         <p>
           Infiniteloldle.com was created under Riot Games'{" "}
-          <a href="https://www.riotgames.com/en/legal">"Legal Jibber Jabber"</a>{" "}
+          <a href="https://www.riotgames.com/en/legal">Legal Jibber Jabber</a>{" "}
           policy using assets owned by Riot Games. Riot Games does not endorse
           or sponsor this project.
         </p>
@@ -482,10 +482,7 @@ export default function Legal() {
           Privacy Policy or the privacy practices of Infiniteloldle.com, please
           contact us at: <strong>infiniteloldle@gmail.com</strong>.{" "}
           <CopyToClipboard text="infiniteloldle@gmail.com">
-            <button
-              className="btn btn-outline-dark"
-              onClick={() => setIsCopied(true)}
-            >
+            <button className="btn btn-dark" onClick={() => setIsCopied(true)}>
               {isCopied ? "Copied!" : "Copy"}
             </button>
           </CopyToClipboard>

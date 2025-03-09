@@ -1,36 +1,75 @@
+body {
+  background-color: var(--primary-color);
+}
 
 #footer {
-    font-family: Spiegel;
-    padding-top: 0.5em;
-    background-color: white
+  font-family: Spiegel;
+  padding-top: 0.5em;
+  background-color: var(--primary-color);
+  color: #fff;
 }
 
 .navbar {
-    background-color: #1E2328;
-    color: #F0E6D2;
-    font-size: 1.3em;
+  background-color: var(--navbar-bg-color);
+  font-size: 1.3em;
 }
 
 .navbar img {
-    min-height: 3vw;
-    max-height: 5vh;
-    padding-right: 1em;
+  min-height: 3vw;
+  max-height: 5vh;
+  padding-right: 1em;
 }
 
-#about a, #disclaimer a, #privacy a {
-    color:#010A13;
-    font-weight: bold;
-    text-decoration: none;
+#about a,
+#disclaimer a,
+#privacy a {
+  color: #010a13;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 #legal li {
-    font-family: Spiegel;
+  font-family: Spiegel;
 }
 
-.navbar-dark .navbar-nav .nav-link, .darkBtn {
-    color:#fff;
+.navbar-dark .navbar-nav .nav-link,
+.darkBtn {
+  color: #fff;
 }
 
 .navbar-brand {
-    font-size: 1.4em;
+  font-size: 1.4em;
+}
+
+h2,
+h3,
+h4,
+h5,
+li {
+  color: var(--title-color);
+}
+
+p {
+  color: var(--title-color);
+}
+
+#about a,
+#legal a {
+  color: var(--title-color);
+}
+
+.form-control,
+.form-control:focus {
+  background-color: var(--primary-color);
+  border-color: var(--secondary-color);
+  color: var(--title-color);
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem var(--secondary-color);
+}
+
+.btn-outline-dark {
+  border-color: var(--secondary-color);
+  color: #ccc;
 }

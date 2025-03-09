@@ -1,346 +1,409 @@
 :root {
-    --correct-color: #28a745;
-    --partial-color: #ffc107;
-    --wrong-color: #dc3545;
-    --cb-correct-color: #3CB371;
-    --cb-partial-color: #FFD700;
-    --cb-wrong-color: #de74ff;
-    --dark-color: #010A13;
+  --correct-color: #28a745;
+  --partial-color: #ffc107;
+  --wrong-color: #dc3545;
+  --cb-correct-color: #3cb371;
+  --cb-partial-color: #ffd700;
+  --cb-wrong-color: #de74ff;
+  --dark-color: #010a13;
+  --primary-color: #181a1c;
+  --secondary-color: #353739;
+  --title-color: #fff;
+  --navbar-bg-color: #212529;
+  --darkBtn-bg-color: #212529;
 }
 
 span {
-    font-family: Spiegel;
-    font-size: 1.2em;
-    margin: auto;
+  font-family: Spiegel;
+  font-size: 1.2em;
+  margin: auto;
 }
 
-p, small {
-    font-family: Spiegel;
+p,
+small {
+  font-family: Spiegel;
 }
 
 .playerCount {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .playerCount h5 {
-    font-size: 1.1em;
+  font-size: 1.1em;
 }
 
 .playerCount span {
-    font-family: "Beaufort for LOL";
-    font-size: 1em;
+  font-family: "Beaufort for LOL";
+  font-size: 1em;
 }
 
 .main {
-    padding-bottom: 8em;
+  padding-bottom: 8em;
 }
 
 .breakWord {
-    word-spacing: 100vw;
+  word-spacing: 100vw;
 }
 
 .championData {
-    border: 0.1em solid var(--dark-color);
-    box-shadow: inset 0 0 0.6em var(--dark-color);
-    display: flex;
+  border: 0.1em solid var(--dark-color);
+  box-shadow: inset 0 0 0.6em var(--dark-color);
+  display: flex;
 }
 
-.championData:first-child{
-    width: 10ch;
+.championData:first-child {
+  width: 10ch;
 }
 
-.correct{
-    background-color: var(--correct-color);
+.correct {
+  background-color: var(--correct-color);
 }
 
 .partial {
-    background-color: var(--partial-color);
+  background-color: var(--partial-color);
 }
 
 .incorrect {
-    background-color: var(--wrong-color);
+  background-color: var(--wrong-color);
 }
 
-.cb-correct{
-    background-color: var(--cb-correct-color);
+.cb-correct {
+  background-color: var(--cb-correct-color);
 }
 
 .cb-partial {
-    background-color: var(--cb-partial-color);
+  background-color: var(--cb-partial-color);
 }
 
 .cb-incorrect {
-    background-color: var(--cb-wrong-color);
+  background-color: var(--cb-wrong-color);
 }
 
 .incorrect-greater {
-    background-image: linear-gradient(var(--correct-color), 60%, var(--wrong-color));
+  background-image: linear-gradient(
+    var(--correct-color),
+    60%,
+    var(--wrong-color)
+  );
 }
 
 .incorrect-less {
-    background-image: linear-gradient(var(--wrong-color), 60%, var(--correct-color));
+  background-image: linear-gradient(
+    var(--wrong-color),
+    60%,
+    var(--correct-color)
+  );
 }
 
 .cb-incorrect-greater {
-    background-image: linear-gradient(var(--cb-correct-color), 60%, var(--cb-wrong-color));
+  background-image: linear-gradient(
+    var(--cb-correct-color),
+    60%,
+    var(--cb-wrong-color)
+  );
 }
 
 .cb-incorrect-less {
-    background-image: linear-gradient(var(--cb-wrong-color), 60%, var(--cb-correct-color));
+  background-image: linear-gradient(
+    var(--cb-wrong-color),
+    60%,
+    var(--cb-correct-color)
+  );
 }
 
-.victory{
-    display: flex;
-    justify-content: center;
+.victory {
+  display: flex;
+  justify-content: center;
 }
 
 .victory p {
-    font-size: 1.4em;
+  font-size: 1.4em;
 }
 
 .victory > .card {
-    color: #fff;
-    background-image: linear-gradient(#408140, #5cb85c);
+  color: #fff;
+  background-image: linear-gradient(#408140, #5cb85c);
 }
 
 .victory .smaller {
-    font-size: 1.1em;
+  font-size: 1.1em;
 }
 
 .transparentModal .modal-header {
-    border: none;
+  border: none;
 }
 
 .transparentModal .modal-content {
-    background-color: transparent;
-    border: none;
+  background-color: transparent;
+  border: none;
 }
 
 .regionText {
-    white-space: pre;
+  white-space: pre;
 }
 
 .demo {
-    width: 4vw;
-    height: 4vw;
-    border: 0.1em solid var(--dark-color);
-    box-shadow: inset 0 0 0.6em var(--dark-color);
+  width: 4vw;
+  height: 4vw;
+  border: 0.1em solid var(--dark-color);
+  box-shadow: inset 0 0 0.6em var(--dark-color);
 }
 
 #championsImgs {
-    max-width: 25vw;
+  max-width: 25vw;
 }
 
 #spriteContainer {
-    width: 40vw;
-    height: auto;
+  width: 40vw;
+  height: auto;
 }
 
-#spriteContainer img, #itemContainer img{
-    width:100%;
+#spriteContainer img,
+#itemContainer img {
+  width: 100%;
 }
 
 #itemContainer {
-    width: 30vw;
-    height: auto;
+  width: 30vw;
+  height: auto;
 }
 
 .darkBtn {
-    background-color: #1E2328;
+  background-color: var(--darkBtn-bg-color);
 }
 
 .scoreboard {
-    width: 75%;
-    padding: 3em 3em;
-    padding-bottom: 1em;
+  color: var(--title-color);
+  background-color: var(--primary-color);
+  width: 75%;
+  padding: 3em 3em;
+  padding-bottom: 1em;
+}
+
+.table th,
+.table td {
+  color: var(--title-color);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--navbar-bg-color);
+}
+
+.table-striped tbody tr {
+  border-bottom: 1px solid var(--navbar-bg-color);
 }
 
 .select img {
-    padding: 0.1em;
-    margin-top: 0.4em;
-    margin-bottom: 0.4em;
+  padding: 0.1em;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+.card {
+  background-color: var(--primary-color);
+  border: 1px solid var(--secondary-color);
 }
 
 .select input[type="text"] {
-    caret-color: transparent;
+  caret-color: transparent;
 }
 
 .select-option {
-    display: flex;
-    align-items: flex-start;
+  display: flex;
+  align-items: flex-start;
+  color: #fff;
 }
 
 .select-option img {
-    height: 40px;
-    width: 40px;
-    margin-right: 1em;
-    margin-bottom: 0em;
-    margin-top: 0em;
+  height: 40px;
+  width: 40px;
+  margin-right: 1em;
+  margin-bottom: 0em;
+  margin-top: 0em;
 }
+
 .select-option span {
-    flex: 1;
-    font-family: "Beaufort for LOL";
+  flex: 1;
+  font-family: "Beaufort for LOL";
+}
+
+#guess-form {
+  background-color: var(--primary-color);
+  border-color: var(--secondary-color);
+}
+
+#gameTitle {
+  color: var(--title-color);
 }
 
 @media only screen and (min-width: 600px) {
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 100vw;
+  }
 
-    .container, .container-md, .container-sm {
-        max-width: 100vw;
-    }
+  .scoreboard {
+    width: 100%;
+    padding: 2em 2em;
+  }
 
-    .scoreboard {
-        width: 100%;
-        padding: 2em 2em;
-    }
-
-    #itemContainer {
-        width: 40vw;
-        height: auto;
-    }
+  #itemContainer {
+    width: 40vw;
+    height: auto;
+  }
 }
 
 @media only screen and (min-width: 768px) {
+  #gameTitle,
+  .championData {
+    font-size: 0.9em;
+  }
 
-    #gameTitle, .championData {
-        font-size: 0.9em;
-    }
+  .container {
+    padding: 0;
+  }
 
-    .container {
-        padding: 0;
-    }
+  .championData:first-child {
+    max-width: 7.5ch;
+  }
 
-    .championData:first-child{
-        max-width: 7.5ch;
-    }
+  #guess-form {
+    width: 45%;
+  }
 
-    #guess-form {
-        width: 45%;
-    }
+  .col-1,
+  .col-2 {
+    padding: 0em;
+  }
 
-    .col-1, .col-2 {
-        padding: 0em;
-    }
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 90vw;
+  }
 
-    .container, .container-md, .container-sm {
-        max-width: 90vw;
-    }
+  .transparentModal .card {
+    width: 100%;
+  }
 
-    .transparentModal .card {
-        width: 100%;
-    }
+  #spriteContainer {
+    width: 40vw;
+    height: auto;
+  }
 
-    #spriteContainer {
-        width: 40vw;
-        height: auto;
-    }
+  #itemContainer {
+    width: 40vw;
+    height: auto;
+  }
 
-    #itemContainer {
-        width: 40vw;
-        height: auto;
-    }
+  #championsImgs {
+    max-width: 20vw;
+  }
 
-    #championsImgs {
-        max-width: 20vw;
-    }
-
-    .scoreboard {
-        width: 90%;
-    }
+  .scoreboard {
+    width: 90%;
+  }
 }
 
 @media only screen and (min-width: 992px) {
-    .championData:first-child{
-        max-width: 7.5ch;
-    }
+  .championData:first-child {
+    max-width: 7.5ch;
+  }
 
-    #gameTitle, .championData {
-        font-size: 0.9em;
-    }
+  #gameTitle,
+  .championData {
+    font-size: 0.9em;
+  }
 
-    #guess-form {
-        width: 40%;
-    }
+  #guess-form {
+    width: 40%;
+  }
 
-    .transparentModal .card {
-        width: 75%;
-    }
+  .transparentModal .card {
+    width: 75%;
+  }
 
-    #spriteContainer {
-        width: 40vw;
-        height: auto;
-    }
+  #spriteContainer {
+    width: 40vw;
+    height: auto;
+  }
 
-    #itemContainer {
-        width: 30vw;
-        height: auto;
-    }
+  #itemContainer {
+    width: 30vw;
+    height: auto;
+  }
 }
 
-@media only screen and (min-width: 1200px) and (max-width: 1400px){
-    .championData:first-child{
-        max-width: 8.5ch;
-    }
+@media only screen and (min-width: 1200px) and (max-width: 1400px) {
+  .championData:first-child {
+    max-width: 8.5ch;
+  }
 
-    #guess-form {
-        width: 35%;
-    }
+  #guess-form {
+    width: 35%;
+  }
 
-    #gameTitle, .championData {
-        font-size: 1em;
-    }
+  #gameTitle,
+  .championData {
+    font-size: 1em;
+  }
 
-    .transparentModal .card {
-        width: 75%;
-    }
+  .transparentModal .card {
+    width: 75%;
+  }
 
-    #spriteContainer {
-        width: 40vw;
-        height: auto;
-    }
+  #spriteContainer {
+    width: 40vw;
+    height: auto;
+  }
 
-    #itemContainer {
-        width: 30vw;
-        height: auto;
-    }
+  #itemContainer {
+    width: 30vw;
+    height: auto;
+  }
 
-    #championsImgs {
-        max-width: 10vw;
-    }
+  #championsImgs {
+    max-width: 10vw;
+  }
 }
 
 @media only screen and (min-width: 1400px) {
-    .championData:first-child{
-        max-width: 10ch;
-    }
+  .championData:first-child {
+    max-width: 10ch;
+  }
 
-    #guess-form {
-        width: 30%;
-    }
+  #guess-form {
+    width: 30%;
+  }
 
-    .container, .container-md, .container-sm {
-        max-width: 70vw;
-    }
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 70vw;
+  }
 
-    #gameTitle, .championData {
-        font-size: 1.1em;
-    }
+  #gameTitle,
+  .championData {
+    font-size: 1.1em;
+  }
 
-    .transparentModal .card {
-        width: 75%;
-    }
+  .transparentModal .card {
+    width: 75%;
+  }
 
-    #spriteContainer {
-        width: 30vw;
-        height: auto;
-    }
+  #spriteContainer {
+    width: 30vw;
+    height: auto;
+  }
 
-    #itemContainer {
-        width: 20vw;
-        height: auto;
-    }
+  #itemContainer {
+    width: 20vw;
+    height: auto;
+  }
 
-    #championsImgs {
-        max-width: 12vw;
-    }
+  #championsImgs {
+    max-width: 12vw;
+  }
 }

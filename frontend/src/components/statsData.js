@@ -14,6 +14,12 @@ import {
   Legend,
 } from "recharts";
 
+import { getCountryName } from "../utils/resolveCountryCode";
+import {
+  tooltipContainerStyle,
+  tooltipTextStyle,
+} from "./styles/tooltipStyles";
+
 export default function StatsData() {
   const [otherStat, setOtherStat] = useState([]);
   const [newPlayers, setNewPlayers] = useState([]);
@@ -89,6 +95,86 @@ export default function StatsData() {
     );
   }
 
+  const PlayerCountryTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const { Country, Players } = payload[0].payload;
+      return (
+        <div style={tooltipContainerStyle}>
+          <p style={tooltipTextStyle}>{getCountryName(Country)}</p>
+          <p style={tooltipTextStyle}>Players: {Players}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const ScoreDistrTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const { score_range, Players } = payload[0].payload;
+      return (
+        <div style={tooltipContainerStyle}>
+          <p style={tooltipTextStyle}>Scores: {score_range}</p>
+          <p style={tooltipTextStyle}>Players: {Players}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const PlayerTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const { nickname, score } = payload[0].payload;
+
+      return (
+        <div style={tooltipContainerStyle}>
+          <p style={tooltipTextStyle}>{nickname}</p>
+          <p style={tooltipTextStyle}>Score: {score}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const DauTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const dauData = payload.find((entry) => entry.dataKey === "DAU");
+      const requestsData = payload.find(
+        (entry) => entry.dataKey === "Requests"
+      );
+
+      return (
+        <div style={tooltipContainerStyle}>
+          <p style={tooltipTextStyle}>Date: {label}</p>
+          {dauData && <p style={tooltipTextStyle}>DAU: {dauData.value}</p>}
+          {requestsData && (
+            <p style={tooltipTextStyle}>Requests: {requestsData.value}</p>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const UsersTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const usersData = payload.find((entry) => entry.dataKey === "Users");
+      const playersData = payload.find((entry) => entry.dataKey === "Players");
+
+      return (
+        <div style={tooltipContainerStyle}>
+          <p style={tooltipTextStyle}>Date: {label}</p>
+          {usersData && (
+            <p style={tooltipTextStyle}>Users: {usersData.value}</p>
+          )}
+          {playersData && (
+            <p style={tooltipTextStyle}>Players: {playersData.value}</p>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <h3 className="text-center pb-3 pt-4">Statistics</h3>
@@ -141,16 +227,17 @@ export default function StatsData() {
         <h4>Requests per day and daily active users</h4>
         <div className="pb-4 pt-2">
           <ComposedChart data={data} width={1000} height={500}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <Tooltip />
-            <Legend />
+            <CartesianGrid strokeDasharray="3 3" stroke="#A9B3B9" />
+            <XAxis dataKey="date" stroke="#A9B3B9" />
+            <Tooltip content={<DauTooltip />} />
+            <Legend wrapperStyle={{ color: "#A9B3B9" }} />
+
             <YAxis
               yAxisId="left"
               type="number"
               dataKey="Requests"
               name="Requests"
-              stroke="#005A82"
+              stroke="#4C9AFF"
             />
             <YAxis
               yAxisId="right"
@@ -158,53 +245,80 @@ export default function StatsData() {
               dataKey="DAU"
               name="DAU"
               orientation="right"
-              stroke="#0397AB"
+              stroke="#2A9D8F"
             />
+
+            <Bar
+              yAxisId="right"
+              dataKey="DAU"
+              fill="#2A9D8F"
+              fillOpacity={0.75}
+            />
+
             <Line
               yAxisId="left"
               type="monotone"
               dataKey="Requests"
-              stroke="#005A82"
-            />
-            <Bar
-              yAxisId="right"
-              dataKey="DAU"
-              fill="#0397AB"
-              fillOpacity={0.75}
+              stroke="#4C9AFF"
+              strokeWidth={2}
+              dot={{ fill: "#4C9AFF" }}
             />
           </ComposedChart>
         </div>
         <h4>Top 50 players</h4>
         <div className="pb-4 pt-2">
           <LineChart width={1000} height={500} data={otherStat.player_stats}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="nickname" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="score" stroke="#005A82" />
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <XAxis dataKey="nickname" stroke="#A9B3B9" />
+            <YAxis stroke="#A9B3B9" />
+            <Tooltip content={<PlayerTooltip />} />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="score"
+              stroke="#4C9AFF"
+            />
           </LineChart>
         </div>
+
         <h4>Gaining of users and players from past 30 days</h4>
         <div className="pb-4 pt-2">
           <LineChart width={1000} height={500} data={userData}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="Players" stroke="#005A82" />
-            <Line type="monotone" dataKey="Users" stroke="#0397AB" />
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <XAxis dataKey="date" stroke="#A9B3B9" />
+            <YAxis stroke="#A9B3B9" />
+            <Tooltip content={<UsersTooltip />} />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="Players"
+              stroke="#4C9AFF"
+            />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="Users"
+              stroke="#2A9D8F"
+            />
           </LineChart>
         </div>
+
         <h4>Newest players from today</h4>
         <div className="pb-4 pt-2">
           <LineChart width={1000} height={500} data={newPlayers}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="nickname" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="score" stroke="#005A82" />
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <XAxis dataKey="nickname" stroke="#A9B3B9" />
+            <YAxis stroke="#A9B3B9" />
+            <Tooltip content={<PlayerTooltip />} />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="score"
+              stroke="#4C9AFF"
+            />
           </LineChart>
         </div>
+
         <h4>Top 20 countries</h4>
         <div className="pb-4 pt-2">
           <BarChart
@@ -213,13 +327,17 @@ export default function StatsData() {
             data={playerCountries}
             layout="vertical"
           >
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis type="number" />
-            <YAxis dataKey="Country" type="category" />
-            <Tooltip />
-            <Bar dataKey="Players" fill="#005A82" />
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <XAxis type="number" stroke="#A9B3B9" />
+            <YAxis dataKey="Country" type="category" stroke="#A9B3B9" />
+            <Tooltip
+              content={<PlayerCountryTooltip />}
+              cursor={{ fill: "var(--secondary-color)", opacity: 0.5 }}
+            />
+            <Bar dataKey="Players" fill="#2A9D8F" />
           </BarChart>
         </div>
+
         <h4>Score distribution graph</h4>
         <div className="pb-4 pt-2">
           <BarChart
@@ -227,12 +345,15 @@ export default function StatsData() {
             height={500}
             data={otherStat.score_count_graph}
           >
-            <CartesianGrid strokeDasharray="2 2" />
-            <Legend />
-            <XAxis dataKey="score_range" type="category" />
-            <YAxis dataKey="Players" type="number" />
-            <Tooltip />
-            <Bar dataKey="Players" fill="#005A82" />
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <Legend wrapperStyle={{ color: "#A9B3B9" }} />
+            <XAxis dataKey="score_range" type="category" stroke="#A9B3B9" />
+            <YAxis dataKey="Players" type="number" stroke="#A9B3B9" />
+            <Tooltip
+              content={<ScoreDistrTooltip />}
+              cursor={{ fill: "var(--secondary-color)", opacity: 0.5 }}
+            />
+            <Bar dataKey="Players" fill="#4C9AFF" />
           </BarChart>
         </div>
       </div>

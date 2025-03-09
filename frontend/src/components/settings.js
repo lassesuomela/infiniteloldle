@@ -4,7 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
 import Cookies from "universal-cookie";
 import { Tooltip } from "react-tooltip";
-import { Reroll } from "./reroll";
+import { Reroll } from "../utils/reroll";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function Settings() {
@@ -121,7 +121,7 @@ export default function Settings() {
     <>
       <button
         onClick={ToggleState}
-        className="btn btn-dark darkBtn p-2 pb-0"
+        className="btn btn-dark darkBtn p-2 pb-0 ps-3 pe-3"
         data-tooltip-id="settings-tooltip"
         data-tooltip-content="Settings"
       >
@@ -225,7 +225,7 @@ export default function Settings() {
                         <p>Copy token</p>
                         <CopyToClipboard text={localStorage.getItem("token")}>
                           <button
-                            className="btn btn-outline-dark"
+                            className="btn btn-dark"
                             onClick={() => setIsCopied(true)}
                           >
                             {isCopied ? "Copied!" : "Copy"}

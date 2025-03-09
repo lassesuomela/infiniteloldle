@@ -3,8 +3,9 @@ import axios from "axios";
 import ReactCountryFlag from "react-country-flag";
 import { Tooltip } from "react-tooltip";
 
-import { saveScore } from "./saveStats";
+import { saveScore } from "../utils/saveStats";
 import Config from "../configs/config";
+import { getCountryName } from "../utils/resolveCountryCode";
 
 export default function ScoreBoardData() {
   const [players, setPlayers] = useState([]);
@@ -99,7 +100,7 @@ export default function ScoreBoardData() {
                         <ReactCountryFlag
                           countryCode={player.country}
                           data-tooltip-id="country-tooltip"
-                          data-tooltip-content={player.country}
+                          data-tooltip-content={getCountryName(player.country)}
                           style={{ fontSize: "1.5em" }}
                           svg
                         />
@@ -127,7 +128,9 @@ export default function ScoreBoardData() {
                       <ReactCountryFlag
                         countryCode={playerData.country}
                         data-tooltip-id="user-country-tooltip"
-                        data-tooltip-content={playerData.country}
+                        data-tooltip-content={getCountryName(
+                          playerData.country
+                        )}
                         style={{ fontSize: "1.5em" }}
                         svg
                       />

@@ -81,10 +81,7 @@ export default function About() {
         If you want to contact us regarding this site. You can do that by
         sending email to <strong>infiniteloldle@gmail.com</strong>.{" "}
         <CopyToClipboard text="infiniteloldle@gmail.com">
-          <button
-            className="btn btn-outline-dark"
-            onClick={() => setIsCopied(true)}
-          >
+          <button className="btn btn-dark" onClick={() => setIsCopied(true)}>
             {isCopied ? "Copied!" : "Copy"}
           </button>
         </CopyToClipboard>
