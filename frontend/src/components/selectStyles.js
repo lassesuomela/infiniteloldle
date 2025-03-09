@@ -41,5 +41,6 @@ export const SelectTheme = (theme) => ({
     primary50: "#353739",
     neutral5: "#1e2328", // active bg color
     neutral10: "#353739", // active border color
+    neutral80: "#fff", // text color when typing
   },
 });
