@@ -143,7 +143,7 @@ export default function StatsData() {
           <ComposedChart data={data} width={1000} height={500}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Legend />
             <YAxis
               yAxisId="left"
@@ -180,7 +180,7 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="nickname" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Line type="monotone" dataKey="score" stroke="#005A82" />
           </LineChart>
         </div>
@@ -190,7 +190,7 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="date" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Line type="monotone" dataKey="Players" stroke="#005A82" />
             <Line type="monotone" dataKey="Users" stroke="#0397AB" />
           </LineChart>
@@ -201,7 +201,7 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="nickname" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Line type="monotone" dataKey="score" stroke="#005A82" />
           </LineChart>
         </div>
@@ -216,7 +216,7 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis type="number" />
             <YAxis dataKey="Country" type="category" />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Bar dataKey="Players" fill="#005A82" />
           </BarChart>
         </div>
@@ -231,7 +231,7 @@ export default function StatsData() {
             <Legend />
             <XAxis dataKey="score_range" type="category" />
             <YAxis dataKey="Players" type="number" />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Bar dataKey="Players" fill="#005A82" />
           </BarChart>
         </div>

@@ -130,7 +130,7 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="Dates" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Line type="monotone" dataKey="Value" stroke="#005A82" />
           </LineChart>
         </div>
@@ -140,7 +140,7 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="Dates" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Line type="monotone" dataKey="Value" stroke="#005A82" />
           </LineChart>
         </div>
@@ -150,7 +150,7 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="Dates" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Line type="monotone" dataKey="Value" stroke="#005A82" />
           </LineChart>
         </div>
@@ -160,7 +160,7 @@ export default function StatsData() {
             <CartesianGrid strokeDasharray="2 2" />
             <XAxis dataKey="Dates" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "black" }} />
             <Line type="monotone" dataKey="Value" stroke="#005A82" />
           </LineChart>
         </div>
