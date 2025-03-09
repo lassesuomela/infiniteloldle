@@ -10,6 +10,7 @@
   --secondary-color: #353739;
   --title-color: #fff;
   --navbar-bg-color: #212529;
+  --darkBtn-bg-color: #1e2328;
 }
 
 span {
@@ -169,7 +170,7 @@ small {
 }
 
 .darkBtn {
-  background-color: #1e2328;
+  background-color: var(--darkBtn-bg-color);
 }
 
 .scoreboard {

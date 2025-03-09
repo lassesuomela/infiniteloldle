@@ -6,7 +6,11 @@ import ItemImg from "./itemImg";
 import Config from "../configs/config";
 import { saveGamesPlayed, saveTries, saveFirstTries } from "./saveStats";
 import { Reroll } from "./reroll";
-import { customFilterOption, HoverSelectStyles } from "./selectStyles";
+import {
+  customFilterOption,
+  HoverSelectStyles,
+  SelectTheme,
+} from "./selectStyles";
 import { useSelector } from "react-redux";
 
 export default function Game() {
@@ -178,18 +182,7 @@ export default function Game() {
             placeholder="Type items name"
             filterOption={customFilterOption}
             styles={HoverSelectStyles}
-            theme={(theme) => ({
-              ...theme,
-              borderRadius: 0,
-              colors: {
-                ...theme.colors,
-                primary25: "#1e2328", // select hover bg color
-                neutral0: "#181a1c", // bg
-                primary: "#1e2328", // active border and bg color of select
-                neutral20: "#353739",
-                primary50: "#353739",
-              },
-            })}
+            theme={SelectTheme}
             formatOptionLabel={(data) => (
               <div className="select-option">
                 <span>{data.label}</span>

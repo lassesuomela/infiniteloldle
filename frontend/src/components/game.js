@@ -11,7 +11,7 @@ import { Helmet } from "react-helmet";
 import LazyLoad from "react-lazy-load";
 import { useSelector } from "react-redux";
 
-import { SelectStyles, customFilterOption } from "./selectStyles";
+import { SelectStyles, customFilterOption, SelectTheme } from "./selectStyles";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -149,18 +149,7 @@ export default function Game() {
                 <span>{data.label}</span>
               </div>
             )}
-            theme={(theme) => ({
-              ...theme,
-              borderRadius: 0,
-              colors: {
-                ...theme.colors,
-                primary25: "#1e2328", // select hover bg color
-                neutral0: "#181a1c", // bg
-                primary: "#1e2328", // active border and bg color of select
-                neutral20: "#353739",
-                primary50: "#353739",
-              },
-            })}
+            theme={SelectTheme}
           />
 
           <div className="d-flex justify-content-evenly">
