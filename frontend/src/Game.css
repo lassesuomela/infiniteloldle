@@ -238,6 +238,16 @@ small {
   color: var(--title-color);
 }
 
+#championsImgs > .container {
+  border-radius: 0.25em;
+}
+
+@media only screen and (max-width: 500px) {
+  #championsImgs {
+    max-width: 80%;
+  }
+}
+
 @media only screen and (max-width: 599px) {
   .container,
   .container-md,
@@ -268,6 +278,19 @@ small {
 
   .champion-container .breakWord {
     white-space: pre-line;
+  }
+
+  #spriteContainer {
+    width: 80vw;
+    height: auto;
+  }
+
+  #championsImgs {
+    max-width: 95%;
+  }
+
+  #guess-form {
+    width: 90%;
   }
 }
 
@@ -316,6 +339,19 @@ small {
   .champion-container .breakWord {
     white-space: pre-line;
   }
+
+  #spriteContainer {
+    width: 70vw;
+    height: auto;
+  }
+
+  #championsImgs {
+    max-width: 80%;
+  }
+
+  #guess-form {
+    width: 80%;
+  }
 }
 
 @media only screen and (min-width: 768px) {
@@ -352,7 +388,7 @@ small {
   }
 
   #spriteContainer {
-    width: 40vw;
+    width: 50vw;
     height: auto;
   }
 
@@ -362,7 +398,7 @@ small {
   }
 
   #championsImgs {
-    max-width: 20vw;
+    max-width: 55%;
   }
 
   .scoreboard {
@@ -397,6 +433,10 @@ small {
     width: 30vw;
     height: auto;
   }
+
+  #championsImgs {
+    max-width: 40%;
+  }
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1400px) {
@@ -428,7 +468,7 @@ small {
   }
 
   #championsImgs {
-    max-width: 12vw;
+    max-width: 35%;
   }
 }
 
@@ -467,7 +507,12 @@ small {
   }
 
   #championsImgs {
-    max-width: 12vw;
+    max-width: 30%;
+  }
+
+  #spriteContainer {
+    width: 35vw;
+    height: auto;
   }
 }
 
@@ -480,6 +525,11 @@ small {
   .container-md,
   .container-sm {
     max-width: 90vw;
+  }
+
+  #spriteContainer {
+    width: 30vw;
+    height: auto;
   }
 }
 
