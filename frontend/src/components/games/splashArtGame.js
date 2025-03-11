@@ -13,7 +13,7 @@ import { Reroll } from "../../utils/reroll";
 import LazyLoad from "react-lazy-load";
 import {
   SelectStyles,
-  customFilterOption,
+  customFilterOptionChamps,
   SelectTheme,
 } from "./styles/selectStyles";
 import { useSelector } from "react-redux";
@@ -189,7 +189,7 @@ export default function SplashArtGame() {
             isDisabled={correctGuess}
             styles={SelectStyles}
             placeholder="Type champions name"
-            filterOption={customFilterOption}
+            filterOption={customFilterOptionChamps}
             formatOptionLabel={(data) => (
               <div className="select-option">
                 <LazyLoad offset={200}>

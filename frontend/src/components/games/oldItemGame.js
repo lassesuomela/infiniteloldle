@@ -11,7 +11,7 @@ import {
 } from "../../utils/saveStats";
 import { Reroll } from "../../utils/reroll";
 import {
-  customFilterOption,
+  customFilterOptionItems,
   HoverSelectStyles,
   SelectTheme,
 } from "./styles/selectStyles";
@@ -184,7 +184,7 @@ export default function OldItemGame() {
             onChange={(selectedOption) => setGuess(selectedOption.value)}
             isDisabled={correctGuess}
             placeholder="Type items name"
-            filterOption={customFilterOption}
+            filterOption={customFilterOptionItems}
             styles={HoverSelectStyles}
             theme={SelectTheme}
             formatOptionLabel={(data) => (

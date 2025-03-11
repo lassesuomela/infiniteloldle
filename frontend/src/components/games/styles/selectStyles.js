@@ -25,8 +25,14 @@ export const HoverSelectStyles = {
   }),
 };
 
-export const customFilterOption = (option, inputValue) => {
-  return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
+export const customFilterOptionChamps = (option, inputValue) => {
+  const normalize = (str) => str.toLowerCase().replace(/'/g, "");
+  return normalize(option.label).startsWith(normalize(inputValue));
+};
+
+export const customFilterOptionItems = (option, inputValue) => {
+  const normalize = (str) => str.toLowerCase().replace(/'/g, "");
+  return normalize(option.label).includes(normalize(inputValue));
 };
 
 export const SelectTheme = (theme) => ({
