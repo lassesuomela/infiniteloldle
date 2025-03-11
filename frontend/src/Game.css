@@ -246,6 +246,12 @@ small {
   #championsImgs {
     max-width: 80%;
   }
+
+  .scoreboard {
+    max-width: 100%;
+    padding: 0.25em 0.25em;
+    font-size: 0.7em;
+  }
 }
 
 @media only screen and (max-width: 599px) {
@@ -292,6 +298,11 @@ small {
 
   #guess-form {
     width: 90%;
+  }
+
+  .scoreboard {
+    width: 100%;
+    padding: 0.5em 0.5em;
   }
 }
 
