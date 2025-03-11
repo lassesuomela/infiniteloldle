@@ -237,6 +237,8 @@ small {
 #gameTitle {
   color: var(--title-color);
 }
+@media only screen and (max-width: 599px) {
+}
 
 @media only screen and (min-width: 600px) {
   .container,
@@ -315,7 +317,7 @@ small {
 
   #gameTitle,
   .championData {
-    font-size: 0.9em;
+    font-size: 0.95em;
   }
 
   #guess-form {
@@ -348,7 +350,7 @@ small {
 
   #gameTitle,
   .championData {
-    font-size: 1em;
+    font-size: 1.05em;
   }
 
   .transparentModal .card {
@@ -366,7 +368,7 @@ small {
   }
 
   #championsImgs {
-    max-width: 10vw;
+    max-width: 12vw;
   }
 }
 
@@ -382,7 +384,7 @@ small {
   .container,
   .container-md,
   .container-sm {
-    max-width: 70vw;
+    max-width: 90vw;
   }
 
   #gameTitle,
@@ -406,5 +408,29 @@ small {
 
   #championsImgs {
     max-width: 12vw;
+  }
+}
+
+@media only screen and (min-width: 1600px) {
+  #guess-form {
+    width: 30%;
+  }
+
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 90vw;
+  }
+}
+
+@media only screen and (min-width: 1800px) {
+  #guess-form {
+    width: 30%;
+  }
+
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 70vw;
   }
 }
