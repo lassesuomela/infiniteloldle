@@ -280,7 +280,8 @@ small {
     white-space: pre-line;
   }
 
-  #spriteContainer {
+  #spriteContainer,
+  #itemContainer {
     width: 80vw;
     height: auto;
   }
@@ -340,7 +341,8 @@ small {
     white-space: pre-line;
   }
 
-  #spriteContainer {
+  #spriteContainer,
+  #itemContainer {
     width: 70vw;
     height: auto;
   }
