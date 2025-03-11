@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 
 import {
   SelectStyles,
-  customFilterOption,
+  customFilterOptionChamps,
   SelectTheme,
 } from "./styles/selectStyles";
 
@@ -145,7 +145,7 @@ export default function Game() {
             isDisabled={correctGuess}
             styles={SelectStyles}
             placeholder="Type champions name"
-            filterOption={customFilterOption}
+            filterOption={customFilterOptionChamps}
             formatOptionLabel={(data) => (
               <div className="select-option">
                 <LazyLoad offset={200}>
