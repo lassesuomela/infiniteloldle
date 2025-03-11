@@ -37,7 +37,6 @@ export const customFilterOptionItems = (option, inputValue) => {
 
 export const SelectTheme = (theme) => ({
   ...theme,
-  borderRadius: 0,
   colors: {
     ...theme.colors,
     primary25: "#1e2328", // select hover bg color
