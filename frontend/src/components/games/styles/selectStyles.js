@@ -26,7 +26,8 @@ export const HoverSelectStyles = {
 };
 
 export const customFilterOption = (option, inputValue) => {
-  return option.label.toLowerCase().startsWith(inputValue.toLowerCase());
+  const normalize = (str) => str.toLowerCase().replace(/'/g, "");
+  return normalize(option.label).startsWith(normalize(inputValue));
 };
 
 export const SelectTheme = (theme) => ({
