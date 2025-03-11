@@ -73,3 +73,33 @@ p {
   border-color: var(--secondary-color);
   color: #ccc;
 }
+
+@media only screen and (min-width: 992px) {
+  .navbar {
+    font-size: 0.95em;
+  }
+
+  .navbar-brand a {
+    font-size: 1.15em;
+  }
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1400px) {
+  .navbar {
+    font-size: 1.1em;
+  }
+
+  .navbar-brand a {
+    font-size: 1.2em;
+  }
+}
+
+@media only screen and (min-width: 1400px) {
+  .navbar {
+    font-size: 1.3em;
+  }
+
+  .navbar-brand a {
+    font-size: 1.4em;
+  }
+}

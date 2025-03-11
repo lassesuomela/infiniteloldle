@@ -237,10 +237,41 @@ small {
 #gameTitle {
   color: var(--title-color);
 }
+
 @media only screen and (max-width: 599px) {
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 100vw;
+  }
+
+  .scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  #gameTitle .row,
+  .champion-container .row {
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 800px;
+  }
+
+  #gameTitle .col-1,
+  #gameTitle .col-2,
+  .champion-container .col-1,
+  .champion-container .col-2 {
+    padding: 0em;
+    width: 15%;
+  }
+
+  .champion-container .breakWord {
+    white-space: pre-line;
+  }
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 600px) and (max-width: 767px) {
   .container,
   .container-md,
   .container-sm {
@@ -255,6 +286,35 @@ small {
   #itemContainer {
     width: 40vw;
     height: auto;
+  }
+
+  .scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  #gameTitle .row,
+  .champion-container .row {
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 800px;
+  }
+
+  #gameTitle .col-1,
+  .champion-container .col-1 {
+    padding: 0em;
+    width: 15%;
+  }
+
+  #gameTitle .col-2,
+  .champion-container .col-2 {
+    padding: 0em;
+    width: 30%;
+  }
+
+  .champion-container .breakWord {
+    white-space: pre-line;
   }
 }
 
@@ -273,7 +333,7 @@ small {
   }
 
   #guess-form {
-    width: 45%;
+    width: 55%;
   }
 
   .col-1,

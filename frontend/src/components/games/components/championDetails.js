@@ -5,7 +5,7 @@ export default function ChampionDetails(props) {
     return props.isColorBlindMode ? "cb-" : "";
   };
   return (
-    <div className="container text-center mb-2">
+    <div className="container text-center mb-2 champion-container">
       <div className="row">
         <div className="col-1">
           <img
