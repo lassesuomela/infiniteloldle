@@ -16,7 +16,7 @@ export default function About() {
       <h3 className="text-center pb-3 pt-4">About</h3>
 
       <div className="d-flex justify-content-center">
-        <div className="card p-5 w-75 text-start">
+        <div className="card p-5 w-100 w-md-75 text-start">
           <AboutComponent />
         </div>
       </div>
