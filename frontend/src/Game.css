@@ -131,6 +131,12 @@ small {
   font-size: 1.1em;
 }
 
+.victory .itemImg {
+  width: 8em;
+  height: auto;
+  max-width: 100%;
+}
+
 .transparentModal .modal-header {
   border: none;
 }

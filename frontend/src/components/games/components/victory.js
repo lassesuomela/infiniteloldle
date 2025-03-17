@@ -19,7 +19,7 @@ export default function Victory(props) {
       >
         <Modal.Body>
           <div className="container victory">
-            <div className="card w-50 text-center">
+            <div className="card w-100 w-md-75 text-center">
               <Modal.Header closeButton></Modal.Header>
 
               <div className="pb-5">
@@ -36,7 +36,9 @@ export default function Victory(props) {
                     ".webp"
                   }
                   alt={props.champion}
-                  className="pb-3"
+                  className={
+                    "pb-3 " + (props.isItem || props.isOldItem ? "itemImg" : "")
+                  }
                 />
 
                 <h2>{props.champion}</h2>
