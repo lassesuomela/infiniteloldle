@@ -73,3 +73,74 @@ p {
   border-color: var(--secondary-color);
   color: #ccc;
 }
+
+@media only screen and (max-width: 500px) {
+  .victory > .card {
+    max-width: 24em;
+    height: 28.75em;
+  }
+}
+
+@media only screen and (max-width: 599px) {
+  .victory > .card {
+    max-width: 24em;
+    height: 28.75em;
+  }
+
+  .victory .itemImg {
+    width: 7em;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 767px) {
+  .victory > .card {
+    max-width: 24em;
+    height: 28.75em;
+  }
+
+  .victory .itemImg {
+    width: 7em;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .victory > .card {
+    max-width: 24em;
+    height: 28.75em;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  .navbar {
+    font-size: 0.95em;
+  }
+
+  .navbar-brand a {
+    font-size: 1.15em;
+  }
+
+  .victory > .card {
+    max-width: 24em;
+    height: 28.75em;
+  }
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1400px) {
+  .navbar {
+    font-size: 1.1em;
+  }
+
+  .navbar-brand a {
+    font-size: 1.2em;
+  }
+}
+
+@media only screen and (min-width: 1400px) {
+  .navbar {
+    font-size: 1.3em;
+  }
+
+  .navbar-brand a {
+    font-size: 1.4em;
+  }
+}

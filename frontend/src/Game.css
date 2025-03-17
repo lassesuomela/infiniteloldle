@@ -131,6 +131,12 @@ small {
   font-size: 1.1em;
 }
 
+.victory .itemImg {
+  width: 8em;
+  height: auto;
+  max-width: 100%;
+}
+
 .transparentModal .modal-header {
   border: none;
 }
@@ -238,7 +244,75 @@ small {
   color: var(--title-color);
 }
 
-@media only screen and (min-width: 600px) {
+#championsImgs > .container {
+  border-radius: 0.25em;
+}
+
+@media only screen and (max-width: 500px) {
+  #championsImgs {
+    max-width: 80%;
+  }
+
+  .scoreboard {
+    max-width: 100%;
+    padding: 0.25em 0.25em;
+    font-size: 0.7em;
+  }
+}
+
+@media only screen and (max-width: 599px) {
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 100vw;
+  }
+
+  .scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  #gameTitle .row,
+  .champion-container .row {
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 800px;
+  }
+
+  #gameTitle .col-1,
+  #gameTitle .col-2,
+  .champion-container .col-1,
+  .champion-container .col-2 {
+    padding: 0em;
+    width: 15%;
+  }
+
+  .champion-container .breakWord {
+    white-space: pre-line;
+  }
+
+  #spriteContainer,
+  #itemContainer {
+    width: 80vw;
+    height: auto;
+  }
+
+  #championsImgs {
+    max-width: 95%;
+  }
+
+  #guess-form {
+    width: 90%;
+  }
+
+  .scoreboard {
+    width: 100%;
+    padding: 0.5em 0.5em;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 767px) {
   .container,
   .container-md,
   .container-sm {
@@ -253,6 +327,49 @@ small {
   #itemContainer {
     width: 40vw;
     height: auto;
+  }
+
+  .scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  #gameTitle .row,
+  .champion-container .row {
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 800px;
+  }
+
+  #gameTitle .col-1,
+  .champion-container .col-1 {
+    padding: 0em;
+    width: 15%;
+  }
+
+  #gameTitle .col-2,
+  .champion-container .col-2 {
+    padding: 0em;
+    width: 30%;
+  }
+
+  .champion-container .breakWord {
+    white-space: pre-line;
+  }
+
+  #spriteContainer,
+  #itemContainer {
+    width: 70vw;
+    height: auto;
+  }
+
+  #championsImgs {
+    max-width: 80%;
+  }
+
+  #guess-form {
+    width: 80%;
   }
 }
 
@@ -271,7 +388,7 @@ small {
   }
 
   #guess-form {
-    width: 45%;
+    width: 55%;
   }
 
   .col-1,
@@ -290,7 +407,7 @@ small {
   }
 
   #spriteContainer {
-    width: 40vw;
+    width: 50vw;
     height: auto;
   }
 
@@ -300,7 +417,7 @@ small {
   }
 
   #championsImgs {
-    max-width: 20vw;
+    max-width: 55%;
   }
 
   .scoreboard {
@@ -315,7 +432,7 @@ small {
 
   #gameTitle,
   .championData {
-    font-size: 0.9em;
+    font-size: 0.95em;
   }
 
   #guess-form {
@@ -335,6 +452,10 @@ small {
     width: 30vw;
     height: auto;
   }
+
+  #championsImgs {
+    max-width: 40%;
+  }
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1400px) {
@@ -348,7 +469,7 @@ small {
 
   #gameTitle,
   .championData {
-    font-size: 1em;
+    font-size: 1.05em;
   }
 
   .transparentModal .card {
@@ -366,7 +487,7 @@ small {
   }
 
   #championsImgs {
-    max-width: 10vw;
+    max-width: 35%;
   }
 }
 
@@ -382,7 +503,7 @@ small {
   .container,
   .container-md,
   .container-sm {
-    max-width: 70vw;
+    max-width: 90vw;
   }
 
   #gameTitle,
@@ -405,6 +526,40 @@ small {
   }
 
   #championsImgs {
-    max-width: 12vw;
+    max-width: 30%;
+  }
+
+  #spriteContainer {
+    width: 35vw;
+    height: auto;
+  }
+}
+
+@media only screen and (min-width: 1600px) {
+  #guess-form {
+    width: 30%;
+  }
+
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 90vw;
+  }
+
+  #spriteContainer {
+    width: 30vw;
+    height: auto;
+  }
+}
+
+@media only screen and (min-width: 1800px) {
+  #guess-form {
+    width: 30%;
+  }
+
+  .container,
+  .container-md,
+  .container-sm {
+    max-width: 70vw;
   }
 }

@@ -177,7 +177,7 @@ export default function Game() {
             )}
             {!correctGuess && guesses.length >= 10 ? (
               <button
-                className="btn btn-dark mb-3 mt-1 min-vw-25"
+                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
                 onClick={() => Reroll("champion")}
               >
                 Reroll
@@ -189,26 +189,28 @@ export default function Game() {
         </form>
       </div>
 
-      {champions.length > 0 ? <Titles /> : ""}
+      <div className="scroll-container">
+        {champions.length > 0 ? <Titles /> : ""}
 
-      <div id="champions">
-        {champions.map((champ) => (
-          <ChampionDetails
-            key={champ[0].championKey}
-            championKey={champ[0].championKey}
-            gender={champ[0].gender}
-            genre={champ[0].genre}
-            resource={champ[0].resource}
-            rangeTypes={champ[0].rangeType}
-            positions={champ[0].position}
-            releaseYear={champ[0].releaseYear}
-            regions={champ[0].region}
-            damageType={champ[0].damageType}
-            similarites={champ[1]}
-            isColorBlindMode={isColorBlindMode}
-            hideResource={hideResource}
-          />
-        ))}
+        <div id="champions">
+          {champions.map((champ) => (
+            <ChampionDetails
+              key={champ[0].championKey}
+              championKey={champ[0].championKey}
+              gender={champ[0].gender}
+              genre={champ[0].genre}
+              resource={champ[0].resource}
+              rangeTypes={champ[0].rangeType}
+              positions={champ[0].position}
+              releaseYear={champ[0].releaseYear}
+              regions={champ[0].region}
+              damageType={champ[0].damageType}
+              similarites={champ[1]}
+              isColorBlindMode={isColorBlindMode}
+              hideResource={hideResource}
+            />
+          ))}
+        </div>
       </div>
 
       {correctGuess ? (
