@@ -139,7 +139,10 @@ export default function Settings() {
         <Modal.Body>
           <div className="container d-flex justify-content-center">
             <div className="card text-center">
-              <Modal.Header closeButton></Modal.Header>
+              <Modal.Header
+                closeButton
+                className="btn-close-white"
+              ></Modal.Header>
 
               <h3 className="pb-4">Settings</h3>
 

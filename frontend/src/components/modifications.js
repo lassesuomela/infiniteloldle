@@ -67,7 +67,10 @@ export default function Modifications() {
         <Modal.Body>
           <div className="container d-flex justify-content-center px-4 px-sm-5">
             <div className="card text-center">
-              <Modal.Header closeButton></Modal.Header>
+              <Modal.Header
+                closeButton
+                className="btn-close-white"
+              ></Modal.Header>
               <div className="wrapper">
                 <h3 className="pb-4">Modifications</h3>
 
