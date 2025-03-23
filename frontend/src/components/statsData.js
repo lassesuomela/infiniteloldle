@@ -254,7 +254,7 @@ export default function StatsData() {
           </LineChart>
         </ResponsiveContainer>
 
-        <h4>Newest players from today</h4>
+        <h4>Top 50 newest players from today</h4>
         <ResponsiveContainer width={"100%"} height={500}>
           <LineChart data={newPlayers}>
             <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
