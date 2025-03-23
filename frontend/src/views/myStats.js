@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet";
 export default function MyStats() {
   return (
     <>
-      <div className="container pb-5">
+      <div className="container pb-5" id="myStats">
         <Helmet>
           <title>Infiniteloldle - My statistics</title>
           <meta
@@ -14,9 +14,12 @@ export default function MyStats() {
           />
         </Helmet>
 
-        <div className="pb-5">
+        <h3 className="text-center pb-3 pt-4">My stats</h3>
+
+        <div className="text-center card p-5 pb-5">
           <Stats />
         </div>
+        <br />
       </div>
     </>
   );

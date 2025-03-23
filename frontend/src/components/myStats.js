@@ -6,6 +6,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 import { initValues } from "../utils/saveStats";
 
@@ -111,79 +112,76 @@ export default function StatsData() {
   };
 
   return (
-    <>
-      <h3 className="text-center pb-3 pt-4">My stats</h3>
-      <div className="d-grid justify-content-center text-center card p-5">
-        <div className="d-flex justify-content-between pb-4">
-          <div>
-            <h5>Total games played</h5>
-            <p>{totalGames}</p>
-          </div>
-          <div>
-            <h5>Total guesses</h5>
-            <p>{totalGuesses}</p>
-          </div>
-          <div>
-            <h5>Average guesses per game</h5>
-            <p>
-              {totalGames !== 0 ? (totalGuesses / totalGames).toFixed(0) : 0}
-            </p>
-          </div>
-          <div>
-            <h5>Total first tries</h5>
-            <p>{totalFirstTries}</p>
-          </div>
-          <div>
-            <h5>First tries rate</h5>
-            <p>
-              {totalGames !== 0
-                ? ((totalFirstTries / totalGames) * 100).toFixed(0)
-                : 0}{" "}
-              %
-            </p>
-          </div>
+    <div className="statsWrapper">
+      <div className="d-flex justify-content-between pb-4 gap-4">
+        <div>
+          <h5>Total games played</h5>
+          <p>{totalGames}</p>
         </div>
-        <h4>Games won per day</h4>
-        <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={gamesPerDay}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="Dates" />
-            <YAxis />
-            <Tooltip content={<StatsTooltip />} />
-            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
-          </LineChart>
+        <div>
+          <h5>Total guesses</h5>
+          <p>{totalGuesses}</p>
         </div>
-        <h4>Score development per day</h4>
-        <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={scoresPerDay}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="Dates" />
-            <YAxis />
-            <Tooltip content={<StatsTooltip />} />
-            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
-          </LineChart>
+        <div>
+          <h5>Average guesses per game</h5>
+          <p>{totalGames !== 0 ? (totalGuesses / totalGames).toFixed(0) : 0}</p>
         </div>
-        <h4>Guesses per day</h4>
-        <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={triesPerDay}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="Dates" />
-            <YAxis />
-            <Tooltip content={<StatsTooltip />} />
-            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
-          </LineChart>
+        <div>
+          <h5>Total first tries</h5>
+          <p>{totalFirstTries}</p>
         </div>
-        <h4>First tries per day</h4>
-        <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={firstTriesPerDay}>
-            <CartesianGrid strokeDasharray="2 2" />
-            <XAxis dataKey="Dates" />
-            <YAxis />
-            <Tooltip content={<StatsTooltip />} />
-            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
-          </LineChart>
+        <div>
+          <h5>First tries rate</h5>
+          <p>
+            {totalGames !== 0
+              ? ((totalFirstTries / totalGames) * 100).toFixed(0)
+              : 0}{" "}
+            %
+          </p>
         </div>
       </div>
-    </>
+      <div className="d-flex gap-3 flex-column">
+        <h4>Games won per day</h4>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <LineChart data={gamesPerDay}>
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis dataKey="Dates" />
+            <YAxis />
+            <Tooltip content={<StatsTooltip />} />
+            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
+          </LineChart>
+        </ResponsiveContainer>
+        <h4>Score development per day</h4>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <LineChart data={scoresPerDay}>
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis dataKey="Dates" />
+            <YAxis />
+            <Tooltip content={<StatsTooltip />} />
+            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
+          </LineChart>
+        </ResponsiveContainer>
+        <h4>Guesses per day</h4>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <LineChart data={triesPerDay}>
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis dataKey="Dates" />
+            <YAxis />
+            <Tooltip content={<StatsTooltip />} />
+            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
+          </LineChart>
+        </ResponsiveContainer>
+        <h4>First tries per day</h4>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <LineChart data={firstTriesPerDay}>
+            <CartesianGrid strokeDasharray="2 2" />
+            <XAxis dataKey="Dates" />
+            <YAxis />
+            <Tooltip content={<StatsTooltip />} />
+            <Line type="monotone" dataKey="Value" stroke="#4C9AFF" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
   );
 }

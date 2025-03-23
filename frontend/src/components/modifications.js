@@ -62,94 +62,99 @@ export default function Modifications() {
         size="lg"
         centered
         className="transparentModal"
+        id="modificationsModal"
       >
         <Modal.Body>
-          <div className="container d-flex justify-content-center">
+          <div className="container d-flex justify-content-center px-4 px-sm-5">
             <div className="card text-center">
-              <Modal.Header closeButton></Modal.Header>
+              <Modal.Header
+                closeButton
+                className="btn-close-white"
+              ></Modal.Header>
+              <div className="wrapper">
+                <h3 className="pb-4">Modifications</h3>
 
-              <h3 className="pb-4">Modifications</h3>
-
-              {/*
+                {/*
                 <h5>Blur mode</h5>
                 <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
-                  <button
-                    className={
-                      blurMode === "default"
-                        ? "btn btn-dark"
-                        : "btn btn-outline-dark"
-                    }
-                    onClick={() => changeBlurMode("DEFAULT_BLUR")}
-                    data-tooltip-id="blur-tooltip"
-                    data-tooltip-content="Change blur mode of splash art, item and legacy item to be default"
+                <button
+                className={
+                  blurMode === "default"
+                  ? "btn btn-dark"
+                  : "btn btn-outline-dark"
+                  }
+                  onClick={() => changeBlurMode("DEFAULT_BLUR")}
+                  data-tooltip-id="blur-tooltip"
+                  data-tooltip-content="Change blur mode of splash art, item and legacy item to be default"
                   >
-                    Default
-                    <Tooltip id="blur-tooltip" />
+                  Default
+                  <Tooltip id="blur-tooltip" />
                   </button>
                   <button
-                    className={
-                      blurMode === "blocky"
-                        ? "btn btn-dark"
-                        : "btn btn-outline-dark"
+                  className={
+                    blurMode === "blocky"
+                    ? "btn btn-dark"
+                    : "btn btn-outline-dark"
                     }
                     onClick={() => changeBlurMode("BLOCKY_BLUR")}
                     data-tooltip-id="blur-tooltip"
                     data-tooltip-content="Change blur mode of splash art, item and legacy item to be pixelated"
-                  >
+                    >
                     Blocky
                     <Tooltip id="blur-tooltip" />
+                    </button>
+                    </div>
+                    */}
+                <h5>Difficulty</h5>
+                <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
+                  <button
+                    className={
+                      isMonochrome ? "btn btn-dark" : "btn btn-outline-dark"
+                    }
+                    onClick={() => toggleMonochrome()}
+                    data-tooltip-id="monochrome-tooltip"
+                    data-tooltip-content="Splash art, item and legacy item games icons are black and white"
+                  >
+                    Monochrome
+                    <Tooltip id="monochrome-tooltip" />
+                  </button>
+                  <button
+                    className={
+                      randomRotate ? "btn btn-dark" : "btn btn-outline-dark"
+                    }
+                    onClick={() => toggleRandomRotate()}
+                    data-tooltip-id="rotate-tooltip"
+                    data-tooltip-content="Splash art, item and legacy item games icons are rotated"
+                  >
+                    Rotate
+                    <Tooltip id="rotate-tooltip" />
+                  </button>
+                  <button
+                    className={
+                      hideResource ? "btn btn-dark" : "btn btn-outline-dark"
+                    }
+                    onClick={() => toggleHideResource()}
+                    data-tooltip-id="resource-tooltip"
+                    data-tooltip-content="Champions game resource is limited to mana or manaless"
+                  >
+                    Simplify resource
+                    <Tooltip id="resource-tooltip" />
                   </button>
                 </div>
-                */}
-              <h5>Difficulty</h5>
-              <div className="pt-2 pb-4 d-flex justify-content-center gap-2">
-                <button
-                  className={
-                    isMonochrome ? "btn btn-dark" : "btn btn-outline-dark"
-                  }
-                  onClick={() => toggleMonochrome()}
-                  data-tooltip-id="monochrome-tooltip"
-                  data-tooltip-content="Splash art, item and legacy item games icons are black and white"
-                >
-                  Monochrome
-                  <Tooltip id="monochrome-tooltip" />
-                </button>
-                <button
-                  className={
-                    randomRotate ? "btn btn-dark" : "btn btn-outline-dark"
-                  }
-                  onClick={() => toggleRandomRotate()}
-                  data-tooltip-id="rotate-tooltip"
-                  data-tooltip-content="Splash art, item and legacy item games icons are rotated"
-                >
-                  Rotate
-                  <Tooltip id="rotate-tooltip" />
-                </button>
-                <button
-                  className={
-                    hideResource ? "btn btn-dark" : "btn btn-outline-dark"
-                  }
-                  onClick={() => toggleHideResource()}
-                  data-tooltip-id="resource-tooltip"
-                  data-tooltip-content="Champions game resource is limited to mana or manaless"
-                >
-                  Simplify resource
-                  <Tooltip id="resource-tooltip" />
-                </button>
-              </div>
-              <div className="pt-2 pb-3">
-                <h5>Colorblind mode</h5>
-                <button
-                  className={
-                    isColorBlindMode ? "btn btn-dark" : "btn btn-outline-dark"
-                  }
-                  onClick={toggleColorBlindMode}
-                  data-tooltip-id="cb-tooltip"
-                  data-tooltip-content="Toggle colorblind mode to help differientiate colors"
-                >
-                  {isColorBlindMode ? "On" : "Off"}
-                  <Tooltip id="cb-tooltip" />
-                </button>
+                <div className="pt-2 pb-3">
+                  <h5>Colorblind mode</h5>
+                  <button
+                    className={
+                      isColorBlindMode ? "btn btn-dark" : "btn btn-outline-dark"
+                    }
+                    onClick={toggleColorBlindMode}
+                    data-tooltip-id="cb-tooltip"
+                    data-tooltip-content="Toggle colorblind mode to help differientiate colors"
+                  >
+                    {isColorBlindMode ? "On" : "Off"}
+                    <Tooltip id="cb-tooltip" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

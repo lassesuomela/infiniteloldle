@@ -11,9 +11,11 @@ export default function ScoreBoard() {
           <meta name="description" content="Infiniteloldle.com - Statistics" />
         </Helmet>
 
-        <div className="pb-5">
+        <h3 className="text-center pb-3 pt-4">Statistics</h3>
+        <div className="text-center card p-5 pb-5">
           <StatsData />
         </div>
+        <br />
       </div>
     </>
   );

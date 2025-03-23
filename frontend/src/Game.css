@@ -258,6 +258,16 @@ small {
     padding: 0.25em 0.25em;
     font-size: 0.7em;
   }
+
+  #settingsModal .wrapper {
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 0.95em;
+  }
+
+  #settingsModal button {
+    font-size: 0.9em;
+  }
 }
 
 @media only screen and (max-width: 599px) {
@@ -309,6 +319,20 @@ small {
   .scoreboard {
     width: 100%;
     padding: 0.5em 0.5em;
+  }
+
+  #modificationsModal .wrapper {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  #modificationsModal button {
+    font-size: 0.9em;
+  }
+
+  .statsWrapper > div {
+    display: flex;
+    flex-direction: column;
   }
 }
 
@@ -370,6 +394,20 @@ small {
 
   #guess-form {
     width: 80%;
+  }
+
+  #modificationsModal .wrapper {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  #modificationsModal button {
+    font-size: 0.9em;
+  }
+
+  .statsWrapper > div {
+    display: flex;
+    flex-direction: column;
   }
 }
 
