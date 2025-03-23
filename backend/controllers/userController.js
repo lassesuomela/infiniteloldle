@@ -54,7 +54,8 @@ const Create = (req, res) => {
         const currentItemId = itemData[randomItemIdx];
 
         if (!nickname) {
-          nickname = "Teemo#" + Math.floor(Math.random() * 9999);
+          const randomStr = Math.random().toString(36).slice(-4).toUpperCase();
+          nickname = `Teemo#${randomStr}`;
         }
 
         champion.getSplashById(currentSplashChampion["id"], (err, result) => {
