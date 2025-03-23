@@ -329,6 +329,11 @@ small {
   #modificationsModal button {
     font-size: 0.9em;
   }
+
+  .myStatsWrapper > div {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 @media only screen and (min-width: 600px) and (max-width: 767px) {
@@ -398,6 +403,11 @@ small {
 
   #modificationsModal button {
     font-size: 0.9em;
+  }
+
+  .myStatsWrapper > div {
+    display: flex;
+    flex-direction: column;
   }
 }
 
