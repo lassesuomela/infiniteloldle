@@ -135,6 +135,7 @@ export default function Settings() {
         size="lg"
         centered
         className="transparentModal"
+        id="settingsModal"
       >
         <Modal.Body>
           <div className="container d-flex justify-content-center">
@@ -144,161 +145,164 @@ export default function Settings() {
                 className="btn-close-white"
               ></Modal.Header>
 
-              <h3 className="pb-4">Settings</h3>
+              <div className="wrapper">
+                <h3 className="pb-4">Settings</h3>
 
-              {localStorage.getItem("token") ? (
-                <>
-                  <h4>Change your nickname</h4>
+                {localStorage.getItem("token") ? (
+                  <>
+                    <h4>Change your nickname</h4>
 
-                  <div className="pt-2 d-flex justify-content-center">
-                    <div className="pb-3">
-                      <form className="row g-3 p-1" onSubmit={ChangeNickname}>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="nickname"
-                          placeholder="New nickname"
-                          maxLength="30"
-                          onChange={(e) => setNewNickname(e.target.value)}
-                        />
-                        <div>
-                          <button className="btn btn-dark mb-2">Save</button>
-                        </div>
-                      </form>
+                    <div className="pt-2 d-flex justify-content-center">
+                      <div className="pb-3">
+                        <form className="row g-3 p-1" onSubmit={ChangeNickname}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="nickname"
+                            placeholder="New nickname"
+                            maxLength="30"
+                            onChange={(e) => setNewNickname(e.target.value)}
+                          />
+                          <div>
+                            <button className="btn btn-dark mb-2">Save</button>
+                          </div>
+                        </form>
+                      </div>
                     </div>
-                  </div>
 
-                  <h4 className="p-2">Reroll</h4>
-                  <div className="pb-4 d-flex justify-content-center gap-2">
-                    <button
-                      onClick={ChangeGuessChampion}
-                      className="btn btn-dark mb-2"
-                    >
-                      Champion
-                    </button>
-                    <button
-                      onClick={ChangeGuessSplash}
-                      className="btn btn-dark mb-2"
-                    >
-                      Splash art
-                    </button>
-                    <button
-                      onClick={ChangeGuessItem}
-                      className="btn btn-dark mb-2"
-                    >
-                      Item
-                    </button>
-                    <button
-                      onClick={ChangeGuessOldItem}
-                      className="btn btn-dark mb-2"
-                    >
-                      Legacy item
-                    </button>
-                  </div>
-
-                  <div className="p-3">
-                    <h4>Export / import token</h4>
-                    <p>
-                      By exporting token you can move all progress over to the
-                      other device and continue progressing on multiple devices.
-                    </p>
-                    <div className="d-flex justify-content-center gap-2">
+                    <h4 className="p-2">Reroll</h4>
+                    <div className="pb-4 d-flex justify-content-center gap-2">
                       <button
-                        onClick={() => {
-                          setExportMode(!exportMode);
-                          setImportMode(false);
-                        }}
+                        onClick={ChangeGuessChampion}
                         className="btn btn-dark mb-2"
                       >
-                        Export
+                        Champion
                       </button>
                       <button
-                        onClick={() => {
-                          setImportMode(!importMode);
-                          setExportMode(false);
-                        }}
-                        className="btn btn-success mb-2"
+                        onClick={ChangeGuessSplash}
+                        className="btn btn-dark mb-2"
                       >
-                        Import
+                        Splash art
+                      </button>
+                      <button
+                        onClick={ChangeGuessItem}
+                        className="btn btn-dark mb-2"
+                      >
+                        Item
+                      </button>
+                      <button
+                        onClick={ChangeGuessOldItem}
+                        className="btn btn-dark mb-2"
+                      >
+                        Legacy item
                       </button>
                     </div>
 
-                    {exportMode ? (
-                      <>
-                        <p>Copy token</p>
-                        <CopyToClipboard text={localStorage.getItem("token")}>
-                          <button
-                            className="btn btn-dark"
-                            onClick={() => setIsCopied(true)}
-                          >
-                            {isCopied ? "Copied!" : "Copy"}
-                          </button>
-                        </CopyToClipboard>
-                      </>
-                    ) : (
-                      ""
-                    )}
-
-                    {importMode ? (
-                      <>
-                        <p>Save exported token</p>
-                        <input
-                          value={newToken}
-                          className="form-control"
-                          placeholder="Token here"
-                          onChange={(e) => {
-                            setNewToken(e.target.value);
-                            setIsValidToken(null);
-                          }}
-                        ></input>
-                        <p className="pt-2">
-                          {isValidToken === true
-                            ? "Token is valid"
-                            : isValidToken === false
-                            ? "Token is not valid"
-                            : ""}
-                        </p>
+                    <div className="p-3">
+                      <h4>Export / import token</h4>
+                      <p>
+                        By exporting token you can move all progress over to the
+                        other device and continue progressing on multiple
+                        devices.
+                      </p>
+                      <div className="d-flex justify-content-center gap-2">
                         <button
-                          className="btn btn-outline-success mt-1"
-                          onClick={() => saveToken()}
+                          onClick={() => {
+                            setExportMode(!exportMode);
+                            setImportMode(false);
+                          }}
+                          className="btn btn-dark mb-2"
                         >
-                          Save
+                          Export
                         </button>
-                      </>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </>
-              ) : (
-                <></>
-              )}
+                        <button
+                          onClick={() => {
+                            setImportMode(!importMode);
+                            setExportMode(false);
+                          }}
+                          className="btn btn-success mb-2"
+                        >
+                          Import
+                        </button>
+                      </div>
 
-              {localStorage.getItem("token") ? (
-                <>
-                  <h4 className="p-2">Delete your account</h4>
-                  <div className="pb-4">
-                    <button
-                      onClick={DeleteUser}
-                      className="btn btn-danger mb-2"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <h4 className="p-2">Create new account</h4>
-                  <div className="pb-4">
-                    <button
-                      onClick={CreateUser}
-                      className="btn btn-success mb-2"
-                    >
-                      Create
-                    </button>
-                  </div>
-                </>
-              )}
+                      {exportMode ? (
+                        <>
+                          <p>Copy token</p>
+                          <CopyToClipboard text={localStorage.getItem("token")}>
+                            <button
+                              className="btn btn-dark"
+                              onClick={() => setIsCopied(true)}
+                            >
+                              {isCopied ? "Copied!" : "Copy"}
+                            </button>
+                          </CopyToClipboard>
+                        </>
+                      ) : (
+                        ""
+                      )}
+
+                      {importMode ? (
+                        <>
+                          <p>Save exported token</p>
+                          <input
+                            value={newToken}
+                            className="form-control"
+                            placeholder="Token here"
+                            onChange={(e) => {
+                              setNewToken(e.target.value);
+                              setIsValidToken(null);
+                            }}
+                          ></input>
+                          <p className="pt-2">
+                            {isValidToken === true
+                              ? "Token is valid"
+                              : isValidToken === false
+                              ? "Token is not valid"
+                              : ""}
+                          </p>
+                          <button
+                            className="btn btn-outline-success mt-1"
+                            onClick={() => saveToken()}
+                          >
+                            Save
+                          </button>
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+
+                {localStorage.getItem("token") ? (
+                  <>
+                    <h4 className="p-2">Delete your account</h4>
+                    <div className="pb-4">
+                      <button
+                        onClick={DeleteUser}
+                        className="btn btn-danger mb-2"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h4 className="p-2">Create new account</h4>
+                    <div className="pb-4">
+                      <button
+                        onClick={CreateUser}
+                        className="btn btn-success mb-2"
+                      >
+                        Create
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </Modal.Body>
