@@ -310,6 +310,15 @@ small {
     width: 100%;
     padding: 0.5em 0.5em;
   }
+
+  #modificationsModal .wrapper {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  #modificationsModal button {
+    font-size: 0.9em;
+  }
 }
 
 @media only screen and (min-width: 600px) and (max-width: 767px) {
@@ -370,6 +379,15 @@ small {
 
   #guess-form {
     width: 80%;
+  }
+
+  #modificationsModal .wrapper {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  #modificationsModal button {
+    font-size: 0.9em;
   }
 }
 
