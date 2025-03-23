@@ -112,7 +112,7 @@ export default function StatsData() {
   };
 
   return (
-    <div className="myStatsWrapper">
+    <div className="statsWrapper">
       <div className="d-flex justify-content-between pb-4 gap-4">
         <div>
           <h5>Total games played</h5>

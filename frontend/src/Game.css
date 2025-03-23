@@ -330,7 +330,7 @@ small {
     font-size: 0.9em;
   }
 
-  .myStatsWrapper > div {
+  .statsWrapper > div {
     display: flex;
     flex-direction: column;
   }
@@ -405,7 +405,7 @@ small {
     font-size: 0.9em;
   }
 
-  .myStatsWrapper > div {
+  .statsWrapper > div {
     display: flex;
     flex-direction: column;
   }

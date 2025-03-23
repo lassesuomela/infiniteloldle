@@ -12,6 +12,7 @@ import {
   Tooltip,
   ComposedChart,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 
 import { getCountryName } from "../utils/resolveCountryCode";
@@ -176,57 +177,139 @@ export default function StatsData() {
   };
 
   return (
-    <>
-      <h3 className="text-center pb-3 pt-4">Statistics</h3>
-      <div className="d-grid justify-content-center text-center card p-5">
-        <h4 className="text-center pb-3 pt-4">Database</h4>
-        <div className="d-flex justify-content-between">
-          <div>
-            <h5>Registered users</h5>
-            <p>{otherStat.register_count}</p>
-          </div>
-          <div>
-            <h5>Actual players</h5>
-            <p>{otherStat.player_count}</p>
-          </div>
-          <div>
-            <h5>Registered today</h5>
-            <p>{otherStat.todays_player_count}</p>
-          </div>
-          <div>
-            <h5>Registered yesterday</h5>
-            <p>{otherStat.yesterdays_player_count}</p>
-          </div>
-          <div>
-            <h5>MAU</h5>
-            <p>{otherStat.mau}</p>
-          </div>
-          <div>
-            <h5>DAU/MAU</h5>
-            <p>{((otherStat.dau / otherStat.mau) * 100).toFixed(2)} %</p>
-          </div>
+    <div className="statsWrapper">
+      <div className="d-flex justify-content-between">
+        <div>
+          <h5>Registered users</h5>
+          <p>{otherStat.register_count}</p>
         </div>
-        <div className="d-flex justify-content-between pt-4 pb-4">
-          <div>
-            <h5>Champion count</h5>
-            <p>{otherStat.champion_count}</p>
-          </div>
-          <div>
-            <h5>Item count</h5>
-            <p>{otherStat.item_count}</p>
-          </div>
-          <div>
-            <h5>Old item count</h5>
-            <p>{otherStat.old_item_count}</p>
-          </div>
-          <div>
-            <h5>Skin count</h5>
-            <p>{otherStat.global_skin_count}</p>
-          </div>
+        <div>
+          <h5>Actual players</h5>
+          <p>{otherStat.player_count}</p>
         </div>
+        <div>
+          <h5>Registered today</h5>
+          <p>{otherStat.todays_player_count}</p>
+        </div>
+        <div>
+          <h5>Registered yesterday</h5>
+          <p>{otherStat.yesterdays_player_count}</p>
+        </div>
+        <div>
+          <h5>MAU</h5>
+          <p>{otherStat.mau}</p>
+        </div>
+        <div>
+          <h5>DAU/MAU</h5>
+          <p>{((otherStat.dau / otherStat.mau) * 100).toFixed(2)} %</p>
+        </div>
+      </div>
+      <div className="d-flex justify-content-between pt-4 pb-4">
+        <div>
+          <h5>Champion count</h5>
+          <p>{otherStat.champion_count}</p>
+        </div>
+        <div>
+          <h5>Item count</h5>
+          <p>{otherStat.item_count}</p>
+        </div>
+        <div>
+          <h5>Old item count</h5>
+          <p>{otherStat.old_item_count}</p>
+        </div>
+        <div>
+          <h5>Skin count</h5>
+          <p>{otherStat.global_skin_count}</p>
+        </div>
+      </div>
+      <div className="d-flex gap-3 flex-column">
+        <h4>Score distribution graph</h4>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <BarChart data={otherStat.score_count_graph}>
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <Legend wrapperStyle={{ color: "#A9B3B9" }} />
+            <XAxis dataKey="score_range" type="category" stroke="#A9B3B9" />
+            <YAxis dataKey="Players" type="number" stroke="#A9B3B9" />
+            <Tooltip
+              content={<ScoreDistrTooltip />}
+              cursor={{ fill: "var(--secondary-color)", opacity: 0.5 }}
+            />
+            <Bar dataKey="Players" fill="#4C9AFF" />
+          </BarChart>
+        </ResponsiveContainer>
+
+        <h4>Top 50 players</h4>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <LineChart data={otherStat.player_stats}>
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <XAxis dataKey="nickname" stroke="#A9B3B9" />
+            <YAxis stroke="#A9B3B9" />
+            <Tooltip content={<PlayerTooltip />} />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="score"
+              stroke="#4C9AFF"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+
+        <h4>Newest players from today</h4>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <LineChart data={newPlayers}>
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <XAxis dataKey="nickname" stroke="#A9B3B9" />
+            <YAxis stroke="#A9B3B9" />
+            <Tooltip content={<PlayerTooltip />} />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="score"
+              stroke="#4C9AFF"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+
+        <h4>Gaining of users and players from past 30 days</h4>
+
+        <ResponsiveContainer width={"100%"} height={500}>
+          <LineChart data={userData}>
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <XAxis dataKey="date" stroke="#A9B3B9" />
+            <YAxis stroke="#A9B3B9" />
+            <Tooltip content={<UsersTooltip />} />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="Players"
+              stroke="#4C9AFF"
+            />
+            <Line
+              strokeWidth={2}
+              type="monotone"
+              dataKey="Users"
+              stroke="#2A9D8F"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+
+        <h4>Top 20 countries</h4>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <BarChart data={playerCountries} layout="vertical">
+            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
+            <XAxis type="number" stroke="#A9B3B9" />
+            <YAxis dataKey="Country" type="category" stroke="#A9B3B9" />
+            <Tooltip
+              content={<PlayerCountryTooltip />}
+              cursor={{ fill: "var(--secondary-color)", opacity: 0.5 }}
+            />
+            <Bar dataKey="Players" fill="#2A9D8F" />
+          </BarChart>
+        </ResponsiveContainer>
+
         <h4>Requests per day and daily active users</h4>
-        <div className="pb-4 pt-2">
-          <ComposedChart data={data} width={1000} height={500}>
+        <ResponsiveContainer width={"100%"} height={500}>
+          <ComposedChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#A9B3B9" />
             <XAxis dataKey="date" stroke="#A9B3B9" />
             <Tooltip content={<DauTooltip />} />
@@ -264,99 +347,8 @@ export default function StatsData() {
               dot={{ fill: "#4C9AFF" }}
             />
           </ComposedChart>
-        </div>
-        <h4>Top 50 players</h4>
-        <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={otherStat.player_stats}>
-            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
-            <XAxis dataKey="nickname" stroke="#A9B3B9" />
-            <YAxis stroke="#A9B3B9" />
-            <Tooltip content={<PlayerTooltip />} />
-            <Line
-              strokeWidth={2}
-              type="monotone"
-              dataKey="score"
-              stroke="#4C9AFF"
-            />
-          </LineChart>
-        </div>
-
-        <h4>Gaining of users and players from past 30 days</h4>
-        <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={userData}>
-            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
-            <XAxis dataKey="date" stroke="#A9B3B9" />
-            <YAxis stroke="#A9B3B9" />
-            <Tooltip content={<UsersTooltip />} />
-            <Line
-              strokeWidth={2}
-              type="monotone"
-              dataKey="Players"
-              stroke="#4C9AFF"
-            />
-            <Line
-              strokeWidth={2}
-              type="monotone"
-              dataKey="Users"
-              stroke="#2A9D8F"
-            />
-          </LineChart>
-        </div>
-
-        <h4>Newest players from today</h4>
-        <div className="pb-4 pt-2">
-          <LineChart width={1000} height={500} data={newPlayers}>
-            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
-            <XAxis dataKey="nickname" stroke="#A9B3B9" />
-            <YAxis stroke="#A9B3B9" />
-            <Tooltip content={<PlayerTooltip />} />
-            <Line
-              strokeWidth={2}
-              type="monotone"
-              dataKey="score"
-              stroke="#4C9AFF"
-            />
-          </LineChart>
-        </div>
-
-        <h4>Top 20 countries</h4>
-        <div className="pb-4 pt-2">
-          <BarChart
-            width={1000}
-            height={500}
-            data={playerCountries}
-            layout="vertical"
-          >
-            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
-            <XAxis type="number" stroke="#A9B3B9" />
-            <YAxis dataKey="Country" type="category" stroke="#A9B3B9" />
-            <Tooltip
-              content={<PlayerCountryTooltip />}
-              cursor={{ fill: "var(--secondary-color)", opacity: 0.5 }}
-            />
-            <Bar dataKey="Players" fill="#2A9D8F" />
-          </BarChart>
-        </div>
-
-        <h4>Score distribution graph</h4>
-        <div className="pb-4 pt-2">
-          <BarChart
-            width={1000}
-            height={500}
-            data={otherStat.score_count_graph}
-          >
-            <CartesianGrid strokeDasharray="2 2" stroke="#A9B3B9" />
-            <Legend wrapperStyle={{ color: "#A9B3B9" }} />
-            <XAxis dataKey="score_range" type="category" stroke="#A9B3B9" />
-            <YAxis dataKey="Players" type="number" stroke="#A9B3B9" />
-            <Tooltip
-              content={<ScoreDistrTooltip />}
-              cursor={{ fill: "var(--secondary-color)", opacity: 0.5 }}
-            />
-            <Bar dataKey="Players" fill="#4C9AFF" />
-          </BarChart>
-        </div>
+        </ResponsiveContainer>
       </div>
-    </>
+    </div>
   );
 }
