@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model champions {
+  id          Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  name        String? @unique(map: "name_UNIQUE") @db.VarChar(45)
+  championKey String? @unique(map: "key_UNIQUE") @db.VarChar(45)
+  title       String? @db.VarChar(60)
+  resource    String? @default("Mana") @db.VarChar(20)
+  skinCount   Int?    @db.TinyInt
+  position    String? @db.VarChar(255)
+  gender      Int?    @db.TinyInt
+  rangeType   String? @db.VarChar(30)
+  region      String? @db.VarChar(255)
+  released    String? @db.VarChar(5)
+  spriteIds   String? @db.VarChar(60)
+  genre       String? @db.VarChar(255)
+  damageType  String? @db.VarChar(45)
+}
+
+model items {
+  id     Int    @id @default(autoincrement())
+  itemId Int    @unique(map: "itemId_UNIQUE")
+  name   String @unique(map: "name_UNIQUE") @db.VarChar(60)
+}
+
+model old_items {
+  id           Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  name         String  @unique(map: "name_UNIQUE") @db.VarChar(50)
+  old_item_key String? @unique(map: "key_UNIQUE") @db.VarChar(255)
+}
+
+model statistics {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @default(now()) @db.DateTime(0)
+  dau             Int      @default(0)
+  requests        Int      @default(0)
+  mostActiveUsers String   @db.VarChar(60)
+  players         Int      @default(0)
+  users           Int      @default(0)
+}
+
+model users {
+  id                    Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  nickname              String  @default("Anonymous") @db.VarChar(30)
+  token                 String  @db.VarChar(64)
+  currentChampion       Int
+  solvedChampions       String? @db.VarChar(1024)
+  timestamp             String  @db.VarChar(10)
+  prestige              Int     @default(0)
+  score                 Int     @default(0)
+  currentSplashChampion Int?
+  solvedSplashChampions String? @db.VarChar(1024)
+  currentSplashId       Int?
+  country               String? @db.VarChar(5)
+  currentItemId         Int?
+  solvedItemIds         String? @db.VarChar(2048)
+  currentOldItemId      Int?
+  solvedOldItemIds      String? @db.VarChar(2048)
+}
