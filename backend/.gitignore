@@ -32,3 +32,4 @@ coverage/*
 *.jpg
 *.jpeg
 *.webp
+/generated/prisma
