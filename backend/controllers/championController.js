@@ -5,6 +5,9 @@ const fs = require("fs");
 const path = require("path");
 const GetPartialSimilarites =
   require("../helpers/compare").GetPartialSimilarites;
+const { PrismaClient } = require("../generated/prisma");
+
+const prisma = new PrismaClient();
 
 const Create = (req, res) => {
   const data = req.body;
@@ -126,200 +129,140 @@ const GetAllChampionKeys = (req, res) => {
   });
 };
 
-const Guess = (req, res) => {
+const Guess = async (req, res) => {
   const { guess } = req.body;
-
-  if (!guess) {
+  if (!guess)
     return res.json({ status: "error", message: "Guess is required" });
-  }
 
   const token = req.token;
+  const user = await prisma.users.findFirst({ where: { token } });
+  if (!user) return res.json({ status: "error", message: "Token is invalid" });
 
-  champion.getByToken(token, (err, correctChampionData) => {
-    if (!correctChampionData[0]) {
-      return res.json({ status: "error", message: "Token is invalid" });
-    }
+  const correctChampion = await prisma.champions.findFirst({
+    where: { id: user.currentChampion },
+  });
+  if (!correctChampion)
+    return res.json({ status: "error", message: "Token is invalid" });
 
-    // wrong guess return diff
+  const guessChampion = await prisma.champions.findFirst({
+    where: { name: guess },
+  });
 
-    champion.getByName(guess, (err, guessChampionData) => {
-      if (!guessChampionData[0]) {
-        return res.json({
-          status: "error",
-          message: "Nothing found with that champion name",
-        });
-      }
-
-      const champData = {
-        guessedChampion: guessChampionData[0].name,
-        championKey: guessChampionData[0].championKey,
-
-        resource: guessChampionData[0].resource,
-
-        gender: guessChampionData[0].gender,
-
-        position: guessChampionData[0].position,
-
-        rangeType: guessChampionData[0].rangeType,
-
-        region: guessChampionData[0].region,
-
-        releaseYear: guessChampionData[0].released,
-
-        genre: guessChampionData[0].genre,
-
-        damageType: guessChampionData[0].damageType,
-      };
-
-      const similarites = {
-        sameResource:
-          guessChampionData[0].resource === correctChampionData[0].resource
-            ? true
-            : false,
-        sameGender:
-          guessChampionData[0].gender === correctChampionData[0].gender
-            ? true
-            : false,
-        sameReleaseYear:
-          correctChampionData[0].released === guessChampionData[0].released
-            ? "="
-            : correctChampionData[0].released > guessChampionData[0].released
-            ? ">"
-            : "<",
-
-        samePosition: GetPartialSimilarites(
-          guessChampionData[0].position,
-          correctChampionData[0].position
-        ),
-
-        sameRangeType: GetPartialSimilarites(
-          guessChampionData[0].rangeType,
-          correctChampionData[0].rangeType
-        ),
-
-        sameRegion: GetPartialSimilarites(
-          guessChampionData[0].region,
-          correctChampionData[0].region
-        ),
-
-        sameGenre: GetPartialSimilarites(
-          guessChampionData[0].genre,
-          correctChampionData[0].genre
-        ),
-
-        sameDamageType: GetPartialSimilarites(
-          guessChampionData[0].damageType,
-          correctChampionData[0].damageType
-        ),
-      };
-
-      if (guess !== correctChampionData[0].name) {
-        return res.json({
-          status: "success",
-          correctGuess: false,
-          properties: [champData, similarites],
-        });
-      } else {
-        // correct guess
-
-        champion.getAllIds((err, data) => {
-          if (err) {
-            console.log(err);
-            return res.json({
-              status: "error",
-              message: "Error on fetching champions ids",
-            });
-          }
-
-          user.fetchByToken(token, (err, result) => {
-            if (err) {
-              console.log(err);
-              return res.json({
-                status: "error",
-                message: "Error on fetching data with the token provided",
-              });
-            }
-
-            let solvedChampions;
-
-            if (result[0]["solvedChampions"]) {
-              solvedChampions =
-                correctChampionData[0]["id"] +
-                "," +
-                result[0]["solvedChampions"];
-            } else {
-              solvedChampions = correctChampionData[0]["id"];
-            }
-
-            let solvedChamps;
-
-            if (
-              solvedChampions.length > 1 &&
-              solvedChampions.split(",").length > 1 &&
-              solvedChampions.split(",").length < data.length
-            ) {
-              solvedChamps = solvedChampions.split(",");
-            } else if (
-              solvedChampions.length > 1 &&
-              solvedChampions.split(",").length >= data.length
-            ) {
-              solvedChamps = "";
-              solvedChampions = "";
-
-              result[0]["prestige"]++;
-            } else {
-              solvedChamps = solvedChampions.toString();
-            }
-
-            // remove solved champs from the all champions pool
-            const champPool = data.filter((id) => {
-              return !solvedChamps.includes(id["id"].toString());
-            });
-
-            const random = Math.floor(Math.random() * champPool.length);
-
-            const newChampion = champPool[random];
-
-            if (newChampion === undefined) {
-              console.log("ERROR, no new champion");
-              console.log(req.body);
-              console.log(req.headers);
-              console.log(req.token);
-              console.log(champPool);
-              console.log(champPool.length);
-              console.log(random);
-            }
-
-            let payload = {
-              currentChampion: newChampion["id"],
-              solvedChampions: solvedChampions,
-              prestige: result[0]["prestige"],
-              score: (result[0]["score"] += 1),
-              token: token,
-            };
-
-            user.update(payload, (err, result) => {
-              if (err) {
-                console.log(err);
-                return res.json({
-                  status: "error",
-                  message: "Error on updating user data",
-                });
-              }
-
-              cache.deleteCache("/user:" + token);
-
-              res.json({
-                status: "success",
-                correctGuess: true,
-                properties: [champData, similarites],
-                title: correctChampionData[0].title,
-              });
-            });
-          });
-        });
-      }
+  if (!guessChampion) {
+    return res.json({
+      status: "error",
+      message: "Nothing found with that champion name",
     });
+  }
+
+  const champData = {
+    guessedChampion: guessChampion.name,
+    championKey: guessChampion.championKey,
+    resource: guessChampion.resource,
+    gender: guessChampion.gender,
+    position: guessChampion.position,
+    rangeType: guessChampion.rangeType,
+    region: guessChampion.region,
+    releaseYear: guessChampion.released,
+    genre: guessChampion.genre,
+    damageType: guessChampion.damageType,
+  };
+
+  const similarites = {
+    sameResource: guessChampion.resource === correctChampion.resource,
+    sameGender: guessChampion.gender === correctChampion.gender,
+    sameReleaseYear:
+      correctChampion.released === guessChampion.released
+        ? "="
+        : correctChampion.released > guessChampion.released
+        ? ">"
+        : "<",
+    samePosition: GetPartialSimilarites(
+      guessChampion.position,
+      correctChampion.position
+    ),
+    sameRangeType: GetPartialSimilarites(
+      guessChampion.rangeType,
+      correctChampion.rangeType
+    ),
+    sameRegion: GetPartialSimilarites(
+      guessChampion.region,
+      correctChampion.region
+    ),
+    sameGenre: GetPartialSimilarites(
+      guessChampion.genre,
+      correctChampion.genre
+    ),
+    sameDamageType: GetPartialSimilarites(
+      guessChampion.damageType,
+      correctChampion.damageType
+    ),
+  };
+  if (guess !== correctChampion.name) {
+    return res.json({
+      status: "success",
+      correctGuess: false,
+      properties: [champData, similarites],
+    });
+  }
+
+  // correct guess
+  // Get all champion IDs
+  const allChampionIds = await prisma.champions.findMany({
+    select: { id: true },
+  });
+  const allIds = allChampionIds.map((c) => c.id);
+
+  // Get solved champion IDs for this user
+  const solvedRows = await prisma.userSolvedChampions.findMany({
+    where: { userId: user.id },
+    select: { championId: true },
+  });
+  let solvedIds = solvedRows.map((row) => row.championId);
+
+  // Add the just-solved champion if not already present
+  if (!solvedIds.includes(correctChampion.id)) {
+    await prisma.userSolvedChampions.create({
+      data: { userId: user.id, championId: correctChampion.id },
+    });
+    solvedIds.push(correctChampion.id);
+  }
+
+  // Prestige logic
+  let prestige = user.prestige;
+  let solvedChamps = solvedIds;
+  if (solvedIds.length >= allIds.length) {
+    // All solved, reset
+    await prisma.userSolvedChampions.deleteMany({ where: { userId: user.id } });
+    solvedChamps = [];
+    prestige += 1;
+  }
+
+  // Pick a new champion not yet solved
+  const unsolvedIds = allIds.filter((id) => !solvedChamps.includes(id));
+  const newChampionId =
+    unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
+  const newChampion = await prisma.champions.findUnique({
+    where: { id: newChampionId },
+  });
+
+  // Update user
+  await prisma.users.update({
+    where: { id: user.id },
+    data: {
+      currentChampion: newChampionId,
+      prestige,
+      score: { increment: 1 },
+    },
+  });
+
+  cache.deleteCache("/user:" + token);
+
+  res.json({
+    status: "success",
+    correctGuess: true,
+    properties: [champData, similarites],
+    title: correctChampion.title,
   });
 };
 
@@ -507,7 +450,7 @@ const GetSplashArt = (req, res) => {
 
     fs.readFile(imagePath, (err, data) => {
       if (err) {
-        console.log(`FATAL: Image is missing for: ${imageName}`)
+        console.log(`FATAL: Image is missing for: ${imageName}`);
         return res.status(404).json({
           status: "error",
           message: "File not found",

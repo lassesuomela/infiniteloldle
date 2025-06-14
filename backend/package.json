@@ -8,6 +8,7 @@
     "test": "jest --detectOpenHandles --runInBand --forceExit"
   },
   "dependencies": {
+    "@prisma/client": "^6.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "~4.19.2",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "prisma": "^6.9.0",
     "supertest": "^6.3.4"
   }
 }

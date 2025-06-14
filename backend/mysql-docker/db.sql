@@ -184,4 +184,70 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-31 18:05:35
+--
+-- Table structure for table `UserSolvedChampions`
+--
+
+DROP TABLE IF EXISTS `UserSolvedChampions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `UserSolvedChampions` (
+  `userId` int NOT NULL,
+  `championId` int NOT NULL,
+  PRIMARY KEY (`userId`,`championId`),
+  KEY `UserSolvedChampions_championId_fkey` (`championId`),
+  CONSTRAINT `UserSolvedChampions_championId_fkey` FOREIGN KEY (`championId`) REFERENCES `champions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `UserSolvedChampions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `UserSolvedItems`
+--
+
+DROP TABLE IF EXISTS `UserSolvedItems`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `UserSolvedItems` (
+  `userId` int NOT NULL,
+  `itemId` int NOT NULL,
+  PRIMARY KEY (`userId`,`itemId`),
+  KEY `UserSolvedItems_itemId_fkey` (`itemId`),
+  CONSTRAINT `UserSolvedItems_itemId_fkey` FOREIGN KEY (`itemId`) REFERENCES `items` (`itemId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `UserSolvedItems_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `UserSolvedOldItems`
+--
+
+DROP TABLE IF EXISTS `UserSolvedOldItems`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `UserSolvedOldItems` (
+  `userId` int NOT NULL,
+  `oldItemId` int NOT NULL,
+  PRIMARY KEY (`userId`,`oldItemId`),
+  KEY `UserSolvedOldItems_oldItemId_fkey` (`oldItemId`),
+  CONSTRAINT `UserSolvedOldItems_oldItemId_fkey` FOREIGN KEY (`oldItemId`) REFERENCES `old_items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `UserSolvedOldItems_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `UserSolvedSplashes`
+--
+
+DROP TABLE IF EXISTS `UserSolvedSplashes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `UserSolvedSplashes` (
+  `userId` int NOT NULL,
+  `splashId` int NOT NULL,
+  PRIMARY KEY (`userId`,`splashId`),
+  KEY `UserSolvedSplashes_splashId_fkey` (`splashId`),
+  CONSTRAINT `UserSolvedSplashes_splashId_fkey` FOREIGN KEY (`splashId`) REFERENCES `champions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `UserSolvedSplashes_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
