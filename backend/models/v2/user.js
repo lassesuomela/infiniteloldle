@@ -1,8 +1,8 @@
-import { PrismaClient } from "../../generated/prisma";
+const { PrismaClient } = require("../../generated/prisma");
 
 const prisma = new PrismaClient();
 
-export const user = {
+const user = {
   async findByToken(token) {
     return prisma.users.findFirst({ where: { token } });
   },
@@ -95,3 +95,5 @@ export const user = {
     return prisma.userSolvedOldItems.deleteMany({ where: { userId } });
   },
 };
+
+module.exports = user;
