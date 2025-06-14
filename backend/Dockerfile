@@ -1,4 +1,4 @@
-FROM node:16.13-alpine3.12
+FROM node:22-alpine3.21
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY package.json package.json
 COPY package-lock.json package-lock.json
 
 RUN npm ci
-
+RUN npx prisma generate
 COPY . .
 
 EXPOSE 8080
