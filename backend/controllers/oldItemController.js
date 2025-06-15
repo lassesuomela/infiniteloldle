@@ -27,75 +27,82 @@ const Create = (req, res) => {
 };
 
 const GuessItem = async (req, res) => {
-  const { guess } = req.body;
-  if (!guess) {
-    return res.json({ status: "error", message: "Guess is required" });
-  }
+  try {
+    const { guess } = req.body;
+    if (!guess) {
+      return res.json({ status: "error", message: "Guess is required" });
+    }
 
-  const token = req.token;
-  const user = await userV2.findByToken(token);
-  if (!user) {
-    return res.json({ status: "error", message: "Token is invalid" });
-  }
+    const token = req.token;
+    const user = await userV2.findByToken(token);
+    if (!user) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
 
-  const correctOldItem = await oldItemV2.findById(user.currentOldItemId);
-  if (!correctOldItem) {
-    return res.json({ status: "error", message: "Token is invalid" });
-  }
+    const correctOldItem = await oldItemV2.findById(user.currentOldItemId);
+    if (!correctOldItem) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
 
-  const guessOldItem = await oldItemV2.findByName(guess);
-  if (!guessOldItem) {
-    return res.json({
-      status: "error",
-      message: "Nothing found with that item name",
+    const guessOldItem = await oldItemV2.findByName(guess);
+    if (!guessOldItem) {
+      return res.json({
+        status: "error",
+        message: "Nothing found with that item name",
+      });
+    }
+
+    if (guess !== correctOldItem.name) {
+      return res.json({
+        status: "success",
+        correctGuess: false,
+        itemId: guessOldItem.old_item_key,
+      });
+    }
+
+    // Correct guess
+    const allIds = await oldItemV2.findAllIds();
+    let solvedIds = await userV2.getSolvedOldItemIds(user.id);
+
+    // Add the just-solved old item if not already present
+    if (!solvedIds.includes(correctOldItem.id)) {
+      await userV2.addSolvedOldItem(user.id, correctOldItem.id);
+      solvedIds.push(correctOldItem.id);
+    }
+
+    // Prestige logic
+    let prestige = user.prestige;
+    let solvedItems = solvedIds;
+    if (solvedIds.length >= allIds.length) {
+      await userV2.clearSolvedOldItems(user.id);
+      solvedItems = [];
+      prestige += 1;
+    }
+
+    // Filter out solved items
+    const unsolvedIds = allIds.filter((id) => !solvedItems.includes(id));
+    const newOldItemId =
+      unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
+    await userV2.updateById(user.id, {
+      currentOldItemId: newOldItemId,
+      prestige,
+      score: { increment: 1 },
     });
-  }
 
-  if (guess !== correctOldItem.name) {
-    return res.json({
+    cache.deleteCache("/user:" + token);
+
+    res.json({
       status: "success",
-      correctGuess: false,
+      correctGuess: true,
       itemId: guessOldItem.old_item_key,
+      name: correctOldItem.name,
     });
+  } catch (error) {
+    console.error("Error in GuessItem:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
   }
-
-  // Correct guess
-  const allIds = await oldItemV2.findAllIds();
-  let solvedIds = await userV2.getSolvedOldItemIds(user.id);
-
-  // Add the just-solved old item if not already present
-  if (!solvedIds.includes(correctOldItem.id)) {
-    await userV2.addSolvedOldItem(user.id, correctOldItem.id);
-    solvedIds.push(correctOldItem.id);
-  }
-
-  // Prestige logic
-  let prestige = user.prestige;
-  let solvedItems = solvedIds;
-  if (solvedIds.length >= allIds.length) {
-    await userV2.clearSolvedOldItems(user.id);
-    solvedItems = [];
-    prestige += 1;
-  }
-
-  // Filter out solved items
-  const unsolvedIds = allIds.filter((id) => !solvedItems.includes(id));
-  const newOldItemId =
-    unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
-  await userV2.updateById(user.id, {
-    currentOldItemId: newOldItemId,
-    prestige,
-    score: { increment: 1 },
-  });
-
-  cache.deleteCache("/user:" + token);
-
-  res.json({
-    status: "success",
-    correctGuess: true,
-    itemId: guessOldItem.old_item_key,
-    name: correctOldItem.name,
-  });
 };
 
 const GetItemSprite = (req, res) => {

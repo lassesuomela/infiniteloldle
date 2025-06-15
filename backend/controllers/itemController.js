@@ -23,75 +23,81 @@ const Create = (req, res) => {
 };
 
 const GuessItem = async (req, res) => {
-  const { guess } = req.body;
+  try {
+    const { guess } = req.body;
 
-  if (!guess) {
-    return res.json({ status: "error", message: "Guess is required" });
-  }
+    if (!guess) {
+      return res.json({ status: "error", message: "Guess is required" });
+    }
 
-  const token = req.token;
-  const user = await userV2.findByToken(token);
-  if (!user) {
-    return res.json({ status: "error", message: "Token is invalid" });
-  }
+    const token = req.token;
+    const user = await userV2.findByToken(token);
+    if (!user) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
 
-  const correctItem = await itemV2.findByItemId(user.currentItemId);
-  if (!correctItem) {
-    return res.json({ status: "error", message: "Token is invalid" });
-  }
+    const correctItem = await itemV2.findByItemId(user.currentItemId);
+    if (!correctItem) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
 
-  const guessItemObj = await itemV2.findByName(guess);
-  if (!guessItemObj) {
-    return res.json({
-      status: "error",
-      message: "No item with that name",
+    const guessItemObj = await itemV2.findByName(guess);
+    if (!guessItemObj) {
+      return res.json({
+        status: "error",
+        message: "No item with that name",
+      });
+    }
+
+    if (guess !== correctItem.name) {
+      return res.json({
+        status: "success",
+        correctGuess: false,
+        itemId: guessItemObj.itemId,
+      });
+    }
+
+    // Correct guess
+    const allIds = await itemV2.findAllItemIds();
+    let solvedIds = await userV2.getSolvedItemIds(user.id);
+
+    // Add the just-solved item if not already present
+    if (!solvedIds.includes(correctItem.itemId)) {
+      await userV2.addSolvedItem(user.id, correctItem.itemId);
+      solvedIds.push(correctItem.itemId);
+    }
+
+    // Prestige logic
+    let prestige = user.prestige;
+    let solvedItems = solvedIds;
+    if (solvedIds.length >= allIds.length) {
+      await userV2.clearSolvedItems(user.id);
+      solvedItems = [];
+      prestige += 1;
+    }
+
+    // Pick a new item not yet solved
+    const unsolvedIds = allIds.filter((id) => !solvedItems.includes(id));
+    const newItemId =
+      unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
+    await userV2.updateById(user.id, {
+      currentItemId: newItemId,
+      prestige,
+      score: { increment: 1 },
     });
-  }
 
-  if (guess !== correctItem.name) {
-    return res.json({
+    cache.deleteCache("/user:" + token);
+
+    res.json({
       status: "success",
-      correctGuess: false,
-      itemId: guessItemObj.itemId,
+      correctGuess: true,
+      name: correctItem.name,
+      itemId: correctItem.itemId,
     });
+  } catch (error) {
+    console.error("Error in GuessItem:", error);
+    return res.json({ status: "error", message: "Internal server error" });
   }
-
-  // Correct guess
-  const allIds = await itemV2.findAllItemIds();
-  let solvedIds = await userV2.getSolvedItemIds(user.id);
-
-  // Add the just-solved item if not already present
-  if (!solvedIds.includes(correctItem.itemId)) {
-    await userV2.addSolvedItem(user.id, correctItem.itemId);
-    solvedIds.push(correctItem.itemId);
-  }
-
-  // Prestige logic
-  let prestige = user.prestige;
-  let solvedItems = solvedIds;
-  if (solvedIds.length >= allIds.length) {
-    await userV2.clearSolvedItems(user.id);
-    solvedItems = [];
-    prestige += 1;
-  }
-
-  // Pick a new item not yet solved
-  const unsolvedIds = allIds.filter((id) => !solvedItems.includes(id));
-  const newItemId = unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
-  await userV2.updateById(user.id, {
-    currentItemId: newItemId,
-    prestige,
-    score: { increment: 1 },
-  });
-
-  cache.deleteCache("/user:" + token);
-
-  res.json({
-    status: "success",
-    correctGuess: true,
-    name: correctItem.name,
-    itemId: correctItem.itemId,
-  });
 };
 
 const GetItemSprite = (req, res) => {
