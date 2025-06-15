@@ -52,67 +52,64 @@ model statistics {
 }
 
 model users {
-  id                    Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  nickname              String  @default("Anonymous") @db.VarChar(30)
-  token                 String  @db.VarChar(64)
+  id                    Int                   @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  nickname              String                @default("Anonymous") @db.VarChar(30)
+  token                 String                @db.VarChar(64)
   currentChampion       Int
-  solvedChampions       String? @db.VarChar(1024)
-  timestamp             String  @db.VarChar(10)
-  prestige              Int     @default(0)
-  score                 Int     @default(0)
+  solvedChampions       String?               @db.VarChar(1024)
+  timestamp             String                @db.VarChar(10)
+  prestige              Int                   @default(0)
+  score                 Int                   @default(0)
   currentSplashChampion Int?
-  solvedSplashChampions String? @db.VarChar(1024)
+  solvedSplashChampions String?               @db.VarChar(1024)
   currentSplashId       Int?
-  country               String? @db.VarChar(5)
+  country               String?               @db.VarChar(5)
   currentItemId         Int?
-  solvedItemIds         String? @db.VarChar(2048)
+  solvedItemIds         String?               @db.VarChar(2048)
   currentOldItemId      Int?
-  solvedOldItemIds      String? @db.VarChar(2048)
-
-  // Relations to join tables:
-  solvedChampionsI UserSolvedChampions[]
-  solvedItems      UserSolvedItems[]
-  solvedOldItems   UserSolvedOldItems[]
-  solvedSplashes   UserSolvedSplashes[]
+  solvedOldItemIds      String?               @db.VarChar(2048)
+  solvedChampionsI      UserSolvedChampions[]
+  solvedItems           UserSolvedItems[]
+  solvedOldItems        UserSolvedOldItems[]
+  solvedSplashes        UserSolvedSplashes[]
 }
 
 model UserSolvedChampions {
   userId     Int
   championId Int
-
-  user     users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  champion champions @relation(fields: [championId], references: [id], onDelete: Cascade)
+  champion   champions @relation(fields: [championId], references: [id], onDelete: Cascade)
+  user       users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, championId])
+  @@index([championId], map: "UserSolvedChampions_championId_fkey")
 }
 
 model UserSolvedItems {
   userId Int
   itemId Int
-
-  user users @relation(fields: [userId], references: [id], onDelete: Cascade)
-  item items @relation(fields: [itemId], references: [itemId], onDelete: Cascade)
+  item   items @relation(fields: [itemId], references: [itemId], onDelete: Cascade)
+  user   users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, itemId])
+  @@index([itemId], map: "UserSolvedItems_itemId_fkey")
 }
-
 
 model UserSolvedOldItems {
   userId    Int
   oldItemId Int
-
-  user    users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  oldItem old_items @relation(fields: [oldItemId], references: [id], onDelete: Cascade)
+  oldItem   old_items @relation(fields: [oldItemId], references: [id], onDelete: Cascade)
+  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, oldItemId])
+  @@index([oldItemId], map: "UserSolvedOldItems_oldItemId_fkey")
 }
 
 model UserSolvedSplashes {
-  userId   Int
-  splashId Int
+  userId     Int
+  championId Int
+  champions  champions @relation(fields: [championId], references: [id], onDelete: Cascade, map: "UserSolvedSplashes_splashId_fkey")
+  user       users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user     users     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  champion champions @relation(fields: [splashId], references: [id], onDelete: Cascade)
-
-  @@id([userId, splashId])
+  @@id([userId, championId])
+  @@index([championId], map: "UserSolvedSplashes_splashId_fkey")
 }

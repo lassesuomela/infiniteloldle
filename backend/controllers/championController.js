@@ -1,5 +1,7 @@
 const champion = require("../models/championModel");
 const user = require("../models/userModel");
+const userV2 = require("../models/v2/user");
+const championV2 = require("../models/v2/champion");
 const cache = require("../middleware/cache");
 const fs = require("fs");
 const path = require("path");
@@ -269,13 +271,13 @@ const GuessSplash = async (req, res) => {
   }
 
   const token = req.token;
-  const userObj = await user.findByToken(token);
+  const userObj = await userV2.findByToken(token);
   if (!userObj) {
     return res.json({ status: "error", message: "Token is invalid" });
   }
 
   // Get the correct champion for the user's current splash
-  const correctChampion = await champion.findById(
+  const correctChampion = await championV2.findById(
     userObj.currentSplashChampion
   );
   if (!correctChampion) {
@@ -283,7 +285,7 @@ const GuessSplash = async (req, res) => {
   }
 
   // Get the guessed champion
-  const guessChampion = await champion.findByName(guess);
+  const guessChampion = await championV2.findByName(guess);
   if (!guessChampion) {
     return res.json({
       status: "error",
@@ -300,12 +302,12 @@ const GuessSplash = async (req, res) => {
   }
 
   // correct guess
-  const allIds = await champion.findAllIds();
-  let solvedIds = await user.getSolvedSplashChampionIds(userObj.id);
+  const allIds = await championV2.findAllIds();
+  let solvedIds = await userV2.getSolvedSplashChampionIds(userObj.id);
 
   // Add the just-solved splash if not already present
   if (!solvedIds.includes(correctChampion.id)) {
-    await user.addSolvedSplash(userObj.id, correctChampion.id);
+    await userV2.addSolvedSplash(userObj.id, correctChampion.id);
     solvedIds.push(correctChampion.id);
   }
 
@@ -313,7 +315,7 @@ const GuessSplash = async (req, res) => {
   let prestige = userObj.prestige;
   let solvedChamps = solvedIds;
   if (solvedIds.length >= allIds.length) {
-    await user.clearSolvedSplashes(userObj.id);
+    await userV2.clearSolvedSplashes(userObj.id);
     solvedChamps = [];
     prestige += 1;
   }
@@ -322,14 +324,14 @@ const GuessSplash = async (req, res) => {
   const unsolvedIds = allIds.filter((id) => !solvedChamps.includes(id));
   const newChampionId =
     unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
-  const newChampion = await champion.findById(newChampionId);
+  const newChampion = await championV2.findById(newChampionId);
 
   // Pick a random splash sprite
   const sprites = newChampion.spriteIds.split(",");
   const randomSprite = sprites[Math.floor(Math.random() * sprites.length)];
 
   // Update user splash info
-  await user.updateById(userObj.id, {
+  await userV2.updateById(userObj.id, {
     currentSplashChampion: newChampionId,
     currentSplashId: parseInt(randomSprite),
     prestige,
