@@ -150,7 +150,19 @@ const CheckToken = (req, res) => {
 
       res.json(response);
     } else {
-      res.json({ status: "error", message: "Token is not valid" });
+      if (err?.errno === -111) {
+        return res
+          .status(500)
+          .json({ status: "error", message: "Error on fetching user" });
+      } else if (!err && !result) {
+        res.json({ status: "error", message: "Token is not valid" });
+      } else {
+        console.log(err);
+        return res.status(500).json({
+          status: "error",
+          message: "Error on fetching user",
+        });
+      }
     }
   });
 };
