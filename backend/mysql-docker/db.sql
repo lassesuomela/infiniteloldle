@@ -212,7 +212,7 @@ CREATE TABLE `UserSolvedItems` (
   `userId` int NOT NULL,
   `itemId` int NOT NULL,
   PRIMARY KEY (`userId`,`itemId`),
-  KEY `UserSolvedItems_itemId_fkey` (`itemId`),
+  KEY `UserSolvedItems_itemId_idx` (`itemId`),
   CONSTRAINT `UserSolvedItems_itemId_fkey` FOREIGN KEY (`itemId`) REFERENCES `items` (`itemId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `UserSolvedItems_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

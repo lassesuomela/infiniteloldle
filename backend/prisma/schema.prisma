@@ -91,7 +91,7 @@ model UserSolvedItems {
   user   users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, itemId])
-  @@index([itemId], map: "UserSolvedItems_itemId_fkey")
+  @@index([itemId])
 }
 
 model UserSolvedOldItems {
