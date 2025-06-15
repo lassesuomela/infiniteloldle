@@ -288,7 +288,6 @@ const ChangeSplashGuess = async (req, res) => {
     await userV2.updateById(userObj.id, {
       currentSplashChampion: newChampionId,
       currentSplashId: parseInt(randomSprite),
-      prestige,
     });
 
     res.json({
@@ -318,7 +317,6 @@ const ChangeItemGuess = async (req, res) => {
 
     await userV2.updateById(userObj.id, {
       currentItemId: newItemId,
-      prestige,
     });
 
     res.json({
@@ -348,7 +346,6 @@ const ChangeoldItemGuess = async (req, res) => {
 
     await userV2.updateById(userObj.id, {
       currentOldItemId: newOldItemId,
-      prestige,
     });
 
     res.json({
