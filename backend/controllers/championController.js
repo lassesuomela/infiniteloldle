@@ -242,10 +242,6 @@ const Guess = async (req, res) => {
   const unsolvedIds = allIds.filter((id) => !solvedChamps.includes(id));
   const newChampionId =
     unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
-  const newChampion = await prisma.champions.findUnique({
-    where: { id: newChampionId },
-  });
-
   // Update user
   await prisma.users.update({
     where: { id: user.id },
