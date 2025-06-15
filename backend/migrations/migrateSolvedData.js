@@ -24,6 +24,16 @@ async function migrateSolvedData() {
     );
 
     await Promise.all([
+      ...[...championIds].map((id) =>
+        prisma.userSolvedChampions
+          .create({
+            data: { userId: user.id, championId: id },
+          })
+          .catch((err) => {
+            if (err.code !== "P2002")
+              console.error("Champion insert error:", err);
+          })
+      ),
       ...[...itemIds].map((id) =>
         prisma.userSolvedItems
           .create({
@@ -46,7 +56,7 @@ async function migrateSolvedData() {
       ...[...splashIds].map((id) =>
         prisma.userSolvedSplashes
           .create({
-            data: { userId: user.id, splashId: id },
+            data: { userId: user.id, championId: id },
           })
           .catch((err) => {
             if (err.code !== "P2002")
