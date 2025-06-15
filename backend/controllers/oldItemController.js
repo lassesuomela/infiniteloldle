@@ -55,7 +55,7 @@ const GuessItem = async (req, res) => {
     return res.json({
       status: "success",
       correctGuess: false,
-      itemKey: guessOldItem.old_item_key,
+      itemId: guessOldItem.old_item_key,
     });
   }
 
@@ -93,7 +93,7 @@ const GuessItem = async (req, res) => {
   res.json({
     status: "success",
     correctGuess: true,
-    itemKey: guessOldItem.old_item_key,
+    itemId: guessOldItem.old_item_key,
     name: correctOldItem.name,
   });
 };
