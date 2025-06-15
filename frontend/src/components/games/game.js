@@ -122,7 +122,7 @@ export default function Game() {
     <div className="container main pt-4 pb-5 mb-5">
       <Helmet>
         <title>
-          Infiniteloldle - Ultimate LoL quiz - Champion guessing game
+          Infinite LoLdle - Ultimate LoL quiz - Champion guessing game
         </title>
         <meta
           name="description"

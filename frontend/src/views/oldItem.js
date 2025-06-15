@@ -6,7 +6,7 @@ export default function Splash() {
   return (
     <div>
       <Helmet>
-        <title>Infiniteloldle - Guessing legacy items game</title>
+        <title>Infinite LoLdle - Guessing legacy items game</title>
         <meta
           name="description"
           content="Infiniteloldle.com - Guess League of Legends legacy items by their icons."

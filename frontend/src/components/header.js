@@ -10,7 +10,7 @@ export default function Header() {
       <div className="container-fluid">
         <img src={"/favicon.webp"} className="m-2" alt="Logo" />
         <Link className="navbar-brand" to="/">
-          Infiniteloldle
+          Infinite LoLdle
         </Link>
 
         <button

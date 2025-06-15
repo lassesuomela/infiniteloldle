@@ -7,11 +7,12 @@ export default function MyStats() {
     <>
       <div className="container pb-5" id="myStats">
         <Helmet>
-          <title>Infiniteloldle - My statistics</title>
+          <title>Infinite LoLdle - My statistics</title>
           <meta
             name="description"
             content="Infiniteloldle.com - My statistics"
           />
+          <meta name="robots" content="noindex, nofollow" />
         </Helmet>
 
         <h3 className="text-center pb-3 pt-4">My stats</h3>

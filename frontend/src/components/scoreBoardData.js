@@ -74,6 +74,14 @@ export default function ScoreBoardData() {
   return (
     <>
       <h3 className="text-center pb-3 pt-4">Leaderboard</h3>
+
+      <p className="text-center pb-3">
+        Welcome to the Infinite LoLdle leaderboard - here you'll find the top
+        League of Legends quiz players ranked by their score. Compete daily,
+        climb the ranks and see how your skills stack up against thousands of
+        players around the world.
+      </p>
+
       <div className="d-flex justify-content-center text-center">
         <div className="card scoreboard">
           <table className="table table-striped table-hover">

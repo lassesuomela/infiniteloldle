@@ -6,7 +6,7 @@ export default function About() {
   return (
     <div className="container mb-5 pb-4">
       <Helmet>
-        <title>Infiniteloldle - Ultimate LoL quiz - About</title>
+        <title>Infinite LoLdle - Ultimate LoL quiz - About</title>
         <meta
           name="description"
           content="Explore an endless world of knowledge and test your expertise as you guess and identify the champions."
