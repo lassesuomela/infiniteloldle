@@ -252,7 +252,9 @@ const Guess = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in Guess function:", error);
-    return res.json({ status: "error", message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
   }
 };
 
@@ -341,7 +343,9 @@ const GuessSplash = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in Splash Guess function:", error);
-    return res.json({ status: "error", message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
   }
 };
 

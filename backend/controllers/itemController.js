@@ -96,7 +96,9 @@ const GuessItem = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in GuessItem:", error);
-    return res.json({ status: "error", message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
   }
 };
 
