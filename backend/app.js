@@ -12,6 +12,9 @@ const limiter = rateLimit({
   max: 450,
   standardHeaders: false,
   legacyHeaders: false,
+  validate: {
+    trustProxy: false,
+  },
 });
 
 const job = schedule.scheduleJob("55 23 * * *", () => {
@@ -22,7 +25,7 @@ const app = express();
 app.use(limiter);
 app.use(cors());
 
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 
 app.use(helmet());
 app.use(express.json());

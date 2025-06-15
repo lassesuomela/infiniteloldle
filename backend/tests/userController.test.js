@@ -126,6 +126,42 @@ describe("Testing userController routes", () => {
       });
   });
 
+  it("Change champion guess", async () => {
+    const res = await request(app)
+      .put("/api/user/champion")
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.message).toMatch(/Changed guess to champion game/);
+  });
+
+  it("Change champion splash guess", async () => {
+    const res = await request(app)
+      .put("/api/user/splash")
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.message).toMatch(/Changed splash guess/);
+  });
+
+  it("Change champion item guess", async () => {
+    const res = await request(app)
+      .put("/api/user/item")
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.message).toMatch(/Changed item guess/);
+  });
+
+  it("Change champion old item guess", async () => {
+    const res = await request(app)
+      .put("/api/user/oldItem")
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.message).toMatch(/Changed old item guess/);
+  });
+
   it("Deleting user account, with valid token.", (done) => {
     request(app)
       .delete("/api/user")

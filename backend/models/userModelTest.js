@@ -17,7 +17,7 @@ const user = {
   },
   fetchByToken: (token, cb) => {
     return db.query(
-      "SELECT nickname, solvedChampions, currentSplashChampion, solvedSplashChampions, timestamp, prestige, score, country, currentItemId, solvedItemIds, currentOldItemId, solvedOldItemIds FROM users WHERE token = ?;",
+      "SELECT nickname, currentSplashChampion, timestamp, prestige, score, country, currentItemId, currentOldItemId FROM users WHERE token = ?;",
       [token],
       cb
     );

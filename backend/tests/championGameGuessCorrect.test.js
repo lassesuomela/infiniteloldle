@@ -1,7 +1,8 @@
 const app = require("../app");
 const request = require("supertest");
-const userModel = require("../models/userModelTest");
 const championModel = require("../models/championModel");
+const user = require("../models/v2/user");
+const champion = require("../models/v2/champion");
 
 describe("Testing guessing champs correctly and prestige", () => {
   let token = "";
@@ -13,7 +14,6 @@ describe("Testing guessing champs correctly and prestige", () => {
     request(app)
       .post("/api/user")
       .send(body)
-
       .then((res) => {
         expect(res.body.status).toBe("success");
         expect(res.body).toHaveProperty("token");
@@ -39,43 +39,34 @@ describe("Testing guessing champs correctly and prestige", () => {
       });
   });
 
-  it("Guessing champion correctly.", (done) => {
-    championModel.getAllIds((err, results) => {
-      const idList = [];
-      results.forEach((result) => {
-        idList.push(result.id);
-      });
-      const guessId = idList.shift();
-      const guessedIds = idList.join(",");
+  it("Guessing champion correctly.", async () => {
+    const championIds = await champion.findAllIds();
 
-      championModel.getNameById(guessId, (err, result) => {
-        const guess = result[0].name;
+    const guessId = championIds.shift();
+    const guessedIds = championIds;
 
-        userModel.update(
-          {
-            solvedChampions: guessedIds,
-            currentChampion: guessId,
-            token: token,
-          },
-          (err, result) => {
-            const body = {
-              guess: guess,
-            };
+    const championData = await champion.findById(guessId);
+    const guess = championData.name;
 
-            request(app)
-              .post("/api/guess")
-              .send(body)
-              .set("Authorization", "Bearer " + token)
-              .then((res) => {
-                expect(res.body.status).toBe("success");
-                expect(res.body.correctGuess).toBe(true);
+    const userObj = await user.findByToken(token);
 
-                done();
-              });
-          }
-        );
-      });
-    });
+    for (const champId of guessedIds) {
+      await user.addSolvedChampion(userObj.id, champId);
+    }
+
+    await user.updateById(userObj.id, { currentChampion: guessId });
+
+    const body = {
+      guess: guess,
+    };
+
+    const res = await request(app)
+      .post("/api/guess")
+      .send(body)
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.correctGuess).toBe(true);
   });
 
   it("Get user data after guessing correctly", (done) => {

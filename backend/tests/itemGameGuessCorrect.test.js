@@ -1,7 +1,8 @@
 const app = require("../app");
 const request = require("supertest");
-const userModel = require("../models/userModelTest");
 const itemModel = require("../models/itemModel");
+const item = require("../models/v2/item");
+const user = require("../models/v2/user");
 
 describe("Testing guessing item correctly and prestige", () => {
   let token = "";
@@ -39,43 +40,38 @@ describe("Testing guessing item correctly and prestige", () => {
       });
   });
 
-  it("Guessing item correctly.", (done) => {
-    itemModel.getAllIds((err, items) => {
-      const idList = [];
-      items.forEach((item) => {
-        idList.push(item.itemId);
-      });
-      const guessId = idList.shift();
-      const guessedIds = idList.join(",");
+  it("Guessing item correctly.", async () => {
+    // Get all item IDs
+    const items = await item.findAllItemIds();
 
-      itemModel.getNameById(guessId, (err, result) => {
-        const guess = result[0].name;
+    const idList = items;
+    const guessId = idList.shift();
+    const guessedIds = idList;
 
-        userModel.updateItem(
-          {
-            currentItemId: guessId,
-            solvedItemIds: guessedIds,
-            token: token,
-          },
-          (err, result) => {
-            const body = {
-              guess: guess,
-            };
+    // Get item name by id
+    const result = await item.findByItemId(guessId);
+    const guess = result.name;
 
-            request(app)
-              .post("/api/item")
-              .send(body)
-              .set("Authorization", "Bearer " + token)
-              .then((res) => {
-                expect(res.body.status).toBe("success");
-                expect(res.body.correctGuess).toBe(true);
+    // Get user from token using the new user model
+    const userObj = await user.findByToken(token);
 
-                done();
-              });
-          }
-        );
-      });
-    });
+    // Insert solved items into the join table using the new user model
+    for (const itemId of guessedIds) {
+      await user.addSolvedItem(userObj.id, itemId);
+    }
+
+    // Set currentItemId to the missing one using the new user model
+    await user.updateById(userObj.id, { currentItemId: guessId });
+
+    const body = { guess };
+
+    const res = await request(app)
+      .post("/api/item")
+      .send(body)
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.correctGuess).toBe(true);
   });
 
   it("Get user data after guessing correctly", (done) => {

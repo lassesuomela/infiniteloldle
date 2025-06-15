@@ -1,6 +1,7 @@
 const item = require("../models/itemModel");
-const user = require("../models/userModel");
 const cache = require("../middleware/cache");
+const itemV2 = require("../models/v2/item");
+const userV2 = require("../models/v2/user");
 
 const Create = (req, res) => {
   const data = req.body;
@@ -21,138 +22,84 @@ const Create = (req, res) => {
   });
 };
 
-const GuessItem = (req, res) => {
-  const { guess } = req.body;
+const GuessItem = async (req, res) => {
+  try {
+    const { guess } = req.body;
 
-  if (!guess) {
-    return res.json({ status: "error", message: "Guess is required" });
-  }
+    if (!guess) {
+      return res.json({ status: "error", message: "Guess is required" });
+    }
 
-  const token = req.token;
-
-  item.getItemByToken(token, (err, data) => {
-    if (!data[0]) {
+    const token = req.token;
+    const user = await userV2.findByToken(token);
+    if (!user) {
       return res.json({ status: "error", message: "Token is invalid" });
     }
 
-    // wrong guess
-    if (guess !== data[0].name) {
-      item.getIdByName(guess, (err, guessItemData) => {
-        if (!guessItemData[0]) {
-          return res.json({
-            status: "error",
-            message: "No item with that name",
-          });
-        }
-        return res.json({
-          status: "success",
-          correctGuess: false,
-          itemId: guessItemData[0].itemId,
-        });
-      });
-    } else {
-      // correct guess
+    const correctItem = await itemV2.findByItemId(user.currentItemId);
+    if (!correctItem) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
 
-      item.getAllIds((err, itemData) => {
-        if (err) {
-          console.log(err);
-          return res.json({
-            status: "error",
-            message: "Error on fetching item ids",
-          });
-        }
-
-        user.fetchByToken(token, (err, userResult) => {
-          if (err) {
-            console.log(err);
-            return res.json({
-              status: "error",
-              message: "Error on fetching data with the token provided",
-            });
-          }
-
-          let solvedItemIds;
-
-          if (userResult[0]["solvedItemIds"]) {
-            solvedItemIds =
-              userResult[0]["currentItemId"] +
-              "," +
-              userResult[0]["solvedItemIds"];
-          } else {
-            solvedItemIds = userResult[0]["currentItemId"];
-          }
-
-          let solvedItemsArray;
-          if (
-            solvedItemIds.length > 1 &&
-            solvedItemIds.split(",").length > 1 &&
-            solvedItemIds.split(",").length < itemData.length
-          ) {
-            solvedItemsArray = solvedItemIds.split(",");
-          } else if (
-            solvedItemIds.length > 1 &&
-            solvedItemIds.split(",").length >= itemData.length
-          ) {
-            solvedItemIds = "";
-            solvedItemsArray = "";
-
-            userResult[0]["prestige"]++;
-          } else {
-            solvedItemsArray = solvedItemIds.toString();
-          }
-
-          // TODO: add prestige stuff
-
-          // remove solved items from the all items pool
-          const itemPool = itemData.filter((item) => {
-            return !solvedItemsArray.includes(item["itemId"].toString());
-          });
-
-          const random = Math.floor(Math.random() * itemPool.length);
-
-          const newItem = itemPool[random];
-
-          if (itemPool.length === 0) {
-            console.log("ERROR, no newItem");
-            console.log(req.body);
-            console.log(req.headers);
-            console.log(req.token);
-            console.log(itemPool);
-            console.log(itemPool.length);
-            console.log(random);
-            console.log(newItem);
-          }
-
-          const payload = {
-            currentItemId: newItem["itemId"],
-            solvedItemIds: solvedItemsArray.toString(),
-            score: (userResult[0]["score"] += 1),
-            prestige: userResult[0]["prestige"],
-            token: token,
-          };
-
-          user.updateItem(payload, (err, result) => {
-            if (err) {
-              console.log(err);
-              return res.json({
-                status: "error",
-                message: "Error on updating user data",
-              });
-            }
-
-            cache.deleteCache("/user:" + token);
-
-            res.json({
-              status: "success",
-              correctGuess: true,
-              name: data[0].name,
-              itemId: data[0].itemId,
-            });
-          });
-        });
+    const guessItemObj = await itemV2.findByName(guess);
+    if (!guessItemObj) {
+      return res.json({
+        status: "error",
+        message: "No item with that name",
       });
     }
-  });
+
+    if (guess !== correctItem.name) {
+      return res.json({
+        status: "success",
+        correctGuess: false,
+        itemId: guessItemObj.itemId,
+      });
+    }
+
+    // Correct guess
+    const allIds = await itemV2.findAllItemIds();
+    let solvedIds = await userV2.getSolvedItemIds(user.id);
+
+    // Add the just-solved item if not already present
+    if (!solvedIds.includes(correctItem.itemId)) {
+      await userV2.addSolvedItem(user.id, correctItem.itemId);
+      solvedIds.push(correctItem.itemId);
+    }
+
+    // Prestige logic
+    let prestige = user.prestige;
+    let solvedItems = solvedIds;
+    if (solvedIds.length >= allIds.length) {
+      await userV2.clearSolvedItems(user.id);
+      solvedItems = [];
+      prestige += 1;
+    }
+
+    // Pick a new item not yet solved
+    const unsolvedIds = allIds.filter((id) => !solvedItems.includes(id));
+    const newItemId =
+      unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
+    await userV2.updateById(user.id, {
+      currentItemId: newItemId,
+      prestige,
+      score: { increment: 1 },
+    });
+
+    cache.deleteCache("/user:" + token);
+
+    res.json({
+      status: "success",
+      correctGuess: true,
+      name: correctItem.name,
+      itemId: correctItem.itemId,
+    });
+  } catch (error) {
+    console.error("Error in GuessItem:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
 };
 
 const GetItemSprite = (req, res) => {
