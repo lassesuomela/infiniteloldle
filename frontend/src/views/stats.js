@@ -7,7 +7,7 @@ export default function ScoreBoard() {
     <>
       <div className="container pb-5">
         <Helmet>
-          <title>Infiniteloldle - Statistics</title>
+          <title>Infinite LoLdle - Statistics</title>
           <meta name="description" content="Infiniteloldle.com - Statistics" />
         </Helmet>
 
