@@ -131,14 +131,6 @@ const CheckToken = (req, res) => {
 
   user.fetchByTokenForUserDataAPI(token, (err, result) => {
     if (result && result[0][0]) {
-      delete result[0][0]["solvedChampions"];
-      delete result[0][0]["currentSplashChampion"];
-      delete result[0][0]["solvedSplashChampions"];
-      delete result[0][0]["solvedItemIds"];
-      delete result[0][0]["currentItemId"];
-      delete result[0][0]["currentOldItemId"];
-      delete result[0][0]["solvedOldItemIds"];
-
       result[0][0]["user_rank"] = result[1][0]
         ? result[1][0]["user_rank"]
         : "n/a";

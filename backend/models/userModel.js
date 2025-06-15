@@ -47,7 +47,7 @@ const user = {
   },
   fetchByTokenForUserDataAPI: (token, cb) => {
     return db.query(
-      "SELECT nickname, solvedChampions, currentSplashChampion, solvedSplashChampions, timestamp, prestige, score, country, currentItemId, solvedItemIds, currentOldItemId, solvedOldItemIds FROM users WHERE token = ?; SELECT user_rank FROM (SELECT token, DENSE_RANK() OVER (ORDER BY score DESC) AS user_rank FROM users WHERE score > 0) AS ranked_users WHERE token = ?;",
+      "SELECT nickname, timestamp, prestige, score, country FROM users WHERE token = ?; SELECT user_rank FROM (SELECT token, DENSE_RANK() OVER (ORDER BY score DESC) AS user_rank FROM users WHERE score > 0) AS ranked_users WHERE token = ?;",
       [token, token],
       cb
     );
