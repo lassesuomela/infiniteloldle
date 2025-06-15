@@ -3,6 +3,8 @@ const user = require("../models/userModel");
 const cache = require("../middleware/cache");
 const fs = require("fs");
 const path = require("path");
+const oldItemV2 = require("../models/v2/oldItem");
+const userV2 = require("../models/v2/user");
 
 const Create = (req, res) => {
   const data = req.body;
@@ -24,138 +26,75 @@ const Create = (req, res) => {
   });
 };
 
-const GuessItem = (req, res) => {
+const GuessItem = async (req, res) => {
   const { guess } = req.body;
-
   if (!guess) {
     return res.json({ status: "error", message: "Guess is required" });
   }
 
   const token = req.token;
+  const user = await userV2.findByToken(token);
+  if (!user) {
+    return res.json({ status: "error", message: "Token is invalid" });
+  }
 
-  oldItemModel.getItemByToken(token, (err, data) => {
-    if (!data[0]) {
-      return res.json({ status: "error", message: "Token is invalid" });
-    }
+  const correctOldItem = await oldItemV2.findById(user.currentOldItemId);
+  if (!correctOldItem) {
+    return res.json({ status: "error", message: "Token is invalid" });
+  }
 
-    // wrong guess
-    if (guess !== data[0].name) {
-      oldItemModel.getIdByName(guess, (err, guessItemData) => {
-        if (!guessItemData[0]) {
-          return res.json({
-            status: "error",
-            message: "No item with that name",
-          });
-        }
-        return res.json({
-          status: "success",
-          correctGuess: false,
-          itemId: guessItemData[0].old_item_key,
-        });
-      });
-    } else {
-      // correct guess
+  const guessOldItem = await oldItemV2.findByName(guess);
+  if (!guessOldItem) {
+    return res.json({
+      status: "error",
+      message: "Nothing found with that item name",
+    });
+  }
 
-      oldItemModel.getAllIds((err, itemData) => {
-        if (err) {
-          console.log(err);
-          return res.json({
-            status: "error",
-            message: "Error on fetching item ids",
-          });
-        }
+  if (guess !== correctOldItem.name) {
+    return res.json({
+      status: "success",
+      correctGuess: false,
+      itemKey: guessOldItem.old_item_key,
+    });
+  }
 
-        user.fetchByToken(token, (err, userResult) => {
-          if (err) {
-            console.log(err);
-            return res.json({
-              status: "error",
-              message: "Error on fetching data with the token provided",
-            });
-          }
+  // Correct guess
+  const allIds = await oldItemV2.findAllIds();
+  let solvedIds = await userV2.getSolvedOldItemIds(user.id);
 
-          let solvedItemIds;
+  // Add the just-solved old item if not already present
+  if (!solvedIds.includes(correctOldItem.id)) {
+    await userV2.addSolvedOldItem(user.id, correctOldItem.id);
+    solvedIds.push(correctOldItem.id);
+  }
 
-          if (userResult[0]["solvedOldItemIds"]) {
-            solvedItemIds =
-              userResult[0]["currentOldItemId"] +
-              "," +
-              userResult[0]["solvedOldItemIds"];
-          } else {
-            solvedItemIds = userResult[0]["currentOldItemId"];
-          }
+  // Prestige logic
+  let prestige = user.prestige;
+  let solvedItems = solvedIds;
+  if (solvedIds.length >= allIds.length) {
+    await userV2.clearSolvedOldItems(user.id);
+    solvedItems = [];
+    prestige += 1;
+  }
 
-          let solvedItemsArray;
-          if (
-            solvedItemIds &&
-            solvedItemIds.length > 1 &&
-            solvedItemIds.split(",").length < itemData.length
-          ) {
-            solvedItemsArray = solvedItemIds.split(",");
-          } else if (
-            solvedItemIds &&
-            solvedItemIds.length > 1 &&
-            solvedItemIds.split(",").length >= itemData.length
-          ) {
-            solvedItemIds = "";
-            solvedItemsArray = "";
-            userResult[0]["prestige"]++;
-          } else if (!solvedItemIds) {
-            solvedItemsArray = "";
-          } else {
-            solvedItemsArray = solvedItemIds.toString();
-          }
+  // Filter out solved items
+  const unsolvedIds = allIds.filter((id) => !solvedItems.includes(id));
+  const newOldItemId =
+    unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
+  await userV2.updateById(user.id, {
+    currentOldItemId: newOldItemId,
+    prestige,
+    score: { increment: 1 },
+  });
 
-          // remove solved items from the all items pool
-          const itemPool = itemData.filter((item) => {
-            return !solvedItemsArray.includes(item["id"].toString());
-          });
+  cache.deleteCache("/user:" + token);
 
-          const random = Math.floor(Math.random() * itemPool.length);
-
-          const newItem = itemPool[random];
-
-          if (itemPool.length === 0) {
-            console.log("ERROR, no newItem");
-            console.log(req.body);
-            console.log(req.headers);
-            console.log(req.token);
-            console.log(itemPool);
-            console.log(itemPool.length);
-            console.log(random);
-          }
-
-          const payload = {
-            currentOldItemId: newItem["id"],
-            solvedOldItemIds: solvedItemsArray
-              ? solvedItemsArray.toString()
-              : null,
-            score: (userResult[0]["score"] += 1),
-            prestige: userResult[0]["prestige"],
-            token: token,
-          };
-
-          user.updateOldItem(payload, (err, result) => {
-            if (err) {
-              console.log(err);
-              return res.json({
-                status: "error",
-                message: "Error on updating user data",
-              });
-            }
-
-            cache.deleteCache("/user:" + token);
-
-            res.json({
-              status: "success",
-              correctGuess: true,
-              name: data[0].name,
-              itemId: data[0].old_item_key,
-            });
-          });
-        });
-      });
-    }
+  res.json({
+    status: "success",
+    correctGuess: true,
+    itemKey: guessOldItem.old_item_key,
+    name: correctOldItem.name,
   });
 };
 
@@ -190,7 +129,7 @@ const GetItemSprite = (req, res) => {
 
     fs.readFile(imagePath, (err, data) => {
       if (err) {
-        console.log(`FATAL: Image is missing for: ${imageName}`)
+        console.log(`FATAL: Image is missing for: ${imageName}`);
         return res.status(404).json({
           status: "error",
           message: "File not found",
