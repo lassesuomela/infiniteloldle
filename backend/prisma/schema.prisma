@@ -56,19 +56,15 @@ model users {
   nickname              String                @default("Anonymous") @db.VarChar(30)
   token                 String                @db.VarChar(64)
   currentChampion       Int
-  solvedChampions       String?               @db.VarChar(1024)
   timestamp             String                @db.VarChar(10)
   prestige              Int                   @default(0)
   score                 Int                   @default(0)
   currentSplashChampion Int?
-  solvedSplashChampions String?               @db.VarChar(1024)
   currentSplashId       Int?
   country               String?               @db.VarChar(5)
   currentItemId         Int?
-  solvedItemIds         String?               @db.VarChar(2048)
   currentOldItemId      Int?
-  solvedOldItemIds      String?               @db.VarChar(2048)
-  solvedChampionsI      UserSolvedChampions[]
+  solvedChampions      UserSolvedChampions[]
   solvedItems           UserSolvedItems[]
   solvedOldItems        UserSolvedOldItems[]
   solvedSplashes        UserSolvedSplashes[]

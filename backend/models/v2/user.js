@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 const user = {
   async findByToken(token) {
+    console.log(`Finding user by token: ${token}`);
     return prisma.users.findFirst({ where: { token } });
   },
 

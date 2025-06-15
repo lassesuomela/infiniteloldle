@@ -20,23 +20,16 @@ const user = {
   },
   update: (data, cb) => {
     return db.query(
-      "UPDATE users SET currentChampion = ?, solvedChampions = ?, prestige = ?, score = ? WHERE token = ?",
-      [
-        data.currentChampion,
-        data.solvedChampions,
-        data.prestige,
-        data.score,
-        data.token,
-      ],
+      "UPDATE users SET currentChampion = ?, prestige = ?, score = ? WHERE token = ?",
+      [data.currentChampion, data.prestige, data.score, data.token],
       cb
     );
   },
   updateSplash: (data, cb) => {
     return db.query(
-      "UPDATE users SET currentSplashChampion = ?, solvedSplashChampions = ?, currentSplashId = ?, prestige = ?, score = ? WHERE token = ?",
+      "UPDATE users SET currentSplashChampion = ? currentSplashId = ?, prestige = ?, score = ? WHERE token = ?",
       [
         data.currentSplashChampion,
-        data.solvedSplashChampions,
         data.currentSplashId,
         data.prestige,
         data.score,
@@ -54,7 +47,7 @@ const user = {
   },
   fetchByToken: (token, cb) => {
     return db.query(
-      "SELECT nickname, solvedChampions, currentSplashChampion, solvedSplashChampions, timestamp, prestige, score, country, currentItemId, solvedItemIds, currentOldItemId, solvedOldItemIds FROM users WHERE token = ?;",
+      "SELECT nickname, currentSplashChampion, timestamp, prestige, score, country, currentItemId, currentOldItemId FROM users WHERE token = ?;",
       [token],
       cb
     );
