@@ -276,15 +276,7 @@ const ChangeSplashGuess = async (req, res) => {
 
     const allChampionIds = await championV2.findAllIds();
     const solvedIds = await userV2.getSolvedSplashChampionIds(userObj.id);
-    let champPool = allChampionIds.filter((id) => !solvedIds.includes(id));
-
-    // Prestige logic: if all solved, reset
-    let prestige = userObj.prestige;
-    if (champPool.length === 0) {
-      await userV2.clearSolvedSplashes(userObj.id);
-      champPool = allChampionIds;
-      prestige += 1;
-    }
+    const champPool = allChampionIds.filter((id) => !solvedIds.includes(id));
 
     const random = Math.floor(Math.random() * champPool.length);
     const newChampionId = champPool[random];
@@ -319,15 +311,7 @@ const ChangeItemGuess = async (req, res) => {
 
     const allItemIds = await itemV2.findAllItemIds();
     const solvedIds = await userV2.getSolvedItemIds(userObj.id);
-    let itemPool = allItemIds.filter((id) => !solvedIds.includes(id));
-
-    // Prestige logic: if all solved, reset
-    let prestige = userObj.prestige;
-    if (itemPool.length === 0) {
-      await userV2.clearSolvedItems(userObj.id);
-      itemPool = allItemIds;
-      prestige += 1;
-    }
+    const itemPool = allItemIds.filter((id) => !solvedIds.includes(id));
 
     const random = Math.floor(Math.random() * itemPool.length);
     const newItemId = itemPool[random];
@@ -357,15 +341,7 @@ const ChangeoldItemGuess = async (req, res) => {
 
     const allOldItemIds = await oldItemV2.findAllIds();
     const solvedIds = await userV2.getSolvedOldItemIds(userObj.id);
-    let itemPool = allOldItemIds.filter((id) => !solvedIds.includes(id));
-
-    // Prestige logic: if all solved, reset
-    let prestige = userObj.prestige;
-    if (itemPool.length === 0) {
-      await userV2.clearSolvedOldItems(userObj.id);
-      itemPool = allOldItemIds;
-      prestige += 1;
-    }
+    const itemPool = allOldItemIds.filter((id) => !solvedIds.includes(id));
 
     const random = Math.floor(Math.random() * itemPool.length);
     const newOldItemId = itemPool[random];
