@@ -6,9 +6,6 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const schedule = require("node-schedule");
-const { PrismaClient } = require("./generated/prisma");
-
-const prisma = new PrismaClient();
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -25,19 +22,6 @@ const job = schedule.scheduleJob("55 23 * * *", () => {
 });
 
 const app = express();
-
-app.get("/users", async (req, res) => {
-  const users = await prisma.users.findFirst({
-    include: {
-      solvedChampionsI: { include: { champion: true } },
-      solvedItems: { include: { item: true } },
-      solvedOldItems: { include: { oldItem: true } },
-      solvedSplashes: { include: { champion: true } },
-    },
-  });
-  res.json(users);
-});
-
 app.use(limiter);
 app.use(cors());
 
