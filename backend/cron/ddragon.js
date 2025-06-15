@@ -1,6 +1,5 @@
-// getLatestPatch.js
-
 const axios = require("axios");
+const semver = require("semver");
 
 const VERSIONS_URL = "https://ddragon.leagueoflegends.com/api/versions.json";
 
