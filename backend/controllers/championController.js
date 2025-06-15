@@ -137,18 +137,14 @@ const Guess = async (req, res) => {
     return res.json({ status: "error", message: "Guess is required" });
 
   const token = req.token;
-  const user = await prisma.users.findFirst({ where: { token } });
+  const user = await userV2.findByToken(token);
   if (!user) return res.json({ status: "error", message: "Token is invalid" });
 
-  const correctChampion = await prisma.champions.findFirst({
-    where: { id: user.currentChampion },
-  });
+  const correctChampion = await championV2.findById(user.currentChampion);
   if (!correctChampion)
     return res.json({ status: "error", message: "Token is invalid" });
 
-  const guessChampion = await prisma.champions.findFirst({
-    where: { name: guess },
-  });
+  const guessChampion = await championV2.findByName(guess);
 
   if (!guessChampion) {
     return res.json({
@@ -210,48 +206,36 @@ const Guess = async (req, res) => {
 
   // correct guess
   // Get all champion IDs
-  const allChampionIds = await prisma.champions.findMany({
-    select: { id: true },
-  });
-  const allIds = allChampionIds.map((c) => c.id);
+  const allChampionIds = await championV2.findAllIds();
 
   // Get solved champion IDs for this user
-  const solvedRows = await prisma.userSolvedChampions.findMany({
-    where: { userId: user.id },
-    select: { championId: true },
-  });
-  let solvedIds = solvedRows.map((row) => row.championId);
+  const solvedRows = await userV2.getSolvedChampionIds(user.id);
 
   // Add the just-solved champion if not already present
-  if (!solvedIds.includes(correctChampion.id)) {
-    await prisma.userSolvedChampions.create({
-      data: { userId: user.id, championId: correctChampion.id },
-    });
-    solvedIds.push(correctChampion.id);
+  if (!solvedRows.includes(correctChampion.id)) {
+    await userV2.addSolvedChampion(user.id, correctChampion.id);
+    solvedRows.push(correctChampion.id);
   }
 
   // Prestige logic
   let prestige = user.prestige;
-  let solvedChamps = solvedIds;
-  if (solvedIds.length >= allIds.length) {
+  let solvedChamps = solvedRows;
+  if (solvedRows.length >= allChampionIds.length) {
     // All solved, reset
-    await prisma.userSolvedChampions.deleteMany({ where: { userId: user.id } });
+    await userV2.clearSolvedChampions(user.id);
     solvedChamps = [];
     prestige += 1;
   }
 
   // Pick a new champion not yet solved
-  const unsolvedIds = allIds.filter((id) => !solvedChamps.includes(id));
+  const unsolvedIds = allChampionIds.filter((id) => !solvedChamps.includes(id));
   const newChampionId =
     unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
   // Update user
-  await prisma.users.update({
-    where: { id: user.id },
-    data: {
-      currentChampion: newChampionId,
-      prestige,
-      score: { increment: 1 },
-    },
+  await userV2.updateById(user.id, {
+    currentChampion: newChampionId,
+    prestige,
+    score: { increment: 1 },
   });
 
   cache.deleteCache("/user:" + token);
