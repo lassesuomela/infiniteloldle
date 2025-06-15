@@ -30,4 +30,4 @@ yarn-error.log*
 
 !public/favicon.ico
 !public/favicon.webp
-!public/preview.webp
+!public/preview.png
