@@ -262,148 +262,87 @@ const Guess = async (req, res) => {
   });
 };
 
-const GuessSplash = (req, res) => {
+const GuessSplash = async (req, res) => {
   const { guess } = req.body;
-
   if (!guess) {
     return res.json({ status: "error", message: "Guess is required" });
   }
 
   const token = req.token;
+  const userObj = await user.findByToken(token);
+  if (!userObj) {
+    return res.json({ status: "error", message: "Token is invalid" });
+  }
 
-  champion.getSplashByToken(token, (err, correctChampionData) => {
-    if (!correctChampionData[0]) {
-      return res.json({ status: "error", message: "Token is invalid" });
-    }
+  // Get the correct champion for the user's current splash
+  const correctChampion = await champion.findById(
+    userObj.currentSplashChampion
+  );
+  if (!correctChampion) {
+    return res.json({ status: "error", message: "Token is invalid" });
+  }
 
-    // wrong guess return diff
-
-    champion.getByName(guess, (err, guessChampionData) => {
-      if (!guessChampionData[0]) {
-        return res.json({
-          status: "error",
-          message: "Nothing found with that champion name",
-        });
-      }
-
-      if (guess !== correctChampionData[0].name) {
-        return res.json({
-          status: "success",
-          correctGuess: false,
-          championKey: guessChampionData[0].championKey,
-        });
-      } else {
-        // correct guess
-
-        champion.getAllIds((err, data) => {
-          if (err) {
-            console.log(err);
-            return res.json({
-              status: "error",
-              message: "Error on fetching champions ids",
-            });
-          }
-
-          user.fetchByToken(token, (err, userResult) => {
-            if (err) {
-              console.log(err);
-              return res.json({
-                status: "error",
-                message: "Error on fetching data with the token provided",
-              });
-            }
-
-            let solvedChampions;
-
-            if (userResult[0]["solvedSplashChampions"]) {
-              solvedChampions =
-                correctChampionData[0]["id"] +
-                "," +
-                userResult[0]["solvedSplashChampions"];
-            } else {
-              solvedChampions = correctChampionData[0]["id"];
-            }
-
-            let solvedChamps;
-
-            // separeate prestige system...
-            // fix
-            if (
-              solvedChampions.length > 1 &&
-              solvedChampions.split(",").length > 1 &&
-              solvedChampions.split(",").length < data.length
-            ) {
-              solvedChamps = solvedChampions.split(",");
-            } else if (
-              solvedChampions.length > 1 &&
-              solvedChampions.split(",").length >= data.length
-            ) {
-              solvedChamps = "";
-              solvedChampions = "";
-
-              userResult[0]["prestige"]++;
-            } else {
-              solvedChamps = solvedChampions.toString();
-            }
-
-            // remove solved champs from the all champions pool
-            const champPool = data.filter((id) => {
-              return !solvedChamps.includes(id["id"].toString());
-            });
-
-            const random = Math.floor(Math.random() * champPool.length);
-
-            const newChampion = champPool[random];
-
-            champion.getSplashById(newChampion["id"], (err, result) => {
-              const sprites = result[0]["spriteIds"].split(",");
-
-              const random = Math.floor(Math.random() * sprites.length);
-
-              const randomSprite = sprites[random];
-
-              if (randomSprite === undefined) {
-                console.log("ERROR, no random sprite");
-                console.log(req.body);
-                console.log(req.headers);
-                console.log(req.token);
-                console.log(sprites);
-                console.log(sprites.length);
-                console.log(random);
-              }
-
-              const payload = {
-                currentSplashChampion: newChampion["id"],
-                solvedSplashChampions: solvedChampions,
-                currentSplashId: parseInt(randomSprite),
-                prestige: userResult[0]["prestige"],
-                score: (userResult[0]["score"] += 1),
-                token: token,
-              };
-
-              user.updateSplash(payload, (err, result) => {
-                if (err) {
-                  console.log(err);
-                  return res.json({
-                    status: "error",
-                    message: "Error on updating user data",
-                  });
-                }
-
-                cache.deleteCache("/user:" + token);
-
-                res.json({
-                  status: "success",
-                  correctGuess: true,
-                  championKey: guessChampionData[0].championKey,
-                  title: correctChampionData[0].title,
-                });
-              });
-            });
-          });
-        });
-      }
+  // Get the guessed champion
+  const guessChampion = await champion.findByName(guess);
+  if (!guessChampion) {
+    return res.json({
+      status: "error",
+      message: "Nothing found with that champion name",
     });
+  }
+
+  if (guess !== correctChampion.name) {
+    return res.json({
+      status: "success",
+      correctGuess: false,
+      championKey: guessChampion.championKey,
+    });
+  }
+
+  // correct guess
+  const allIds = await champion.findAllIds();
+  let solvedIds = await user.getSolvedSplashChampionIds(userObj.id);
+
+  // Add the just-solved splash if not already present
+  if (!solvedIds.includes(correctChampion.id)) {
+    await user.addSolvedSplash(userObj.id, correctChampion.id);
+    solvedIds.push(correctChampion.id);
+  }
+
+  // Prestige logic
+  let prestige = userObj.prestige;
+  let solvedChamps = solvedIds;
+  if (solvedIds.length >= allIds.length) {
+    await user.clearSolvedSplashes(userObj.id);
+    solvedChamps = [];
+    prestige += 1;
+  }
+
+  // Pick a new champion not yet solved
+  const unsolvedIds = allIds.filter((id) => !solvedChamps.includes(id));
+  const newChampionId =
+    unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
+  const newChampion = await champion.findById(newChampionId);
+
+  // Pick a random splash sprite
+  const sprites = newChampion.spriteIds.split(",");
+  const randomSprite = sprites[Math.floor(Math.random() * sprites.length)];
+
+  // Update user splash info
+  await user.updateById(userObj.id, {
+    currentSplashChampion: newChampionId,
+    currentSplashId: parseInt(randomSprite),
+    prestige,
+    score: { increment: 1 },
+  });
+
+  cache.deleteCache("/user:" + token);
+
+  res.json({
+    status: "success",
+    correctGuess: true,
+    championKey: guessChampion.championKey,
+    title: correctChampion.title,
   });
 };
 

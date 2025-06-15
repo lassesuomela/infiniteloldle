@@ -1,7 +1,7 @@
 const app = require("../app");
 const request = require("supertest");
-const userModel = require("../models/userModelTest");
-const championModel = require("../models/championModel");
+const userModel = require("../models/v2/user");
+const championModel = require("../models/v2/champion");
 
 describe("Testing guessing splash correctly and prestige", () => {
   let token = "";
@@ -39,43 +39,38 @@ describe("Testing guessing splash correctly and prestige", () => {
       });
   });
 
-  it("Guessing splash correctly.", (done) => {
-    championModel.getAllIds((err, results) => {
-      const idList = [];
-      results.forEach((result) => {
-        idList.push(result.id);
-      });
-      const guessId = idList.shift();
-      const guessedIds = idList.join(",");
+  it("Guessing splash correctly.", async () => {
+    // Get all champion IDs
+    const championIds = await championModel.findAllIds();
 
-      championModel.getNameById(guessId, (err, result) => {
-        const guess = result[0].name;
+    // The one to guess
+    const guessId = championIds.shift();
+    const guessedIds = championIds;
 
-        userModel.updateSplash(
-          {
-            currentSplashChampion: guessId,
-            solvedSplashChampions: guessedIds,
-            token: token,
-          },
-          (err, result) => {
-            const body = {
-              guess: guess,
-            };
+    // Get champion name by id
+    const championData = await championModel.findById(guessId);
+    const guess = championData.name;
 
-            request(app)
-              .post("/api/splash")
-              .send(body)
-              .set("Authorization", "Bearer " + token)
-              .then((res) => {
-                expect(res.body.status).toBe("success");
-                expect(res.body.correctGuess).toBe(true);
+    // Get user from token using the new user model
+    const userObj = await userModel.findByToken(token);
 
-                done();
-              });
-          }
-        );
-      });
-    });
+    // Insert solved splashes into the join table using the new user model
+    for (const champId of guessedIds) {
+      await userModel.addSolvedSplash(userObj.id, champId);
+    }
+
+    // Set currentSplashChampion to the missing one using the new user model
+    await userModel.updateById(userObj.id, { currentSplashChampion: guessId });
+
+    const body = { guess };
+
+    const res = await request(app)
+      .post("/api/splash")
+      .send(body)
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.correctGuess).toBe(true);
   });
 
   it("Get user data after guessing correctly", (done) => {
