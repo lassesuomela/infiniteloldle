@@ -2,7 +2,8 @@ const app = require("../app");
 const request = require("supertest");
 const userModel = require("../models/userModelTest");
 const championModel = require("../models/championModel");
-const { user } = require("../models/v2/user");
+const user = require("../models/v2/user");
+const champion = require("../models/v2/champion");
 
 describe("Testing guessing champs correctly and prestige", () => {
   let token = "";
@@ -39,45 +40,34 @@ describe("Testing guessing champs correctly and prestige", () => {
       });
   });
 
-  it("Guessing champion correctly.", async (done) => {
-    championModel.getAllIds(async (err, results) => {
-      const idList = [];
-      results.forEach((result) => {
-        idList.push(result.id);
-      });
-      const guessId = idList.shift();
-      const guessedIds = idList;
+  it("Guessing champion correctly.", async () => {
+    const championIds = await champion.findAllIds();
 
-      championModel.getNameById(guessId, async (err, result) => {
-        const guess = result[0].name;
+    const guessId = championIds.shift();
+    const guessedIds = championIds;
 
-        // Get user from token using the new user model
-        const userObj = await user.findByToken(token);
+    const championData = await champion.findById(guessId);
+    const guess = championData.name;
 
-        // Insert solved champions into the join table using the new user model
-        for (const champId of guessedIds) {
-          await user.addSolvedChampion(userObj.id, champId);
-        }
+    const userObj = await user.findByToken(token);
 
-        // Set currentChampion to the missing one using the new user model
-        await user.updateById(userObj.id, { currentChampion: guessId });
+    for (const champId of guessedIds) {
+      await user.addSolvedChampion(userObj.id, champId);
+    }
 
-        const body = {
-          guess: guess,
-        };
+    await user.updateById(userObj.id, { currentChampion: guessId });
 
-        request(app)
-          .post("/api/guess")
-          .send(body)
-          .set("Authorization", "Bearer " + token)
-          .then((res) => {
-            expect(res.body.status).toBe("success");
-            expect(res.body.correctGuess).toBe(true);
+    const body = {
+      guess: guess,
+    };
 
-            done();
-          });
-      });
-    });
+    const res = await request(app)
+      .post("/api/guess")
+      .send(body)
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.correctGuess).toBe(true);
   });
 
   it("Get user data after guessing correctly", (done) => {
