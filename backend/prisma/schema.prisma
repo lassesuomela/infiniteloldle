@@ -109,3 +109,9 @@ model UserSolvedSplashes {
   @@id([userId, championId])
   @@index([championId], map: "UserSolvedSplashes_splashId_fkey")
 }
+
+model lol_patches {
+  id         Int      @id @default(autoincrement())
+  version    String   @unique @db.VarChar(20)
+  checkedAt  DateTime @default(now()) @db.Timestamp(0)
+}
