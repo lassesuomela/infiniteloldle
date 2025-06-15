@@ -2,33 +2,31 @@ name: Build & Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - "backend/**"
       - "frontend/**"
 
 jobs:
-        
   Build-React:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [22.x]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup npm
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: ./frontend/package-lock.json
-    - run: npm ci
-      working-directory: ./frontend
-    - run: npm run build
-      working-directory: ./frontend
+      - uses: actions/checkout@v3
+      - name: Setup npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: ./frontend/package-lock.json
+      - run: npm ci
+        working-directory: ./frontend
+      - run: npm run build
+        working-directory: ./frontend
 
   Build-Containers-Run-Tests:
     needs: Build-React
@@ -48,6 +46,7 @@ jobs:
           echo TOKEN=${{ secrets.TEST_TOKEN }} >> backend/.env
           echo NODE_ENV=${{ secrets.TEST_NODE_ENV }} >> backend/.env
           echo ENV=${{ secrets.TEST_ENV }} >> backend/.env
+          echo DATABASE_URL=${{ secrets.TEST_DB_URL }} >> backend/.env
           cat backend/.env
 
       - name: Set up Docker Compose
@@ -63,7 +62,7 @@ jobs:
 
       - name: Wait for services to start
         run: |
-          sleep 20
+          sleep 10
 
       - name: Run tests and check status
         id: tests
@@ -79,17 +78,17 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Pull from GitHub, build images and run them
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.REMOTE_HOST }}
-        username: ${{ secrets.REMOTE_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.REMOTE_PORT }}
-        script: |
-          cd ${{ secrets.REMOTE_PATH }}
-          git pull
-          cd ./backend
-          chmod +x ./restart.sh
-          ./restart.sh
-          exit
+      - name: Pull from GitHub, build images and run them
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            cd ${{ secrets.REMOTE_PATH }}
+            git pull
+            cd ./backend
+            chmod +x ./restart.sh
+            ./restart.sh
+            exit
