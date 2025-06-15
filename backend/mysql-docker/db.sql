@@ -156,21 +156,17 @@ CREATE TABLE `users` (
   `nickname` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT 'Anonymous',
   `token` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `currentChampion` int NOT NULL,
-  `solvedChampions` varchar(1024) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `timestamp` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `prestige` int NOT NULL DEFAULT '0',
   `score` int NOT NULL DEFAULT '0',
   `currentSplashChampion` int DEFAULT NULL,
-  `solvedSplashChampions` varchar(1024) DEFAULT NULL,
   `currentSplashId` int DEFAULT NULL,
   `country` varchar(5) DEFAULT NULL,
   `currentItemId` int DEFAULT NULL,
-  `solvedItemIds` varchar(2048) DEFAULT NULL,
   `currentOldItemId` int DEFAULT NULL,
-  `solvedOldItemIds` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3611 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=82820 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
