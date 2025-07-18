@@ -1,5 +1,7 @@
 const axios = require("axios");
 const semver = require("semver");
+const cheerio = require("cheerio");
+
 const { PrismaClient } = require("../generated/prisma");
 const prisma = new PrismaClient();
 const championV2 = require("../models/v2/champion");
@@ -128,27 +130,62 @@ function findMissingChampions(latestChampions, existingChampions) {
 }
 
 async function buildChampionPayload(champion, version) {
-  const detailUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion/${champion.id}.json`;
-  const detailResponse = await axios.get(detailUrl);
+  try {
+    const detailUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion/${champion.id}.json`;
+    const detailResponse = await axios.get(detailUrl);
 
-  const skins = detailResponse.data.data[champion.id].skins.map((skin) => ({
-    id: skin.id,
-    name: skin.name,
-    num: skin.num,
-  }));
+    const skins = detailResponse.data.data[champion.id].skins.map((skin) => ({
+      id: skin.id,
+      name: skin.name,
+      num: skin.num,
+    }));
 
-  const genderInfo = await determineGenderFromLore(champion.id);
+    const genderInfo = await determineGenderFromLore(champion.id);
 
-  // TODO: Fetch release year and region data for each champion from wiki
-  return {
-    championId: champion.id,
-    name: champion.name,
-    title: champion.title,
-    rangeType: getChampionRangeType(champion.stats.attackrange),
-    resource: champion.partype,
-    skins,
-    gender: genderInfo.gender,
-  };
+    const releaseYear = await fetchChampionReleaseYear(champion.id);
+
+    // TODO: Fetch release year and region data for each champion from wiki
+    return {
+      championId: champion.id,
+      name: champion.name,
+      title: champion.title,
+      rangeType: getChampionRangeType(champion.stats.attackrange),
+      resource: champion.partype,
+      skins,
+      gender: genderInfo.gender,
+      released: releaseYear,
+    };
+  } catch (error) {
+    console.error(
+      `Error building payload for champion ${champion.id}:`,
+      error.message
+    );
+    return null;
+  }
+}
+
+async function fetchChampionReleaseYear(champName) {
+  const url = `https://wiki.leagueoflegends.com/en-us/Template:Data_${champName}/`;
+
+  try {
+    const response = await axios.get(url);
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    const releaseDate = $("tr")
+      .filter((i, el) => $(el).find("td:first-child").text().trim() === "date")
+      .find("td:nth-child(2)")
+      .text()
+      .trim();
+
+    return releaseDate.slice(0, 4);
+  } catch (err) {
+    console.error(
+      `Failed to fetch release year for ${champName}:`,
+      err.message
+    );
+    return null;
+  }
 }
 
 async function saveLatestPatch() {
