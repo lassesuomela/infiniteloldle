@@ -23,7 +23,9 @@
     "mysql2": "^2.3.3",
     "node-cache": "^5.1.2",
     "node-schedule": "^2.1.1",
+    "p-limit": "3.0.0",
     "semver": "^7.7.2",
+    "sharp": "^0.34.3",
     "ua-parser-js": "^1.0.38"
   },
   "devDependencies": {
