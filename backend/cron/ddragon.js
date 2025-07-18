@@ -1,14 +1,18 @@
 const axios = require("axios");
 const semver = require("semver");
 const cheerio = require("cheerio");
+const fsp = require("fs").promises;
+const pLimit = require("p-limit");
+const path = require("path");
+const sharp = require("sharp");
 
 const { PrismaClient } = require("../generated/prisma");
 const prisma = new PrismaClient();
 const championV2 = require("../models/v2/champion");
 
-const VERSIONS_URL = "https://ddragon.leagueoflegends.com/api/versions.json";
-const BASE_UNIVERSE_URL =
-  "https://universe-meeps.leagueoflegends.com/v1/en_us/champions";
+const DDRAGON_BASE = "https://ddragon.leagueoflegends.com";
+const BASE_UNIVERSE_URL = "https://universe-meeps.leagueoflegends.com";
+const WIKI_BASE_URL = "https://wiki.leagueoflegends.com";
 
 const MALE_WORDS = ["he", "him", "his"];
 const FEMALE_WORDS = ["she", "her", "hers"];
@@ -47,7 +51,7 @@ function computeMalePercentage({ male, female }) {
 
 async function determineGenderFromLore(championId) {
   try {
-    const loreUrl = `${BASE_UNIVERSE_URL}/${championId.toLowerCase()}/index.json`;
+    const loreUrl = `${BASE_UNIVERSE_URL}/v1/en_us/champions/${championId.toLowerCase()}/index.json`;
     const loreResponse = await axios.get(loreUrl);
 
     const { full, short } = loreResponse.data.champion.biography;
@@ -107,14 +111,14 @@ async function determineGenderFromLore(championId) {
 }
 
 async function fetchLatestPatch() {
-  const patchResponse = await axios.get(VERSIONS_URL);
+  const patchResponse = await axios.get(DDRAGON_BASE + "/api/versions.json");
   const versions = patchResponse.data;
   if (!versions.length) throw new Error("No patch versions found.");
   return versions[0];
 }
 
 async function fetchChampionsForPatch(version) {
-  const championsUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`;
+  const championsUrl = `${DDRAGON_BASE}/cdn/${version}/data/en_US/champion.json`;
   const championsResponse = await axios.get(championsUrl);
   const championsMap = championsResponse.data.data;
   return Object.values(championsMap);
@@ -131,7 +135,7 @@ function findMissingChampions(latestChampions, existingChampions) {
 
 async function buildChampionPayload(champion, version) {
   try {
-    const detailUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion/${champion.id}.json`;
+    const detailUrl = `${DDRAGON_BASE}/cdn/${version}/data/en_US/champion/${champion.id}.json`;
     const detailResponse = await axios.get(detailUrl);
 
     const skins = detailResponse.data.data[champion.id].skins.map((skin) => ({
@@ -144,7 +148,7 @@ async function buildChampionPayload(champion, version) {
 
     const releaseYear = await fetchChampionReleaseYear(champion.id);
 
-    // TODO: Fetch release year and region data for each champion from wiki
+    // TODO: Fetch and region data for each champion from wiki
     return {
       championId: champion.id,
       name: champion.name,
@@ -165,7 +169,7 @@ async function buildChampionPayload(champion, version) {
 }
 
 async function fetchChampionReleaseYear(champName) {
-  const url = `https://wiki.leagueoflegends.com/en-us/Template:Data_${champName}/`;
+  const url = `${WIKI_BASE_URL}/en-us/Template:Data_${champName}/`;
 
   try {
     const response = await axios.get(url);
@@ -186,6 +190,129 @@ async function fetchChampionReleaseYear(champName) {
     );
     return null;
   }
+}
+
+async function fetchPngBuffer(url) {
+  const response = await axios.get(url, { responseType: "arraybuffer" });
+  return Buffer.from(response.data);
+}
+
+async function ensureDir(dirPath) {
+  try {
+    await fsp.mkdir(dirPath, { recursive: true });
+    return true;
+  } catch (error) {
+    console.error(`Failed to create directory ${dirPath}: ${error.message}`);
+    return false;
+  }
+}
+
+async function saveBuffer(filePath, buffer) {
+  await fsp.writeFile(filePath, buffer);
+}
+
+async function convertImagesToWebp(inputDir, options) {
+  const files = await fsp.readdir(inputDir);
+  const webpFiles = files.filter(
+    (file) => file.endsWith(".png") || file.endsWith(".jpg")
+  );
+
+  const limit = pLimit(4);
+  const tasks = webpFiles.map((file) =>
+    limit(async () => {
+      const inputPath = path.join(inputDir, file);
+      const outputPath = path.join(
+        inputDir,
+        file.replace(/\.(png|jpg)$/, ".webp")
+      );
+      try {
+        await sharp(inputPath).webp(options).toFile(outputPath);
+        console.log(`Converted ${file} to webp`);
+      } catch (err) {
+        console.error(`Failed to convert ${file}:`, err.message);
+      }
+    })
+  );
+
+  await Promise.all(tasks);
+  console.log(`Converted ${webpFiles.length} images to webp format.`);
+
+  webpFiles.forEach((file) => {
+    const inputPath = path.join(inputDir, file);
+    fsp.unlink(inputPath).catch((err) => {
+      console.error(`Failed to delete original file ${file}:`, err.message);
+    });
+  });
+  console.log(`Deleted original files in ${inputDir}.`);
+}
+
+async function downloadChampionAsset(url, championName, outputDir, ext) {
+  const savePath = path.join(outputDir, `${championName}.${ext}`);
+
+  try {
+    const png = await fetchPngBuffer(url);
+    await saveBuffer(savePath, png);
+    return { championName, ok: true };
+  } catch (err) {
+    console.log(
+      `fail ${championName} (${err.response?.status || err.message})`
+    );
+    return { championName, ok: false, error: err };
+  }
+}
+
+async function downloadBulkChampionImages(
+  version,
+  missingChampNames,
+  championPayloads,
+  outputDir,
+  concurrency = 4
+) {
+  console.log("Downloading champion images");
+
+  const splashdir = path.join(outputDir, "splash");
+  const icondir = path.join(outputDir, "icons");
+
+  await ensureDir(splashdir);
+  await ensureDir(icondir);
+
+  const limit = pLimit(concurrency);
+
+  const championUrls = missingChampNames.map((champion) => ({
+    name: champion,
+    iconUrl: `${DDRAGON_BASE}/cdn/${version}/img/champion/${champion}.png`,
+    splashes:
+      championPayloads
+        .find((c) => c.championId.toLowerCase() === champion.toLowerCase())
+        ?.skins.map((skin) => ({
+          name: skin.name,
+          num: skin.num,
+          url: `${DDRAGON_BASE}/cdn/img/champion/splash/${champion}_${skin.num}.jpg`,
+        })) || [],
+  }));
+
+  const tasks = championUrls.flatMap((champion) => [
+    // Icon download
+    limit(() =>
+      downloadChampionAsset(champion.iconUrl, champion.name, icondir, "png")
+    ),
+    // Splash downloads
+    ...champion.splashes.map((splash) =>
+      limit(() =>
+        downloadChampionAsset(
+          splash.url,
+          `${champion.name}_${splash.num}`,
+          splashdir,
+          "jpg"
+        )
+      )
+    ),
+  ]);
+
+  const results = await Promise.all(tasks);
+  const succeeded = results.filter((r) => r.ok).length;
+  const failed = results.length - succeeded;
+  return { total: results.length, succeeded, failed, results };
 }
 
 async function saveLatestPatch() {
@@ -219,7 +346,22 @@ async function saveLatestPatch() {
       championPayloads.push(payload);
     }
 
-    console.log("Prepared champions:", championPayloads);
+    const missingChampNames = missingChampions.map((champ) => champ.id);
+
+    const downloadResult = await downloadBulkChampionImages(
+      latestPatch,
+      missingChampNames,
+      championPayloads,
+      "./images/champions"
+    );
+
+    console.log(
+      `Downloaded ${downloadResult.succeeded} champion images, ${downloadResult.failed} failed.`
+    );
+
+    // Convert images to webp format and delete originals
+    await convertImagesToWebp("./images/champions/icons", { lossless: true });
+    await convertImagesToWebp("./images/champions/splash", { quality: 90 });
 
     // TODO: Save champions and patch in DB
     console.log("Saving patch:", latestPatch);
