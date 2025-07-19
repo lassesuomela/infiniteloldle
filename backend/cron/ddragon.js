@@ -13,6 +13,7 @@ const championV2 = require("../models/v2/champion");
 const DDRAGON_BASE = "https://ddragon.leagueoflegends.com";
 const BASE_UNIVERSE_URL = "https://universe-meeps.leagueoflegends.com";
 const WIKI_BASE_URL = "https://wiki.leagueoflegends.com";
+const CDRAGON_BASE = "https://raw.communitydragon.org";
 
 const MALE_WORDS = ["he", "him", "his"];
 const FEMALE_WORDS = ["she", "her", "hers"];
@@ -133,7 +134,64 @@ function findMissingChampions(latestChampions, existingChampions) {
   );
 }
 
-async function buildChampionPayload(champion, version) {
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+async function getChampionRolesMap(missingChampions) {
+  const url =
+    CDRAGON_BASE +
+    "/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json";
+
+  try {
+    const response = await axios.get(url);
+    const champions = response.data;
+
+    // Build a lookup map by champion id
+    const championById = {};
+    for (const champ of champions) {
+      championById[champ.alias] = champ;
+    }
+
+    const championRolesMap = {};
+
+    for (const missingChampName of missingChampions) {
+      const champData = championById[missingChampName];
+      if (champData && Array.isArray(champData.roles)) {
+        championRolesMap[missingChampName] =
+          champData.roles.map(capitalize) || [];
+      }
+    }
+
+    return championRolesMap;
+  } catch (error) {
+    console.error("Failed to fetch champion data:", error.message);
+    return {};
+  }
+}
+
+async function scrapeChampionWikiData(championId) {
+  const wikiUrl = `${WIKI_BASE_URL}/en-us/${encodeURIComponent(championId)}`;
+
+  try {
+    const req = await axios.get(wikiUrl);
+    const $ = cheerio.load(req.data);
+    let damageType = "";
+    const positions = [];
+
+    $('a[title="Adaptive force"]').each((_, el) => {
+      const text = $(el).text().trim();
+      if (text) damageType = text;
+    });
+
+    return { positions, damageType };
+  } catch (error) {
+    console.error(`Error scraping wiki data for ${championId}:`, error.message);
+    return { positions: [], damageType: "" };
+  }
+}
+
+async function buildChampionPayload(champion, version, championRoles) {
   try {
     const detailUrl = `${DDRAGON_BASE}/cdn/${version}/data/en_US/champion/${champion.id}.json`;
     const detailResponse = await axios.get(detailUrl);
@@ -148,6 +206,7 @@ async function buildChampionPayload(champion, version) {
 
     const releaseYear = await fetchChampionReleaseYear(champion.id);
 
+    const wikiData = await scrapeChampionWikiData(champion.id);
     // TODO: Fetch and region data for each champion from wiki
     return {
       championId: champion.id,
@@ -158,6 +217,9 @@ async function buildChampionPayload(champion, version) {
       skins,
       gender: genderInfo.gender,
       released: releaseYear,
+      positions: wikiData.positions,
+      damageType: wikiData.damageType,
+      roles: championRoles,
     };
   } catch (error) {
     console.error(
@@ -340,13 +402,18 @@ async function saveLatestPatch() {
       missingChampions.map((c) => c.id)
     );
 
+    const missingChampNames = missingChampions.map((champ) => champ.id);
+    const championRolesMap = await getChampionRolesMap(missingChampNames);
+
     const championPayloads = [];
     for (const champ of missingChampions) {
-      const payload = await buildChampionPayload(champ, latestPatch);
+      const payload = await buildChampionPayload(
+        champ,
+        latestPatch,
+        championRolesMap[champ.id] || []
+      );
       championPayloads.push(payload);
     }
-
-    const missingChampNames = missingChampions.map((champ) => champ.id);
 
     const downloadResult = await downloadBulkChampionImages(
       latestPatch,
@@ -363,6 +430,7 @@ async function saveLatestPatch() {
     await convertImagesToWebp("./images/champions/icons", { lossless: true });
     await convertImagesToWebp("./images/champions/splash", { quality: 90 });
 
+    console.log(championPayloads);
     // TODO: Save champions and patch in DB
     console.log("Saving patch:", latestPatch);
   } catch (err) {
