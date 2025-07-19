@@ -238,6 +238,7 @@ function extractAbilities(abilities) {
       simplified[key] = {
         name: abilities[key][0].name,
         icon: abilities[key][0].icon,
+        key,
       };
     }
   }
@@ -416,9 +417,11 @@ async function downloadBulkChampionImages(
 
   const splashdir = path.join(outputDir, "splash");
   const icondir = path.join(outputDir, "icons");
+  const abilityDir = path.join(outputDir, "abilities");
 
   await ensureDir(splashdir);
   await ensureDir(icondir);
+  await ensureDir(abilityDir);
 
   const limit = pLimit(concurrency);
 
@@ -433,25 +436,46 @@ async function downloadBulkChampionImages(
           num: skin.num,
           url: `${DDRAGON_BASE}/cdn/img/champion/splash/${champion}_${skin.num}.jpg`,
         })) || [],
+    abilities:
+      championPayloads.find(
+        (c) => c.championId.toLowerCase() === champion.toLowerCase()
+      )?.abilities || [],
   }));
 
-  const tasks = championUrls.flatMap((champion) => [
-    // Icon download
-    limit(() =>
-      downloadChampionAsset(champion.iconUrl, champion.name, icondir, "png")
-    ),
-    // Splash downloads
-    ...champion.splashes.map((splash) =>
+  const tasks = championUrls.flatMap((champion) => {
+    const abilitiesArray = Object.values(champion.abilities).flat();
+
+    return [
+      // Icon download
       limit(() =>
-        downloadChampionAsset(
-          splash.url,
-          `${champion.name}_${splash.num}`,
-          splashdir,
-          "jpg"
+        downloadChampionAsset(champion.iconUrl, champion.name, icondir, "png")
+      ),
+
+      // Splash downloads
+      ...champion.splashes.map((splash) =>
+        limit(() =>
+          downloadChampionAsset(
+            splash.url,
+            `${champion.name}_${splash.num}`,
+            splashdir,
+            "jpg"
+          )
         )
-      )
-    ),
-  ]);
+      ),
+
+      // Ability icons download
+      ...abilitiesArray.map((ability) =>
+        limit(() =>
+          downloadChampionAsset(
+            ability.icon,
+            `${champion.name}_${ability.key}`,
+            abilityDir,
+            "png"
+          )
+        )
+      ),
+    ];
+  });
 
   const results = await Promise.all(tasks);
   const succeeded = results.filter((r) => r.ok).length;
@@ -517,6 +541,9 @@ async function saveLatestPatch() {
     // Convert images to webp format and delete originals
     await convertImagesToWebp("./images/champions/icons", { lossless: true });
     await convertImagesToWebp("./images/champions/splash", { quality: 90 });
+    await convertImagesToWebp("./images/champions/abilities", {
+      lossless: true,
+    });
 
     // Create 40x40 thumbnails for champion icons to be used in select menu
     await resizeChampionIcons();
