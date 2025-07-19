@@ -178,17 +178,16 @@ async function scrapeChampionWikiData(championId) {
     const req = await axios.get(wikiUrl);
     const $ = cheerio.load(req.data);
     let damageType = "";
-    const positions = [];
 
     $('a[title="Adaptive force"]').each((_, el) => {
       const text = $(el).text().trim();
       if (text) damageType = text;
     });
 
-    return { positions, damageType };
+    return damageType;
   } catch (error) {
     console.error(`Error scraping wiki data for ${championId}:`, error.message);
-    return { positions: [], damageType: "" };
+    return null;
   }
 }
 
@@ -247,7 +246,7 @@ async function buildChampionPayload(
 
     const genderInfo = await determineGenderFromLore(champion.id);
 
-    const wikiData = await scrapeChampionWikiData(champion.id);
+    const damageType = await scrapeChampionWikiData(champion.id);
 
     return {
       championId: champion.id,
@@ -258,7 +257,7 @@ async function buildChampionPayload(
       skins,
       gender: genderInfo.gender,
       positions: wikiData.positions,
-      damageType: wikiData.damageType,
+      damageType,
       roles: championRoles,
       region: championFactions.faction.name || null,
       releaseDate: championFactions["release-date"] || null,
