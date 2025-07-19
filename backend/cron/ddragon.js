@@ -208,8 +208,6 @@ async function getFactionsAndChampions() {
       };
     }
 
-    console.log(factions);
-
     for (const champion of data.champions) {
       championsByName[champion.slug] = {
         name: champion.name,
@@ -326,6 +324,36 @@ async function convertImagesToWebp(inputDir, options) {
     });
   });
   console.log(`Deleted original files in ${inputDir}.`);
+}
+
+async function resizeChampionIcons() {
+  const iconsDir = path.join("./images/champions/icons");
+  const resizedDir = path.join(iconsDir, "40_40");
+  try {
+    await ensureDir(resizedDir);
+
+    const files = await fsp.readdir(iconsDir);
+    const webpFiles = files.filter((file) => file.endsWith(".webp"));
+    const limit = pLimit(4);
+    const tasks = webpFiles.map((file) =>
+      limit(async () => {
+        const inputPath = path.join(iconsDir, file);
+        const outputPath = path.join(resizedDir, file);
+        try {
+          await sharp(inputPath)
+            .resize(40, 40, { fit: "inside" })
+            .toFile(outputPath);
+          console.log(`Resized champion icon: ${file}`);
+        } catch (err) {
+          console.error(`Failed to resize ${file}:`, err.message);
+        }
+      })
+    );
+    await Promise.all(tasks);
+    console.log("Champion icons resized to 40x40.");
+  } catch (err) {
+    console.error("Failed to resize champion icons:", err.message);
+  }
 }
 
 async function downloadChampionAsset(url, championName, outputDir, ext) {
@@ -452,6 +480,9 @@ async function saveLatestPatch() {
     // Convert images to webp format and delete originals
     await convertImagesToWebp("./images/champions/icons", { lossless: true });
     await convertImagesToWebp("./images/champions/splash", { quality: 90 });
+
+    // Create 40x40 thumbnails for champion icons to be used in select menu
+    await resizeChampionIcons();
 
     console.log(championPayloads);
     // TODO: Save champions and patch in DB
