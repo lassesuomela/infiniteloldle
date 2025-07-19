@@ -11,7 +11,8 @@ const prisma = new PrismaClient();
 const championV2 = require("../models/v2/champion");
 
 const DDRAGON_BASE = "https://ddragon.leagueoflegends.com";
-const BASE_UNIVERSE_URL = "https://universe-meeps.leagueoflegends.com";
+const BASE_UNIVERSE_MEEPS_URL = "https://universe-meeps.leagueoflegends.com";
+const BASE_UNIVERSE_URL = "https://universe.leagueoflegends.com";
 const WIKI_BASE_URL = "https://wiki.leagueoflegends.com";
 const CDRAGON_BASE = "https://raw.communitydragon.org";
 
@@ -52,7 +53,7 @@ function computeMalePercentage({ male, female }) {
 
 async function determineGenderFromLore(championId) {
   try {
-    const loreUrl = `${BASE_UNIVERSE_URL}/v1/en_us/champions/${championId.toLowerCase()}/index.json`;
+    const loreUrl = `${BASE_UNIVERSE_MEEPS_URL}/v1/en_us/champions/${championId.toLowerCase()}/index.json`;
     const loreResponse = await axios.get(loreUrl);
 
     const { full, short } = loreResponse.data.champion.biography;
@@ -191,7 +192,51 @@ async function scrapeChampionWikiData(championId) {
   }
 }
 
-async function buildChampionPayload(champion, version, championRoles) {
+async function getFactionsAndChampions() {
+  try {
+    const url = `${BASE_UNIVERSE_MEEPS_URL}/v1/en_us/search/index.json`;
+
+    const { data } = await axios.get(url);
+
+    const factions = {};
+    const championsByName = {};
+
+    for (const faction of data.factions) {
+      factions[faction.slug] = {
+        slug: faction.slug,
+        name: faction.name,
+      };
+    }
+
+    console.log(factions);
+
+    for (const champion of data.champions) {
+      championsByName[champion.slug] = {
+        name: champion.name,
+        slug: champion.slug,
+        faction: {
+          slug: champion["associated-faction-slug"],
+          name: factions[champion["associated-faction-slug"]]
+            ? factions[champion["associated-faction-slug"]].name
+            : null,
+        },
+        "release-date": champion["release-date"] || null,
+      };
+    }
+
+    return { factions, championsByName };
+  } catch (err) {
+    console.error("Failed to fetch or parse:", err.message);
+    return { factions: [], championsByName: {} };
+  }
+}
+
+async function buildChampionPayload(
+  champion,
+  version,
+  championRoles,
+  championFactions
+) {
   try {
     const detailUrl = `${DDRAGON_BASE}/cdn/${version}/data/en_US/champion/${champion.id}.json`;
     const detailResponse = await axios.get(detailUrl);
@@ -204,10 +249,8 @@ async function buildChampionPayload(champion, version, championRoles) {
 
     const genderInfo = await determineGenderFromLore(champion.id);
 
-    const releaseYear = await fetchChampionReleaseYear(champion.id);
-
     const wikiData = await scrapeChampionWikiData(champion.id);
-    // TODO: Fetch and region data for each champion from wiki
+
     return {
       championId: champion.id,
       name: champion.name,
@@ -216,39 +259,16 @@ async function buildChampionPayload(champion, version, championRoles) {
       resource: champion.partype,
       skins,
       gender: genderInfo.gender,
-      released: releaseYear,
       positions: wikiData.positions,
       damageType: wikiData.damageType,
       roles: championRoles,
+      region: championFactions.faction.name || null,
+      releaseDate: championFactions["release-date"] || null,
     };
   } catch (error) {
     console.error(
       `Error building payload for champion ${champion.id}:`,
       error.message
-    );
-    return null;
-  }
-}
-
-async function fetchChampionReleaseYear(champName) {
-  const url = `${WIKI_BASE_URL}/en-us/Template:Data_${champName}/`;
-
-  try {
-    const response = await axios.get(url);
-    const html = response.data;
-    const $ = cheerio.load(html);
-
-    const releaseDate = $("tr")
-      .filter((i, el) => $(el).find("td:first-child").text().trim() === "date")
-      .find("td:nth-child(2)")
-      .text()
-      .trim();
-
-    return releaseDate.slice(0, 4);
-  } catch (err) {
-    console.error(
-      `Failed to fetch release year for ${champName}:`,
-      err.message
     );
     return null;
   }
@@ -405,12 +425,15 @@ async function saveLatestPatch() {
     const missingChampNames = missingChampions.map((champ) => champ.id);
     const championRolesMap = await getChampionRolesMap(missingChampNames);
 
+    const { factions, championsByName } = await getFactionsAndChampions();
+
     const championPayloads = [];
     for (const champ of missingChampions) {
       const payload = await buildChampionPayload(
         champ,
         latestPatch,
-        championRolesMap[champ.id] || []
+        championRolesMap[champ.id] || [],
+        championsByName[champ.id.toLowerCase()] || []
       );
       championPayloads.push(payload);
     }
