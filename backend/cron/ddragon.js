@@ -1,6 +1,4 @@
 const axios = require("axios");
-const semver = require("semver");
-const cheerio = require("cheerio");
 const fsp = require("fs").promises;
 const pLimit = require("p-limit");
 const path = require("path");
@@ -12,8 +10,6 @@ const championV2 = require("../models/v2/champion");
 
 const DDRAGON_BASE = "https://ddragon.leagueoflegends.com";
 const BASE_UNIVERSE_MEEPS_URL = "https://universe-meeps.leagueoflegends.com";
-const BASE_UNIVERSE_URL = "https://universe.leagueoflegends.com";
-const WIKI_BASE_URL = "https://wiki.leagueoflegends.com";
 const CDRAGON_BASE = "https://raw.communitydragon.org";
 
 const MALE_WORDS = ["he", "him", "his"];
@@ -24,7 +20,6 @@ const RANGE_LIMIT = 350; // Range limit to determine melee/ranged
 function getChampionRangeType(range) {
   return range >= RANGE_LIMIT ? "Ranged" : "Melee";
 }
-
 function normalizeToken(token) {
   return token
     .replace(/<[^>]*>/g, "")
@@ -135,62 +130,6 @@ function findMissingChampions(latestChampions, existingChampions) {
   );
 }
 
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-async function getChampionRolesMap(missingChampions) {
-  const url =
-    CDRAGON_BASE +
-    "/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json";
-
-  try {
-    const response = await axios.get(url);
-    const champions = response.data;
-
-    // Build a lookup map by champion id
-    const championById = {};
-    for (const champ of champions) {
-      championById[champ.alias] = champ;
-    }
-
-    const championRolesMap = {};
-
-    for (const missingChampName of missingChampions) {
-      const champData = championById[missingChampName];
-      if (champData && Array.isArray(champData.roles)) {
-        championRolesMap[missingChampName] =
-          champData.roles.map(capitalize) || [];
-      }
-    }
-
-    return championRolesMap;
-  } catch (error) {
-    console.error("Failed to fetch champion data:", error.message);
-    return {};
-  }
-}
-
-async function scrapeChampionWikiData(championId) {
-  const wikiUrl = `${WIKI_BASE_URL}/en-us/${encodeURIComponent(championId)}`;
-
-  try {
-    const req = await axios.get(wikiUrl);
-    const $ = cheerio.load(req.data);
-    let damageType = "";
-
-    $('a[title="Adaptive force"]').each((_, el) => {
-      const text = $(el).text().trim();
-      if (text) damageType = text;
-    });
-
-    return damageType;
-  } catch (error) {
-    console.error(`Error scraping wiki data for ${championId}:`, error.message);
-    return null;
-  }
-}
-
 async function getFactionsAndChampions() {
   try {
     const url = `${BASE_UNIVERSE_MEEPS_URL}/v1/en_us/search/index.json`;
@@ -228,11 +167,90 @@ async function getFactionsAndChampions() {
   }
 }
 
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+async function getChampionRolesMap(missingChampions) {
+  const url =
+    CDRAGON_BASE +
+    "/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json";
+
+  try {
+    const response = await axios.get(url);
+    const champions = response.data;
+
+    // Build a lookup map by champion id
+    const championById = {};
+    for (const champ of champions) {
+      championById[champ.alias] = champ;
+    }
+
+    const championRolesMap = {};
+
+    for (const missingChampName of missingChampions) {
+      const champData = championById[missingChampName];
+      if (champData && Array.isArray(champData.roles)) {
+        championRolesMap[missingChampName] =
+          champData.roles.map(capitalize) || [];
+      }
+    }
+
+    return championRolesMap;
+  } catch (error) {
+    console.error("Failed to fetch champion data:", error.message);
+    return {};
+  }
+}
+
+async function getAllChampionDetails() {
+  const URL =
+    "https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/champions.json";
+
+  try {
+    const response = await axios.get(URL);
+    const champions = response.data;
+
+    const championDetails = {};
+    for (const champId of Object.keys(champions)) {
+      const champ = champions[champId];
+      championDetails[champ.key] = {
+        name: champ.name,
+        attackType: champ.attackType,
+        adaptiveType: champ.adaptiveType,
+        positions: champ.positions || [],
+        abilities: extractAbilities(champ.abilities),
+      };
+    }
+    return championDetails;
+  } catch (error) {
+    console.error("Error fetching champion details:", error.message);
+    return {};
+  }
+}
+
+function extractAbilities(abilities) {
+  const keys = ["P", "Q", "W", "E", "R"];
+  const simplified = {};
+
+  for (const key of keys) {
+    if (abilities[key] && abilities[key][0]) {
+      simplified[key] = {
+        name: abilities[key][0].name,
+        icon: abilities[key][0].icon,
+      };
+    }
+  }
+
+  return simplified;
+}
+
 async function buildChampionPayload(
   champion,
   version,
   championRoles,
-  championFactions
+  championFactions,
+  championDetails
 ) {
   try {
     const detailUrl = `${DDRAGON_BASE}/cdn/${version}/data/en_US/champion/${champion.id}.json`;
@@ -246,7 +264,23 @@ async function buildChampionPayload(
 
     const genderInfo = await determineGenderFromLore(champion.id);
 
-    const damageType = await scrapeChampionWikiData(champion.id);
+    const damageMap = {
+      PHYSICAL_DAMAGE: "Physical",
+      MAGIC_DAMAGE: "Magic",
+      MIXED_DAMAGE: "Physical,Magic",
+    };
+
+    const positionMap = {
+      TOP: "Top",
+      JUNGLE: "Jungle",
+      MIDDLE: "Middle",
+      MID: "Middle",
+      BOTTOM: "Bottom",
+      BOT: "Bottom",
+      SUPPORT: "Support",
+    };
+
+    const positions = championDetails.positions.map((pos) => positionMap[pos]);
 
     return {
       championId: champion.id,
@@ -256,11 +290,12 @@ async function buildChampionPayload(
       resource: champion.partype,
       skins,
       gender: genderInfo.gender,
-      positions: wikiData.positions,
-      damageType,
+      positions,
       roles: championRoles,
+      damageType: damageMap[championDetails.adaptiveType],
       region: championFactions.faction.name || null,
       releaseDate: championFactions["release-date"] || null,
+      abilities: championDetails.abilities,
     };
   } catch (error) {
     console.error(
@@ -454,13 +489,16 @@ async function saveLatestPatch() {
 
     const { factions, championsByName } = await getFactionsAndChampions();
 
+    const championDetails = await getAllChampionDetails();
+
     const championPayloads = [];
     for (const champ of missingChampions) {
       const payload = await buildChampionPayload(
         champ,
         latestPatch,
         championRolesMap[champ.id] || [],
-        championsByName[champ.id.toLowerCase()] || []
+        championsByName[champ.id.toLowerCase()] || [],
+        championDetails[champ.id] || {}
       );
       championPayloads.push(payload);
     }
