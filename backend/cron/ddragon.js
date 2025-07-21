@@ -146,6 +146,11 @@ async function getFactionsAndChampions() {
       };
     }
 
+    factions["unaffiliated"] = {
+      slug: "unaffiliated",
+      name: "Runeterra",
+    };
+
     for (const champion of data.champions) {
       championsByName[champion.slug] = {
         name: champion.name,
