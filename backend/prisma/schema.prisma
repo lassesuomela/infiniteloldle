@@ -117,14 +117,6 @@ model lol_patches {
   checkedAt DateTime @default(now()) @db.Timestamp(0)
 }
 
-enum AbilityKey {
-  P
-  Q
-  W
-  E
-  R
-}
-
 model abilities {
   id         Int        @id @default(autoincrement())
   championId Int
@@ -133,4 +125,12 @@ model abilities {
   champion   champions  @relation(fields: [championId], references: [id], onDelete: Cascade)
 
   @@unique([championId, key])
+}
+
+enum AbilityKey {
+  P
+  Q
+  W
+  E
+  R
 }
