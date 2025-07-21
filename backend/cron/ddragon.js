@@ -508,6 +508,11 @@ async function saveLatestPatch() {
       missingChampions.map((c) => c.id)
     );
 
+    if (missingChampions.length === 0) {
+      console.log("No new champions to save.");
+      return;
+    }
+
     const missingChampNames = missingChampions.map((champ) => champ.id);
     const championRolesMap = await getChampionRolesMap(missingChampNames);
 
@@ -549,8 +554,41 @@ async function saveLatestPatch() {
     await resizeChampionIcons();
 
     console.log(championPayloads);
-    // TODO: Save champions and patch in DB
-    console.log("Saving patch:", latestPatch);
+
+    // Save champions and patch in DB
+    // Use a transaction incase there is an error or some how the patch is already in the DB
+    console.log("Saving champions and patch to database...");
+    await prisma.$transaction(async (tx) => {
+      for (const payload of championPayloads) {
+        await tx.champions.create({
+          data: {
+            championKey: payload.championId,
+            name: payload.name,
+            title: payload.title,
+            rangeType: payload.rangeType,
+            resource: payload.resource,
+            gender: payload.gender,
+            position: payload.positions.join(","),
+            damageType: payload.damageType,
+            region: payload.region,
+            released: payload.releaseDate.slice(0, 4),
+            skinCount: payload.skins.length,
+            genre: payload.roles.join(","),
+            spriteIds: payload.skins.map((s) => s.num).join(","),
+          },
+        });
+      }
+
+      console.log("Saving patch:", latestPatch);
+
+      await tx.lol_patches.create({
+        data: {
+          version: latestPatch,
+        },
+      });
+
+      console.log("Champions and patch saved successfully.");
+    });
   } catch (err) {
     console.error("Error in saveLatestPatch:", err);
   } finally {
