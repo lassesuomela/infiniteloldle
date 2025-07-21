@@ -25,6 +25,7 @@ model champions {
   damageType          String?               @db.VarChar(45)
   UserSolvedChampions UserSolvedChampions[]
   UserSolvedSplashes  UserSolvedSplashes[]
+  abilities           abilities[]
 }
 
 model items {
@@ -64,7 +65,7 @@ model users {
   country               String?               @db.VarChar(5)
   currentItemId         Int?
   currentOldItemId      Int?
-  solvedChampions      UserSolvedChampions[]
+  solvedChampions       UserSolvedChampions[]
   solvedItems           UserSolvedItems[]
   solvedOldItems        UserSolvedOldItems[]
   solvedSplashes        UserSolvedSplashes[]
@@ -111,7 +112,25 @@ model UserSolvedSplashes {
 }
 
 model lol_patches {
-  id         Int      @id @default(autoincrement())
-  version    String   @unique @db.VarChar(20)
-  checkedAt  DateTime @default(now()) @db.Timestamp(0)
+  id        Int      @id @default(autoincrement())
+  version   String   @unique @db.VarChar(20)
+  checkedAt DateTime @default(now()) @db.Timestamp(0)
+}
+
+enum AbilityKey {
+  P
+  Q
+  W
+  E
+  R
+}
+
+model abilities {
+  id         Int        @id @default(autoincrement())
+  championId Int
+  name       String
+  key        AbilityKey
+  champion   champions  @relation(fields: [championId], references: [id], onDelete: Cascade)
+
+  @@unique([championId, key])
 }
