@@ -411,6 +411,39 @@ async function downloadChampionAsset(url, championName, outputDir, ext) {
   }
 }
 
+function buildChampionSplashUrls(champion, skins) {
+  return skins.map((s) => ({
+    name: s.name,
+    num: s.num,
+    url: `${DDRAGON_BASE}/cdn/img/champion/splash/${champion}_${s.num}.jpg`,
+  }));
+}
+
+function buildChampionAbilityUrls(champion, abilities) {
+  return abilities.map((a) => ({
+    ...a,
+    url: `${CDRAGON_BASE}/${champion}/ability-icon/${a.key.toLowerCase()}`,
+  }));
+}
+
+function buildChampionUrls(missingChampNames, championPayloads, version) {
+  const byName = new Map(
+    championPayloads.map((p) => [p.championId.toLowerCase(), p])
+  );
+
+  return missingChampNames.map((champion) => {
+    const payload = byName.get(champion.toLowerCase());
+    return {
+      name: champion,
+      iconUrl: `${DDRAGON_BASE}/cdn/${version}/img/champion/${champion}.png`,
+      splashes: payload ? buildChampionSplashUrls(champion, payload.skins) : [],
+      abilities: payload
+        ? buildChampionAbilityUrls(champion, payload.abilities)
+        : [],
+    };
+  });
+}
+
 async function downloadBulkChampionImages(
   version,
   missingChampNames,
@@ -430,22 +463,11 @@ async function downloadBulkChampionImages(
 
   const limit = pLimit(concurrency);
 
-  const championUrls = missingChampNames.map((champion) => ({
-    name: champion,
-    iconUrl: `${DDRAGON_BASE}/cdn/${version}/img/champion/${champion}.png`,
-    splashes:
-      championPayloads
-        .find((c) => c.championId.toLowerCase() === champion.toLowerCase())
-        ?.skins.map((skin) => ({
-          name: skin.name,
-          num: skin.num,
-          url: `${DDRAGON_BASE}/cdn/img/champion/splash/${champion}_${skin.num}.jpg`,
-        })) || [],
-    abilities:
-      championPayloads.find(
-        (c) => c.championId.toLowerCase() === champion.toLowerCase()
-      )?.abilities || [],
-  }));
+  const championUrls = buildChampionUrls(
+    missingChampNames,
+    championPayloads,
+    version
+  );
 
   const tasks = championUrls.flatMap((champion) => {
     const abilitiesArray = Object.values(champion.abilities).flat();
@@ -645,4 +667,116 @@ async function saveChampionsAndPatch(championPayloads, latestPatch) {
 }
 // TODO: Create new function. This function should be called periodically to keep the champions data up to date
 // It should only fetch new champion skins and abilities to keep them up to date
-saveMissingChampions();
+//saveMissingChampions();
+
+/**
+ * Fetch new skins for champions.
+ * This function should be called periodically to keep the skins data up to date.
+ */
+async function fetchNewSkins() {
+  const limit = pLimit(2); // limit concurrency to 2 tasks at a time
+
+  const latestPatch = await fetchLatestPatch();
+  console.log("Latest patch version:", latestPatch);
+
+  const existingSkins = await prisma.skins.findMany({
+    select: {
+      championId: true,
+      name: true,
+      champion: {
+        select: { championKey: true },
+      },
+    },
+  });
+
+  console.log(existingSkins);
+
+  const existingSkinSet = new Set(
+    existingSkins.map((skin) => `${skin.champion.championKey}-${skin.name}`)
+  );
+
+  const champions = await fetchChampionsForPatch(latestPatch);
+
+  const championRecords = await championV2.findAll();
+
+  const splashDir = path.join("./images/champions/splash");
+  await ensureDir(splashDir);
+
+  // Download new skins and convert them to webp
+  for (const champion of champions) {
+    const skinsUrl = `${DDRAGON_BASE}/cdn/${latestPatch}/data/en_US/champion/${champion.id}.json`;
+    const response = await axios.get(skinsUrl);
+    const skins = response.data.data[champion.id].skins;
+
+    console.log(`Processing skins for champion: ${champion.id}`);
+
+    const missingSkins = skins.filter((skin) => {
+      const skinKey = `${champion.id}-${skin.name}`;
+
+      return !existingSkinSet.has(skinKey);
+    });
+
+    if (missingSkins.length === 0) {
+      console.log(`No new skins for champion: ${champion.id}`);
+      continue;
+    }
+
+    const missingSkinUrls = buildChampionSplashUrls(champion.id, missingSkins);
+
+    // Create a list of throttled download tasks
+    const downloadTasks = missingSkinUrls.map((skin) =>
+      limit(async () => {
+        const downloadedSplash = await downloadChampionAsset(
+          skin.url,
+          `${champion.id}_${skin.num}`,
+          splashDir,
+          "jpg"
+        );
+
+        if (!downloadedSplash.ok) {
+          console.error(
+            `Failed to download splash for ${champion.id} - ${skin.name}: ${downloadedSplash.error.message}`
+          );
+          return;
+        }
+
+        console.log(`Downloaded new skin: ${champion.id} - ${skin.name}`);
+      })
+    );
+
+    await Promise.all(downloadTasks);
+
+    console.log("Converting images to webp format...");
+
+    await convertImagesToWebp("./images/champions/splash", { quality: 90 });
+
+    // Fetch all champions to get the champion ID
+
+    const championId = championRecords.find(
+      (c) => c.championKey.toLowerCase() === champion.id.toLowerCase()
+    )?.id;
+
+    const skinData = missingSkins.map((skin) => ({
+      championId,
+      name: skin.name,
+      key: skin.num.toString(),
+    }));
+
+    // Save new skins to the database
+
+    console.log("Saving new skins to the database...");
+
+    await prisma.skins.createMany({
+      data: skinData,
+    });
+
+    // Add sleep
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+}
+
+/**
+ * Fetch abilities for champions.
+ * Used mostly to seed the db with abilities.
+ */
+async function fetchAllAbilities() {}
