@@ -595,6 +595,18 @@ async function saveLatestPatch() {
             data: abilityData,
           });
         }
+
+        const skinData = payload.skins.map((skin) => ({
+          championId: champion.id,
+          name: skin.name,
+          key: skin.num.toString(),
+        }));
+
+        if (skinData.length > 0) {
+          await tx.skins.createMany({
+            data: skinData,
+          });
+        }
       }
 
       console.log("Saving patch:", latestPatch);
