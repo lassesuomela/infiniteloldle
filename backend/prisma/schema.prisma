@@ -26,6 +26,7 @@ model champions {
   UserSolvedChampions UserSolvedChampions[]
   UserSolvedSplashes  UserSolvedSplashes[]
   abilities           abilities[]
+  skins               skins[]
 }
 
 model items {
@@ -133,4 +134,14 @@ enum AbilityKey {
   W
   E
   R
+}
+
+model skins {
+  id         Int       @id @default(autoincrement())
+  championId Int
+  name       String
+  key        String
+  champion   champions @relation(fields: [championId], references: [id], onDelete: Cascade)
+
+  @@unique([championId, key])
 }
