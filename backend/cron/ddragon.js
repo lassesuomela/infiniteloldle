@@ -11,6 +11,7 @@ const championV2 = require("../models/v2/champion");
 const DDRAGON_BASE = "https://ddragon.leagueoflegends.com";
 const BASE_UNIVERSE_MEEPS_URL = "https://universe-meeps.leagueoflegends.com";
 const CDRAGON_BASE = "https://raw.communitydragon.org";
+const CDN_CDRAGON_BASE = "https://cdn.communitydragon.org";
 
 const MALE_WORDS = ["he", "him", "his"];
 const FEMALE_WORDS = ["she", "her", "hers"];
@@ -422,7 +423,7 @@ function buildChampionSplashUrls(champion, skins) {
 function buildChampionAbilityUrls(champion, abilities) {
   return abilities.map((a) => ({
     ...a,
-    url: `${CDRAGON_BASE}/${champion}/ability-icon/${a.key.toLowerCase()}`,
+    url: `${CDN_CDRAGON_BASE}/latest/champion/${champion}/ability-icon/${a.key.toLowerCase()}`,
   }));
 }
 
@@ -699,8 +700,8 @@ async function fetchNewSkins() {
 
   const championRecords = await championV2.findAll();
 
-  const splashDir = path.join("./images/champions/splash");
-  await ensureDir(splashDir);
+  const imgDir = path.join("./images/champions/splash");
+  await ensureDir(imgDir);
 
   // Download new skins and convert them to webp
   for (const champion of champions) {
@@ -729,7 +730,7 @@ async function fetchNewSkins() {
         const downloadedSplash = await downloadChampionAsset(
           skin.url,
           `${champion.id}_${skin.num}`,
-          splashDir,
+          imgDir,
           "jpg"
         );
 
@@ -779,4 +780,108 @@ async function fetchNewSkins() {
  * Fetch abilities for champions.
  * Used mostly to seed the db with abilities.
  */
-async function fetchAllAbilities() {}
+async function fetchAllAbilities() {
+  const limit = pLimit(2); // limit concurrency to 2 tasks at a time
+
+  const latestPatch = await fetchLatestPatch();
+  console.log("Latest patch version:", latestPatch);
+
+  const existingAbilities = await prisma.abilities.findMany({
+    select: {
+      championId: true,
+      key: true,
+      champion: {
+        select: { championKey: true },
+      },
+    },
+  });
+
+  const existingAbilitiesSet = new Set(
+    existingAbilities.map(
+      (ability) => `${ability.champion.championKey}-${ability.key}`
+    )
+  );
+
+  const championsDetails = await getAllChampionDetails();
+
+  const championRecords = await championV2.findAll();
+
+  const imgDir = path.join("./images/champions/abilities");
+  await ensureDir(imgDir);
+
+  const championKeys = Object.keys(championsDetails);
+
+  // Download new abilities and convert them to webp
+  for (const championKey of championKeys) {
+    const championName = championsDetails[championKey].name;
+    console.log(`Processing abilities for champion: ${championName}`);
+
+    const missingAbilities = Object.values(
+      championsDetails[championKey].abilities
+    ).filter((ability) => {
+      const abilityKey = `${championKey}-${ability.key}`;
+      return !existingAbilitiesSet.has(abilityKey);
+    });
+
+    if (missingAbilities.length === 0) {
+      console.log(`No new abilities for champion: ${championName}`);
+      continue;
+    }
+
+    // Create a list of throttled download tasks
+    const downloadTasks = missingAbilities.map((ability) =>
+      limit(async () => {
+        const downloadedAbility = await downloadChampionAsset(
+          ability.icon,
+          `${championKey}_${ability.key}`,
+          imgDir,
+          "png"
+        );
+
+        if (!downloadedAbility.ok) {
+          console.error(
+            `Failed to download ability icon for ${championName} - ${ability.name}: ${downloadedAbility.error.message}`
+          );
+          return;
+        }
+
+        console.log(
+          `Downloaded new ability icon: ${championName} - ${ability.name}`
+        );
+      })
+    );
+
+    await Promise.all(downloadTasks);
+
+    console.log("Converting images to webp format...");
+
+    await convertImagesToWebp("./images/champions/abilities", {
+      lossless: true,
+    });
+
+    // Fetch all champions to get the champion ID
+
+    const championId = championRecords.find(
+      (c) => c.championKey.toLowerCase() === championKey.toLowerCase()
+    )?.id;
+
+    const abilityData = missingAbilities.map((ability) => ({
+      championId,
+      name: ability.name,
+      key: ability.key,
+    }));
+
+    // Save new abilities to the database
+
+    console.log("Saving new abilities to the database...");
+
+    await prisma.abilities.createMany({
+      data: abilityData,
+    });
+
+    // Add sleep
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+}
+
+fetchAllAbilities();
