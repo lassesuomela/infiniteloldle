@@ -238,6 +238,8 @@ function extractAbilities(abilities) {
   const keys = ["P", "Q", "W", "E", "R"];
   const simplified = {};
 
+  // Just get the first ability for each key
+  // This is because some champions have multiple abilities but we only care of the first one
   for (const key of keys) {
     if (abilities[key] && abilities[key][0]) {
       simplified[key] = {
@@ -488,7 +490,13 @@ async function downloadBulkChampionImages(
   return { total: results.length, succeeded, failed, results };
 }
 
-async function saveLatestPatch() {
+/**
+ * Save missing champions, skins and abilities to the database.
+ * It fetches the latest patch, checks for missing champions,
+ * builds their payloads, downloads images, converts them to webp,
+ * resizes icons, and saves everything to the database.
+ */
+async function saveMissingChampions() {
   try {
     const latestPatch = await fetchLatestPatch();
     console.log("Latest patch version:", latestPatch);
@@ -618,13 +626,15 @@ async function saveLatestPatch() {
       });
 
       console.log("Champions and patch saved successfully.");
+      return 0;
     });
   } catch (err) {
-    console.error("Error in saveLatestPatch:", err);
+    console.error("Error in saveMissingChampions:", err);
+    return 1;
   } finally {
     await prisma.$disconnect();
   }
 }
 // TODO: Create new function. This function should be called periodically to keep the champions data up to date
-// It should only fetch new champion skins and splash arts to keep them up to date
-saveLatestPatch();
+// It should only fetch new champion skins and abilities to keep them up to date
+saveMissingChampions();
