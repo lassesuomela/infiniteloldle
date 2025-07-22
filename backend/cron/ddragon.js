@@ -349,7 +349,6 @@ async function convertImagesToWebp(inputDir, options) {
       );
       try {
         await sharp(inputPath).webp(options).toFile(outputPath);
-        console.log(`Converted ${file} to webp`);
       } catch (err) {
         console.error(`Failed to convert ${file}:`, err.message);
       }
@@ -385,7 +384,6 @@ async function resizeChampionIcons() {
           await sharp(inputPath)
             .resize(40, 40, { fit: "inside" })
             .toFile(outputPath);
-          console.log(`Resized champion icon: ${file}`);
         } catch (err) {
           console.error(`Failed to resize ${file}:`, err.message);
         }
@@ -498,142 +496,152 @@ async function downloadBulkChampionImages(
  */
 async function saveMissingChampions() {
   try {
-    const latestPatch = await fetchLatestPatch();
-    console.log("Latest patch version:", latestPatch);
+    const latestPatch = await getLatestPatchIfNew();
+    if (!latestPatch) return;
 
-    const existingPatch = await prisma.lol_patches.findUnique({
-      where: { version: latestPatch },
-    });
-    if (existingPatch) {
-      console.log("Patch already exists:", latestPatch);
-      return;
-    }
-
-    const latestChampions = await fetchChampionsForPatch(latestPatch);
-    const existingChampions = await championV2.findAllNamesAndKeys();
-
-    const missingChampions = findMissingChampions(
-      latestChampions,
-      existingChampions
-    );
-    console.log(
-      `${missingChampions.length} champions missing:`,
-      missingChampions.map((c) => c.id)
-    );
-
+    const missingChampions = await getMissingChampions(latestPatch);
     if (missingChampions.length === 0) {
       console.log("No new champions to save.");
       return;
     }
 
-    const missingChampNames = missingChampions.map((champ) => champ.id);
-    const championRolesMap = await getChampionRolesMap(missingChampNames);
-
-    const { factions, championsByName } = await getFactionsAndChampions();
-
-    const championDetails = await getAllChampionDetails();
-
-    const championPayloads = [];
-    for (const champ of missingChampions) {
-      const payload = await buildChampionPayload(
-        champ,
-        latestPatch,
-        championRolesMap[champ.id] || [],
-        championsByName[champ.id.toLowerCase()] || [],
-        championDetails[champ.id] || {}
-      );
-      championPayloads.push(payload);
-    }
-
-    const downloadResult = await downloadBulkChampionImages(
-      latestPatch,
-      missingChampNames,
-      championPayloads,
-      "./images/champions"
+    const championPayloads = await buildMissingChampionPayloads(
+      missingChampions,
+      latestPatch
     );
 
-    console.log(
-      `Downloaded ${downloadResult.succeeded} champion images, ${downloadResult.failed} failed.`
-    );
+    await processChampionImages(latestPatch, championPayloads);
+    await saveChampionsAndPatch(championPayloads, latestPatch);
 
-    // Convert images to webp format and delete originals
-    await convertImagesToWebp("./images/champions/icons", { lossless: true });
-    await convertImagesToWebp("./images/champions/splash", { quality: 90 });
-    await convertImagesToWebp("./images/champions/abilities", {
-      lossless: true,
-    });
-
-    // Create 40x40 thumbnails for champion icons to be used in select menu
-    await resizeChampionIcons();
-
-    console.log(championPayloads);
-
-    // Save champions and patch in DB
-    // Use a transaction incase there is an error or some how the patch is already in the DB
-    console.log("Saving champions and patch to database...");
-    await prisma.$transaction(async (tx) => {
-      for (const payload of championPayloads) {
-        console.log(payload.skins);
-        const champion = await tx.champions.create({
-          data: {
-            championKey: payload.championId,
-            name: payload.name,
-            title: payload.title,
-            rangeType: payload.rangeType,
-            resource: payload.resource,
-            gender: payload.gender,
-            position: payload.positions.join(","),
-            damageType: payload.damageType,
-            region: payload.region,
-            released: payload.releaseDate.slice(0, 4),
-            skinCount: payload.skins.length,
-            genre: payload.roles.join(","),
-            spriteIds: payload.skins.map((s) => s.num).join(","),
-          },
-        });
-
-        const abilityData = Object.values(payload.abilities).map((a) => ({
-          championId: champion.id,
-          name: a.name,
-          key: a.key, // "P" | "Q" | "W" | "E" | "R"
-        }));
-
-        if (abilityData.length > 0) {
-          await tx.abilities.createMany({
-            data: abilityData,
-          });
-        }
-
-        const skinData = payload.skins.map((skin) => ({
-          championId: champion.id,
-          name: skin.name,
-          key: skin.num.toString(),
-        }));
-
-        if (skinData.length > 0) {
-          await tx.skins.createMany({
-            data: skinData,
-          });
-        }
-      }
-
-      console.log("Saving patch:", latestPatch);
-
-      await tx.lol_patches.create({
-        data: {
-          version: latestPatch,
-        },
-      });
-
-      console.log("Champions and patch saved successfully.");
-      return 0;
-    });
+    console.log("Completed champion sync for patch:", latestPatch);
   } catch (err) {
     console.error("Error in saveMissingChampions:", err);
     return 1;
   } finally {
     await prisma.$disconnect();
   }
+}
+
+async function getLatestPatchIfNew() {
+  const latestPatch = await fetchLatestPatch();
+  console.log("Latest patch version:", latestPatch);
+
+  const existingPatch = await prisma.lol_patches.findUnique({
+    where: { version: latestPatch },
+  });
+
+  if (existingPatch) {
+    console.log("Patch already exists:", latestPatch);
+    return null;
+  }
+
+  return latestPatch;
+}
+
+async function getMissingChampions(latestPatch) {
+  const latestChampions = await fetchChampionsForPatch(latestPatch);
+  const existingChampions = await championV2.findAllNamesAndKeys();
+
+  const missingChampions = findMissingChampions(
+    latestChampions,
+    existingChampions
+  );
+
+  console.log(
+    `${missingChampions.length} champions missing:`,
+    missingChampions.map((c) => c.id)
+  );
+
+  return missingChampions;
+}
+
+async function buildMissingChampionPayloads(missingChampions, latestPatch) {
+  const missingChampNames = missingChampions.map((champ) => champ.id);
+  const championRolesMap = await getChampionRolesMap(missingChampNames);
+  const { championsByName } = await getFactionsAndChampions();
+  const championDetails = await getAllChampionDetails();
+
+  const championPayloads = [];
+  for (const champ of missingChampions) {
+    const payload = await buildChampionPayload(
+      champ,
+      latestPatch,
+      championRolesMap[champ.id] || [],
+      championsByName[champ.id.toLowerCase()] || [],
+      championDetails[champ.id] || {}
+    );
+    championPayloads.push(payload);
+  }
+
+  return championPayloads;
+}
+
+async function processChampionImages(latestPatch, championPayloads) {
+  const missingChampNames = championPayloads.map((p) => p.championId);
+
+  const downloadResult = await downloadBulkChampionImages(
+    latestPatch,
+    missingChampNames,
+    championPayloads,
+    "./images/champions"
+  );
+
+  console.log(
+    `Downloaded ${downloadResult.succeeded} champion images, ${downloadResult.failed} failed.`
+  );
+
+  await convertImagesToWebp("./images/champions/icons", { lossless: true });
+  await convertImagesToWebp("./images/champions/splash", { quality: 90 });
+  await convertImagesToWebp("./images/champions/abilities", { lossless: true });
+  await resizeChampionIcons();
+}
+
+async function saveChampionsAndPatch(championPayloads, latestPatch) {
+  console.log("Saving champions and patch to database...");
+  await prisma.$transaction(async (tx) => {
+    for (const payload of championPayloads) {
+      const champion = await tx.champions.create({
+        data: {
+          championKey: payload.championId,
+          name: payload.name,
+          title: payload.title,
+          rangeType: payload.rangeType,
+          resource: payload.resource,
+          gender: payload.gender,
+          position: payload.positions.join(","),
+          damageType: payload.damageType,
+          region: payload.region,
+          released: payload.releaseDate.slice(0, 4),
+          skinCount: payload.skins.length,
+          genre: payload.roles.join(","),
+          spriteIds: payload.skins.map((s) => s.num).join(","),
+        },
+      });
+
+      if (payload.abilities) {
+        await tx.abilities.createMany({
+          data: Object.values(payload.abilities).map((a) => ({
+            championId: champion.id,
+            name: a.name,
+            key: a.key,
+          })),
+        });
+      }
+
+      if (payload.skins) {
+        await tx.skins.createMany({
+          data: payload.skins.map((skin) => ({
+            championId: champion.id,
+            name: skin.name,
+            key: skin.num.toString(),
+          })),
+        });
+      }
+    }
+
+    await tx.lol_patches.create({ data: { version: latestPatch } });
+    console.log("Champions and patch saved successfully.");
+  });
 }
 // TODO: Create new function. This function should be called periodically to keep the champions data up to date
 // It should only fetch new champion skins and abilities to keep them up to date
