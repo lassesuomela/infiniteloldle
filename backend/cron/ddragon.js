@@ -565,7 +565,8 @@ async function saveLatestPatch() {
     console.log("Saving champions and patch to database...");
     await prisma.$transaction(async (tx) => {
       for (const payload of championPayloads) {
-        await tx.champions.create({
+        console.log(payload.skins);
+        const champion = await tx.champions.create({
           data: {
             championKey: payload.championId,
             name: payload.name,
@@ -582,6 +583,18 @@ async function saveLatestPatch() {
             spriteIds: payload.skins.map((s) => s.num).join(","),
           },
         });
+
+        const abilityData = Object.values(payload.abilities).map((a) => ({
+          championId: champion.id,
+          name: a.name,
+          key: a.key, // "P" | "Q" | "W" | "E" | "R"
+        }));
+
+        if (abilityData.length > 0) {
+          await tx.abilities.createMany({
+            data: abilityData,
+          });
+        }
       }
 
       console.log("Saving patch:", latestPatch);

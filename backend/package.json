@@ -7,7 +7,8 @@
     "dev": "nodemon server.js",
     "test": "jest --detectOpenHandles --runInBand --forceExit",
     "db:gen": "npx prisma generate",
-    "db:migrate": "npx prisma migrate dev"
+    "db:migrate": "npx prisma migrate dev",
+    "db:push": "npx prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
