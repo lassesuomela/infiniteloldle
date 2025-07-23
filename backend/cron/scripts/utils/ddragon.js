@@ -688,8 +688,6 @@ async function saveNewSkins() {
     },
   });
 
-  console.log(existingSkins);
-
   const existingSkinSet = new Set(
     existingSkins.map((skin) => `${skin.champion.championKey}-${skin.name}`)
   );
@@ -812,7 +810,9 @@ async function saveNewAbilities() {
   // Download new abilities and convert them to webp
   for (const championKey of championKeys) {
     const championName = championsDetails[championKey].name;
-    console.log(`Processing abilities for champion: ${championName}`);
+    console.log(
+      `Processing abilities for champion: ${championName}. Key: ${championKey}`
+    );
 
     const missingAbilities = Object.values(
       championsDetails[championKey].abilities
@@ -822,7 +822,9 @@ async function saveNewAbilities() {
     });
 
     if (missingAbilities.length === 0) {
-      console.log(`No new abilities for champion: ${championName}`);
+      console.log(
+        `No new abilities for champion: ${championName}. Key: ${championKey}`
+      );
       continue;
     }
 
