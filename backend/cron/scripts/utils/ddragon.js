@@ -4,9 +4,9 @@ const pLimit = require("p-limit");
 const path = require("path");
 const sharp = require("sharp");
 
-const { PrismaClient } = require("../generated/prisma");
+const { PrismaClient } = require("../../../generated/prisma");
 const prisma = new PrismaClient();
-const championV2 = require("../models/v2/champion");
+const championV2 = require("../../../models/v2/champion");
 
 const DDRAGON_BASE = "https://ddragon.leagueoflegends.com";
 const BASE_UNIVERSE_MEEPS_URL = "https://universe-meeps.leagueoflegends.com";
