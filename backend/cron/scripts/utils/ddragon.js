@@ -370,7 +370,7 @@ async function convertImagesToWebp(inputDir, options) {
 
 async function resizeChampionIcons() {
   const iconsDir = path.join("./images/champions/icons");
-  const resizedDir = path.join(iconsDir, "40_40");
+  const resizedDir = path.join("./images/40_40/champions");
   try {
     await ensureDir(resizedDir);
 
@@ -634,6 +634,29 @@ async function saveChampionsAndPatch(championPayloads, latestPatch) {
   });
 }
 
+async function copyFiles(srcDir, destDir) {
+  try {
+    await ensureDir(destDir);
+    const files = await fsp.readdir(srcDir);
+    const webpFiles = files.filter((file) =>
+      file.toLowerCase().endsWith(".webp")
+    );
+    const copyTasks = webpFiles.map((file) =>
+      fsp.copyFile(path.join(srcDir, file), path.join(destDir, file))
+    );
+    await Promise.all(copyTasks);
+    console.log(
+      `Copied ${webpFiles.length} .webp files from ${srcDir} to ${destDir}.`
+    );
+  } catch (err) {
+    console.error(
+      `Failed to copy files from ${srcDir} to ${destDir}:`,
+      err.message
+    );
+  }
+  return true;
+}
+
 /**
  * Save missing champions, skins and abilities to the database.
  * It fetches the latest patch, checks for missing champions,
@@ -657,6 +680,27 @@ async function saveNewChampions() {
     );
 
     await processChampionImages(latestPatch, championPayloads);
+
+    // Move splash arts to the correct directory for backend usage
+    await copyFiles("./images/champions/splash", "./images/splash_arts");
+    await copyFiles("./images/champions/abilities", "./images/abilities");
+
+    // Copy images to frontend public directory
+    await copyFiles(
+      "./images/champions/splash",
+      "../frontend/public/splash_arts"
+    );
+    await copyFiles(
+      "./images/40_40/champions",
+      "../frontend/public/40_40/champions"
+    );
+
+    await copyFiles("./images/champions/icons", "../frontend/public/champions");
+    await copyFiles(
+      "./images/champions/abilities",
+      "../frontend/public/abilities"
+    );
+
     await saveChampionsAndPatch(championPayloads, latestPatch);
 
     console.log("Completed champion sync for patch:", latestPatch);
@@ -746,6 +790,14 @@ async function saveNewSkins() {
     console.log("Converting images to webp format...");
 
     await convertImagesToWebp("./images/champions/splash", { quality: 90 });
+
+    // Move splash arts to the correct directory for backend usage
+    await copyFiles("./images/champions/splash", "./images/splash_arts");
+    // Copy images to frontend public directory
+    await copyFiles(
+      "./images/champions/splash",
+      "../frontend/public/splash_arts"
+    );
 
     // Fetch all champions to get the champion ID
 
@@ -874,6 +926,15 @@ async function saveNewAbilities() {
     // Save new abilities to the database
 
     console.log("Saving new abilities to the database...");
+
+    // Move splash arts to the correct directory for backend usage
+    await copyFiles("./images/champions/abilities", "./images/abilities");
+
+    // Copy images to frontend public directory
+    await copyFiles(
+      "./images/champions/abilities",
+      "../frontend/public/abilities"
+    );
 
     await prisma.abilities.createMany({
       data: abilityData,
