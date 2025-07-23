@@ -434,12 +434,13 @@ function buildChampionUrls(missingChampNames, championPayloads, version) {
 
   return missingChampNames.map((champion) => {
     const payload = byName.get(champion.toLowerCase());
+
     return {
       name: champion,
       iconUrl: `${DDRAGON_BASE}/cdn/${version}/img/champion/${champion}.png`,
       splashes: payload ? buildChampionSplashUrls(champion, payload.skins) : [],
       abilities: payload
-        ? buildChampionAbilityUrls(champion, payload.abilities)
+        ? buildChampionAbilityUrls(champion, Object.values(payload.abilities))
         : [],
     };
   });
@@ -509,40 +510,6 @@ async function downloadBulkChampionImages(
   const succeeded = results.filter((r) => r.ok).length;
   const failed = results.length - succeeded;
   return { total: results.length, succeeded, failed, results };
-}
-
-/**
- * Save missing champions, skins and abilities to the database.
- * It fetches the latest patch, checks for missing champions,
- * builds their payloads, downloads images, converts them to webp,
- * resizes icons, and saves everything to the database.
- */
-async function saveMissingChampions() {
-  try {
-    const latestPatch = await getLatestPatchIfNew();
-    if (!latestPatch) return;
-
-    const missingChampions = await getMissingChampions(latestPatch);
-    if (missingChampions.length === 0) {
-      console.log("No new champions to save.");
-      return;
-    }
-
-    const championPayloads = await buildMissingChampionPayloads(
-      missingChampions,
-      latestPatch
-    );
-
-    await processChampionImages(latestPatch, championPayloads);
-    await saveChampionsAndPatch(championPayloads, latestPatch);
-
-    console.log("Completed champion sync for patch:", latestPatch);
-  } catch (err) {
-    console.error("Error in saveMissingChampions:", err);
-    return 1;
-  } finally {
-    await prisma.$disconnect();
-  }
 }
 
 async function getLatestPatchIfNew() {
@@ -666,15 +633,46 @@ async function saveChampionsAndPatch(championPayloads, latestPatch) {
     console.log("Champions and patch saved successfully.");
   });
 }
-// TODO: Create new function. This function should be called periodically to keep the champions data up to date
-// It should only fetch new champion skins and abilities to keep them up to date
-//saveMissingChampions();
+
+/**
+ * Save missing champions, skins and abilities to the database.
+ * It fetches the latest patch, checks for missing champions,
+ * builds their payloads, downloads images, converts them to webp,
+ * resizes icons, and saves everything to the database.
+ */
+async function saveNewChampions() {
+  try {
+    const latestPatch = await getLatestPatchIfNew();
+    if (!latestPatch) return;
+
+    const missingChampions = await getMissingChampions(latestPatch);
+    if (missingChampions.length === 0) {
+      console.log("No new champions to save.");
+      return;
+    }
+
+    const championPayloads = await buildMissingChampionPayloads(
+      missingChampions,
+      latestPatch
+    );
+
+    await processChampionImages(latestPatch, championPayloads);
+    await saveChampionsAndPatch(championPayloads, latestPatch);
+
+    console.log("Completed champion sync for patch:", latestPatch);
+  } catch (err) {
+    console.error("Error in saveMissingChampions:", err);
+    return 1;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
 
 /**
  * Fetch new skins for champions.
  * This function should be called periodically to keep the skins data up to date.
  */
-async function fetchNewSkins() {
+async function saveNewSkins() {
   const limit = pLimit(2); // limit concurrency to 2 tasks at a time
 
   const latestPatch = await fetchLatestPatch();
@@ -780,7 +778,7 @@ async function fetchNewSkins() {
  * Fetch abilities for champions.
  * Used mostly to seed the db with abilities.
  */
-async function fetchAllAbilities() {
+async function saveNewAbilities() {
   const limit = pLimit(2); // limit concurrency to 2 tasks at a time
 
   const latestPatch = await fetchLatestPatch();
@@ -884,4 +882,8 @@ async function fetchAllAbilities() {
   }
 }
 
-fetchAllAbilities();
+module.exports = {
+  saveNewChampions,
+  saveNewSkins,
+  saveNewAbilities,
+};
