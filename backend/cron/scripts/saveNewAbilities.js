@@ -1,3 +1,6 @@
 const ddragon = require("./utils/ddragon");
 
-ddragon.saveNewAbilities();
+(async () => {
+  const code = await ddragon.saveNewAbilities();
+  process.exit(code === 1 ? 1 : 0);
+})();
