@@ -60,6 +60,9 @@ describe("Testing guessing champs correctly and prestige", () => {
       guess: guess,
     };
 
+    const data = await user.getSolvedChampionIds(userObj.id);
+    expect(data).not.toHaveLength(0);
+
     const res = await request(app)
       .post("/api/guess")
       .send(body)
@@ -67,6 +70,9 @@ describe("Testing guessing champs correctly and prestige", () => {
 
     expect(res.body.status).toBe("success");
     expect(res.body.correctGuess).toBe(true);
+
+    const data1 = await user.getSolvedChampionIds(userObj.id);
+    expect(data1).toHaveLength(0);
   });
 
   it("Get user data after guessing correctly", (done) => {
