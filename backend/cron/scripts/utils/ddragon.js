@@ -787,18 +787,6 @@ async function saveNewSkins() {
 
     await Promise.all(downloadTasks);
 
-    console.log("Converting images to webp format...");
-
-    await convertImagesToWebp("./images/champions/splash", { quality: 90 });
-
-    // Move splash arts to the correct directory for backend usage
-    await copyFiles("./images/champions/splash", "./images/splash_arts");
-    // Copy images to frontend public directory
-    await copyFiles(
-      "./images/champions/splash",
-      "../frontend/public/splash_arts"
-    );
-
     // Fetch all champions to get the champion ID
 
     const championId = championRecords.find(
@@ -822,6 +810,18 @@ async function saveNewSkins() {
     // Add sleep
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
+
+  console.log("Converting images to webp format...");
+
+  await convertImagesToWebp("./images/champions/splash", { quality: 90 });
+
+  // Copy images to frontend public directory
+  await copyFiles(
+    "./images/champions/splash",
+    "../frontend/public/splash_arts"
+  );
+
+  console.log("Skins saved successfully.");
 }
 
 /**
@@ -905,12 +905,6 @@ async function saveNewAbilities() {
 
     await Promise.all(downloadTasks);
 
-    console.log("Converting images to webp format...");
-
-    await convertImagesToWebp("./images/champions/abilities", {
-      lossless: true,
-    });
-
     // Fetch all champions to get the champion ID
 
     const championId = championRecords.find(
@@ -927,15 +921,6 @@ async function saveNewAbilities() {
 
     console.log("Saving new abilities to the database...");
 
-    // Move splash arts to the correct directory for backend usage
-    await copyFiles("./images/champions/abilities", "./images/abilities");
-
-    // Copy images to frontend public directory
-    await copyFiles(
-      "./images/champions/abilities",
-      "../frontend/public/abilities"
-    );
-
     await prisma.abilities.createMany({
       data: abilityData,
     });
@@ -943,6 +928,20 @@ async function saveNewAbilities() {
     // Add sleep
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
+
+  console.log("Converting images to webp format...");
+
+  await convertImagesToWebp("./images/champions/abilities", {
+    lossless: true,
+  });
+
+  // Copy images to frontend public directory
+  await copyFiles(
+    "./images/champions/abilities",
+    "../frontend/public/abilities"
+  );
+
+  console.log("Abilities saved successfully.");
 }
 
 module.exports = {
