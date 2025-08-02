@@ -8,6 +8,8 @@ const path = require("path");
 const GetPartialSimilarites =
   require("../helpers/compare").GetPartialSimilarites;
 const { PrismaClient } = require("../generated/prisma");
+const skin = require("../models/v2/skin");
+const fsp = require("fs").promises;
 
 const prisma = new PrismaClient();
 
@@ -272,10 +274,8 @@ const GuessSplash = async (req, res) => {
     }
 
     // Get the correct champion for the user's current splash
-    const correctChampion = await championV2.findById(
-      userObj.currentSplashChampion
-    );
-    if (!correctChampion) {
+    const correctSkinData = await skin.findById(userObj.currentSplashSkinId);
+    if (!correctSkinData) {
       return res.json({ status: "error", message: "Token is invalid" });
     }
 
@@ -288,7 +288,7 @@ const GuessSplash = async (req, res) => {
       });
     }
 
-    if (guess !== correctChampion.name) {
+    if (guess !== correctSkinData.champion.name) {
       return res.json({
         status: "success",
         correctGuess: false,
@@ -301,9 +301,9 @@ const GuessSplash = async (req, res) => {
     let solvedIds = await userV2.getSolvedSplashChampionIds(userObj.id);
 
     // Add the just-solved splash if not already present
-    if (!solvedIds.includes(correctChampion.id)) {
-      await userV2.addSolvedSplash(userObj.id, correctChampion.id);
-      solvedIds.push(correctChampion.id);
+    if (!solvedIds.includes(correctSkinData.champion.id)) {
+      await userV2.addSolvedSplash(userObj.id, correctSkinData.champion.id);
+      solvedIds.push(correctSkinData.champion.id);
     }
 
     // Prestige logic
@@ -319,16 +319,25 @@ const GuessSplash = async (req, res) => {
     const unsolvedIds = allIds.filter((id) => !solvedChamps.includes(id));
     const newChampionId =
       unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
-    const newChampion = await championV2.findById(newChampionId);
 
     // Pick a random splash sprite
-    const sprites = newChampion.spriteIds.split(",");
-    const randomSprite = sprites[Math.floor(Math.random() * sprites.length)];
+
+    const skins = await skin.findByChampionId(newChampionId);
+
+    if (skins.length === 0) {
+      console.log("FATAL: No skins found for champion ID", newChampionId);
+      return res.json({
+        status: "error",
+        message: "No skins found for this champion",
+      });
+    }
+
+    const randomSkinIndex = Math.floor(Math.random() * skins.length);
+    const randomSkin = skins[randomSkinIndex];
 
     // Update user splash info
     await userV2.updateById(userObj.id, {
-      currentSplashChampion: newChampionId,
-      currentSplashId: parseInt(randomSprite),
+      currentSplashSkinId: randomSkin.id,
       prestige,
       score: { increment: 1 },
     });
@@ -339,7 +348,7 @@ const GuessSplash = async (req, res) => {
       status: "success",
       correctGuess: true,
       championKey: guessChampion.championKey,
-      title: correctChampion.title,
+      title: correctSkinData.champion.title,
     });
   } catch (error) {
     console.error("Error in Splash Guess function:", error);
@@ -349,27 +358,33 @@ const GuessSplash = async (req, res) => {
   }
 };
 
-const GetSplashArt = (req, res) => {
+const GetSplashArt = async (req, res) => {
   const token = req.token;
+  try {
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
 
-  user.fetchSplashArtByToken(token, (err, result) => {
-    if (err) {
-      console.log(err);
+    if (!userObj.currentSplashSkinId) {
       return res.json({
         status: "error",
-        message: "Error on fetching splash art",
+        message: "No current splash art set for this user",
       });
     }
 
-    if (!result) {
+    // Fetch the splash art from the database
+    const currentSplashSkinId = userObj.currentSplashSkinId;
+
+    const skinData = await skin.findById(currentSplashSkinId);
+    if (!skinData) {
       return res.json({
         status: "error",
-        message: "Splash art was not found for that token",
+        message: "Splash art not found for this user",
       });
     }
 
-    const imageName =
-      result[0].championKey + "_" + result[0].currentSplashId + ".webp";
+    const imageName = `${skinData.champion.championKey}_${skinData.key}.webp`;
 
     if (cache.checkCache(imageName)) {
       const data = cache.getCache(imageName);
@@ -384,26 +399,35 @@ const GetSplashArt = (req, res) => {
       });
     }
 
-    const imagePath = path.join(__dirname, "../splash_arts", imageName);
+    const imagePath = path.join(
+      __dirname,
+      "../images/champions/splash",
+      imageName
+    );
 
-    fs.readFile(imagePath, (err, data) => {
-      if (err) {
-        console.log(`FATAL: Image is missing for: ${imageName}`);
-        return res.status(404).json({
-          status: "error",
-          message: "File not found",
-        });
-      }
-      const base64 = data.toString("base64");
-      cache.saveCache(imageName, base64);
-      cache.changeTTL(imageName, 3600 * 6);
-
-      return res.json({
-        status: "success",
-        result: base64,
+    const file = await fsp.readFile(imagePath);
+    if (!file) {
+      console.log(`FATAL: Image is missing for: ${imageName}`);
+      return res.status(404).json({
+        status: "error",
+        message: "File not found",
       });
+    }
+
+    const base64 = file.toString("base64");
+    cache.saveCache(imageName, base64);
+    cache.changeTTL(imageName, 3600 * 6);
+
+    return res.json({
+      status: "success",
+      result: base64,
     });
-  });
+  } catch (error) {
+    console.error("Error in GetSplashArt function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
 };
 
 module.exports = {

@@ -9,6 +9,7 @@ const userV2 = require("../models/v2/user");
 const championV2 = require("../models/v2/champion");
 const itemV2 = require("../models/v2/item");
 const oldItemV2 = require("../models/v2/oldItem");
+const skin = require("../models/v2/skin");
 
 const Create = (req, res) => {
   crypto.randomBytes(46, (err, token) => {
@@ -281,14 +282,20 @@ const ChangeSplashGuess = async (req, res) => {
     const random = Math.floor(Math.random() * champPool.length);
     const newChampionId = champPool[random];
 
-    const newChampion = await championV2.findById(newChampionId);
-    const sprites = newChampion.spriteIds.split(",");
-    const randomSprite = sprites[Math.floor(Math.random() * sprites.length)];
+    const skins = await skin.findByChampionId(newChampionId);
 
-    await userV2.updateById(userObj.id, {
-      currentSplashChampion: newChampionId,
-      currentSplashId: parseInt(randomSprite),
-    });
+    if (skins.length === 0) {
+      console.log("FATAL: No skins found for champion ID", newChampionId);
+      return res.json({
+        status: "error",
+        message: "No skins found for this champion",
+      });
+    }
+
+    const randomSkinIndex = Math.floor(Math.random() * skins.length);
+    const randomSkin = skins[randomSkinIndex];
+
+    await userV2.updateById(userObj.id, { currentSplashSkinId: randomSkin.id });
 
     res.json({
       status: "success",
