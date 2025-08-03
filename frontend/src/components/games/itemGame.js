@@ -24,7 +24,7 @@ import {
 
 export default function ItemGame() {
   const [validGuesses, setValidGuesses] = useState([]);
-  const [items, setitems] = useState([]);
+  const [items, setItems] = useState([]);
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
@@ -58,7 +58,7 @@ export default function ItemGame() {
     const history = getItemGuessHistory().reverse();
 
     if (history.length > 0) {
-      setitems(history);
+      setItems(history);
       setGuesses(history.map((item) => item.name));
     }
   };
@@ -140,7 +140,7 @@ export default function ItemGame() {
         const itemId = response.data.itemId;
         const name = response.data.name;
 
-        setitems((items) => [{ itemId, name, isCorrect }, ...items]);
+        setItems((items) => [{ itemId, name, isCorrect }, ...items]);
 
         addToItemGuessHistory({ itemId, name, isCorrect });
         const spriteImg = document.getElementById("spriteImg");
@@ -159,7 +159,7 @@ export default function ItemGame() {
       })
       .catch((error) => {
         console.log(error);
-        setitems([]);
+        setItems([]);
       });
   };
 
@@ -187,7 +187,7 @@ export default function ItemGame() {
     FetchItems();
 
     setGuesses([]);
-    setitems([]);
+    setItems([]);
     setGuess();
     setCorrectGuess(false);
   };
@@ -195,7 +195,7 @@ export default function ItemGame() {
   const HandleReroll = () => {
     clearItemHistory();
     setGuesses([]);
-    setitems([]);
+    setItems([]);
     Reroll("item");
   };
 
