@@ -112,7 +112,8 @@ export default function SplashArtGame() {
         const isCorrect = response.data.correctGuess;
         const key = response.data.championKey;
 
-        setChampions((champions) => [[key, isCorrect], ...champions]);
+        // Use object instead of tuple
+        setChampions((champions) => [{ key, isCorrect }, ...champions]);
 
         const spriteImg = document.getElementById("spriteImg");
 
@@ -234,9 +235,9 @@ export default function SplashArtGame() {
       <div id="championsImgs" className="container">
         {champions.map((champ) => (
           <ChampionImg
-            key={champ[0].key}
-            championKey={champ[0]}
-            isCorrect={champ[1]}
+            key={champ.key}
+            championKey={champ.key}
+            isCorrect={champ.isCorrect}
             isColorBlindMode={isColorBlindMode}
           />
         ))}
@@ -245,7 +246,7 @@ export default function SplashArtGame() {
       {correctGuess ? (
         <Victory
           id="victory"
-          championKey={champions[0][0]}
+          championKey={champions[0].key}
           champion={currentGuess}
           tries={guesses.length}
           title={title}
