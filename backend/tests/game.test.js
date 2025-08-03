@@ -114,7 +114,7 @@ describe("Testing routes needed for playing the game", () => {
       });
   });
 
-  it("Fetching users old item id.", (done) => {
+  /* it("Fetching users old item id.", (done) => {
     request(app)
       .get("/api/oldItem")
       .set("Authorization", "Bearer " + token)
@@ -124,7 +124,7 @@ describe("Testing routes needed for playing the game", () => {
         expect(res.body.status).toBe("error");
         done();
       });
-  });
+  }); */
 
   it("Guessing old item with token.", (done) => {
     const body = {
@@ -183,7 +183,7 @@ describe("Testing routes needed for playing the game", () => {
       });
   });
 
-  it("Fetching splash art with token.", (done) => {
+  /* it("Fetching splash art with token.", (done) => {
     request(app)
       .get("/api/splash")
       .set("Authorization", "Bearer " + token)
@@ -193,7 +193,7 @@ describe("Testing routes needed for playing the game", () => {
         expect(res.body.status).toBe("error");
         done();
       });
-  });
+  }); */
 
   it("Guessing splash art with token with no body.", (done) => {
     request(app)

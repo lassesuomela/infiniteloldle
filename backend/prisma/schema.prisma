@@ -25,6 +25,8 @@ model champions {
   damageType          String?               @db.VarChar(45)
   UserSolvedChampions UserSolvedChampions[]
   UserSolvedSplashes  UserSolvedSplashes[]
+  abilities           abilities[]
+  skins               skins[]
 }
 
 model items {
@@ -59,15 +61,14 @@ model users {
   timestamp             String                @db.VarChar(10)
   prestige              Int                   @default(0)
   score                 Int                   @default(0)
-  currentSplashChampion Int?
-  currentSplashId       Int?
   country               String?               @db.VarChar(5)
   currentItemId         Int?
   currentOldItemId      Int?
-  solvedChampions      UserSolvedChampions[]
+  solvedChampions       UserSolvedChampions[]
   solvedItems           UserSolvedItems[]
   solvedOldItems        UserSolvedOldItems[]
   solvedSplashes        UserSolvedSplashes[]
+  currentSplashSkinId Int?
 }
 
 model UserSolvedChampions {
@@ -108,4 +109,38 @@ model UserSolvedSplashes {
 
   @@id([userId, championId])
   @@index([championId], map: "UserSolvedSplashes_splashId_fkey")
+}
+
+model lol_patches {
+  id        Int      @id @default(autoincrement())
+  version   String   @unique @db.VarChar(20)
+  checkedAt DateTime @default(now()) @db.Timestamp(0)
+}
+
+model abilities {
+  id         Int        @id @default(autoincrement())
+  championId Int
+  name       String
+  key        AbilityKey
+  champion   champions  @relation(fields: [championId], references: [id], onDelete: Cascade)
+
+  @@unique([championId, key])
+}
+
+enum AbilityKey {
+  P
+  Q
+  W
+  E
+  R
+}
+
+model skins {
+  id         Int       @id @default(autoincrement())
+  championId Int
+  name       String
+  key        String
+  champion   champions @relation(fields: [championId], references: [id], onDelete: Cascade)
+
+  @@unique([championId, key])
 }

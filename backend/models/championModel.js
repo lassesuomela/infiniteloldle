@@ -56,18 +56,8 @@ const champion = {
       cb
     );
   },
-  getSplashByToken: (token, cb) => {
-    db.query(
-      "SELECT users.currentSplashChampion, champions.id, champions.name, champions.title FROM users JOIN champions ON champions.id = users.currentSplashChampion WHERE users.token = ?",
-      [token],
-      cb
-    );
-  },
   getByName: (name, cb) => {
     db.query("SELECT * FROM champions WHERE name = ?", [name], cb);
-  },
-  getSplashById: (id, cb) => {
-    db.query("SELECT spriteIds FROM champions where id = ?", [id], cb);
   },
   getNameById: (id, cb) => {
     db.query("SELECT name FROM champions WHERE id = ?", [id], cb);

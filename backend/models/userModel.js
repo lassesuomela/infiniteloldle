@@ -1,23 +1,6 @@
 const db = require("../configs/db");
 
 const user = {
-  create: (data, cb) => {
-    return db.query(
-      "INSERT INTO users (nickname, token, currentChampion, timestamp, currentSplashChampion, currentSplashId, country, currentItemId, currentOldItemId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [
-        data.nickname,
-        data.token,
-        data.currentChampion,
-        data.timestamp,
-        data.currentSplashChampion,
-        data.currentSplashId,
-        data.country,
-        data.currentItemId,
-        data.currentOldItemId,
-      ],
-      cb
-    );
-  },
   update: (data, cb) => {
     return db.query(
       "UPDATE users SET currentChampion = ?, prestige = ?, score = ? WHERE token = ?",
@@ -25,37 +8,10 @@ const user = {
       cb
     );
   },
-  updateSplash: (data, cb) => {
-    return db.query(
-      "UPDATE users SET currentSplashChampion = ? currentSplashId = ?, prestige = ?, score = ? WHERE token = ?",
-      [
-        data.currentSplashChampion,
-        data.currentSplashId,
-        data.prestige,
-        data.score,
-        data.token,
-      ],
-      cb
-    );
-  },
   fetchByTokenForUserDataAPI: (token, cb) => {
     return db.query(
       "SELECT nickname, timestamp, prestige, score, country FROM users WHERE token = ?; SELECT user_rank FROM (SELECT token, DENSE_RANK() OVER (ORDER BY score DESC) AS user_rank FROM users WHERE score > 0) AS ranked_users WHERE token = ?;",
       [token, token],
-      cb
-    );
-  },
-  fetchByToken: (token, cb) => {
-    return db.query(
-      "SELECT nickname, currentSplashChampion, timestamp, prestige, score, country, currentItemId, currentOldItemId FROM users WHERE token = ?;",
-      [token],
-      cb
-    );
-  },
-  fetchSplashArtByToken: (token, cb) => {
-    return db.query(
-      "SELECT users.currentSplashId, champions.championKey FROM users JOIN champions ON champions.id = users.currentSplashChampion WHERE token = ?",
-      [token],
       cb
     );
   },
