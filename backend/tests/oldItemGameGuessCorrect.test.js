@@ -1,6 +1,5 @@
 const app = require("../app");
 const request = require("supertest");
-const oldItemModel = require("../models/oldItemModel");
 const oldItem = require("../models/v2/oldItem");
 const user = require("../models/v2/user");
 

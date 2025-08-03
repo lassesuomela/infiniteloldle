@@ -13,89 +13,6 @@ const fsp = require("fs").promises;
 
 const prisma = new PrismaClient();
 
-const Create = (req, res) => {
-  const data = req.body;
-
-  if (
-    !data.name ||
-    !data.title ||
-    !data.resource ||
-    !data.skinCount ||
-    !data.spriteIds ||
-    !data.genre ||
-    !data.gender
-  ) {
-    return res.json({
-      status: "error",
-      message: "One or more fields must be provided",
-    });
-  }
-
-  champion.create(data, (err, result) => {
-    if (err) {
-      return res.json({ status: "error", error: err });
-    }
-
-    res.json({ status: "success", message: "Champion added successfully" });
-  });
-};
-
-const AddMoreData = (req, res) => {
-  const body = req.body;
-
-  if (
-    !body.champion ||
-    !body.data[0].released ||
-    !body.data[1].region ||
-    !body.data[2].positions ||
-    !body.data[3].rangeTypes
-  ) {
-    return res.json({
-      status: "error",
-      message: "One or more fields must be provided",
-    });
-  }
-
-  const data = {
-    name: body.champion,
-    released: body.data[0].released.toString(),
-    region: body.data[1].region.toString(),
-    position: body.data[2].positions.toString(),
-    rangeType: body.data[3].rangeTypes.toString(),
-    damageType: body.data[4].damageType.toString(),
-  };
-
-  champion.addMoreData(data, (err, result) => {
-    if (err) {
-      return res.json({ status: "error", error: err });
-    }
-    res.json({ status: "success", message: "Champion edited" });
-  });
-};
-
-const AddChampionId = (req, res) => {
-  const body = req.body;
-
-  const data = {
-    name: body.name,
-    key: body.key,
-  };
-
-  if (!body.name || !body.key) {
-    return res.json({
-      status: "error",
-      message: "One or more fields must be provided",
-    });
-  }
-
-  champion.addChampionId(data, (err, result) => {
-    if (err) {
-      return res.json({ status: "error", error: err });
-    }
-    res.json({ status: "success", message: "Champion edited" });
-  });
-};
-
 const GetAllChampions = (req, res) => {
   const key = req.path;
   if (cache.checkCache(key)) {
@@ -120,16 +37,6 @@ const GetAllChampions = (req, res) => {
     cache.changeTTL(key, 3600 * 24);
     res.set("X-CACHE", "MISS");
     res.json(response);
-  });
-};
-
-const GetAllChampionKeys = (req, res) => {
-  champion.getAllKeys((err, result) => {
-    if (err) {
-      return res.json({ status: "error", error: err });
-    }
-
-    res.json({ status: "success", championKeys: result });
   });
 };
 
@@ -432,12 +339,8 @@ const GetSplashArt = async (req, res) => {
 };
 
 module.exports = {
-  Create,
-  AddMoreData,
-  AddChampionId,
   GetAllChampions,
   Guess,
   GuessSplash,
   GetSplashArt,
-  GetAllChampionKeys,
 };

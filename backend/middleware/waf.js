@@ -2,7 +2,7 @@ require("dotenv").config();
 const Parser = require("ua-parser-js");
 
 const checkRequest = (req, res, next) => {
-  if (process.env.ENV === "dev") {
+  if (process.env.NODE_ENV === "dev" || process.env.NODE_ENV === "test") {
     next();
     return;
   }

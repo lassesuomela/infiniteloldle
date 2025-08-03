@@ -1,5 +1,4 @@
 const config = {
-  url: "https://www.infiniteloldle.com/api",
+  url: process.env.REACT_APP_API_URL || "https://www.infiniteloldle.com/api",
 };
-
 module.exports = config;
