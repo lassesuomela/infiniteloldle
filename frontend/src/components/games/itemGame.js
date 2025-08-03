@@ -16,6 +16,11 @@ import {
   SelectTheme,
 } from "./styles/selectStyles";
 import { useSelector } from "react-redux";
+import {
+  addToItemGuessHistory,
+  getItemGuessHistory,
+  clearItemHistory,
+} from "../history";
 
 export default function ItemGame() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -40,7 +45,23 @@ export default function ItemGame() {
   useEffect(() => {
     FetchItems();
     FetchItemImage();
+    SetHistory();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (spriteUrl) {
+      ApplyBlur(guesses.length);
+    }
+  }, [spriteUrl, guesses]);
+
+  const SetHistory = () => {
+    const history = getItemGuessHistory().reverse();
+
+    if (history.length > 0) {
+      setChampions(history);
+      setGuesses(history.map((item) => item.name));
+    }
+  };
 
   const FetchItems = () => {
     axios
@@ -49,10 +70,17 @@ export default function ItemGame() {
         if (response.data.status === "success") {
           const data = response.data.items;
           data.sort((a, b) => a.value.localeCompare(b.value));
-          const transformedData = data.map((champion) => ({
-            value: champion.value,
-            label: champion.value,
-          }));
+
+          const guessHistoryNames = new Set(
+            getItemGuessHistory().map((item) => item.name)
+          );
+
+          const transformedData = data
+            .filter((item) => !guessHistoryNames.has(item.value))
+            .map((item) => ({
+              value: item.value,
+              label: item.value,
+            }));
           setValidGuesses(transformedData);
         }
       })
@@ -116,6 +144,8 @@ export default function ItemGame() {
           { itemId, name, isCorrect },
           ...champions,
         ]);
+
+        addToItemGuessHistory({ itemId, name, isCorrect });
         const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
@@ -124,15 +154,10 @@ export default function ItemGame() {
           }
           saveGamesPlayed();
           setCorrectGuess(true);
+          clearItemHistory();
           spriteImg.style.filter = "";
         } else {
-          let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
-
-          blurVal -= blurVal * 0.4;
-
-          spriteImg.style.filter = `blur(${blurVal.toString()}em) ${
-            isMonochrome ? "grayscale(1)" : ""
-          }`;
+          ApplyBlur(guesses.length + 1);
         }
       })
       .catch((error) => {
@@ -141,11 +166,25 @@ export default function ItemGame() {
       });
   };
 
-  const Restart = () => {
+  const ApplyBlur = (guessCount) => {
     const spriteImg = document.getElementById("spriteImg");
-    spriteImg.style.filter = `blur(1.0em) ${
+    if (!spriteImg) return;
+
+    const initialBlur = 1.0;
+    let blurVal = initialBlur;
+
+    for (let i = 0; i < guessCount; i++) {
+      blurVal -= blurVal * 0.4;
+    }
+
+    spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
       isMonochrome ? "grayscale(1)" : ""
     }`;
+  };
+
+  const Restart = () => {
+    setTimeout(() => ApplyBlur(0), 0);
+    clearItemHistory();
 
     FetchItemImage();
     FetchItems();
@@ -154,6 +193,11 @@ export default function ItemGame() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
+  };
+
+  const HandleReroll = () => {
+    clearItemHistory();
+    Reroll("item");
   };
 
   return (
@@ -214,7 +258,7 @@ export default function ItemGame() {
             {!correctGuess && guesses.length >= 10 ? (
               <button
                 className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={() => Reroll("item")}
+                onClick={HandleReroll}
               >
                 Reroll
               </button>
