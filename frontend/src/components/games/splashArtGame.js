@@ -17,6 +17,11 @@ import {
   SelectTheme,
 } from "./styles/selectStyles";
 import { useSelector } from "react-redux";
+import {
+  clearSkinHistory,
+  getSkinGuessHistory,
+  addToSkinGuessHistory,
+} from "../history";
 
 export default function SplashArtGame() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -42,7 +47,23 @@ export default function SplashArtGame() {
   useEffect(() => {
     FetchChampions();
     FetchSplashArt();
+    SetHistory();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const SetHistory = () => {
+    const history = getSkinGuessHistory().reverse();
+
+    if (history.length > 0) {
+      setChampions(history);
+      setGuesses(history.map((item) => item.name));
+    }
+  };
+
+  useEffect(() => {
+    if (sprite) {
+      ApplyBlur(guesses.length);
+    }
+  }, [sprite, guesses]);
 
   const FetchChampions = () => {
     axios
@@ -51,11 +72,18 @@ export default function SplashArtGame() {
         if (response.data.status === "success") {
           const data = response.data.champions;
           data.sort((a, b) => a.value.localeCompare(b.value));
-          const transformedData = data.map((champion) => ({
-            value: champion.value,
-            label: champion.value,
-            image: champion.image,
-          }));
+
+          const guessChampionKeys = new Set(
+            getSkinGuessHistory().map((champ) => champ.key)
+          );
+
+          const transformedData = data
+            .filter((champion) => !guessChampionKeys.has(champion.value))
+            .map((champion) => ({
+              value: champion.value,
+              label: champion.value,
+              image: champion.image,
+            }));
           setValidGuesses(transformedData);
         }
       })
@@ -114,6 +142,7 @@ export default function SplashArtGame() {
 
         // Use object instead of tuple
         setChampions((champions) => [{ key, isCorrect }, ...champions]);
+        addToSkinGuessHistory({ key, isCorrect });
 
         const spriteImg = document.getElementById("spriteImg");
 
@@ -123,17 +152,12 @@ export default function SplashArtGame() {
           }
           saveGamesPlayed();
           setCorrectGuess(true);
+          clearSkinHistory();
           setTitle(response.data.title);
 
           spriteImg.style.filter = "";
         } else {
-          let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
-
-          blurVal -= blurVal * 0.4;
-
-          spriteImg.style.filter = `blur(${blurVal.toString()}em) ${
-            isMonochrome ? "grayscale(1)" : ""
-          }`;
+          ApplyBlur(guesses.length + 1);
         }
       })
       .catch((error) => {
@@ -142,11 +166,25 @@ export default function SplashArtGame() {
       });
   };
 
-  const Restart = () => {
+  const ApplyBlur = (guessCount) => {
     const spriteImg = document.getElementById("spriteImg");
-    spriteImg.style.filter = `blur(1.0em) ${
+    if (!spriteImg) return;
+
+    const initialBlur = 1.0;
+    let blurVal = initialBlur;
+
+    for (let i = 0; i < guessCount; i++) {
+      blurVal -= blurVal * 0.4;
+    }
+
+    spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
       isMonochrome ? "grayscale(1)" : ""
     }`;
+  };
+
+  const Restart = () => {
+    setTimeout(() => ApplyBlur(0), 0);
+
     FetchSplashArt();
     FetchChampions();
 
@@ -154,6 +192,13 @@ export default function SplashArtGame() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
+  };
+
+  const HandleReroll = () => {
+    clearSkinHistory();
+    setGuesses([]);
+    setChampions([]);
+    Reroll("splash");
   };
 
   return (
@@ -221,7 +266,7 @@ export default function SplashArtGame() {
             {!correctGuess && guesses.length >= 10 ? (
               <button
                 className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={() => Reroll("splash")}
+                onClick={HandleReroll}
               >
                 Reroll
               </button>
