@@ -185,7 +185,7 @@ export default function SplashArtGame() {
     if (sprite) {
       ApplyBlur(guesses.length);
     }
-  }, [sprite, guesses.length, isMonochrome, ApplyBlur]);
+  }, [sprite, guesses, isMonochrome, ApplyBlur]);
 
   const Restart = () => {
     setTimeout(() => ApplyBlur(0), 0);
