@@ -112,8 +112,10 @@ export default function ItemGame() {
         const itemId = response.data.itemId;
         const name = response.data.name;
 
-        setChampions((champions) => [[itemId, name, isCorrect], ...champions]);
-
+        setChampions((champions) => [
+          { itemId, name, isCorrect },
+          ...champions,
+        ]);
         const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
@@ -226,9 +228,10 @@ export default function ItemGame() {
       <div id="championsImgs" className="container">
         {champions.map((item) => (
           <ItemImg
-            itemId={item[0]}
-            name={item[1]}
-            isCorrect={item[2]}
+            key={item.itemId}
+            itemId={item.itemId}
+            name={item.name}
+            isCorrect={item.isCorrect}
             isColorBlindMode={isColorBlindMode}
             path="/items/"
           />
@@ -238,7 +241,7 @@ export default function ItemGame() {
       {correctGuess ? (
         <Victory
           id="victory"
-          championKey={champions[0][0]}
+          championKey={champions[0]?.itemId}
           champion={currentGuess}
           tries={guesses.length}
           isItem={true}
