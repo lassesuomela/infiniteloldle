@@ -11,6 +11,20 @@ const itemV2 = require("../models/v2/item");
 const oldItemV2 = require("../models/v2/oldItem");
 const skin = require("../models/v2/skin");
 
+const GetNickname = (nick) => {
+  let nickname = nick ? nick.trim() : "";
+  if (nick?.length > 30) {
+    nickname = nick.substring(0, 30);
+  }
+
+  if (!nick) {
+    const randomStr = Math.random().toString(36).slice(-5).toUpperCase();
+    nickname = `Teemo#${randomStr}`;
+  }
+
+  return nickname;
+};
+
 const Create = (req, res) => {
   crypto.randomBytes(46, (err, token) => {
     if (err) {
@@ -22,9 +36,7 @@ const Create = (req, res) => {
 
     let { nickname } = req.body;
 
-    if (nickname && nickname.length > 30) {
-      nickname = nickname.substring(0, 30);
-    }
+    nickname = GetNickname(nickname);
 
     const country = req.get("cf-ipcountry");
 
@@ -45,7 +57,7 @@ const Create = (req, res) => {
 
       const currentSplashChampion = data[randomSplash];
 
-      item.getAllIds((err, itemData) => {
+      item.getAllIds(async (err, itemData) => {
         if (err) {
           console.log(err);
           return res.json({
@@ -58,27 +70,24 @@ const Create = (req, res) => {
 
         const currentItemId = itemData[randomItemIdx];
 
-        if (!nickname) {
-          const randomStr = Math.random().toString(36).slice(-4).toUpperCase();
-          nickname = `Teemo#${randomStr}`;
-        }
+        try {
+          const skins = await skin.findByChampionId(currentSplashChampion.id);
 
-        champion.getSplashById(currentSplashChampion["id"], (err, result) => {
-          if (err) {
-            console.log(err);
+          if (skins.length === 0) {
+            console.log(
+              "FATAL: No skins found for champion ID",
+              currentSplashChampion.id
+            );
             return res.json({
               status: "error",
-              message: "Error on fetching splash art ids",
+              message: "No skins found for this champion",
             });
           }
 
-          const sprites = result[0]["spriteIds"].split(",");
+          const randomSkinIndex = Math.floor(Math.random() * skins.length);
+          const randomSkin = skins[randomSkinIndex];
 
-          const randomSpriteId = Math.floor(Math.random() * sprites.length);
-
-          const randomSprite = sprites[randomSpriteId];
-
-          oldItem.getAllIds((err, oldItemData) => {
+          oldItem.getAllIds(async (err, oldItemData) => {
             if (err) {
               console.log(err);
               return res.json({
@@ -96,28 +105,27 @@ const Create = (req, res) => {
             const userData = {
               nickname: nickname,
               token: token,
-              currentChampion: currentChampion["id"],
-              currentSplashChampion: currentSplashChampion["id"],
-              currentSplashId: parseInt(randomSprite),
+              currentChampion: currentChampion.id,
               timestamp: new Date().toLocaleDateString("en"),
               country: country,
-              currentItemId: currentItemId["itemId"],
-              currentOldItemId: currentOldItemId["id"],
+              currentItemId: currentItemId.itemId,
+              currentOldItemId: currentOldItemId.id,
+              currentSplashSkinId: randomSkin.id,
             };
 
-            user.create(userData, (err, result) => {
-              if (err) {
-                console.log(err);
-                return res.json({
-                  status: "error",
-                  message: "Error on fetching ids",
-                });
-              }
+            const user = await userV2.create(userData);
 
-              res.json({ status: "success", token: token });
-            });
+            console.log(user);
+
+            res.json({ status: "success", token: token });
           });
-        });
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({
+            status: "error",
+            message: "Error on creating user",
+          });
+        }
       });
     });
   });
