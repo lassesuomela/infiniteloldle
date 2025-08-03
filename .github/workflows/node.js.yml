@@ -90,5 +90,6 @@ jobs:
             git pull
             cd ./backend
             chmod +x ./restart.sh
+            chmod +x ./cron.sh
             ./restart.sh
             exit

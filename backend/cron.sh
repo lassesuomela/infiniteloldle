@@ -4,8 +4,8 @@ set -eu
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 scripts=(
-"$BASE_DIR/scripts/saveNewChampions.js"
-"$BASE_DIR/scripts/saveNewSkins.js"
+"$BASE_DIR/cron/scripts/saveNewChampions.js"
+"$BASE_DIR/cron/scripts/saveNewSkins.js"
 )
 
 for s in "${scripts[@]}"; do
