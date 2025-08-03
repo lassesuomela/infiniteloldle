@@ -108,7 +108,7 @@ export default function OldItemGame() {
     if (sprite) {
       ApplyBlur(guesses.length);
     }
-  }, [sprite, guesses.length, isMonochrome, ApplyBlur]);
+  }, [sprite, guesses, isMonochrome, ApplyBlur]);
 
   const FetchItemImage = () => {
     axios
