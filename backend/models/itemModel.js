@@ -1,13 +1,6 @@
 const db = require("../configs/db");
 
 const item = {
-  create: (data, cb) => {
-    db.query(
-      "INSERT INTO items (name, itemId) VALUES (?, ?)",
-      [data.name, data.id],
-      cb
-    );
-  },
   getAllIds: (cb) => {
     db.query("SELECT itemId FROM items", cb);
   },

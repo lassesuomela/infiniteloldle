@@ -1,42 +1,6 @@
 const db = require("../configs/db");
 
 const champion = {
-  create: (data, cb) => {
-    db.query(
-      "INSERT INTO champions (name, title, resource, skinCount, spriteIds, genre, gender) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [
-        data.name,
-        data.title,
-        data.resource,
-        data.skinCount,
-        data.spriteIds,
-        data.genre,
-        data.gender,
-      ],
-      cb
-    );
-  },
-  addMoreData: (data, cb) => {
-    db.query(
-      "UPDATE champions SET damageType = ?, position = ?, rangeType = ?, released = ?, region = ? WHERE name = ?",
-      [
-        data.damageType,
-        data.position,
-        data.rangeType,
-        data.released,
-        data.region,
-        data.name,
-      ],
-      cb
-    );
-  },
-  addChampionId: (data, cb) => {
-    db.query(
-      "UPDATE champions SET championKey = ? WHERE name = ?",
-      [data.key, data.name],
-      cb
-    );
-  },
   getAllIds: (cb) => {
     db.query("SELECT id FROM champions", cb);
   },
