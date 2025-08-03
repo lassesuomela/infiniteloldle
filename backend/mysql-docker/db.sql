@@ -314,8 +314,6 @@ CREATE TABLE `users` (
   `timestamp` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `prestige` int NOT NULL DEFAULT '0',
   `score` int NOT NULL DEFAULT '0',
-  `currentSplashChampion` int DEFAULT NULL,
-  `currentSplashId` int DEFAULT NULL,
   `country` varchar(5) DEFAULT NULL,
   `currentItemId` int DEFAULT NULL,
   `currentOldItemId` int DEFAULT NULL,
