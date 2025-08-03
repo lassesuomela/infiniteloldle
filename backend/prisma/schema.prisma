@@ -61,8 +61,6 @@ model users {
   timestamp             String                @db.VarChar(10)
   prestige              Int                   @default(0)
   score                 Int                   @default(0)
-  currentSplashChampion Int?
-  currentSplashId       Int?
   country               String?               @db.VarChar(5)
   currentItemId         Int?
   currentOldItemId      Int?
