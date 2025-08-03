@@ -45,7 +45,6 @@ jobs:
           echo DB_DATABASE=${{ secrets.TEST_DB_DATABASE }} >> backend/.env
           echo TOKEN=${{ secrets.TEST_TOKEN }} >> backend/.env
           echo NODE_ENV=${{ secrets.TEST_NODE_ENV }} >> backend/.env
-          echo ENV=${{ secrets.TEST_ENV }} >> backend/.env
           echo DATABASE_URL=${{ secrets.TEST_DB_URL }} >> backend/.env
           cat backend/.env
 
