@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Victory from "./components/victory";
@@ -58,12 +58,6 @@ export default function SplashArtGame() {
       setGuesses(history.map((item) => item.name));
     }
   };
-
-  useEffect(() => {
-    if (sprite) {
-      ApplyBlur(guesses.length);
-    }
-  }, [sprite, guesses]);
 
   const FetchChampions = () => {
     axios
@@ -168,21 +162,30 @@ export default function SplashArtGame() {
       });
   };
 
-  const ApplyBlur = (guessCount) => {
-    const spriteImg = document.getElementById("spriteImg");
-    if (!spriteImg) return;
+  const ApplyBlur = useCallback(
+    (guessCount) => {
+      const spriteImg = document.getElementById("spriteImg");
+      if (!spriteImg) return;
 
-    const initialBlur = 1.0;
-    let blurVal = initialBlur;
+      const initialBlur = 1.0;
+      let blurVal = initialBlur;
 
-    for (let i = 0; i < guessCount; i++) {
-      blurVal -= blurVal * 0.4;
+      for (let i = 0; i < guessCount; i++) {
+        blurVal -= blurVal * 0.4;
+      }
+
+      spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
+        isMonochrome ? "grayscale(1)" : ""
+      }`;
+    },
+    [isMonochrome]
+  );
+
+  useEffect(() => {
+    if (sprite) {
+      ApplyBlur(guesses.length);
     }
-
-    spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
-      isMonochrome ? "grayscale(1)" : ""
-    }`;
-  };
+  }, [sprite, guesses.length, isMonochrome, ApplyBlur]);
 
   const Restart = () => {
     setTimeout(() => ApplyBlur(0), 0);
@@ -214,7 +217,7 @@ export default function SplashArtGame() {
         <img
           src={`data:image/webp;base64,${sprite}`}
           style={{
-            filter: `blur(1.0em) ${isMonochrome ? "grayscale(1)" : ""}`,
+            filter: `${isMonochrome ? "grayscale(1)" : ""}`,
             transform: `${randomRotate ? "rotate(180deg)" : ""}`,
           }}
           className="rounded p-4"
