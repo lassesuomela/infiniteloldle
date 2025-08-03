@@ -48,6 +48,14 @@ const clearItemHistory = () => {
   setLocalStorage("itemGuessHistory", []);
 };
 
+const clearOldItemHistory = () => {
+  setLocalStorage("oldItemGuessHistory", []);
+};
+
+const clearSkinHistory = () => {
+  setLocalStorage("skinGuessHistory", []);
+};
+
 module.exports = {
   getLocalStorage,
   setLocalStorage,
@@ -58,4 +66,6 @@ module.exports = {
   addToItemGuessHistory,
   addToOldItemGuessHistory,
   clearItemHistory,
+  clearOldItemHistory,
+  clearSkinHistory,
 };

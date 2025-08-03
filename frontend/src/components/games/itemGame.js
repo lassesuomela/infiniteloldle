@@ -24,7 +24,7 @@ import {
 
 export default function ItemGame() {
   const [validGuesses, setValidGuesses] = useState([]);
-  const [champions, setChampions] = useState([]);
+  const [items, setitems] = useState([]);
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
@@ -58,7 +58,7 @@ export default function ItemGame() {
     const history = getItemGuessHistory().reverse();
 
     if (history.length > 0) {
-      setChampions(history);
+      setitems(history);
       setGuesses(history.map((item) => item.name));
     }
   };
@@ -140,10 +140,7 @@ export default function ItemGame() {
         const itemId = response.data.itemId;
         const name = response.data.name;
 
-        setChampions((champions) => [
-          { itemId, name, isCorrect },
-          ...champions,
-        ]);
+        setitems((items) => [{ itemId, name, isCorrect }, ...items]);
 
         addToItemGuessHistory({ itemId, name, isCorrect });
         const spriteImg = document.getElementById("spriteImg");
@@ -162,7 +159,7 @@ export default function ItemGame() {
       })
       .catch((error) => {
         console.log(error);
-        setChampions([]);
+        setitems([]);
       });
   };
 
@@ -190,13 +187,15 @@ export default function ItemGame() {
     FetchItems();
 
     setGuesses([]);
-    setChampions([]);
+    setitems([]);
     setGuess();
     setCorrectGuess(false);
   };
 
   const HandleReroll = () => {
     clearItemHistory();
+    setGuesses([]);
+    setitems([]);
     Reroll("item");
   };
 
@@ -270,7 +269,7 @@ export default function ItemGame() {
       </div>
 
       <div id="championsImgs" className="container">
-        {champions.map((item) => (
+        {items.map((item) => (
           <ItemImg
             key={item.itemId}
             itemId={item.itemId}
@@ -285,7 +284,7 @@ export default function ItemGame() {
       {correctGuess ? (
         <Victory
           id="victory"
-          championKey={champions[0]?.itemId}
+          championKey={items[0]?.itemId}
           champion={currentGuess}
           tries={guesses.length}
           isItem={true}

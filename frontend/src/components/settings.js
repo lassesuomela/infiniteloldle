@@ -6,7 +6,11 @@ import Cookies from "universal-cookie";
 import { Tooltip } from "react-tooltip";
 import { Reroll } from "../utils/reroll";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-
+import {
+  clearItemHistory,
+  clearOldItemHistory,
+  clearSkinHistory,
+} from "./history";
 export default function Settings() {
   const [isShown, setIsShown] = useState(false);
   const [exportMode, setExportMode] = useState(false);
@@ -78,14 +82,17 @@ export default function Settings() {
 
   const ChangeGuessSplash = () => {
     Reroll("splash");
+    clearSkinHistory();
   };
 
   const ChangeGuessItem = () => {
     Reroll("item");
+    clearItemHistory();
   };
 
   const ChangeGuessOldItem = () => {
     Reroll("oldItem");
+    clearOldItemHistory();
   };
 
   const CreateUser = () => {
