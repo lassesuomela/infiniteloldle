@@ -71,7 +71,7 @@ export default function ItemGame() {
     if (spriteUrl) {
       ApplyBlur(guesses.length);
     }
-  }, [spriteUrl, guesses.length, isMonochrome, ApplyBlur]);
+  }, [spriteUrl, guesses, isMonochrome, ApplyBlur]);
   const SetHistory = () => {
     const history = getItemGuessHistory().reverse();
 
