@@ -94,6 +94,10 @@ const user = {
   async clearSolvedOldItems(userId) {
     return prisma.userSolvedOldItems.deleteMany({ where: { userId } });
   },
+
+  async findAll() {
+    return prisma.users.findMany();
+  },
 };
 
 module.exports = user;
