@@ -59,9 +59,6 @@ const champion = {
   getByName: (name, cb) => {
     db.query("SELECT * FROM champions WHERE name = ?", [name], cb);
   },
-  getSplashById: (id, cb) => {
-    db.query("SELECT spriteIds FROM champions where id = ?", [id], cb);
-  },
   getNameById: (id, cb) => {
     db.query("SELECT name FROM champions WHERE id = ?", [id], cb);
   },
