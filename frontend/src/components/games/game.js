@@ -208,6 +208,7 @@ export default function Game() {
               similarites={champ[1]}
               isColorBlindMode={isColorBlindMode}
               hideResource={hideResource}
+              name={champ[0].guessedChampion}
             />
           ))}
         </div>

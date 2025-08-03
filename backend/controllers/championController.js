@@ -293,6 +293,7 @@ const GuessSplash = async (req, res) => {
         status: "success",
         correctGuess: false,
         championKey: guessChampion.championKey,
+        name: guessChampion.name,
       });
     }
 

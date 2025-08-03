@@ -51,7 +51,7 @@ export default function Victory(props) {
                   <p className="smaller">First try</p>
                 )}
 
-                <button type="button" class="btn btn-dark" onClick={Close}>
+                <button type="button" className="btn btn-dark" onClick={Close}>
                   Play again
                 </button>
               </div>

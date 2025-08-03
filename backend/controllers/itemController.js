@@ -54,6 +54,7 @@ const GuessItem = async (req, res) => {
         status: "success",
         correctGuess: false,
         itemId: guessItemObj.itemId,
+        name: guessItemObj.name,
       });
     }
 
