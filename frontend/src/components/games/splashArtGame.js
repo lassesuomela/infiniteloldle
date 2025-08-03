@@ -140,9 +140,11 @@ export default function SplashArtGame() {
         const isCorrect = response.data.correctGuess;
         const key = response.data.championKey;
 
+        const name = response.data.name;
+
         // Use object instead of tuple
-        setChampions((champions) => [{ key, isCorrect }, ...champions]);
-        addToSkinGuessHistory({ key, isCorrect });
+        setChampions((champions) => [{ key, isCorrect, name }, ...champions]);
+        addToSkinGuessHistory({ key, isCorrect, name });
 
         const spriteImg = document.getElementById("spriteImg");
 
@@ -284,6 +286,7 @@ export default function SplashArtGame() {
             championKey={champ.key}
             isCorrect={champ.isCorrect}
             isColorBlindMode={isColorBlindMode}
+            name={champ.name}
           />
         ))}
       </div>
