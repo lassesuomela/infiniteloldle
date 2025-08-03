@@ -224,6 +224,7 @@ export default function OldItemGame() {
       <div id="championsImgs" className="container">
         {champions.map((item) => (
           <ItemImg
+            key={item[0]}
             itemId={item[0]}
             name={item[1]}
             isCorrect={item[2]}
