@@ -2,6 +2,7 @@ const app = require("../app");
 const request = require("supertest");
 const userModel = require("../models/v2/user");
 const championModel = require("../models/v2/champion");
+const skin = require("../models/v2/skin");
 
 describe("Testing guessing splash correctly and prestige", () => {
   let token = "";
@@ -59,8 +60,13 @@ describe("Testing guessing splash correctly and prestige", () => {
       await userModel.addSolvedSplash(userObj.id, champId);
     }
 
+    const skins = await skin.findByChampionId(guessId);
+    const skinToGuess = skins[0];
+
     // Set currentSplashChampion to the missing one using the new user model
-    await userModel.updateById(userObj.id, { currentSplashChampion: guessId });
+    await userModel.updateById(userObj.id, {
+      currentSplashSkinId: skinToGuess.id,
+    });
 
     const body = { guess };
 
