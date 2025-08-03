@@ -112,8 +112,10 @@ export default function OldItemGame() {
         const itemId = response.data.itemId;
         const name = response.data.name;
 
-        setChampions((champions) => [[itemId, name, isCorrect], ...champions]);
-
+        setChampions((champions) => [
+          { id: itemId, name, isCorrect },
+          ...champions,
+        ]);
         const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
@@ -224,10 +226,10 @@ export default function OldItemGame() {
       <div id="championsImgs" className="container">
         {champions.map((item) => (
           <ItemImg
-            key={item[0]}
-            itemId={item[0]}
-            name={item[1]}
-            isCorrect={item[2]}
+            key={item.id}
+            itemId={item.id}
+            name={item.name}
+            isCorrect={item.isCorrect}
             path="/old_items/"
             isColorBlindMode={isColorBlindMode}
           />
@@ -237,7 +239,7 @@ export default function OldItemGame() {
       {correctGuess ? (
         <Victory
           id="victory"
-          championKey={champions[0][0]}
+          championKey={champions[0].id}
           champion={currentGuess}
           tries={guesses.length}
           isOldItem={true}
