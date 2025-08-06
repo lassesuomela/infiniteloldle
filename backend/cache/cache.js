@@ -5,6 +5,27 @@ class Cache {
     this.redis = new Redis({
       host: process.env.REDIS_HOST || "localhost",
       port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+      connectTimeout: 500,
+    });
+
+    this.redis.on("connect", () => {
+      console.log("✅ Redis connection established");
+    });
+
+    this.redis.on("ready", () => {
+      console.log("🔄 Redis connection is ready to use");
+    });
+
+    this.redis.on("error", (err) => {
+      console.error("❌ Redis connection error:", err);
+    });
+
+    this.redis.on("end", () => {
+      console.warn("⚠️ Redis connection closed");
+    });
+
+    this.redis.on("reconnecting", () => {
+      console.log("🔁 Redis reconnecting...");
     });
   }
 

@@ -31,6 +31,7 @@
     "ua-parser-js": "^1.0.38"
   },
   "devDependencies": {
+    "ioredis-mock": "^8.9.0",
     "jest": "^29.7.0",
     "prisma": "^6.9.0",
     "supertest": "^6.3.4"
