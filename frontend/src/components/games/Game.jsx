@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Titles from "./components/gameTitle";
-import ChampionDetails from "./components/championDetails";
+import Titles from "./components/GameTitle";
+import ChampionDetails from "./components/ChampionDetails";
 import Select from "react-select";
-import Victory from "./components/victory";
+import Victory from "./components/Victory";
 import {
   saveGamesPlayed,
   saveTries,

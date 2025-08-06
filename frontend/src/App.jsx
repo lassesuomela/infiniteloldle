@@ -3,17 +3,17 @@ import "./Main.css";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import Header from "./components/header";
-import Footer from "./components/footer";
-import Game from "./components/games/game";
-import Scoreboard from "./views/scoreboard";
-import Legal from "./views/legal";
-import About from "./views/about";
-import Splash from "./views/splash";
-import Item from "./views/item";
-import OldItem from "./views/oldItem";
-import Stats from "./views/stats";
-import MyStats from "./views/myStats";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Game from "./components/games/Game";
+import Scoreboard from "./views/Scoreboard";
+import Legal from "./views/Legal";
+import About from "./views/About";
+import Splash from "./views/Splash";
+import Item from "./views/Item";
+import OldItem from "./views/OldItem";
+import Stats from "./views/Stats";
+import MyStats from "./views/MyStats";
 
 import { Provider } from "react-redux";
 import store from "./store/store";

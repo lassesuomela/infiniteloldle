@@ -1,4 +1,4 @@
 const config = {
-  url: process.env.REACT_APP_API_URL || "https://www.infiniteloldle.com/api",
+  url: import.meta.env.VITE_API_URL || "https://www.infiniteloldle.com/api",
 };
-module.exports = config;
+export default config;

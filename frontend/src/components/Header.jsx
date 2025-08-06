@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Settings from "../components/settings";
-import Modifications from "../components/modifications";
+import Settings from "./Settings";
+import Modifications from "./Modifications";
 import { Tooltip } from "react-tooltip";
 
 export default function Header() {

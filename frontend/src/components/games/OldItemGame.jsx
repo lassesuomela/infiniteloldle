@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Select from "react-select";
-import Victory from "./components/victory";
-import ChampionImg from "./components/championImg";
+import Victory from "./components/Victory";
+import ItemImg from "./components/ItemImg";
 import Config from "../../configs/config";
 import {
   saveGamesPlayed,
@@ -10,27 +10,25 @@ import {
   saveFirstTries,
 } from "../../utils/saveStats";
 import { Reroll } from "../../utils/reroll";
-import LazyLoad from "react-lazy-load";
 import {
-  SelectStyles,
-  customFilterOptionChamps,
+  customFilterOptionItems,
+  HoverSelectStyles,
   SelectTheme,
 } from "./styles/selectStyles";
 import { useSelector } from "react-redux";
 import {
-  clearSkinHistory,
-  getSkinGuessHistory,
-  addToSkinGuessHistory,
+  getOldItemGuessHistory,
+  addToOldItemGuessHistory,
+  clearOldItemHistory,
 } from "../history";
 
-export default function SplashArtGame() {
+export default function OldItemGame() {
   const [validGuesses, setValidGuesses] = useState([]);
-  const [champions, setChampions] = useState([]);
+  const [items, setItems] = useState([]);
   const [guesses, setGuesses] = useState([]);
-  const [currentGuess, setGuess] = useState(validGuesses[0]);
+  const [currentGuess, setGuess] = useState();
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
-  const [title, setTitle] = useState("");
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -45,39 +43,40 @@ export default function SplashArtGame() {
   );
 
   useEffect(() => {
-    FetchChampions();
-    FetchSplashArt();
+    FetchItems();
+    FetchItemImage();
     SetHistory();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const SetHistory = () => {
-    const history = getSkinGuessHistory().reverse();
+    const history = getOldItemGuessHistory().reverse();
 
     if (history.length > 0) {
-      setChampions(history);
+      setItems(history);
       setGuesses(history.map((item) => item.name));
     }
   };
 
-  const FetchChampions = () => {
+  const FetchItems = () => {
     axios
-      .get(Config.url + "/champions")
+      .get(Config.url + "/oldItems")
       .then((response) => {
         if (response.data.status === "success") {
-          const data = response.data.champions;
+          const data = response.data.items;
           data.sort((a, b) => a.value.localeCompare(b.value));
 
-          const guessChampionKeys = new Set(
-            getSkinGuessHistory().map((champ) => champ.key)
+          // Remove already guessed items from valid guesses
+          const guessHistoryNames = new Set(
+            getOldItemGuessHistory().map((item) => item.name)
           );
 
           const transformedData = data
-            .filter((champion) => !guessChampionKeys.has(champion.value))
+            .filter((item) => !guessHistoryNames.has(item.value))
             .map((champion) => ({
               value: champion.value,
               label: champion.value,
-              image: champion.image,
             }));
+
           setValidGuesses(transformedData);
         }
       })
@@ -86,9 +85,34 @@ export default function SplashArtGame() {
       });
   };
 
-  const FetchSplashArt = () => {
+  const ApplyBlur = useCallback(
+    (guessCount) => {
+      const spriteImg = document.getElementById("spriteImg");
+      if (!spriteImg) return;
+
+      const initialBlur = 1.0;
+      let blurVal = initialBlur;
+
+      for (let i = 0; i < guessCount; i++) {
+        blurVal -= blurVal * 0.4;
+      }
+
+      spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
+        isMonochrome ? "grayscale(1)" : ""
+      }`;
+    },
+    [isMonochrome]
+  );
+
+  useEffect(() => {
+    if (sprite) {
+      ApplyBlur(guesses.length);
+    }
+  }, [sprite, guesses, isMonochrome, ApplyBlur]);
+
+  const FetchItemImage = () => {
     axios
-      .get(Config.url + "/splash", {
+      .get(Config.url + "/oldItem", {
         headers: { authorization: "Bearer " + localStorage.getItem("token") },
       })
       .then((response) => {
@@ -119,7 +143,7 @@ export default function SplashArtGame() {
 
     axios
       .post(
-        Config.url + "/splash",
+        Config.url + "/oldItem",
         { guess: currentGuess },
         {
           headers: { authorization: "Bearer " + localStorage.getItem("token") },
@@ -129,16 +153,16 @@ export default function SplashArtGame() {
         if (response.data.status !== "success") {
           return;
         }
+
         saveTries(1);
 
         const isCorrect = response.data.correctGuess;
-        const key = response.data.championKey;
-
+        const itemId = response.data.itemId;
         const name = response.data.name;
 
-        // Use object instead of tuple
-        setChampions((champions) => [{ key, isCorrect, name }, ...champions]);
-        addToSkinGuessHistory({ key, isCorrect, name });
+        setItems((items) => [{ id: itemId, name, isCorrect }, ...items]);
+
+        addToOldItemGuessHistory({ id: itemId, name, isCorrect });
 
         const spriteImg = document.getElementById("spriteImg");
 
@@ -148,81 +172,54 @@ export default function SplashArtGame() {
           }
           saveGamesPlayed();
           setCorrectGuess(true);
-          clearSkinHistory();
-          setTitle(response.data.title);
-
           spriteImg.style.filter = "";
+          clearOldItemHistory();
         } else {
           ApplyBlur(guesses.length + 1);
         }
       })
       .catch((error) => {
         console.log(error);
-        setChampions([]);
+        setItems([]);
       });
   };
-
-  const ApplyBlur = useCallback(
-    (guessCount) => {
-      const spriteImg = document.getElementById("spriteImg");
-      if (!spriteImg) return;
-
-      const initialBlur = 1.0;
-      let blurVal = initialBlur;
-
-      for (let i = 0; i < guessCount; i++) {
-        blurVal -= blurVal * 0.4;
-      }
-
-      spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
-        isMonochrome ? "grayscale(1)" : ""
-      }`;
-    },
-    [isMonochrome]
-  );
-
-  useEffect(() => {
-    if (sprite) {
-      ApplyBlur(guesses.length);
-    }
-  }, [sprite, guesses, isMonochrome, ApplyBlur]);
 
   const Restart = () => {
     setTimeout(() => ApplyBlur(0), 0);
 
-    FetchSplashArt();
-    FetchChampions();
+    FetchItemImage();
+    FetchItems();
 
     setGuesses([]);
-    setChampions([]);
+    setItems([]);
     setGuess();
     setCorrectGuess(false);
+    clearOldItemHistory();
   };
 
   const HandleReroll = () => {
-    clearSkinHistory();
+    clearOldItemHistory();
     setGuesses([]);
-    setChampions([]);
-    Reroll("splash");
+    setItems([]);
+    Reroll("oldItem");
   };
 
   return (
     <div className="container main pt-4 pb-5 mb-5">
-      <h3 className="text-center pb-3">Whose splash art is this?</h3>
+      <h3 className="text-center pb-3">Which legacy item is this?</h3>
 
       <div
         className="container d-flex justify-content-center shadow"
-        id="spriteContainer"
+        id="itemContainer"
       >
         <img
           src={`data:image/webp;base64,${sprite}`}
           style={{
-            filter: `${isMonochrome ? "grayscale(1)" : ""}`,
             transform: `${randomRotate ? "rotate(180deg)" : ""}`,
           }}
           className="rounded p-4"
           id="spriteImg"
-          alt="Champion splash art."
+          alt="Item sprite."
           draggable="false"
         />
       </div>
@@ -234,25 +231,18 @@ export default function SplashArtGame() {
           id="guess-form"
         >
           <Select
-            className="select"
             options={validGuesses}
             onChange={(selectedOption) => setGuess(selectedOption.value)}
             isDisabled={correctGuess}
-            styles={SelectStyles}
-            placeholder="Type champions name"
-            filterOption={customFilterOptionChamps}
+            placeholder="Type items name"
+            filterOption={customFilterOptionItems}
+            styles={HoverSelectStyles}
+            theme={SelectTheme}
             formatOptionLabel={(data) => (
               <div className="select-option">
-                <LazyLoad offset={200}>
-                  <img
-                    src={"/40_40/champions/" + data.image + ".webp"}
-                    alt="Champion icon"
-                  />
-                </LazyLoad>
                 <span>{data.label}</span>
               </div>
             )}
-            theme={SelectTheme}
           />
 
           <div className="d-flex justify-content-evenly">
@@ -283,13 +273,14 @@ export default function SplashArtGame() {
       </div>
 
       <div id="championsImgs" className="container">
-        {champions.map((champ) => (
-          <ChampionImg
-            key={champ.key}
-            championKey={champ.key}
-            isCorrect={champ.isCorrect}
+        {items.map((item) => (
+          <ItemImg
+            key={item.id}
+            itemId={item.id}
+            name={item.name}
+            isCorrect={item.isCorrect}
+            path="/old_items/"
             isColorBlindMode={isColorBlindMode}
-            name={champ.name}
           />
         ))}
       </div>
@@ -297,10 +288,10 @@ export default function SplashArtGame() {
       {correctGuess ? (
         <Victory
           id="victory"
-          championKey={champions[0].key}
+          championKey={items[0]?.id}
           champion={currentGuess}
           tries={guesses.length}
-          title={title}
+          isOldItem={true}
         />
       ) : (
         ""

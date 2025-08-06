@@ -1,5 +1,5 @@
 import React from "react";
-import StatsData from "../components/statsData";
+import StatsData from "../components/StatsData";
 import { Helmet } from "react-helmet";
 
 export default function ScoreBoard() {
