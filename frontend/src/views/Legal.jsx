@@ -1,5 +1,5 @@
 import React from "react";
-import LegalComponent from "../components/legal";
+import LegalComponent from "../components/Legal";
 import { Helmet } from "react-helmet";
 
 export default function Legal() {

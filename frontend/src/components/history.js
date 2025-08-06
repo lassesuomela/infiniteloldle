@@ -56,7 +56,7 @@ const clearSkinHistory = () => {
   setLocalStorage("skinGuessHistory", []);
 };
 
-module.exports = {
+export {
   getLocalStorage,
   setLocalStorage,
   getSkinGuessHistory,

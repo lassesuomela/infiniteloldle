@@ -1,5 +1,5 @@
 import React from "react";
-import AboutComponent from "../components/about";
+import AboutComponent from "../components/About";
 import { Helmet } from "react-helmet";
 
 export default function About() {

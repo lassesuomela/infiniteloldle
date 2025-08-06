@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Select from "react-select";
-import Victory from "./components/victory";
-import ItemImg from "./components/itemImg";
+import Victory from "./components/Victory";
+import ItemImg from "./components/ItemImg";
 import Config from "../../configs/config";
 import {
   saveGamesPlayed,

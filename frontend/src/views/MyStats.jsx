@@ -1,5 +1,5 @@
 import React from "react";
-import Stats from "../components/myStats";
+import Stats from "../components/MyStats";
 import { Helmet } from "react-helmet";
 
 export default function MyStats() {
