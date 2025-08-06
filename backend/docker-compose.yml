@@ -77,6 +77,8 @@ services:
     volumes:
       - loldle-redis:/data
     command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    networks:
+      - mynetwork
 
 volumes:
   loldle-mysql:
