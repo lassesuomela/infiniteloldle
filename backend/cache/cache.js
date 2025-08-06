@@ -68,6 +68,15 @@ class Cache {
     }
   }
 
+  async sadd(key, member) {
+    try {
+      return await this.redis.sadd(key, member);
+    } catch (err) {
+      console.error(`Redis SADD error for key "${key}":`, err);
+      return false;
+    }
+  }
+
   quit() {
     this.redis.quit();
   }
