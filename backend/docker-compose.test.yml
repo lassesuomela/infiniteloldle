@@ -41,5 +41,15 @@ services:
     networks:
       - mynetwork
 
+  loldle-redis:
+    image: redis:8.2.0
+    container_name: loldle-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+
 volumes:
   loldle-mysql:
