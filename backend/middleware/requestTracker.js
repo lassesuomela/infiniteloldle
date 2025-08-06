@@ -8,6 +8,10 @@ const DAU_KEY = "stats:dau";
 const TOKENS_KEY = "stats:tokens";
 
 const trackRequests = async (req, res, next) => {
+  if (process.env.NODE_ENV === "test") {
+    next();
+    return;
+  }
   try {
     let requests = await redisCache.get(REQUESTS_KEY);
     if (!requests) requests = 0;
@@ -19,6 +23,10 @@ const trackRequests = async (req, res, next) => {
 };
 
 const trackDAU = async (req, res, next) => {
+  if (process.env.NODE_ENV === "test") {
+    next();
+    return;
+  }
   if (!req.token) return next();
 
   const token = req.token.substring(0, 40);
@@ -38,6 +46,10 @@ const trackDAU = async (req, res, next) => {
 
 // Save stats to DB and reset Redis counters
 const saveStats = async () => {
+  if (process.env.NODE_ENV === "test") {
+    console.log("Skipping stats saving in test environment");
+    return;
+  }
   console.log("Saving to db");
 
   try {
