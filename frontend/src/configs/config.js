@@ -1,5 +1,4 @@
 const config = {
-  url: "https://www.infiniteloldle.com/api",
+  url: import.meta.env.VITE_API_URL || "https://www.infiniteloldle.com/api",
 };
-
-module.exports = config;
+export default config;

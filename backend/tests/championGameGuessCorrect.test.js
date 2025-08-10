@@ -1,6 +1,5 @@
 const app = require("../app");
 const request = require("supertest");
-const championModel = require("../models/championModel");
 const user = require("../models/v2/user");
 const champion = require("../models/v2/champion");
 

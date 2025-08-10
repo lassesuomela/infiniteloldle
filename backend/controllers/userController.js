@@ -115,8 +115,6 @@ const Create = (req, res) => {
 
             const user = await userV2.create(userData);
 
-            console.log(user);
-
             res.json({ status: "success", token: token });
           });
         } catch (error) {

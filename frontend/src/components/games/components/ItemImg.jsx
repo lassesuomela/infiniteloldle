@@ -1,9 +1,11 @@
 import React from "react";
+import { Tooltip } from "react-tooltip";
 
 export default function ItemImg(props) {
   const checkColorBlindMode = () => {
     return props.isColorBlindMode ? "cb-" : "";
   };
+
   return (
     <div
       className={
@@ -14,12 +16,15 @@ export default function ItemImg(props) {
       }
     >
       <img
-        id="itemImg"
+        id={`itemImg-${props.itemId}`}
         key={props.itemId}
         src={props.path + props.itemId + ".webp"}
         alt={props.name}
         className="championData mx-auto"
       />
+      <Tooltip anchorSelect={`#itemImg-${props.itemId}`} place="bottom">
+        {props.name}
+      </Tooltip>
     </div>
   );
 }

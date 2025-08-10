@@ -6,26 +6,6 @@ const path = require("path");
 const oldItemV2 = require("../models/v2/oldItem");
 const userV2 = require("../models/v2/user");
 
-const Create = (req, res) => {
-  const data = req.body;
-
-  if (!data.name || !data.key) {
-    return res.status(500).json({
-      status: "error",
-      message: "One or more fields must be provided",
-    });
-  }
-
-  oldItemModel.create(data, (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({ status: "error", error: err });
-    }
-
-    res.json({ status: "success", message: "Item added successfully" });
-  });
-};
-
 const GuessItem = async (req, res) => {
   try {
     const { guess } = req.body;
@@ -57,6 +37,7 @@ const GuessItem = async (req, res) => {
         status: "success",
         correctGuess: false,
         itemId: guessOldItem.old_item_key,
+        name: guessOldItem.name,
       });
     }
 
@@ -183,7 +164,6 @@ const GetAllItems = (req, res) => {
 };
 
 module.exports = {
-  Create,
   GuessItem,
   GetItemSprite,
   GetAllItems,

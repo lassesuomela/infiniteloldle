@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Select from "react-select";
-import Victory from "./components/victory";
-import ItemImg from "./components/itemImg";
+import Victory from "./components/Victory";
+import ItemImg from "./components/ItemImg";
 import Config from "../../configs/config";
 import {
   saveGamesPlayed,
@@ -16,14 +16,19 @@ import {
   SelectTheme,
 } from "./styles/selectStyles";
 import { useSelector } from "react-redux";
+import {
+  addToItemGuessHistory,
+  getItemGuessHistory,
+  clearItemHistory,
+} from "../history";
 
-export default function OldItemGame() {
+export default function ItemGame() {
   const [validGuesses, setValidGuesses] = useState([]);
-  const [champions, setChampions] = useState([]);
+  const [items, setItems] = useState([]);
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-  const [sprite, setSprite] = useState("");
+  const [spriteUrl, setSpriteUrl] = useState("");
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -40,19 +45,60 @@ export default function OldItemGame() {
   useEffect(() => {
     FetchItems();
     FetchItemImage();
+    SetHistory();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const ApplyBlur = useCallback(
+    (guessCount) => {
+      const spriteImg = document.getElementById("spriteImg");
+      if (!spriteImg) return;
+
+      const initialBlur = 1.0;
+      let blurVal = initialBlur;
+
+      for (let i = 0; i < guessCount; i++) {
+        blurVal -= blurVal * 0.4;
+      }
+
+      spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
+        isMonochrome ? "grayscale(1)" : ""
+      }`;
+    },
+    [isMonochrome]
+  );
+
+  useEffect(() => {
+    if (spriteUrl) {
+      ApplyBlur(guesses.length);
+    }
+  }, [spriteUrl, guesses, isMonochrome, ApplyBlur]);
+  const SetHistory = () => {
+    const history = getItemGuessHistory().reverse();
+
+    if (history.length > 0) {
+      setItems(history);
+      setGuesses(history.map((item) => item.name));
+    }
+  };
 
   const FetchItems = () => {
     axios
-      .get(Config.url + "/oldItems")
+      .get(Config.url + "/items")
       .then((response) => {
         if (response.data.status === "success") {
           const data = response.data.items;
           data.sort((a, b) => a.value.localeCompare(b.value));
-          const transformedData = data.map((champion) => ({
-            value: champion.value,
-            label: champion.value,
-          }));
+
+          const guessHistoryNames = new Set(
+            getItemGuessHistory().map((item) => item.name)
+          );
+
+          const transformedData = data
+            .filter((item) => !guessHistoryNames.has(item.value))
+            .map((item) => ({
+              value: item.value,
+              label: item.value,
+            }));
           setValidGuesses(transformedData);
         }
       })
@@ -63,13 +109,14 @@ export default function OldItemGame() {
 
   const FetchItemImage = () => {
     axios
-      .get(Config.url + "/oldItem", {
+      .get(Config.url + "/item", {
         headers: { authorization: "Bearer " + localStorage.getItem("token") },
       })
       .then((response) => {
         if (response.data.status === "success") {
           if (response.data.result) {
-            setSprite(response.data.result);
+            const url = "/items/" + response.data.result + ".webp";
+            setSpriteUrl(url);
           }
         }
       })
@@ -94,7 +141,7 @@ export default function OldItemGame() {
 
     axios
       .post(
-        Config.url + "/oldItem",
+        Config.url + "/item",
         { guess: currentGuess },
         {
           headers: { authorization: "Bearer " + localStorage.getItem("token") },
@@ -104,7 +151,6 @@ export default function OldItemGame() {
         if (response.data.status !== "success") {
           return;
         }
-
         saveTries(1);
 
         const isCorrect = response.data.correctGuess;
@@ -112,8 +158,9 @@ export default function OldItemGame() {
         const itemId = response.data.itemId;
         const name = response.data.name;
 
-        setChampions((champions) => [[itemId, name, isCorrect], ...champions]);
+        setItems((items) => [{ itemId, name, isCorrect }, ...items]);
 
+        addToItemGuessHistory({ itemId, name, isCorrect });
         const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
@@ -122,48 +169,49 @@ export default function OldItemGame() {
           }
           saveGamesPlayed();
           setCorrectGuess(true);
+          clearItemHistory();
           spriteImg.style.filter = "";
         } else {
-          let blurVal = parseFloat(spriteImg.style.filter.substring(5, 8));
-          blurVal -= blurVal * 0.4;
-          spriteImg.style.filter = `blur(${blurVal.toString()}em) ${
-            isMonochrome ? "grayscale(1)" : ""
-          }`;
+          ApplyBlur(guesses.length + 1);
         }
       })
       .catch((error) => {
         console.log(error);
-        setChampions([]);
+        setItems([]);
       });
   };
 
   const Restart = () => {
-    const spriteImg = document.getElementById("spriteImg");
-    spriteImg.style.filter = `blur(1.0em) ${
-      isMonochrome ? "grayscale(1)" : ""
-    }`;
+    setTimeout(() => ApplyBlur(0), 0);
+    clearItemHistory();
 
     FetchItemImage();
     FetchItems();
 
     setGuesses([]);
-    setChampions([]);
+    setItems([]);
     setGuess();
     setCorrectGuess(false);
   };
 
+  const HandleReroll = () => {
+    clearItemHistory();
+    setGuesses([]);
+    setItems([]);
+    Reroll("item");
+  };
+
   return (
     <div className="container main pt-4 pb-5 mb-5">
-      <h3 className="text-center pb-3">Which legacy item is this?</h3>
+      <h3 className="text-center pb-3">Which item is this?</h3>
 
       <div
         className="container d-flex justify-content-center shadow"
         id="itemContainer"
       >
         <img
-          src={`data:image/webp;base64,${sprite}`}
+          src={spriteUrl}
           style={{
-            filter: `blur(1.0em) ${isMonochrome ? "grayscale(1)" : ""}`,
             transform: `${randomRotate ? "rotate(180deg)" : ""}`,
           }}
           className="rounded p-4"
@@ -210,7 +258,7 @@ export default function OldItemGame() {
             {!correctGuess && guesses.length >= 10 ? (
               <button
                 className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={() => Reroll("oldItem")}
+                onClick={HandleReroll}
               >
                 Reroll
               </button>
@@ -222,13 +270,14 @@ export default function OldItemGame() {
       </div>
 
       <div id="championsImgs" className="container">
-        {champions.map((item) => (
+        {items.map((item) => (
           <ItemImg
-            itemId={item[0]}
-            name={item[1]}
-            isCorrect={item[2]}
-            path="/old_items/"
+            key={item.itemId}
+            itemId={item.itemId}
+            name={item.name}
+            isCorrect={item.isCorrect}
             isColorBlindMode={isColorBlindMode}
+            path="/items/"
           />
         ))}
       </div>
@@ -236,10 +285,10 @@ export default function OldItemGame() {
       {correctGuess ? (
         <Victory
           id="victory"
-          championKey={champions[0][0]}
+          championKey={items[0]?.itemId}
           champion={currentGuess}
           tries={guesses.length}
-          isOldItem={true}
+          isItem={true}
         />
       ) : (
         ""

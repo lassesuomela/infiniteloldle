@@ -1,13 +1,6 @@
 const db = require("../configs/db");
 
 const oldItem = {
-  create: (data, cb) => {
-    db.query(
-      "INSERT INTO old_items (name, old_item_key) VALUES (?, ?)",
-      [data.name, data.key],
-      cb
-    );
-  },
   getAllNames: (cb) => {
     db.query("SELECT name FROM old_items", cb);
   },

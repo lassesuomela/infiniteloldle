@@ -1,5 +1,5 @@
 import React from "react";
-import OldItemGame from "../components/games/oldItemGame";
+import OldItemGame from "../components/games/OldItemGame";
 import { Helmet } from "react-helmet";
 
 export default function Splash() {
