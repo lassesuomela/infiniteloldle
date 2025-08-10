@@ -211,7 +211,7 @@ export default function AbilityGuessingGame() {
 
       <div
         className="container d-flex justify-content-center shadow"
-        id="abilityContainer"
+        id="itemContainer"
       >
         <img
           src={`data:image/webp;base64,${sprite}`}
@@ -281,7 +281,7 @@ export default function AbilityGuessingGame() {
         </form>
       </div>
 
-      <div id="abilitiesImgs" className="container">
+      <div id="championsImgs" className="container">
         {champions.map((champ) => (
           <ChampionImg
             key={champ.key}
