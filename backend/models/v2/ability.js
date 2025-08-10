@@ -39,8 +39,6 @@ const ability = {
       where: { name: championName },
     });
 
-    console.log(champion);
-
     if (!champion) {
       return null;
     }

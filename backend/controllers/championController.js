@@ -359,7 +359,7 @@ const GuessAbility = async (req, res) => {
       return res.json({ status: "error", message: "Token is invalid" });
     }
 
-    const guessedChampion = await ability.findByChampionName(guess);
+    const guessedChampion = await championV2.findByName(guess);
 
     if (!guessedChampion) {
       return res.json({
@@ -372,8 +372,8 @@ const GuessAbility = async (req, res) => {
       return res.json({
         status: "success",
         correctGuess: false,
-        guessedChampion: guessedChampion.name,
-        guessedChampionKey: guessedChampion.championKey,
+        name: guessedChampion.name,
+        championKey: guessedChampion.championKey,
       });
     }
 

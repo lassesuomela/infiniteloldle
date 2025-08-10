@@ -40,6 +40,12 @@ export default function Header() {
             </li>
 
             <li className="nav-item">
+              <Link className="nav-link" to="/game/ability">
+                Ability
+              </Link>
+            </li>
+
+            <li className="nav-item">
               <Link className="nav-link" to="/game/item">
                 Item
               </Link>

@@ -56,6 +56,21 @@ const clearSkinHistory = () => {
   setLocalStorage("skinGuessHistory", []);
 };
 
+const getAbilityGuessHistory = () => {
+  const history = getLocalStorage("abilityGuessHistory");
+  return history ? history : [];
+};
+
+const addToAbilityGuessHistory = (guess) => {
+  const history = getAbilityGuessHistory();
+  history.push(guess);
+  setLocalStorage("abilityGuessHistory", history);
+};
+
+const clearAbilityHistory = () => {
+  setLocalStorage("abilityGuessHistory", []);
+};
+
 export {
   getLocalStorage,
   setLocalStorage,
@@ -68,4 +83,7 @@ export {
   clearItemHistory,
   clearOldItemHistory,
   clearSkinHistory,
+  addToAbilityGuessHistory,
+  clearAbilityHistory,
+  getAbilityGuessHistory,
 };
