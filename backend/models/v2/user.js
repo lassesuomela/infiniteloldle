@@ -98,6 +98,24 @@ const user = {
   async findAll() {
     return prisma.users.findMany();
   },
+
+  async getSolvedAbilityIds(userId) {
+    const solved = await prisma.userSolvedAbilities.findMany({
+      where: { userId },
+      select: { championId: true },
+    });
+    return solved.map((row) => row.abilityId);
+  },
+
+  async addSolvedAbility(userId, abilityId) {
+    return prisma.userSolvedAbilities.create({
+      data: { userId, abilityId },
+    });
+  },
+
+  async clearSolvedAbilities(userId) {
+    return prisma.userSolvedAbilities.deleteMany({ where: { userId } });
+  },
 };
 
 module.exports = user;
