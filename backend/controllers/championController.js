@@ -425,10 +425,83 @@ const GuessAbility = async (req, res) => {
   }
 };
 
+const GetAbilitySprite = async (req, res) => {
+  const token = req.token;
+  try {
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    if (!userObj.currentAbilityId) {
+      return res.json({
+        status: "error",
+        message: "No current ability set for this user",
+      });
+    }
+
+    const abilityData = await ability.findById(userObj.currentAbilityId, {
+      include: { champion: true },
+    });
+    if (!abilityData) {
+      return res.json({
+        status: "error",
+        message: "Ability not found for this user",
+      });
+    }
+
+    // Compose image filename, e.g. championKey_abilityKey.webp
+    const imageName = `${abilityData.champion.championKey}_${abilityData.key}.webp`;
+
+    if (cache.checkCache(imageName)) {
+      const data = cache.getCache(imageName);
+      res.set("X-CACHE", "HIT");
+      res.set(
+        "X-CACHE-REMAINING",
+        new Date(cache.getTtl(imageName)).toISOString()
+      );
+      return res.json({
+        status: "success",
+        result: data,
+      });
+    }
+
+    const imagePath = path.join(
+      __dirname,
+      "../images/champions/abilities",
+      imageName
+    );
+
+    const file = await fsp.readFile(imagePath);
+    if (!file) {
+      console.log(`FATAL: Ability sprite missing for: ${imageName}`);
+      return res.status(404).json({
+        status: "error",
+        message: "File not found",
+      });
+    }
+
+    const base64 = file.toString("base64");
+    cache.saveCache(imageName, base64);
+    cache.changeTTL(imageName, 3600 * 6);
+
+    return res.json({
+      status: "success",
+      result: base64,
+    });
+  } catch (error) {
+    console.error("Error in GetAbilitySprite function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
 module.exports = {
   GetAllChampions,
   Guess,
   GuessSplash,
   GetSplashArt,
   GuessAbility,
+  GetAbilitySprite,
 };

@@ -18,5 +18,6 @@ router.get("/oldItem", oldItemController.GetItemSprite);
 router.get("/splash", championController.GetSplashArt);
 
 router.post("/ability", championController.GuessAbility);
+router.get("/ability", championController.GetAbilitySprite);
 
 module.exports = router;
