@@ -1,7 +1,7 @@
 const champion = require("../models/championModel");
-const user = require("../models/userModel");
 const userV2 = require("../models/v2/user");
 const championV2 = require("../models/v2/champion");
+const ability = require("../models/v2/ability");
 const cache = require("../middleware/cache");
 const fs = require("fs");
 const path = require("path");
@@ -338,9 +338,97 @@ const GetSplashArt = async (req, res) => {
   }
 };
 
+const GuessAbility = async (req, res) => {
+  try {
+    const { guess } = req.body;
+    if (!guess) {
+      return res.json({ status: "error", message: "Guess is required" });
+    }
+
+    const token = req.token;
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    // Get the correct ability
+    const correctAbility = await ability.findById(userObj.currentAbilityId, {
+      include: { champion: true },
+    });
+    if (!correctAbility) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    const guessedChampion = await ability.findByChampionName(guess);
+
+    if (!guessedChampion) {
+      return res.json({
+        status: "error",
+        message: "Nothing found with that champion name",
+      });
+    }
+
+    if (guess.toLowerCase() !== correctAbility.champion.name.toLowerCase()) {
+      return res.json({
+        status: "success",
+        correctGuess: false,
+        guessedChampion: guessedChampion.name,
+        guessedChampionKey: guessedChampion.championKey,
+      });
+    }
+
+    // ===== Correct guess =====
+    // Get all ability IDs
+    const allIds = await ability.findAllIds();
+    let solvedIds = await userV2.getSolvedAbilityIds(userObj.id);
+
+    // Add the just-solved ability if not already present
+    if (!solvedIds.includes(correctAbility.id)) {
+      await userV2.addSolvedAbility(userObj.id, correctAbility.id);
+      solvedIds.push(correctAbility.id);
+    }
+
+    // Prestige logic
+    let prestige = userObj.prestige;
+    let solved = solvedIds;
+    if (solved.length >= allIds.length) {
+      await userV2.clearSolvedAbilities(userObj.id);
+      solved = [];
+      prestige += 1;
+    }
+
+    // Pick a new ability not yet solved
+    const unsolvedIds = allIds.filter((id) => !solved.includes(id));
+    const newAbilityId =
+      unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
+
+    // Update user
+    await userV2.updateById(userObj.id, {
+      currentAbilityId: newAbilityId,
+      prestige,
+      score: { increment: 1 },
+    });
+
+    cache.deleteCache("/user:" + token);
+
+    res.json({
+      status: "success",
+      correctGuess: true,
+      abilityName: correctAbility.name,
+      championName: correctAbility.champion.name,
+    });
+  } catch (error) {
+    console.error("Error in GuessAbility function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
 module.exports = {
   GetAllChampions,
   Guess,
   GuessSplash,
   GetSplashArt,
+  GuessAbility,
 };
