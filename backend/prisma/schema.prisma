@@ -54,21 +54,23 @@ model statistics {
 }
 
 model users {
-  id                    Int                   @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  nickname              String                @default("Anonymous") @db.VarChar(30)
-  token                 String                @db.VarChar(64)
-  currentChampion       Int
-  timestamp             String                @db.VarChar(10)
-  prestige              Int                   @default(0)
-  score                 Int                   @default(0)
-  country               String?               @db.VarChar(5)
-  currentItemId         Int?
-  currentOldItemId      Int?
-  solvedChampions       UserSolvedChampions[]
-  solvedItems           UserSolvedItems[]
-  solvedOldItems        UserSolvedOldItems[]
-  solvedSplashes        UserSolvedSplashes[]
+  id                  Int                   @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  nickname            String                @default("Anonymous") @db.VarChar(30)
+  token               String                @db.VarChar(64)
+  currentChampion     Int
+  timestamp           String                @db.VarChar(10)
+  prestige            Int                   @default(0)
+  score               Int                   @default(0)
+  country             String?               @db.VarChar(5)
+  currentItemId       Int?
+  currentOldItemId    Int?
   currentSplashSkinId Int?
+  currentAbilityId    Int?
+  solvedChampions     UserSolvedChampions[]
+  solvedItems         UserSolvedItems[]
+  solvedOldItems      UserSolvedOldItems[]
+  solvedSplashes      UserSolvedSplashes[]
+  solvedAbilities     UserSolvedAbilities[]
 }
 
 model UserSolvedChampions {
@@ -118,11 +120,12 @@ model lol_patches {
 }
 
 model abilities {
-  id         Int        @id @default(autoincrement())
-  championId Int
-  name       String
-  key        AbilityKey
-  champion   champions  @relation(fields: [championId], references: [id], onDelete: Cascade)
+  id                  Int                   @id @default(autoincrement())
+  championId          Int
+  name                String
+  key                 AbilityKey
+  champion            champions             @relation(fields: [championId], references: [id], onDelete: Cascade)
+  UserSolvedAbilities UserSolvedAbilities[]
 
   @@unique([championId, key])
 }
@@ -143,4 +146,14 @@ model skins {
   champion   champions @relation(fields: [championId], references: [id], onDelete: Cascade)
 
   @@unique([championId, key])
+}
+
+model UserSolvedAbilities {
+  userId    Int
+  abilityId Int
+  ability   abilities @relation(fields: [abilityId], references: [id], onDelete: Cascade)
+  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, abilityId])
+  @@index([abilityId])
 }
