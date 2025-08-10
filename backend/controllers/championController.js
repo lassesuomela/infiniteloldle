@@ -415,7 +415,8 @@ const GuessAbility = async (req, res) => {
       status: "success",
       correctGuess: true,
       abilityName: correctAbility.name,
-      championName: correctAbility.champion.name,
+      name: correctAbility.champion.name,
+      championKey: correctAbility.champion.championKey,
     });
   } catch (error) {
     console.error("Error in GuessAbility function:", error);
@@ -428,15 +429,20 @@ const GuessAbility = async (req, res) => {
 const GetAbilitySprite = async (req, res) => {
   const token = req.token;
   try {
-    const userObj = await userV2.findByToken(token);
+    let userObj = await userV2.findByToken(token);
     if (!userObj) {
       return res.json({ status: "error", message: "Token is invalid" });
     }
 
     if (!userObj.currentAbilityId) {
-      return res.json({
-        status: "error",
-        message: "No current ability set for this user",
+      // No current ability set for this user
+      // Set ability to a random one if not set
+      const abilityIds = await ability.findAllIds();
+      const randomAbilityId =
+        abilityIds[Math.floor(Math.random() * abilityIds.length)];
+
+      userObj = await userV2.updateById(userObj.id, {
+        currentAbilityId: randomAbilityId,
       });
     }
 

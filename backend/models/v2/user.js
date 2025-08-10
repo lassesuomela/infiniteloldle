@@ -102,7 +102,7 @@ const user = {
   async getSolvedAbilityIds(userId) {
     const solved = await prisma.userSolvedAbilities.findMany({
       where: { userId },
-      select: { championId: true },
+      select: { abilityId: true },
     });
     return solved.map((row) => row.abilityId);
   },
