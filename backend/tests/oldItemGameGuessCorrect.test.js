@@ -58,6 +58,13 @@ describe("Testing guessing legacy item correctly and prestige", () => {
       await user.addSolvedOldItem(userObj.id, itemId);
     }
 
+    await user.addSolvedOldItems(
+      guessedIds.map((oldItemId) => ({
+        userId: userObj.id,
+        oldItemId,
+      }))
+    );
+
     // Set currentOldItemId to the missing one using the new user model
     await user.updateById(userObj.id, { currentOldItemId: guessId });
 

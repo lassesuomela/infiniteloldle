@@ -56,9 +56,13 @@ describe("Testing guessing splash correctly and prestige", () => {
     const userObj = await userModel.findByToken(token);
 
     // Insert solved splashes into the join table using the new user model
-    for (const champId of guessedIds) {
-      await userModel.addSolvedSplash(userObj.id, champId);
-    }
+
+    await userModel.addSolvedSplashes(
+      guessedIds.map((championId) => ({
+        userId: userObj.id,
+        championId,
+      }))
+    );
 
     const skins = await skin.findByChampionId(guessId);
     const skinToGuess = skins[0];

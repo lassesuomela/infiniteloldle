@@ -49,9 +49,12 @@ describe("Testing guessing champs correctly and prestige", () => {
 
     const userObj = await user.findByToken(token);
 
-    for (const champId of guessedIds) {
-      await user.addSolvedChampion(userObj.id, champId);
-    }
+    await user.addSolvedChampions(
+      guessedIds.map((championId) => ({
+        userId: userObj.id,
+        championId,
+      }))
+    );
 
     await user.updateById(userObj.id, { currentChampion: guessId });
 
