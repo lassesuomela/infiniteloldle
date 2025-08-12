@@ -604,7 +604,6 @@ async function saveChampionsAndPatch(championPayloads, latestPatch) {
           released: payload.releaseDate.slice(0, 4),
           skinCount: payload.skins.length,
           genre: payload.roles.join(","),
-          spriteIds: payload.skins.map((s) => s.num).join(","),
         },
       });
 
