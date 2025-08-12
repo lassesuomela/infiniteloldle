@@ -20,7 +20,6 @@ model champions {
   rangeType           String?               @db.VarChar(30)
   region              String?               @db.VarChar(255)
   released            String?               @db.VarChar(5)
-  spriteIds           String?               @db.VarChar(60)
   genre               String?               @db.VarChar(255)
   damageType          String?               @db.VarChar(45)
   UserSolvedChampions UserSolvedChampions[]
