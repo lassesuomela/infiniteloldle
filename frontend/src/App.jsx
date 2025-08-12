@@ -17,6 +17,7 @@ import MyStats from "./views/MyStats";
 
 import { Provider } from "react-redux";
 import store from "./store/store";
+import Ability from "./views/Ability";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Game />} />
           <Route path="/game/splash" element={<Splash />} />
+          <Route path="/game/ability" element={<Ability />} />
           <Route path="/game/item" element={<Item />} />
           <Route path="/game/item/legacy" element={<OldItem />} />
           <Route path="/leaderboard" element={<Scoreboard />} />

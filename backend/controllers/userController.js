@@ -4,12 +4,12 @@ const item = require("../models/itemModel");
 const oldItem = require("../models/oldItemModel");
 const crypto = require("crypto");
 const cache = require("../middleware/cache");
-const oldItemModel = require("../models/oldItemModel");
 const userV2 = require("../models/v2/user");
 const championV2 = require("../models/v2/champion");
 const itemV2 = require("../models/v2/item");
 const oldItemV2 = require("../models/v2/oldItem");
 const skin = require("../models/v2/skin");
+const ability = require("../models/v2/ability");
 
 const GetNickname = (nick) => {
   let nickname = nick ? nick.trim() : "";
@@ -102,6 +102,10 @@ const Create = (req, res) => {
 
             const currentOldItemId = oldItemData[randomOldItemIdx];
 
+            const abilityIds = await ability.findAllIds();
+            const randomAbilityId =
+              abilityIds[Math.floor(Math.random() * abilityIds.length)];
+
             const userData = {
               nickname: nickname,
               token: token,
@@ -111,6 +115,7 @@ const Create = (req, res) => {
               currentItemId: currentItemId.itemId,
               currentOldItemId: currentOldItemId.id,
               currentSplashSkinId: randomSkin.id,
+              currentAbilityId: randomAbilityId,
             };
 
             const user = await userV2.create(userData);

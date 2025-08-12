@@ -54,10 +54,12 @@ describe("Testing guessing item correctly and prestige", () => {
     // Get user from token using the new user model
     const userObj = await user.findByToken(token);
 
-    // Insert solved items into the join table using the new user model
-    for (const itemId of guessedIds) {
-      await user.addSolvedItem(userObj.id, itemId);
-    }
+    await user.addSolvedItems(
+      guessedIds.map((itemId) => ({
+        userId: userObj.id,
+        itemId,
+      }))
+    );
 
     // Set currentItemId to the missing one using the new user model
     await user.updateById(userObj.id, { currentItemId: guessId });

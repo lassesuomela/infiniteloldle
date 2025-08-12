@@ -29,6 +29,13 @@ const user = {
     });
   },
 
+  async addSolvedChampions(data) {
+    return prisma.userSolvedChampions.createMany({
+      data,
+      skipDuplicates: true,
+    });
+  },
+
   async getSolvedChampionIds(userId) {
     const solved = await prisma.userSolvedChampions.findMany({
       where: { userId },
@@ -47,6 +54,12 @@ const user = {
     });
   },
 
+  async addSolvedSplashes(data) {
+    return prisma.userSolvedSplashes.createMany({
+      data,
+      skipDuplicates: true,
+    });
+  },
   async getSolvedSplashChampionIds(userId) {
     const solved = await prisma.userSolvedSplashes.findMany({
       where: { userId },
@@ -62,6 +75,13 @@ const user = {
   async addSolvedItem(userId, itemId) {
     return prisma.userSolvedItems.create({
       data: { userId, itemId },
+    });
+  },
+
+  async addSolvedItems(data) {
+    return prisma.userSolvedItems.createMany({
+      data,
+      skipDuplicates: true,
     });
   },
 
@@ -83,6 +103,13 @@ const user = {
     });
   },
 
+  async addSolvedOldItems(data) {
+    return prisma.userSolvedOldItems.createMany({
+      data,
+      skipDuplicates: true,
+    });
+  },
+
   async getSolvedOldItemIds(userId) {
     const solved = await prisma.userSolvedOldItems.findMany({
       where: { userId },
@@ -97,6 +124,31 @@ const user = {
 
   async findAll() {
     return prisma.users.findMany();
+  },
+
+  async getSolvedAbilityIds(userId) {
+    const solved = await prisma.userSolvedAbilities.findMany({
+      where: { userId },
+      select: { abilityId: true },
+    });
+    return solved.map((row) => row.abilityId);
+  },
+
+  async addSolvedAbility(userId, abilityId) {
+    return prisma.userSolvedAbilities.create({
+      data: { userId, abilityId },
+    });
+  },
+
+  async addSolvedAbilities(data) {
+    return prisma.userSolvedAbilities.createMany({
+      data,
+      skipDuplicates: true,
+    });
+  },
+
+  async clearSolvedAbilities(userId) {
+    return prisma.userSolvedAbilities.deleteMany({ where: { userId } });
   },
 };
 
