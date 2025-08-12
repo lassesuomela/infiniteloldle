@@ -1,4 +1,4 @@
-FROM node:22-alpine3.21 as build-stage
+FROM node:22-alpine3.21 AS build-stage
 WORKDIR /app
 COPY package.json package.json
 COPY package-lock.json package-lock.json
@@ -6,7 +6,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:stable-alpine as prod-stage
+FROM nginx:stable-alpine AS prod-stage
 COPY --from=build-stage /app/build /usr/share/nginx/html
 COPY --from=build-stage /app/nginx.conf /temp/prod.conf
 
