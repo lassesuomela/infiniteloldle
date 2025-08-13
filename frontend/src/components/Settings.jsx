@@ -7,6 +7,7 @@ import { Tooltip } from "react-tooltip";
 import { Reroll } from "../utils/reroll";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
+  clearAbilityHistory,
   clearItemHistory,
   clearOldItemHistory,
   clearSkinHistory,
@@ -93,6 +94,11 @@ export default function Settings() {
   const ChangeGuessOldItem = () => {
     Reroll("oldItem");
     clearOldItemHistory();
+  };
+
+  const ChangeGuessAbility = () => {
+    Reroll("ability");
+    clearAbilityHistory();
   };
 
   const CreateUser = () => {
@@ -190,6 +196,12 @@ export default function Settings() {
                         className="btn btn-dark mb-2"
                       >
                         Splash art
+                      </button>
+                      <button
+                        onClick={ChangeGuessAbility}
+                        className="btn btn-dark mb-2"
+                      >
+                        Ability
                       </button>
                       <button
                         onClick={ChangeGuessItem}
