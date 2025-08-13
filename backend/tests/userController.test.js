@@ -153,7 +153,7 @@ describe("Testing userController routes", () => {
     expect(res.body.message).toMatch(/Changed item guess/);
   });
 
-  it("Change champion old item guess", async () => {
+  it("Change old item guess", async () => {
     const res = await request(app)
       .put("/api/user/oldItem")
       .set("Authorization", "Bearer " + token);
@@ -185,5 +185,14 @@ describe("Testing userController routes", () => {
 
         done();
       });
+  });
+
+  it("Change ability guess", async () => {
+    const res = await request(app)
+      .put("/api/user/ability")
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.message).toMatch(/Changed ability guess/);
   });
 });
