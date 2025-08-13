@@ -1,5 +1,6 @@
 const app = require("../app");
 const request = require("supertest");
+const user = require("../models/v2/user");
 
 describe("Testing userController routes", () => {
   let token = "";
@@ -127,39 +128,74 @@ describe("Testing userController routes", () => {
   });
 
   it("Change champion guess", async () => {
+    const userData = await user.findByToken(token);
     const res = await request(app)
       .put("/api/user/champion")
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
     expect(res.body.message).toMatch(/Changed guess to champion game/);
+
+    const newUserData = await user.findByToken(token);
+    expect(newUserData.currentChampion).not.toEqual(userData.currentChampion);
   });
 
   it("Change champion splash guess", async () => {
+    const userData = await user.findByToken(token);
+
     const res = await request(app)
       .put("/api/user/splash")
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
     expect(res.body.message).toMatch(/Changed splash guess/);
+
+    const newUserData = await user.findByToken(token);
+    expect(newUserData.currentSplashSkinId).not.toEqual(
+      userData.currentSplashSkinId
+    );
   });
 
   it("Change champion item guess", async () => {
+    const userData = await user.findByToken(token);
+
     const res = await request(app)
       .put("/api/user/item")
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
     expect(res.body.message).toMatch(/Changed item guess/);
+
+    const newUserData = await user.findByToken(token);
+    expect(newUserData.currentItemId).not.toEqual(userData.currentItemId);
   });
 
   it("Change old item guess", async () => {
+    const userData = await user.findByToken(token);
+
     const res = await request(app)
       .put("/api/user/oldItem")
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
     expect(res.body.message).toMatch(/Changed old item guess/);
+
+    const newUserData = await user.findByToken(token);
+    expect(newUserData.currentOldItemId).not.toEqual(userData.currentOldItemId);
+  });
+
+  it("Change ability guess", async () => {
+    const userData = await user.findByToken(token);
+
+    const res = await request(app)
+      .put("/api/user/ability")
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.message).toMatch(/Changed ability guess/);
+
+    const newUserData = await user.findByToken(token);
+    expect(newUserData.currentAbilityId).not.toEqual(userData.currentAbilityId);
   });
 
   it("Deleting user account, with valid token.", (done) => {
@@ -185,14 +221,5 @@ describe("Testing userController routes", () => {
 
         done();
       });
-  });
-
-  it("Change ability guess", async () => {
-    const res = await request(app)
-      .put("/api/user/ability")
-      .set("Authorization", "Bearer " + token);
-
-    expect(res.body.status).toBe("success");
-    expect(res.body.message).toMatch(/Changed ability guess/);
   });
 });
