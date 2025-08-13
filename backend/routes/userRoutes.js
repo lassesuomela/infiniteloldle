@@ -11,7 +11,8 @@ router.put("/user/country", userController.ChangeCountry);
 router.put("/user/champion", userController.ChangeChampionGuess);
 router.put("/user/splash", userController.ChangeSplashGuess);
 router.put("/user/item", userController.ChangeItemGuess);
-router.put("/user/oldItem", userController.ChangeoldItemGuess);
+router.put("/user/oldItem", userController.ChangeOldItemGuess);
+router.put("/user/ability", userController.ChangeAbilityGuess);
 
 router.delete("/user", userController.DeleteUser);
 

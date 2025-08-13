@@ -359,7 +359,7 @@ const ChangeItemGuess = async (req, res) => {
   }
 };
 
-const ChangeoldItemGuess = async (req, res) => {
+const ChangeOldItemGuess = async (req, res) => {
   try {
     const token = req.token;
     const userObj = await userV2.findByToken(token);
@@ -388,6 +388,35 @@ const ChangeoldItemGuess = async (req, res) => {
   }
 };
 
+const ChangeAbilityGuess = async (req, res) => {
+  try {
+    const token = req.token;
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    const allAbilityIds = await ability.findAllIds();
+    const solvedIds = await userV2.getSolvedAbilityIds(userObj.id);
+    const abilityPool = allAbilityIds.filter((id) => !solvedIds.includes(id));
+
+    const random = Math.floor(Math.random() * abilityPool.length);
+    const newAbilityId = abilityPool[random];
+
+    await userV2.updateById(userObj.id, {
+      currentAbilityId: newAbilityId,
+    });
+
+    res.json({
+      status: "success",
+      message: "Changed ability guess",
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({ status: "error", message: "Error on updating user data" });
+  }
+};
+
 module.exports = {
   Create,
   CheckToken,
@@ -397,5 +426,6 @@ module.exports = {
   ChangeChampionGuess,
   ChangeSplashGuess,
   ChangeItemGuess,
-  ChangeoldItemGuess,
+  ChangeOldItemGuess,
+  ChangeAbilityGuess,
 };
