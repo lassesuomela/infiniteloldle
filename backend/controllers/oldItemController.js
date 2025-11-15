@@ -1,6 +1,7 @@
 const oldItemModel = require("../models/oldItemModel");
 const user = require("../models/userModel");
 const cache = require("../middleware/cache");
+const redisCache = require("../cache/cache");
 const fs = require("fs");
 const path = require("path");
 const oldItemV2 = require("../models/v2/oldItem");
@@ -32,6 +33,10 @@ const GuessItem = async (req, res) => {
       });
     }
 
+    // Increment guess count in Redis
+    const guessCountKey = `userId:${user.id}:oldItem:guessCount`;
+    await redisCache.increment(guessCountKey);
+
     if (guess !== correctOldItem.name) {
       return res.json({
         status: "success",
@@ -42,14 +47,20 @@ const GuessItem = async (req, res) => {
     }
 
     // Correct guess
+    // Get guess count from Redis and save to database
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+    
     const allIds = await oldItemV2.findAllIds();
     let solvedIds = await userV2.getSolvedOldItemIds(user.id);
 
     // Add the just-solved old item if not already present
     if (!solvedIds.includes(correctOldItem.id)) {
-      await userV2.addSolvedOldItem(user.id, correctOldItem.id);
+      await userV2.addSolvedOldItem(user.id, correctOldItem.id, guessCount);
       solvedIds.push(correctOldItem.id);
     }
+
+    // Delete the guess count from Redis after saving to database
+    await redisCache.delete(guessCountKey);
 
     // Prestige logic
     let prestige = user.prestige;

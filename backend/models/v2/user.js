@@ -23,9 +23,9 @@ const user = {
     return prisma.users.update({ where: { token }, data });
   },
 
-  async addSolvedChampion(userId, championId) {
+  async addSolvedChampion(userId, championId, guessCount = 0) {
     return prisma.userSolvedChampions.create({
-      data: { userId, championId },
+      data: { userId, championId, guessCount },
     });
   },
 
@@ -48,9 +48,9 @@ const user = {
     return prisma.userSolvedChampions.deleteMany({ where: { userId } });
   },
 
-  async addSolvedSplash(userId, championId) {
+  async addSolvedSplash(userId, championId, guessCount = 0) {
     return prisma.userSolvedSplashes.create({
-      data: { userId, championId },
+      data: { userId, championId, guessCount },
     });
   },
 
@@ -72,9 +72,9 @@ const user = {
     return prisma.userSolvedSplashes.deleteMany({ where: { userId } });
   },
 
-  async addSolvedItem(userId, itemId) {
+  async addSolvedItem(userId, itemId, guessCount = 0) {
     return prisma.userSolvedItems.create({
-      data: { userId, itemId },
+      data: { userId, itemId, guessCount },
     });
   },
 
@@ -97,9 +97,9 @@ const user = {
     return prisma.userSolvedItems.deleteMany({ where: { userId } });
   },
 
-  async addSolvedOldItem(userId, oldItemId) {
+  async addSolvedOldItem(userId, oldItemId, guessCount = 0) {
     return prisma.userSolvedOldItems.create({
-      data: { userId, oldItemId },
+      data: { userId, oldItemId, guessCount },
     });
   },
 
@@ -134,9 +134,9 @@ const user = {
     return solved.map((row) => row.abilityId);
   },
 
-  async addSolvedAbility(userId, abilityId) {
+  async addSolvedAbility(userId, abilityId, guessCount = 0) {
     return prisma.userSolvedAbilities.create({
-      data: { userId, abilityId },
+      data: { userId, abilityId, guessCount },
     });
   },
 

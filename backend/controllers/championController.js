@@ -3,6 +3,7 @@ const userV2 = require("../models/v2/user");
 const championV2 = require("../models/v2/champion");
 const ability = require("../models/v2/ability");
 const cache = require("../middleware/cache");
+const redisCache = require("../cache/cache");
 const fs = require("fs");
 const path = require("path");
 const GetPartialSimilarites =
@@ -64,6 +65,10 @@ const Guess = async (req, res) => {
       });
     }
 
+    // Increment guess count in Redis
+    const guessCountKey = `userId:${user.id}:champion:guessCount`;
+    await redisCache.increment(guessCountKey);
+
     const champData = {
       guessedChampion: guessChampion.name,
       championKey: guessChampion.championKey,
@@ -116,6 +121,9 @@ const Guess = async (req, res) => {
     }
 
     // correct guess
+    // Get guess count from Redis and save to database
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+    
     // Get all champion IDs
     const allChampionIds = await championV2.findAllIds();
 
@@ -124,9 +132,12 @@ const Guess = async (req, res) => {
 
     // Add the just-solved champion if not already present
     if (!solvedRows.includes(correctChampion.id)) {
-      await userV2.addSolvedChampion(user.id, correctChampion.id);
+      await userV2.addSolvedChampion(user.id, correctChampion.id, guessCount);
       solvedRows.push(correctChampion.id);
     }
+
+    // Delete the guess count from Redis after saving to database
+    await redisCache.delete(guessCountKey);
 
     // Prestige logic
     let prestige = user.prestige;
@@ -195,6 +206,10 @@ const GuessSplash = async (req, res) => {
       });
     }
 
+    // Increment guess count in Redis
+    const guessCountKey = `userId:${userObj.id}:splash:guessCount`;
+    await redisCache.increment(guessCountKey);
+
     if (guess !== correctSkinData.champion.name) {
       return res.json({
         status: "success",
@@ -205,14 +220,20 @@ const GuessSplash = async (req, res) => {
     }
 
     // correct guess
+    // Get guess count from Redis and save to database
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+    
     const allIds = await championV2.findAllIds();
     let solvedIds = await userV2.getSolvedSplashChampionIds(userObj.id);
 
     // Add the just-solved splash if not already present
     if (!solvedIds.includes(correctSkinData.champion.id)) {
-      await userV2.addSolvedSplash(userObj.id, correctSkinData.champion.id);
+      await userV2.addSolvedSplash(userObj.id, correctSkinData.champion.id, guessCount);
       solvedIds.push(correctSkinData.champion.id);
     }
+
+    // Delete the guess count from Redis after saving to database
+    await redisCache.delete(guessCountKey);
 
     // Prestige logic
     let prestige = userObj.prestige;
@@ -368,6 +389,10 @@ const GuessAbility = async (req, res) => {
       });
     }
 
+    // Increment guess count in Redis
+    const guessCountKey = `userId:${userObj.id}:ability:guessCount`;
+    await redisCache.increment(guessCountKey);
+
     if (guess.toLowerCase() !== correctAbility.champion.name.toLowerCase()) {
       return res.json({
         status: "success",
@@ -378,15 +403,21 @@ const GuessAbility = async (req, res) => {
     }
 
     // ===== Correct guess =====
+    // Get guess count from Redis and save to database
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+    
     // Get all ability IDs
     const allIds = await ability.findAllIds();
     let solvedIds = await userV2.getSolvedAbilityIds(userObj.id);
 
     // Add the just-solved ability if not already present
     if (!solvedIds.includes(correctAbility.id)) {
-      await userV2.addSolvedAbility(userObj.id, correctAbility.id);
+      await userV2.addSolvedAbility(userObj.id, correctAbility.id, guessCount);
       solvedIds.push(correctAbility.id);
     }
+
+    // Delete the guess count from Redis after saving to database
+    await redisCache.delete(guessCountKey);
 
     // Prestige logic
     let prestige = userObj.prestige;

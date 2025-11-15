@@ -75,6 +75,7 @@ model users {
 model UserSolvedChampions {
   userId     Int
   championId Int
+  guessCount Int       @default(0)
   champion   champions @relation(fields: [championId], references: [id], onDelete: Cascade)
   user       users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -83,20 +84,22 @@ model UserSolvedChampions {
 }
 
 model UserSolvedItems {
-  userId Int
-  itemId Int
-  item   items @relation(fields: [itemId], references: [itemId], onDelete: Cascade)
-  user   users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  itemId     Int
+  guessCount Int   @default(0)
+  item       items @relation(fields: [itemId], references: [itemId], onDelete: Cascade)
+  user       users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, itemId])
   @@index([itemId])
 }
 
 model UserSolvedOldItems {
-  userId    Int
-  oldItemId Int
-  oldItem   old_items @relation(fields: [oldItemId], references: [id], onDelete: Cascade)
-  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  oldItemId  Int
+  guessCount Int       @default(0)
+  oldItem    old_items @relation(fields: [oldItemId], references: [id], onDelete: Cascade)
+  user       users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, oldItemId])
   @@index([oldItemId], map: "UserSolvedOldItems_oldItemId_fkey")
@@ -105,6 +108,7 @@ model UserSolvedOldItems {
 model UserSolvedSplashes {
   userId     Int
   championId Int
+  guessCount Int       @default(0)
   champions  champions @relation(fields: [championId], references: [id], onDelete: Cascade, map: "UserSolvedSplashes_splashId_fkey")
   user       users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -148,10 +152,11 @@ model skins {
 }
 
 model UserSolvedAbilities {
-  userId    Int
-  abilityId Int
-  ability   abilities @relation(fields: [abilityId], references: [id], onDelete: Cascade)
-  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  abilityId  Int
+  guessCount Int       @default(0)
+  ability    abilities @relation(fields: [abilityId], references: [id], onDelete: Cascade)
+  user       users     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, abilityId])
   @@index([abilityId])
