@@ -4,6 +4,7 @@ const championV2 = require("../models/v2/champion");
 const ability = require("../models/v2/ability");
 const cache = require("../middleware/cache");
 const redisCache = require("../cache/cache");
+const { GuessCountKeys } = require("../helpers/redisKeys");
 const fs = require("fs");
 const path = require("path");
 const GetPartialSimilarites =
@@ -66,7 +67,7 @@ const Guess = async (req, res) => {
     }
 
     // Increment guess count in Redis
-    const guessCountKey = `userId:${user.id}:champion:guessCount`;
+    const guessCountKey = GuessCountKeys.champion(user.id);
     await redisCache.increment(guessCountKey);
 
     const champData = {
@@ -207,7 +208,7 @@ const GuessSplash = async (req, res) => {
     }
 
     // Increment guess count in Redis
-    const guessCountKey = `userId:${userObj.id}:splash:guessCount`;
+    const guessCountKey = GuessCountKeys.splash(userObj.id);
     await redisCache.increment(guessCountKey);
 
     if (guess !== correctSkinData.champion.name) {
@@ -390,7 +391,7 @@ const GuessAbility = async (req, res) => {
     }
 
     // Increment guess count in Redis
-    const guessCountKey = `userId:${userObj.id}:ability:guessCount`;
+    const guessCountKey = GuessCountKeys.ability(userObj.id);
     await redisCache.increment(guessCountKey);
 
     if (guess.toLowerCase() !== correctAbility.champion.name.toLowerCase()) {

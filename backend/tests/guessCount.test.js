@@ -3,6 +3,7 @@ const request = require("supertest");
 const user = require("../models/v2/user");
 const champion = require("../models/v2/champion");
 const redisCache = require("../cache/cache");
+const { GuessCountKeys } = require("../helpers/redisKeys");
 const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
@@ -56,7 +57,7 @@ describe("Testing guess count functionality", () => {
     expect(res.body.correctGuess).toBe(false);
 
     // Check Redis guess count
-    const guessCountKey = `userId:${userId}:champion:guessCount`;
+    const guessCountKey = GuessCountKeys.champion(userId);
     const count = await redisCache.getGuessCount(guessCountKey);
     expect(count).toBe(1);
   });
@@ -82,7 +83,7 @@ describe("Testing guess count functionality", () => {
       .set("Authorization", "Bearer " + token);
 
     // Check Redis guess count
-    const guessCountKey = `userId:${userId}:champion:guessCount`;
+    const guessCountKey = GuessCountKeys.champion(userId);
     const count = await redisCache.getGuessCount(guessCountKey);
     expect(count).toBe(2);
   });
@@ -104,7 +105,7 @@ describe("Testing guess count functionality", () => {
     expect(res.body.correctGuess).toBe(true);
 
     // Check that guess count is cleared from Redis
-    const guessCountKey = `userId:${userId}:champion:guessCount`;
+    const guessCountKey = GuessCountKeys.champion(userId);
     const redisCount = await redisCache.getGuessCount(guessCountKey);
     expect(redisCount).toBe(0);
 
@@ -136,7 +137,7 @@ describe("Testing guess count functionality", () => {
       .set("Authorization", "Bearer " + token);
 
     // Check guess count increased
-    let guessCountKey = `userId:${userId}:champion:guessCount`;
+    let guessCountKey = GuessCountKeys.champion(userId);
     let count = await redisCache.getGuessCount(guessCountKey);
     expect(count).toBeGreaterThan(0);
 

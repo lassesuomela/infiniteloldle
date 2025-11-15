@@ -5,6 +5,7 @@ const oldItem = require("../models/oldItemModel");
 const crypto = require("crypto");
 const cache = require("../middleware/cache");
 const redisCache = require("../cache/cache");
+const { GuessCountKeys } = require("../helpers/redisKeys");
 const userV2 = require("../models/v2/user");
 const championV2 = require("../models/v2/champion");
 const itemV2 = require("../models/v2/item");
@@ -282,7 +283,7 @@ const ChangeChampionGuess = async (req, res) => {
     await userV2.updateById(userObj.id, { currentChampion: newChampionId });
 
     // Reset guess count in Redis
-    const guessCountKey = `userId:${userObj.id}:champion:guessCount`;
+    const guessCountKey = GuessCountKeys.champion(userObj.id);
     await redisCache.delete(guessCountKey);
 
     res.json({
@@ -326,7 +327,7 @@ const ChangeSplashGuess = async (req, res) => {
     await userV2.updateById(userObj.id, { currentSplashSkinId: randomSkin.id });
 
     // Reset guess count in Redis
-    const guessCountKey = `userId:${userObj.id}:splash:guessCount`;
+    const guessCountKey = GuessCountKeys.splash(userObj.id);
     await redisCache.delete(guessCountKey);
 
     res.json({
@@ -359,7 +360,7 @@ const ChangeItemGuess = async (req, res) => {
     });
 
     // Reset guess count in Redis
-    const guessCountKey = `userId:${userObj.id}:item:guessCount`;
+    const guessCountKey = GuessCountKeys.item(userObj.id);
     await redisCache.delete(guessCountKey);
 
     res.json({
@@ -392,7 +393,7 @@ const ChangeOldItemGuess = async (req, res) => {
     });
 
     // Reset guess count in Redis
-    const guessCountKey = `userId:${userObj.id}:oldItem:guessCount`;
+    const guessCountKey = GuessCountKeys.oldItem(userObj.id);
     await redisCache.delete(guessCountKey);
 
     res.json({
@@ -425,7 +426,7 @@ const ChangeAbilityGuess = async (req, res) => {
     });
 
     // Reset guess count in Redis
-    const guessCountKey = `userId:${userObj.id}:ability:guessCount`;
+    const guessCountKey = GuessCountKeys.ability(userObj.id);
     await redisCache.delete(guessCountKey);
 
     res.json({

@@ -1,6 +1,7 @@
 const item = require("../models/itemModel");
 const cache = require("../middleware/cache");
 const redisCache = require("../cache/cache");
+const { GuessCountKeys } = require("../helpers/redisKeys");
 const itemV2 = require("../models/v2/item");
 const userV2 = require("../models/v2/user");
 
@@ -32,7 +33,7 @@ const GuessItem = async (req, res) => {
     }
 
     // Increment guess count in Redis
-    const guessCountKey = `userId:${user.id}:item:guessCount`;
+    const guessCountKey = GuessCountKeys.item(user.id);
     await redisCache.increment(guessCountKey);
 
     if (guess !== correctItem.name) {
