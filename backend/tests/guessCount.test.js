@@ -37,7 +37,7 @@ describe("Testing guess count functionality", () => {
     const userObj = await user.findByToken(token);
     userId = userObj.id;
     const correctChampion = await champion.findById(userObj.currentChampion);
-    
+
     // Get a different champion to guess wrongly
     const allChampions = await champion.findAllIds();
     const wrongChampion = await champion.findById(
@@ -65,7 +65,7 @@ describe("Testing guess count functionality", () => {
   it("Increment guess count multiple times", async () => {
     const userObj = await user.findByToken(token);
     const correctChampion = await champion.findById(userObj.currentChampion);
-    
+
     // Get a different champion
     const allChampions = await champion.findAllIds();
     const wrongChampion = await champion.findById(
@@ -123,7 +123,7 @@ describe("Testing guess count functionality", () => {
 
   it("Reset guess count on reroll", async () => {
     const userObj = await user.findByToken(token);
-    
+
     // Make a wrong guess first
     const correctChampion = await champion.findById(userObj.currentChampion);
     const allChampions = await champion.findAllIds();
@@ -142,10 +142,12 @@ describe("Testing guess count functionality", () => {
     expect(count).toBeGreaterThan(0);
 
     // Reroll
-    await request(app)
-      .post("/api/user/change/champion")
+    const b = await request(app)
+      .put("/api/user/champion")
       .set("Authorization", "Bearer " + token);
 
+    expect(b.body.status).toBe("success");
+    expect(b.body.message).toBe("Changed guess to champion game");
     // Check guess count is reset
     count = await redisCache.getGuessCount(guessCountKey);
     expect(count).toBe(0);
