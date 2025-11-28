@@ -70,6 +70,22 @@ Folder structure should look like this:
 
 Frontend API config is in \frontend\src\configs\config.js
 
+---
+
+## Redis keys
+
+`userId:${userId}:champion:guessCount`
+
+`userId:${userId}:splash:guessCount`
+
+`userId:${userId}:item:guessCount`
+
+`userId:${userId}:oldItem:guessCount`
+
+`userId:${userId}:ability:guessCount`
+
+---
+
 ## How to run tests
 
 - `cd ./backend`
