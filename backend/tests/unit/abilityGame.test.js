@@ -135,7 +135,7 @@ describe("GuessAbility", () => {
       name: "Ahri",
       championKey: "Ahri",
     });
-    expect(userV2.addSolvedAbility).toHaveBeenCalledWith(1, 1);
+    expect(userV2.addSolvedAbility).toHaveBeenCalledWith(1, 1, 1);
   });
 });
 

@@ -34,6 +34,7 @@ DROP TABLE IF EXISTS `UserSolvedAbilities`;
 CREATE TABLE `UserSolvedAbilities` (
   `userId` int NOT NULL,
   `abilityId` int NOT NULL,
+  `guessCount` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`userId`,`abilityId`),
   KEY `UserSolvedAbilities_abilityId_idx` (`abilityId`),
   CONSTRAINT `UserSolvedAbilities_abilityId_fkey` FOREIGN KEY (`abilityId`) REFERENCES `abilities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -52,6 +53,7 @@ DROP TABLE IF EXISTS `UserSolvedChampions`;
 CREATE TABLE `UserSolvedChampions` (
   `userId` int NOT NULL,
   `championId` int NOT NULL,
+  `guessCount` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`userId`,`championId`),
   KEY `UserSolvedChampions_championId_fkey` (`championId`),
   CONSTRAINT `UserSolvedChampions_championId_fkey` FOREIGN KEY (`championId`) REFERENCES `champions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -70,6 +72,7 @@ DROP TABLE IF EXISTS `UserSolvedItems`;
 CREATE TABLE `UserSolvedItems` (
   `userId` int NOT NULL,
   `itemId` int NOT NULL,
+  `guessCount` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`userId`,`itemId`),
   KEY `UserSolvedItems_itemId_idx` (`itemId`),
   CONSTRAINT `UserSolvedItems_itemId_fkey` FOREIGN KEY (`itemId`) REFERENCES `items` (`itemId`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -88,6 +91,7 @@ DROP TABLE IF EXISTS `UserSolvedOldItems`;
 CREATE TABLE `UserSolvedOldItems` (
   `userId` int NOT NULL,
   `oldItemId` int NOT NULL,
+  `guessCount` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`userId`,`oldItemId`),
   KEY `UserSolvedOldItems_oldItemId_fkey` (`oldItemId`),
   CONSTRAINT `UserSolvedOldItems_oldItemId_fkey` FOREIGN KEY (`oldItemId`) REFERENCES `old_items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -106,6 +110,7 @@ DROP TABLE IF EXISTS `UserSolvedSplashes`;
 CREATE TABLE `UserSolvedSplashes` (
   `userId` int NOT NULL,
   `championId` int NOT NULL,
+  `guessCount` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`userId`,`championId`),
   KEY `UserSolvedSplashes_splashId_fkey` (`championId`),
   CONSTRAINT `UserSolvedSplashes_splashId_fkey` FOREIGN KEY (`championId`) REFERENCES `champions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

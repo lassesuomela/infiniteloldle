@@ -98,6 +98,29 @@ class Cache {
     }
   }
 
+  async increment(key, ttlInSeconds = null) {
+    try {
+      const value = await this.redis.incr(key);
+      if (ttlInSeconds) {
+        await this.redis.expire(key, ttlInSeconds);
+      }
+      return value;
+    } catch (err) {
+      console.error(`Redis INCR error for key "${key}":`, err);
+      return null;
+    }
+  }
+
+  async getGuessCount(key) {
+    try {
+      const value = await this.redis.get(key);
+      return value ? parseInt(value, 10) : 0;
+    } catch (err) {
+      console.error(`Redis GET error for key "${key}":`, err);
+      return 0;
+    }
+  }
+
   quit() {
     this.redis.quit();
   }

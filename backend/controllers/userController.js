@@ -4,6 +4,8 @@ const item = require("../models/itemModel");
 const oldItem = require("../models/oldItemModel");
 const crypto = require("crypto");
 const cache = require("../middleware/cache");
+const redisCache = require("../cache/cache");
+const { GuessCountKeys } = require("../helpers/redisKeys");
 const userV2 = require("../models/v2/user");
 const championV2 = require("../models/v2/champion");
 const itemV2 = require("../models/v2/item");
@@ -280,6 +282,10 @@ const ChangeChampionGuess = async (req, res) => {
 
     await userV2.updateById(userObj.id, { currentChampion: newChampionId });
 
+    // Reset guess count in Redis
+    const guessCountKey = GuessCountKeys.champion(userObj.id);
+    await redisCache.delete(guessCountKey);
+
     res.json({
       status: "success",
       message: "Changed guess to champion game",
@@ -320,6 +326,10 @@ const ChangeSplashGuess = async (req, res) => {
 
     await userV2.updateById(userObj.id, { currentSplashSkinId: randomSkin.id });
 
+    // Reset guess count in Redis
+    const guessCountKey = GuessCountKeys.splash(userObj.id);
+    await redisCache.delete(guessCountKey);
+
     res.json({
       status: "success",
       message: "Changed splash guess",
@@ -348,6 +358,10 @@ const ChangeItemGuess = async (req, res) => {
     await userV2.updateById(userObj.id, {
       currentItemId: newItemId,
     });
+
+    // Reset guess count in Redis
+    const guessCountKey = GuessCountKeys.item(userObj.id);
+    await redisCache.delete(guessCountKey);
 
     res.json({
       status: "success",
@@ -378,6 +392,10 @@ const ChangeOldItemGuess = async (req, res) => {
       currentOldItemId: newOldItemId,
     });
 
+    // Reset guess count in Redis
+    const guessCountKey = GuessCountKeys.oldItem(userObj.id);
+    await redisCache.delete(guessCountKey);
+
     res.json({
       status: "success",
       message: "Changed old item guess",
@@ -406,6 +424,10 @@ const ChangeAbilityGuess = async (req, res) => {
     await userV2.updateById(userObj.id, {
       currentAbilityId: newAbilityId,
     });
+
+    // Reset guess count in Redis
+    const guessCountKey = GuessCountKeys.ability(userObj.id);
+    await redisCache.delete(guessCountKey);
 
     res.json({
       status: "success",
