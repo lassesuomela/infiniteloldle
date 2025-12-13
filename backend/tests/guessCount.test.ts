@@ -160,4 +160,3 @@ describe("Testing guess count functionality", () => {
   });
 });
 
-export {};

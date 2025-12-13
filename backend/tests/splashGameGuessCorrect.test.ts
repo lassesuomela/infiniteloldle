@@ -96,4 +96,3 @@ describe("Testing guessing splash correctly and prestige", () => {
   });
 });
 
-export {};

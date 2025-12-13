@@ -265,4 +265,3 @@ describe("Testing routes needed for playing the game", () => {
   });
 });
 
-export {};

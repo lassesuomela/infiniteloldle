@@ -29,4 +29,3 @@ describe("Testing stats routes", () => {
   });
 });
 
-export {};

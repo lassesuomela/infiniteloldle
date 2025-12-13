@@ -92,4 +92,3 @@ describe("Testing guessing legacy item correctly and prestige", () => {
   });
 });
 
-export {};

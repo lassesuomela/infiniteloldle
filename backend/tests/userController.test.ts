@@ -224,4 +224,3 @@ describe("Testing userController routes", () => {
   });
 });
 
-export {};

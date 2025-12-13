@@ -5,4 +5,3 @@ const ddragon = require("./utils/ddragon");
   process.exit(code === 1 ? 1 : 0);
 })();
 
-export {};

@@ -90,4 +90,3 @@ describe("Testing guessing abilities correctly and prestige", () => {
   });
 });
 
-export {};

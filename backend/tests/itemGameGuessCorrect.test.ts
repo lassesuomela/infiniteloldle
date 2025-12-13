@@ -88,4 +88,3 @@ describe("Testing guessing item correctly and prestige", () => {
   });
 });
 
-export {};

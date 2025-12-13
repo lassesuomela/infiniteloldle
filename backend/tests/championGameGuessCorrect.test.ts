@@ -90,4 +90,3 @@ describe("Testing guessing champs correctly and prestige", () => {
   });
 });
 
-export {};

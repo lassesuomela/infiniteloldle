@@ -17,4 +17,3 @@ process.on("SIGINT", function() {
     });
 });
 
-export {};

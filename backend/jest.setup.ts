@@ -6,4 +6,3 @@ jest.mock("node-schedule", () => ({
 
 jest.mock("ioredis", () => require("ioredis-mock"));
 
-export {};
