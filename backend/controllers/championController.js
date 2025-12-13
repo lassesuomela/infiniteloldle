@@ -699,12 +699,33 @@ const GetAbilityClue = async (req, res) => {
       });
     }
 
-    // Pick first ability (ordering depends on database)
-    const abilityToUse = abilities[0];
-    const imageName = `${currentChampion.championKey}_${abilityToUse.key}.webp`;
-    const imageKey = `cropped_ability_${imageName}`;
+    // Make it somewhat different on what the key will be each day
+    // Use week day to pick ability
 
-    // Check if cropped image is cached
+    // Get current day of week (0-6)
+    const dayOfWeek = new Date().getDay();
+    // Mon = 1 -> Q, Tue = 2 -> W, Wed = 3 -> E, Thu = 4 -> R, Fri = 5 -> Q, Sat = 6 -> W, Sun = 0 -> E
+
+    // Map day of week to ability key
+    const dayToAbilityKey = {
+      1: "Q",
+      2: "W",
+      3: "E",
+      4: "R",
+      5: "Q",
+      6: "W",
+      0: "E",
+    };
+    // Pick E as the ability to use for the clue, or first if no Q
+    const abilityToUse = abilities.find(
+      (ab) => ab.key === dayToAbilityKey[dayOfWeek]
+    )
+      ? abilities.find((ab) => ab.key === dayToAbilityKey[dayOfWeek])
+      : abilities[0];
+    const imageName = `${currentChampion.championKey}_${abilityToUse.key}.webp`;
+    const imageKey = `clue_ability_${imageName}`;
+
+    // Check if image is cached
     if (cache.checkCache(imageKey)) {
       const data = cache.getCache(imageKey);
       res.set("X-CACHE", "HIT");
@@ -730,22 +751,7 @@ const GetAbilityClue = async (req, res) => {
 
     try {
       const image = sharp(imagePath);
-      const metadata = await image.metadata();
-
-      const cropWidth = Math.floor(metadata.width * 0.5);
-      const cropHeight = Math.floor(metadata.height * 0.5);
-
-      const left = Math.floor((metadata.width - cropWidth) / 2);
-      const top = Math.floor((metadata.height - cropHeight) / 2);
-
-      const imageBuffer = await image
-        .extract({
-          left,
-          top,
-          width: cropWidth,
-          height: cropHeight,
-        })
-        .toBuffer();
+      const imageBuffer = await image.toBuffer();
 
       const base64 = imageBuffer.toString("base64");
 
