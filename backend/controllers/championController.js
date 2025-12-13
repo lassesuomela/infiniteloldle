@@ -219,11 +219,15 @@ const GuessSplash = async (req, res) => {
     await redisCache.increment(guessCountKey);
 
     if (guess !== correctSkinData.champion.name) {
+      // Get current guess count to return to frontend
+      const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
+      
       return res.json({
         status: "success",
         correctGuess: false,
         championKey: guessChampion.championKey,
         name: guessChampion.name,
+        guessCount: currentGuessCount,
       });
     }
 
@@ -290,6 +294,7 @@ const GuessSplash = async (req, res) => {
       correctGuess: true,
       championKey: guessChampion.championKey,
       title: correctSkinData.champion.title,
+      guessCount: guessCount,
     });
   } catch (error) {
     console.error("Error in Splash Guess function:", error);
@@ -406,11 +411,15 @@ const GuessAbility = async (req, res) => {
     await redisCache.increment(guessCountKey);
 
     if (guess.toLowerCase() !== correctAbility.champion.name.toLowerCase()) {
+      // Get current guess count to return to frontend
+      const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
+      
       return res.json({
         status: "success",
         correctGuess: false,
         name: guessedChampion.name,
         championKey: guessedChampion.championKey,
+        guessCount: currentGuessCount,
       });
     }
 
@@ -460,6 +469,7 @@ const GuessAbility = async (req, res) => {
       abilityName: correctAbility.name,
       name: correctAbility.champion.name,
       championKey: correctAbility.champion.championKey,
+      guessCount: guessCount,
     });
   } catch (error) {
     console.error("Error in GuessAbility function:", error);
