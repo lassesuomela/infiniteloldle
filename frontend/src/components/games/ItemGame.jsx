@@ -49,14 +49,14 @@ export default function ItemGame() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const ApplyBlur = useCallback(
-    (guessCount) => {
+    (_guessCount) => {
       const spriteImg = document.getElementById("spriteImg");
       if (!spriteImg) return;
 
       const initialBlur = 1.0;
       let blurVal = initialBlur;
 
-      for (let i = 0; i < guessCount; i++) {
+      for (let i = 0; i < _guessCount; i++) {
         blurVal -= blurVal * 0.4;
       }
 

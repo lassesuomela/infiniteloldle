@@ -169,14 +169,14 @@ export default function AbilityGuessingGame() {
   };
 
   const applyBlur = useCallback(
-    (guessCount) => {
+    (_guessCount) => {
       const abilityImgEl = document.getElementById("abilityImg");
       if (!abilityImgEl) return;
 
       const initialBlur = 1.0;
       let blurVal = initialBlur;
 
-      for (let i = 0; i < guessCount; i++) {
+      for (let i = 0; i < _guessCount; i++) {
         blurVal -= blurVal * 0.4;
       }
 
