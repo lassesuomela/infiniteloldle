@@ -91,7 +91,7 @@ export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
 
   return (
     <div className="d-flex justify-content-center mb-4">
-      <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
+      <div className="card" id="clue-box">
         <div className="card-body text-center">
           <h5 className="card-title">💡 Clues</h5>
 
