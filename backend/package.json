@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node server.ts",
+    "dev:watch": "nodemon --exec ts-node server.ts",
     "test": "jest --detectOpenHandles --runInBand --forceExit",
     "db:gen": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
@@ -32,6 +34,7 @@
     "ua-parser-js": "^1.0.38"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.35",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
@@ -39,11 +42,14 @@
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.0.1",
     "@types/node-schedule": "^2.1.8",
+    "@types/semver": "^7.7.1",
+    "@types/sharp": "^0.31.1",
     "@types/supertest": "^6.0.3",
     "ioredis-mock": "^8.13.1",
     "jest": "^29.7.0",
     "prisma": "^6.9.0",
     "supertest": "^6.3.4",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

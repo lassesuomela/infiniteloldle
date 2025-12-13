@@ -4,3 +4,5 @@ const ddragon = require("./utils/ddragon");
   const code = await ddragon.saveNewAbilities();
   process.exit(code === 1 ? 1 : 0);
 })();
+
+export {};

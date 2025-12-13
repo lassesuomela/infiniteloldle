@@ -1,9 +1,9 @@
 const app = require("../app");
 const request = require("supertest");
-const item = require("../models/v2/item");
+const oldItem = require("../models/v2/oldItem");
 const user = require("../models/v2/user");
 
-describe("Testing guessing item correctly and prestige", () => {
+describe("Testing guessing legacy item correctly and prestige", () => {
   let token = "";
   it("Creating user account with nickname defined.", (done) => {
     const body = {
@@ -39,35 +39,39 @@ describe("Testing guessing item correctly and prestige", () => {
       });
   });
 
-  it("Guessing item correctly.", async () => {
-    // Get all item IDs
-    const items = await item.findAllItemIds();
-
+  it("Guessing legacy item correctly.", async () => {
+    // Get all old item IDs
+    const items = await oldItem.findAllIds();
     const idList = items;
     const guessId = idList.shift();
     const guessedIds = idList;
 
     // Get item name by id
-    const result = await item.findByItemId(guessId);
+    const result = await oldItem.findById(guessId);
     const guess = result.name;
 
     // Get user from token using the new user model
     const userObj = await user.findByToken(token);
 
-    await user.addSolvedItems(
-      guessedIds.map((itemId) => ({
+    // Insert solved old items into the join table using the new user model
+    for (const itemId of guessedIds) {
+      await user.addSolvedOldItem(userObj.id, itemId);
+    }
+
+    await user.addSolvedOldItems(
+      guessedIds.map((oldItemId) => ({
         userId: userObj.id,
-        itemId,
+        oldItemId,
       }))
     );
 
-    // Set currentItemId to the missing one using the new user model
-    await user.updateById(userObj.id, { currentItemId: guessId });
+    // Set currentOldItemId to the missing one using the new user model
+    await user.updateById(userObj.id, { currentOldItemId: guessId });
 
     const body = { guess };
 
     const res = await request(app)
-      .post("/api/item")
+      .post("/api/oldItem")
       .send(body)
       .set("Authorization", "Bearer " + token);
 
@@ -87,3 +91,5 @@ describe("Testing guessing item correctly and prestige", () => {
       });
   });
 });
+
+export {};

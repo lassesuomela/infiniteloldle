@@ -89,3 +89,5 @@ describe("Testing guessing abilities correctly and prestige", () => {
     expect(res.body.player.prestige).toBeGreaterThan(prestige);
   });
 });
+
+export {};

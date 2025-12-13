@@ -26,3 +26,5 @@ describe("Testing scoreboard routes", () => {
       });
   });
 });
+
+export {};

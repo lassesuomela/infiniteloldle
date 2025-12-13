@@ -1,9 +1,10 @@
 const app = require("../app");
 const request = require("supertest");
-const oldItem = require("../models/v2/oldItem");
-const user = require("../models/v2/user");
+const userModel = require("../models/v2/user");
+const championModel = require("../models/v2/champion");
+const skin = require("../models/v2/skin");
 
-describe("Testing guessing legacy item correctly and prestige", () => {
+describe("Testing guessing splash correctly and prestige", () => {
   let token = "";
   it("Creating user account with nickname defined.", (done) => {
     const body = {
@@ -39,39 +40,42 @@ describe("Testing guessing legacy item correctly and prestige", () => {
       });
   });
 
-  it("Guessing legacy item correctly.", async () => {
-    // Get all old item IDs
-    const items = await oldItem.findAllIds();
-    const idList = items;
-    const guessId = idList.shift();
-    const guessedIds = idList;
+  it("Guessing splash correctly.", async () => {
+    // Get all champion IDs
+    const championIds = await championModel.findAllIds();
 
-    // Get item name by id
-    const result = await oldItem.findById(guessId);
-    const guess = result.name;
+    // The one to guess
+    const guessId = championIds.shift();
+    const guessedIds = championIds;
+
+    // Get champion name by id
+    const championData = await championModel.findById(guessId);
+    const guess = championData.name;
 
     // Get user from token using the new user model
-    const userObj = await user.findByToken(token);
+    const userObj = await userModel.findByToken(token);
 
-    // Insert solved old items into the join table using the new user model
-    for (const itemId of guessedIds) {
-      await user.addSolvedOldItem(userObj.id, itemId);
-    }
+    // Insert solved splashes into the join table using the new user model
 
-    await user.addSolvedOldItems(
-      guessedIds.map((oldItemId) => ({
+    await userModel.addSolvedSplashes(
+      guessedIds.map((championId) => ({
         userId: userObj.id,
-        oldItemId,
+        championId,
       }))
     );
 
-    // Set currentOldItemId to the missing one using the new user model
-    await user.updateById(userObj.id, { currentOldItemId: guessId });
+    const skins = await skin.findByChampionId(guessId);
+    const skinToGuess = skins[0];
+
+    // Set currentSplashChampion to the missing one using the new user model
+    await userModel.updateById(userObj.id, {
+      currentSplashSkinId: skinToGuess.id,
+    });
 
     const body = { guess };
 
     const res = await request(app)
-      .post("/api/oldItem")
+      .post("/api/splash")
       .send(body)
       .set("Authorization", "Bearer " + token);
 
@@ -91,3 +95,5 @@ describe("Testing guessing legacy item correctly and prestige", () => {
       });
   });
 });
+
+export {};

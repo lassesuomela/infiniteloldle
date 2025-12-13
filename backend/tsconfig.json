@@ -16,10 +16,11 @@
     "rootDir": "./",
     "removeComments": true,
     "sourceMap": true,
+    "noEmitOnError": false,
 
     /* Interop Constraints */
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": false,
+    "isolatedModules": false,
 
     /* Type Checking - VERY PERMISSIVE */
     "strict": false,
@@ -41,11 +42,10 @@
     "skipLibCheck": true,
 
     /* Additional Permissive Options */
-    "allowJs": true,
+    "allowJs": false,
     "checkJs": false
   },
   "include": [
-    "**/*.js",
     "**/*.ts"
   ],
   "exclude": [
@@ -53,6 +53,9 @@
     "dist",
     "coverage",
     "mysql-docker",
-    "cache"
+    "tests",
+    "**/*.test.ts",
+    "jest.config.ts",
+    "jest.setup.ts"
   ]
 }

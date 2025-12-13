@@ -50,3 +50,5 @@ describe("CheckToken", () => {
     });
   });
 });
+
+export {};

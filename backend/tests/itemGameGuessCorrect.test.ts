@@ -1,9 +1,9 @@
 const app = require("../app");
 const request = require("supertest");
+const item = require("../models/v2/item");
 const user = require("../models/v2/user");
-const champion = require("../models/v2/champion");
 
-describe("Testing guessing champs correctly and prestige", () => {
+describe("Testing guessing item correctly and prestige", () => {
   let token = "";
   it("Creating user account with nickname defined.", (done) => {
     const body = {
@@ -13,6 +13,7 @@ describe("Testing guessing champs correctly and prestige", () => {
     request(app)
       .post("/api/user")
       .send(body)
+
       .then((res) => {
         expect(res.body.status).toBe("success");
         expect(res.body).toHaveProperty("token");
@@ -38,43 +39,40 @@ describe("Testing guessing champs correctly and prestige", () => {
       });
   });
 
-  it("Guessing champion correctly.", async () => {
-    const championIds = await champion.findAllIds();
+  it("Guessing item correctly.", async () => {
+    // Get all item IDs
+    const items = await item.findAllItemIds();
 
-    const guessId = championIds.shift();
-    const guessedIds = championIds;
+    const idList = items;
+    const guessId = idList.shift();
+    const guessedIds = idList;
 
-    const championData = await champion.findById(guessId);
-    const guess = championData.name;
+    // Get item name by id
+    const result = await item.findByItemId(guessId);
+    const guess = result.name;
 
+    // Get user from token using the new user model
     const userObj = await user.findByToken(token);
 
-    await user.addSolvedChampions(
-      guessedIds.map((championId) => ({
+    await user.addSolvedItems(
+      guessedIds.map((itemId) => ({
         userId: userObj.id,
-        championId,
+        itemId,
       }))
     );
 
-    await user.updateById(userObj.id, { currentChampion: guessId });
+    // Set currentItemId to the missing one using the new user model
+    await user.updateById(userObj.id, { currentItemId: guessId });
 
-    const body = {
-      guess: guess,
-    };
-
-    const data = await user.getSolvedChampionIds(userObj.id);
-    expect(data).not.toHaveLength(0);
+    const body = { guess };
 
     const res = await request(app)
-      .post("/api/guess")
+      .post("/api/item")
       .send(body)
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
     expect(res.body.correctGuess).toBe(true);
-
-    const data1 = await user.getSolvedChampionIds(userObj.id);
-    expect(data1).toHaveLength(0);
   });
 
   it("Get user data after guessing correctly", (done) => {
@@ -89,3 +87,5 @@ describe("Testing guessing champs correctly and prestige", () => {
       });
   });
 });
+
+export {};

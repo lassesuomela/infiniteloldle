@@ -1,10 +1,9 @@
 const app = require("../app");
 const request = require("supertest");
-const userModel = require("../models/v2/user");
-const championModel = require("../models/v2/champion");
-const skin = require("../models/v2/skin");
+const user = require("../models/v2/user");
+const champion = require("../models/v2/champion");
 
-describe("Testing guessing splash correctly and prestige", () => {
+describe("Testing guessing champs correctly and prestige", () => {
   let token = "";
   it("Creating user account with nickname defined.", (done) => {
     const body = {
@@ -14,7 +13,6 @@ describe("Testing guessing splash correctly and prestige", () => {
     request(app)
       .post("/api/user")
       .send(body)
-
       .then((res) => {
         expect(res.body.status).toBe("success");
         expect(res.body).toHaveProperty("token");
@@ -40,47 +38,43 @@ describe("Testing guessing splash correctly and prestige", () => {
       });
   });
 
-  it("Guessing splash correctly.", async () => {
-    // Get all champion IDs
-    const championIds = await championModel.findAllIds();
+  it("Guessing champion correctly.", async () => {
+    const championIds = await champion.findAllIds();
 
-    // The one to guess
     const guessId = championIds.shift();
     const guessedIds = championIds;
 
-    // Get champion name by id
-    const championData = await championModel.findById(guessId);
+    const championData = await champion.findById(guessId);
     const guess = championData.name;
 
-    // Get user from token using the new user model
-    const userObj = await userModel.findByToken(token);
+    const userObj = await user.findByToken(token);
 
-    // Insert solved splashes into the join table using the new user model
-
-    await userModel.addSolvedSplashes(
+    await user.addSolvedChampions(
       guessedIds.map((championId) => ({
         userId: userObj.id,
         championId,
       }))
     );
 
-    const skins = await skin.findByChampionId(guessId);
-    const skinToGuess = skins[0];
+    await user.updateById(userObj.id, { currentChampion: guessId });
 
-    // Set currentSplashChampion to the missing one using the new user model
-    await userModel.updateById(userObj.id, {
-      currentSplashSkinId: skinToGuess.id,
-    });
+    const body = {
+      guess: guess,
+    };
 
-    const body = { guess };
+    const data = await user.getSolvedChampionIds(userObj.id);
+    expect(data).not.toHaveLength(0);
 
     const res = await request(app)
-      .post("/api/splash")
+      .post("/api/guess")
       .send(body)
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
     expect(res.body.correctGuess).toBe(true);
+
+    const data1 = await user.getSolvedChampionIds(userObj.id);
+    expect(data1).toHaveLength(0);
   });
 
   it("Get user data after guessing correctly", (done) => {
@@ -95,3 +89,5 @@ describe("Testing guessing splash correctly and prestige", () => {
       });
   });
 });
+
+export {};

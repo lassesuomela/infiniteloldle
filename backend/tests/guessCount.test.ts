@@ -159,3 +159,5 @@ describe("Testing guess count functionality", () => {
     await prisma.$disconnect();
   });
 });
+
+export {};

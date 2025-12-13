@@ -52,3 +52,5 @@ describe("Compare function", () => {
     expect(GetPartialSimilarites("Ixtal,xxx", "Ixtal,Shurima")).toBe("partial");
   });
 });
+
+export {};
