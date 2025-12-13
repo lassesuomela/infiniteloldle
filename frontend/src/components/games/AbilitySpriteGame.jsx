@@ -22,6 +22,7 @@ import {
   getAbilityGuessHistory,
   addToAbilityGuessHistory,
 } from "../history";
+import ClueBox from "./components/ClueBox";
 
 export default function AbilityGuessingGame() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -31,6 +32,8 @@ export default function AbilityGuessingGame() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
   const [title, setTitle] = useState("");
+  const [guessCount, setGuessCount] = useState(0);
+  const [clueBoxKey, setClueBoxKey] = useState(0);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -56,6 +59,7 @@ export default function AbilityGuessingGame() {
     if (history.length > 0) {
       setChampions(history);
       setGuesses(history.map((item) => item.name));
+      setGuessCount(history.length);
     }
   };
 
@@ -134,8 +138,12 @@ export default function AbilityGuessingGame() {
         const isCorrect = response.data.correctGuess;
         const key = response.data.championKey;
         const name = response.data.name;
+        const currentGuessCount = response.data.guessCount;
 
-        console.log(response.data);
+        if (currentGuessCount !== undefined) {
+          setGuessCount(currentGuessCount);
+        }
+
         setChampions((champions) => [{ key, isCorrect, name }, ...champions]);
         addToAbilityGuessHistory({ key, isCorrect, name });
 
@@ -162,14 +170,14 @@ export default function AbilityGuessingGame() {
   };
 
   const applyBlur = useCallback(
-    (guessCount) => {
+    (_guessCount) => {
       const abilityImgEl = document.getElementById("abilityImg");
       if (!abilityImgEl) return;
 
       const initialBlur = 1.0;
       let blurVal = initialBlur;
 
-      for (let i = 0; i < guessCount; i++) {
+      for (let i = 0; i < _guessCount; i++) {
         blurVal -= blurVal * 0.4;
       }
 
@@ -196,6 +204,8 @@ export default function AbilityGuessingGame() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
+    setGuessCount(0);
+    setClueBoxKey((prev) => prev + 1);
   };
 
   const handleReroll = () => {
@@ -267,7 +277,7 @@ export default function AbilityGuessingGame() {
                 Guess
               </button>
             )}
-            {!correctGuess && guesses.length >= 10 ? (
+            {!correctGuess && guesses.length >= 15 ? (
               <button
                 className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
                 onClick={handleReroll}
@@ -280,6 +290,20 @@ export default function AbilityGuessingGame() {
           </div>
         </form>
       </div>
+
+      <ClueBox
+        key={clueBoxKey}
+        guessCount={guessCount}
+        gameType="ability"
+        clueEndpoints={[
+          {
+            endpoint: "/clue/ability/splash",
+            type: "splash",
+            label: "Splash Clue",
+            thresholdKey: "splashClueThreshold",
+          },
+        ]}
+      />
 
       <div id="championsImgs" className="container">
         {champions.map((champ) => (
@@ -298,7 +322,7 @@ export default function AbilityGuessingGame() {
           id="victory"
           championKey={champions[0].key}
           champion={currentGuess}
-          tries={guesses.length}
+          tries={guessCount}
           title={title}
         />
       ) : (

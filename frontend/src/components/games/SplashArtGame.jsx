@@ -22,6 +22,7 @@ import {
   getSkinGuessHistory,
   addToSkinGuessHistory,
 } from "../history";
+import ClueBox from "./components/ClueBox";
 
 export default function SplashArtGame() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -31,6 +32,8 @@ export default function SplashArtGame() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
   const [title, setTitle] = useState("");
+  const [guessCount, setGuessCount] = useState(0);
+  const [clueBoxKey, setClueBoxKey] = useState(0);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -56,6 +59,7 @@ export default function SplashArtGame() {
     if (history.length > 0) {
       setChampions(history);
       setGuesses(history.map((item) => item.name));
+      setGuessCount(history.length);
     }
   };
 
@@ -135,7 +139,11 @@ export default function SplashArtGame() {
         const key = response.data.championKey;
 
         const name = response.data.name;
+        const currentGuessCount = response.data.guessCount;
 
+        if (currentGuessCount !== undefined) {
+          setGuessCount(currentGuessCount);
+        }
         // Use object instead of tuple
         setChampions((champions) => [{ key, isCorrect, name }, ...champions]);
         addToSkinGuessHistory({ key, isCorrect, name });
@@ -197,6 +205,8 @@ export default function SplashArtGame() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
+    setGuessCount(0);
+    setClueBoxKey((prev) => prev + 1);
   };
 
   const HandleReroll = () => {
@@ -268,7 +278,7 @@ export default function SplashArtGame() {
                 Guess
               </button>
             )}
-            {!correctGuess && guesses.length >= 10 ? (
+            {!correctGuess && guesses.length >= 15 ? (
               <button
                 className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
                 onClick={HandleReroll}
@@ -281,6 +291,20 @@ export default function SplashArtGame() {
           </div>
         </form>
       </div>
+
+      <ClueBox
+        key={clueBoxKey}
+        guessCount={guessCount}
+        gameType="splash"
+        clueEndpoints={[
+          {
+            endpoint: "/clue/splash/ability",
+            type: "ability",
+            label: "Ability Clue",
+            thresholdKey: "abilityClueThreshold",
+          },
+        ]}
+      />
 
       <div id="championsImgs" className="container">
         {champions.map((champ) => (
@@ -299,7 +323,7 @@ export default function SplashArtGame() {
           id="victory"
           championKey={champions[0].key}
           champion={currentGuess}
-          tries={guesses.length}
+          tries={guessCount}
           title={title}
         />
       ) : (

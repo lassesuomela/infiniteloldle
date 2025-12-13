@@ -26,6 +26,17 @@ const getOldItemGuessHistory = () => {
   return history ? history : [];
 };
 
+const getChampionGuessHistory = () => {
+  const history = getLocalStorage("championGuessHistory");
+  return history ? history : [];
+};
+
+const addToChampionGuessHistory = (guess) => {
+  const history = getChampionGuessHistory();
+  history.push(guess);
+  setLocalStorage("championGuessHistory", history);
+};
+
 const addToSkinGuessHistory = (guess) => {
   const history = getSkinGuessHistory();
   history.push(guess);
@@ -42,6 +53,10 @@ const addToOldItemGuessHistory = (guess) => {
   const history = getOldItemGuessHistory();
   history.push(guess);
   setLocalStorage("oldItemGuessHistory", history);
+};
+
+const clearChampionHistory = () => {
+  setLocalStorage("championGuessHistory", []);
 };
 
 const clearItemHistory = () => {
@@ -86,4 +101,7 @@ export {
   addToAbilityGuessHistory,
   clearAbilityHistory,
   getAbilityGuessHistory,
+  getChampionGuessHistory,
+  addToChampionGuessHistory,
+  clearChampionHistory,
 };

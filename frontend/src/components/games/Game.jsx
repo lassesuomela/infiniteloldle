@@ -4,6 +4,7 @@ import Titles from "./components/GameTitle";
 import ChampionDetails from "./components/ChampionDetails";
 import Select from "react-select";
 import Victory from "./components/Victory";
+import ClueBox from "./components/ClueBox";
 import {
   saveGamesPlayed,
   saveTries,
@@ -20,6 +21,11 @@ import {
   customFilterOptionChamps,
   SelectTheme,
 } from "./styles/selectStyles";
+import {
+  clearChampionHistory,
+  getChampionGuessHistory,
+  addToChampionGuessHistory,
+} from "../history";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -28,6 +34,8 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
   const [title, setTitle] = useState("");
+  const [guessCount, setGuessCount] = useState(0);
+  const [clueBoxKey, setClueBoxKey] = useState(0);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -39,7 +47,18 @@ export default function Game() {
 
   useEffect(() => {
     FetchChampions();
+    setHistory();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const setHistory = () => {
+    const history = getChampionGuessHistory().reverse();
+
+    if (history.length > 0) {
+      setChampions(history);
+      setGuesses(history.map((champ) => champ[0].guessedChampion));
+      setGuessCount(history.length);
+    }
+  };
 
   const FetchChampions = () => {
     axios
@@ -48,11 +67,19 @@ export default function Game() {
         if (response.data.status === "success") {
           const data = response.data.champions;
           data.sort((a, b) => a.value.localeCompare(b.value));
-          const transformedData = data.map((champion) => ({
-            value: champion.value,
-            label: champion.value,
-            image: champion.image,
-          }));
+
+          const guessChampionKeys = new Set(
+            getChampionGuessHistory().map((champ) => champ[0].championKey)
+          );
+
+          const transformedData = data
+            .filter((champion) => !guessChampionKeys.has(champion.value))
+
+            .map((champion) => ({
+              value: champion.value,
+              label: champion.value,
+              image: champion.image,
+            }));
           setValidGuesses(transformedData);
         }
       })
@@ -91,8 +118,14 @@ export default function Game() {
 
         const correct = response.data.correctGuess;
         const data = response.data.properties;
+        const currentGuessCount = response.data.guessCount;
+
+        if (currentGuessCount !== undefined) {
+          setGuessCount(currentGuessCount);
+        }
 
         setChampions((champions) => [data, ...champions]);
+        addToChampionGuessHistory(data);
 
         if (correct) {
           if (guesses.length === 0) {
@@ -100,6 +133,7 @@ export default function Game() {
           }
           saveGamesPlayed();
           setCorrectGuess(true);
+          clearChampionHistory();
           setTitle(response.data.title);
         }
       })
@@ -116,6 +150,13 @@ export default function Game() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
+    setGuessCount(0);
+    setClueBoxKey((prev) => prev + 1);
+  };
+
+  const handleReroll = () => {
+    clearChampionHistory();
+    Reroll("champion");
   };
 
   return (
@@ -175,10 +216,10 @@ export default function Game() {
                 Guess
               </button>
             )}
-            {!correctGuess && guesses.length >= 10 ? (
+            {!correctGuess && guesses.length >= 15 ? (
               <button
                 className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={() => Reroll("champion")}
+                onClick={handleReroll}
               >
                 Reroll
               </button>
@@ -188,6 +229,26 @@ export default function Game() {
           </div>
         </form>
       </div>
+
+      <ClueBox
+        key={clueBoxKey}
+        guessCount={guessCount}
+        gameType="champion"
+        clueEndpoints={[
+          {
+            endpoint: "/clue/champion/ability",
+            type: "ability",
+            label: "Ability Clue",
+            thresholdKey: "abilityClueThreshold",
+          },
+          {
+            endpoint: "/clue/champion/splash",
+            type: "splash",
+            label: "Splash Clue",
+            thresholdKey: "splashClueThreshold",
+          },
+        ]}
+      />
 
       <div className="scroll-container">
         {champions.length > 0 ? <Titles /> : ""}
@@ -219,7 +280,7 @@ export default function Game() {
           id="victory"
           championKey={champions[0][0].championKey}
           champion={champions[0][0].guessedChampion}
-          tries={guesses.length}
+          tries={guessCount}
           title={title}
         />
       ) : (

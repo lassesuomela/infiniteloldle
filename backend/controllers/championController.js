@@ -7,11 +7,13 @@ const redisCache = require("../cache/cache");
 const { GuessCountKeys } = require("../helpers/redisKeys");
 const fs = require("fs");
 const path = require("path");
+const sharp = require("sharp");
 const GetPartialSimilarites =
   require("../helpers/compare").GetPartialSimilarites;
 const { PrismaClient } = require("../generated/prisma");
 const skin = require("../models/v2/skin");
 const fsp = require("fs").promises;
+const clueConfig = require("../configs/clues");
 
 const prisma = new PrismaClient();
 
@@ -114,17 +116,21 @@ const Guess = async (req, res) => {
       ),
     };
     if (guess !== correctChampion.name) {
+      // Get current guess count to return to frontend
+      const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
+
       return res.json({
         status: "success",
         correctGuess: false,
         properties: [champData, similarites],
+        guessCount: currentGuessCount,
       });
     }
 
     // correct guess
     // Get guess count from Redis and save to database
     const guessCount = await redisCache.getGuessCount(guessCountKey);
-    
+
     // Get all champion IDs
     const allChampionIds = await championV2.findAllIds();
 
@@ -170,6 +176,7 @@ const Guess = async (req, res) => {
       correctGuess: true,
       properties: [champData, similarites],
       title: correctChampion.title,
+      guessCount: guessCount,
     });
   } catch (error) {
     console.error("Error in Guess function:", error);
@@ -212,24 +219,32 @@ const GuessSplash = async (req, res) => {
     await redisCache.increment(guessCountKey);
 
     if (guess !== correctSkinData.champion.name) {
+      // Get current guess count to return to frontend
+      const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
+
       return res.json({
         status: "success",
         correctGuess: false,
         championKey: guessChampion.championKey,
         name: guessChampion.name,
+        guessCount: currentGuessCount,
       });
     }
 
     // correct guess
     // Get guess count from Redis and save to database
     const guessCount = await redisCache.getGuessCount(guessCountKey);
-    
+
     const allIds = await championV2.findAllIds();
     let solvedIds = await userV2.getSolvedSplashChampionIds(userObj.id);
 
     // Add the just-solved splash if not already present
     if (!solvedIds.includes(correctSkinData.champion.id)) {
-      await userV2.addSolvedSplash(userObj.id, correctSkinData.champion.id, guessCount);
+      await userV2.addSolvedSplash(
+        userObj.id,
+        correctSkinData.champion.id,
+        guessCount
+      );
       solvedIds.push(correctSkinData.champion.id);
     }
 
@@ -279,6 +294,7 @@ const GuessSplash = async (req, res) => {
       correctGuess: true,
       championKey: guessChampion.championKey,
       title: correctSkinData.champion.title,
+      guessCount: guessCount,
     });
   } catch (error) {
     console.error("Error in Splash Guess function:", error);
@@ -395,18 +411,22 @@ const GuessAbility = async (req, res) => {
     await redisCache.increment(guessCountKey);
 
     if (guess.toLowerCase() !== correctAbility.champion.name.toLowerCase()) {
+      // Get current guess count to return to frontend
+      const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
+
       return res.json({
         status: "success",
         correctGuess: false,
         name: guessedChampion.name,
         championKey: guessedChampion.championKey,
+        guessCount: currentGuessCount,
       });
     }
 
     // ===== Correct guess =====
     // Get guess count from Redis and save to database
     const guessCount = await redisCache.getGuessCount(guessCountKey);
-    
+
     // Get all ability IDs
     const allIds = await ability.findAllIds();
     let solvedIds = await userV2.getSolvedAbilityIds(userObj.id);
@@ -449,6 +469,7 @@ const GuessAbility = async (req, res) => {
       abilityName: correctAbility.name,
       name: correctAbility.champion.name,
       championKey: correctAbility.champion.championKey,
+      guessCount: guessCount,
     });
   } catch (error) {
     console.error("Error in GuessAbility function:", error);
@@ -535,6 +556,518 @@ const GetAbilitySprite = async (req, res) => {
   }
 };
 
+const GetSplashClueForChampionGame = async (req, res) => {
+  const token = req.token;
+  try {
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    // Get guess count from Redis
+    const guessCountKey = GuessCountKeys.champion(userObj.id);
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+
+    if (guessCount < clueConfig.champion.splashClueThreshold) {
+      return res.json({
+        status: "success",
+        clue: null,
+        message: "Not enough guesses to unlock clue",
+      });
+    }
+
+    // Get the current champion for this user
+    const currentChampion = await championV2.findById(userObj.currentChampion);
+    if (!currentChampion) {
+      return res.json({ status: "error", message: "Champion not found" });
+    }
+
+    // Get skin data to determine available splash arts
+    const skins = await skin.findByChampionId(currentChampion.id);
+    if (skins.length === 0) {
+      return res.json({
+        status: "error",
+        message: "No skins found for this champion",
+      });
+    }
+
+    // Omit default skin (id='0') from clue splashes
+    const clueSkins = skins.filter((s) => s.key !== "0");
+
+    // Or if no other skins, use default
+    const skinToUse =
+      clueSkins.length > 0 ? clueSkins[0] : skins.find((s) => s.key === "0");
+
+    // Use splash art with id 0 (first splash art)
+    const splashId = skinToUse.key;
+    const imageName = `${currentChampion.championKey}_${splashId}.webp`;
+    const imageKey = `clue_skin_${imageName}`;
+
+    // Check if clue image is cached
+    if (cache.checkCache(imageKey)) {
+      const data = cache.getCache(imageKey);
+      res.set("X-CACHE", "HIT");
+      res.set(
+        "X-CACHE-REMAINING",
+        new Date(cache.getTtl(imageKey)).toISOString()
+      );
+      return res.json({
+        status: "success",
+        clue: {
+          type: "splash_art",
+          data: data,
+        },
+      });
+    }
+
+    // Read the original image
+    const imagePath = path.join(
+      __dirname,
+      "../images/champions/splash",
+      imageName
+    );
+
+    try {
+      const image = sharp(imagePath);
+      const metadata = await image.metadata();
+
+      const cropWidth = Math.floor(metadata.width * 0.5);
+      const cropHeight = Math.floor(metadata.height * 0.5);
+
+      const left = Math.floor((metadata.width - cropWidth) / 2);
+      const top = Math.floor((metadata.height - cropHeight) / 2);
+
+      const imageBuffer = await image
+        .extract({
+          left,
+          top,
+          width: cropWidth,
+          height: cropHeight,
+        })
+        .toBuffer();
+
+      const base64 = imageBuffer.toString("base64");
+
+      cache.saveCache(imageKey, base64);
+      cache.changeTTL(imageKey, 3600 * 12);
+
+      res.set("X-CACHE", "MISS");
+      return res.json({
+        status: "success",
+        clue: {
+          type: "splash_art",
+          data: base64,
+        },
+      });
+    } catch (error) {
+      console.error(`Error processing image ${imageName}:`, error);
+      return res.status(404).json({
+        status: "error",
+        message: "Splash art not found",
+      });
+    }
+  } catch (error) {
+    console.error("Error in GetChampionClue function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
+const GetAbilityClueForChampionGame = async (req, res) => {
+  const token = req.token;
+  try {
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    // Get guess count from Redis
+    const guessCountKey = GuessCountKeys.champion(userObj.id);
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+
+    // Ability clue unlocks at threshold defined in config (easier than splash)
+    if (guessCount < clueConfig.champion.abilityClueThreshold) {
+      return res.json({
+        status: "success",
+        clue: null,
+        message: "Not enough guesses to unlock clue",
+      });
+    }
+
+    // Get the current champion for this user
+    const currentChampion = await championV2.findById(userObj.currentChampion);
+    if (!currentChampion) {
+      return res.json({ status: "error", message: "Champion not found" });
+    }
+
+    // Get all abilities for this champion
+    const abilities = await ability.findByChampionId(currentChampion.id);
+    if (abilities.length === 0) {
+      return res.json({
+        status: "error",
+        message: "No abilities found for this champion",
+      });
+    }
+
+    // Make it somewhat different on what the key will be each day
+    // Use week day to pick ability
+
+    // Get current day of week (0-6)
+    const dayOfWeek = new Date().getDay();
+    // Mon = 1 -> Q, Tue = 2 -> W, Wed = 3 -> E, Thu = 4 -> R, Fri = 5 -> Q, Sat = 6 -> W, Sun = 0 -> E
+
+    // Map day of week to ability key
+    const dayToAbilityKey = {
+      1: "Q",
+      2: "W",
+      3: "E",
+      4: "R",
+      5: "Q",
+      6: "W",
+      0: "E",
+    };
+    const abilityToUse = abilities.find(
+      (ab) => ab.key === dayToAbilityKey[dayOfWeek]
+    )
+      ? abilities.find((ab) => ab.key === dayToAbilityKey[dayOfWeek])
+      : abilities[0];
+    const imageName = `${currentChampion.championKey}_${abilityToUse.key}.webp`;
+    const imageKey = `clue_ability_${imageName}`;
+
+    // Check if image is cached
+    if (cache.checkCache(imageKey)) {
+      const data = cache.getCache(imageKey);
+      res.set("X-CACHE", "HIT");
+      res.set(
+        "X-CACHE-REMAINING",
+        new Date(cache.getTtl(imageKey)).toISOString()
+      );
+      return res.json({
+        status: "success",
+        clue: {
+          type: "ability",
+          data: data,
+        },
+      });
+    }
+
+    // Read the original image
+    const imagePath = path.join(
+      __dirname,
+      "../images/champions/abilities",
+      imageName
+    );
+
+    try {
+      const image = sharp(imagePath);
+      const imageBuffer = await image.toBuffer();
+
+      const base64 = imageBuffer.toString("base64");
+
+      cache.saveCache(imageKey, base64);
+      cache.changeTTL(imageKey, 3600 * 12);
+
+      res.set("X-CACHE", "MISS");
+      return res.json({
+        status: "success",
+        clue: {
+          type: "ability",
+          data: base64,
+        },
+      });
+    } catch (error) {
+      console.error(`Error processing image ${imageName}:`, error);
+      return res.status(404).json({
+        status: "error",
+        message: "Ability image not found",
+      });
+    }
+  } catch (error) {
+    console.error("Error in GetAbilityClue function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
+const GetAbilityClueForSplashGame = async (req, res) => {
+  const token = req.token;
+  try {
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    // Get guess count from Redis for splash game
+    const guessCountKey = GuessCountKeys.splash(userObj.id);
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+
+    // Ability clue for splash game unlocks at threshold defined in config
+    if (guessCount < clueConfig.splash.abilityClueThreshold) {
+      return res.json({
+        status: "success",
+        clue: null,
+        message: "Not enough guesses to unlock clue",
+      });
+    }
+
+    // Get the current splash skin for this user
+    const currentSplashSkinId = userObj.currentSplashSkinId;
+    if (!currentSplashSkinId) {
+      return res.json({
+        status: "error",
+        message: "No current splash art set for this user",
+      });
+    }
+
+    const skinData = await skin.findById(currentSplashSkinId);
+    if (!skinData) {
+      return res.json({
+        status: "error",
+        message: "Splash art not found for this user",
+      });
+    }
+
+    // Get abilities for this champion
+    const abilities = await ability.findByChampionId(skinData.champion.id);
+    if (abilities.length === 0) {
+      return res.json({
+        status: "error",
+        message: "No abilities found for this champion",
+      });
+    }
+
+    // Make it somewhat different on what the key will be each day
+    // Use week day to pick ability
+
+    // Get current day of week (0-6)
+    const dayOfWeek = new Date().getDay();
+    // Mon = 1 -> Q, Tue = 2 -> W, Wed = 3 -> E, Thu = 4 -> R, Fri = 5 -> Q, Sat = 6 -> W, Sun = 0 -> E
+
+    // Map day of week to ability key
+    const dayToAbilityKey = {
+      1: "Q",
+      2: "W",
+      3: "E",
+      4: "R",
+      5: "Q",
+      6: "W",
+      0: "E",
+    };
+    const abilityToUse = abilities.find(
+      (ab) => ab.key === dayToAbilityKey[dayOfWeek]
+    )
+      ? abilities.find((ab) => ab.key === dayToAbilityKey[dayOfWeek])
+      : abilities[0];
+
+    const imageName = `${skinData.champion.championKey}_${abilityToUse.key}.webp`;
+    const imageKey = `clue_ability_${imageName}`;
+
+    // Check if cropped image is cached
+    if (cache.checkCache(imageKey)) {
+      const data = cache.getCache(imageKey);
+      res.set("X-CACHE", "HIT");
+      res.set(
+        "X-CACHE-REMAINING",
+        new Date(cache.getTtl(imageKey)).toISOString()
+      );
+      return res.json({
+        status: "success",
+        clue: {
+          type: "ability",
+          data: data,
+        },
+      });
+    }
+
+    // Read the original image
+    const imagePath = path.join(
+      __dirname,
+      "../images/champions/abilities",
+      imageName
+    );
+
+    try {
+      const image = sharp(imagePath);
+
+      const imageBuffer = await image.toBuffer();
+
+      const base64 = imageBuffer.toString("base64");
+
+      cache.saveCache(imageKey, base64);
+      cache.changeTTL(imageKey, 3600 * 12);
+
+      res.set("X-CACHE", "MISS");
+      return res.json({
+        status: "success",
+        clue: {
+          type: "ability",
+          data: base64,
+        },
+      });
+    } catch (error) {
+      console.error(`Error processing image ${imageName}:`, error);
+      return res.status(404).json({
+        status: "error",
+        message: "Ability image not found",
+      });
+    }
+  } catch (error) {
+    console.error("Error in GetSplashGameClue function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
+const GetSplashClueForAbilityGame = async (req, res) => {
+  const token = req.token;
+  try {
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    // Get guess count from Redis for ability game
+    const guessCountKey = GuessCountKeys.ability(userObj.id);
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+
+    // Splash clue for ability game unlocks at threshold defined in config
+    if (guessCount < clueConfig.ability.splashClueThreshold) {
+      return res.json({
+        status: "success",
+        clue: null,
+        message: "Not enough guesses to unlock clue",
+      });
+    }
+
+    // Get the current ability for this user
+    const currentAbilityId = userObj.currentAbilityId;
+    if (!currentAbilityId) {
+      return res.json({
+        status: "error",
+        message: "No current ability set for this user",
+      });
+    }
+
+    const abilityData = await ability.findById(currentAbilityId, {
+      include: { champion: true },
+    });
+    if (!abilityData) {
+      return res.json({
+        status: "error",
+        message: "Ability not found for this user",
+      });
+    }
+
+    // Get skin data to determine available splash arts
+    const skins = await skin.findByChampionId(abilityData.champion.id);
+    if (skins.length === 0) {
+      return res.json({
+        status: "error",
+        message: "No skins found for this champion",
+      });
+    }
+
+    // Omit default skin (id='0') from clue splashes
+    const clueSkins = skins.filter((s) => s.key !== "0");
+
+    // Or if no other skins, use default
+    const skinToUse =
+      clueSkins.length > 0 ? clueSkins[0] : skins.find((s) => s.key === "0");
+
+    const splashId = skinToUse.key;
+    const imageName = `${abilityData.champion.championKey}_${splashId}.webp`;
+    const imageKey = `clue_skin_${imageName}`;
+
+    // Check if cropped image is cached
+    if (cache.checkCache(imageKey)) {
+      const data = cache.getCache(imageKey);
+      res.set("X-CACHE", "HIT");
+      res.set(
+        "X-CACHE-REMAINING",
+        new Date(cache.getTtl(imageKey)).toISOString()
+      );
+      return res.json({
+        status: "success",
+        clue: {
+          type: "splash_art",
+          data: data,
+        },
+      });
+    }
+
+    // Read the original image
+    const imagePath = path.join(
+      __dirname,
+      "../images/champions/splash",
+      imageName
+    );
+
+    try {
+      const image = sharp(imagePath);
+      const metadata = await image.metadata();
+
+      const cropWidth = Math.floor(metadata.width * 0.5);
+      const cropHeight = Math.floor(metadata.height * 0.5);
+
+      const left = Math.floor((metadata.width - cropWidth) / 2);
+      const top = Math.floor((metadata.height - cropHeight) / 2);
+
+      const imageBuffer = await image
+        .extract({
+          left,
+          top,
+          width: cropWidth,
+          height: cropHeight,
+        })
+        .toBuffer();
+
+      const base64 = imageBuffer.toString("base64");
+
+      cache.saveCache(imageKey, base64);
+      cache.changeTTL(imageKey, 3600 * 12);
+
+      res.set("X-CACHE", "MISS");
+      return res.json({
+        status: "success",
+        clue: {
+          type: "splash_art",
+          data: base64,
+        },
+      });
+    } catch (error) {
+      console.error(`Error processing image ${imageName}:`, error);
+      return res.status(404).json({
+        status: "error",
+        message: "Splash art not found",
+      });
+    }
+  } catch (error) {
+    console.error("Error in GetAbilityGameClue function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
+const GetClueConfig = async (req, res) => {
+  try {
+    return res.json({
+      status: "success",
+      config: {
+        clue: clueConfig,
+      },
+    });
+  } catch (error) {
+    console.error("Error in GetClueConfig function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
 module.exports = {
   GetAllChampions,
   Guess,
@@ -542,4 +1075,9 @@ module.exports = {
   GetSplashArt,
   GuessAbility,
   GetAbilitySprite,
+  GetClueConfig,
+  GetSplashClueForChampionGame,
+  GetAbilityClueForChampionGame,
+  GetAbilityClueForSplashGame,
+  GetSplashClueForAbilityGame,
 };

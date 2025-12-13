@@ -316,6 +316,10 @@ small {
     width: 90%;
   }
 
+  #clue-box {
+    width: 90%;
+  }
+
   .scoreboard {
     width: 100%;
     padding: 0.5em 0.5em;
@@ -396,6 +400,10 @@ small {
     width: 80%;
   }
 
+  #clue-box {
+    width: 80%;
+  }
+
   #modificationsModal .wrapper {
     padding-left: 1em;
     padding-right: 1em;
@@ -426,6 +434,10 @@ small {
   }
 
   #guess-form {
+    width: 55%;
+  }
+
+  #clue-box {
     width: 55%;
   }
 
@@ -477,6 +489,10 @@ small {
     width: 40%;
   }
 
+  #clue-box {
+    width: 40%;
+  }
+
   .transparentModal .card {
     width: 75%;
   }
@@ -502,6 +518,10 @@ small {
   }
 
   #guess-form {
+    width: 35%;
+  }
+
+  #clue-box {
     width: 35%;
   }
 
@@ -535,6 +555,10 @@ small {
   }
 
   #guess-form {
+    width: 30%;
+  }
+
+  #clue-box {
     width: 30%;
   }
 
@@ -578,6 +602,10 @@ small {
     width: 30%;
   }
 
+  #clue-box {
+    width: 30%;
+  }
+
   .container,
   .container-md,
   .container-sm {
@@ -592,6 +620,10 @@ small {
 
 @media only screen and (min-width: 1800px) {
   #guess-form {
+    width: 30%;
+  }
+
+  #clue-box {
     width: 30%;
   }
 
