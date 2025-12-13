@@ -782,7 +782,7 @@ const GetAbilityClue = async (req, res) => {
   }
 };
 
-const GetClueConfig = (req, res) => {
+const GetClueConfig = async (req, res) => {
   try {
     return res.json({
       status: "success",

@@ -33,10 +33,8 @@ export default function Game() {
   const [splashClueData, setSplashClueData] = useState(null);
   const [showAbilityClue, setShowAbilityClue] = useState(false);
   const [showSplashClue, setShowSplashClue] = useState(false);
-  const [clueThresholds, setClueThresholds] = useState({
-    abilityClueThreshold: 5,
-    splashClueThreshold: 10,
-  });
+  const [clueThresholds, setClueThresholds] = useState(null);
+  const [configLoaded, setConfigLoaded] = useState(false);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -57,10 +55,17 @@ export default function Game() {
       .then((response) => {
         if (response.data.status === "success") {
           setClueThresholds(response.data.config);
+          setConfigLoaded(true);
         }
       })
       .catch((error) => {
         console.log("Error fetching clue config:", error);
+        // Fallback to defaults if config fetch fails
+        setClueThresholds({
+          abilityClueThreshold: 5,
+          splashClueThreshold: 10,
+        });
+        setConfigLoaded(true);
       });
   };
 
@@ -275,7 +280,7 @@ export default function Game() {
       </div>
 
       {/* Clue Box - Show when at least one clue is available */}
-      {!correctGuess && guessCount >= clueThresholds.abilityClueThreshold && (
+      {!correctGuess && configLoaded && clueThresholds && guessCount >= clueThresholds.abilityClueThreshold && (
         <div className="d-flex justify-content-center mb-4">
           <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
             <div className="card-body text-center">
