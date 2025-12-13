@@ -590,9 +590,9 @@ const GetChampionClue = async (req, res) => {
     // Use splash art with id 0 (first splash art)
     const splashId = skinToUse.key;
     const imageName = `${currentChampion.championKey}_${splashId}.webp`;
-    const imageKey = `cropped_${imageName}`;
+    const imageKey = `clue_skin_${imageName}`;
 
-    // Check if blurred image is cached
+    // Check if clue image is cached
     if (cache.checkCache(imageKey)) {
       const data = cache.getCache(imageKey);
       res.set("X-CACHE", "HIT");
