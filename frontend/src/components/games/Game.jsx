@@ -33,6 +33,10 @@ export default function Game() {
   const [splashClueData, setSplashClueData] = useState(null);
   const [showAbilityClue, setShowAbilityClue] = useState(false);
   const [showSplashClue, setShowSplashClue] = useState(false);
+  const [clueThresholds, setClueThresholds] = useState({
+    abilityClueThreshold: 5,
+    splashClueThreshold: 10,
+  });
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -44,7 +48,21 @@ export default function Game() {
 
   useEffect(() => {
     FetchChampions();
+    FetchClueConfig();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const FetchClueConfig = () => {
+    axios
+      .get(Config.url + "/clue-config")
+      .then((response) => {
+        if (response.data.status === "success") {
+          setClueThresholds(response.data.config);
+        }
+      })
+      .catch((error) => {
+        console.log("Error fetching clue config:", error);
+      });
+  };
 
   const FetchChampions = () => {
     axios
@@ -256,38 +274,42 @@ export default function Game() {
         </form>
       </div>
 
-      {!correctGuess && guessCount >= 2 && (
+      {/* Clue Box - Show when at least one clue is available */}
+      {!correctGuess && guessCount >= clueThresholds.abilityClueThreshold && (
         <div className="d-flex justify-content-center mb-4">
           <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
             <div className="card-body text-center">
               <h5 className="card-title">💡 Clues</h5>
 
-              <div className="d-flex justify-content-center gap-2 mb-3 mt-4">
+              {/* Buttons for clues - mobile friendly with flex-wrap */}
+              <div className="d-flex justify-content-center flex-wrap gap-2 mb-3 mt-4">
                 <button
                   className={`btn ${
-                    guessCount >= 5 ? "btn-dark" : "btn-secondary"
+                    guessCount >= clueThresholds.abilityClueThreshold ? "btn-dark" : "btn-secondary"
                   }`}
                   onClick={toggleAbilityClue}
-                  disabled={guessCount < 5}
+                  disabled={guessCount < clueThresholds.abilityClueThreshold}
+                  style={{ minWidth: "150px" }}
                 >
-                  {guessCount >= 5
+                  {guessCount >= clueThresholds.abilityClueThreshold
                     ? showAbilityClue
                       ? "Hide Ability Clue"
                       : "Show Ability Clue"
-                    : `Ability Clue (${5 - guessCount} more)`}
+                    : `Ability Clue (${clueThresholds.abilityClueThreshold - guessCount} more)`}
                 </button>
                 <button
                   className={`btn ${
-                    guessCount >= 10 ? "btn-dark" : "btn-secondary"
+                    guessCount >= clueThresholds.splashClueThreshold ? "btn-dark" : "btn-secondary"
                   }`}
                   onClick={toggleSplashClue}
-                  disabled={guessCount < 10}
+                  disabled={guessCount < clueThresholds.splashClueThreshold}
+                  style={{ minWidth: "150px" }}
                 >
-                  {guessCount >= 10
+                  {guessCount >= clueThresholds.splashClueThreshold
                     ? showSplashClue
                       ? "Hide Splash Clue"
                       : "Show Splash Clue"
-                    : `Splash Clue (${10 - guessCount} more)`}
+                    : `Splash Clue (${clueThresholds.splashClueThreshold - guessCount} more)`}
                 </button>
               </div>
 

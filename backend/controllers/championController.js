@@ -13,6 +13,7 @@ const GetPartialSimilarites =
 const { PrismaClient } = require("../generated/prisma");
 const skin = require("../models/v2/skin");
 const fsp = require("fs").promises;
+const clueConfig = require("../configs/clues");
 
 const prisma = new PrismaClient();
 
@@ -557,7 +558,7 @@ const GetChampionClue = async (req, res) => {
     const guessCountKey = GuessCountKeys.champion(userObj.id);
     const guessCount = await redisCache.getGuessCount(guessCountKey);
 
-    if (guessCount < 10) {
+    if (guessCount < clueConfig.splashClueThreshold) {
       return res.json({
         status: "success",
         clue: null,
@@ -675,8 +676,8 @@ const GetAbilityClue = async (req, res) => {
     const guessCountKey = GuessCountKeys.champion(userObj.id);
     const guessCount = await redisCache.getGuessCount(guessCountKey);
 
-    // Ability clue unlocks at 5 guesses (easier than splash)
-    if (guessCount < 5) {
+    // Ability clue unlocks at threshold defined in config (easier than splash)
+    if (guessCount < clueConfig.abilityClueThreshold) {
       return res.json({
         status: "success",
         clue: null,
@@ -781,6 +782,23 @@ const GetAbilityClue = async (req, res) => {
   }
 };
 
+const GetClueConfig = (req, res) => {
+  try {
+    return res.json({
+      status: "success",
+      config: {
+        abilityClueThreshold: clueConfig.abilityClueThreshold,
+        splashClueThreshold: clueConfig.splashClueThreshold,
+      },
+    });
+  } catch (error) {
+    console.error("Error in GetClueConfig function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
 module.exports = {
   GetAllChampions,
   Guess,
@@ -790,4 +808,5 @@ module.exports = {
   GetAbilitySprite,
   GetChampionClue,
   GetAbilityClue,
+  GetClueConfig,
 };
