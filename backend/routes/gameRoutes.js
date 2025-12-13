@@ -9,6 +9,6 @@ const oldItemController = require("../controllers/oldItemController");
 router.get("/champions", championController.GetAllChampions);
 router.get("/items", itemController.GetAllItems);
 router.get("/oldItems", oldItemController.GetAllItems);
-router.get("/clue-config", championController.GetClueConfig);
+router.get("/config", championController.GetClueConfig);
 
 module.exports = router;

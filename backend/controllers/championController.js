@@ -558,7 +558,7 @@ const GetChampionClue = async (req, res) => {
     const guessCountKey = GuessCountKeys.champion(userObj.id);
     const guessCount = await redisCache.getGuessCount(guessCountKey);
 
-    if (guessCount < clueConfig.splashClueThreshold) {
+    if (guessCount < clueConfig.champion.splashClueThreshold) {
       return res.json({
         status: "success",
         clue: null,
@@ -677,7 +677,7 @@ const GetAbilityClue = async (req, res) => {
     const guessCount = await redisCache.getGuessCount(guessCountKey);
 
     // Ability clue unlocks at threshold defined in config (easier than splash)
-    if (guessCount < clueConfig.abilityClueThreshold) {
+    if (guessCount < clueConfig.champion.abilityClueThreshold) {
       return res.json({
         status: "success",
         clue: null,
@@ -787,8 +787,7 @@ const GetClueConfig = async (req, res) => {
     return res.json({
       status: "success",
       config: {
-        abilityClueThreshold: clueConfig.abilityClueThreshold,
-        splashClueThreshold: clueConfig.splashClueThreshold,
+        clue: clueConfig,
       },
     });
   } catch (error) {

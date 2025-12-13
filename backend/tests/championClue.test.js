@@ -31,7 +31,7 @@ describe("Testing champion clue functionality", () => {
       });
   });
 
-  it(`Should not return splash clue when guess count is less than ${clueConfig.splashClueThreshold}`, async () => {
+  it(`Should not return splash clue when guess count is less than ${clueConfig.champion.splashClueThreshold}`, async () => {
     const res = await request(app)
       .get("/api/clue/champion")
       .set("Authorization", "Bearer " + token);
@@ -41,7 +41,7 @@ describe("Testing champion clue functionality", () => {
     expect(res.body.message).toBe("Not enough guesses to unlock clue");
   });
 
-  it(`Should not return ability clue when guess count is less than ${clueConfig.abilityClueThreshold}`, async () => {
+  it(`Should not return ability clue when guess count is less than ${clueConfig.champion.abilityClueThreshold}`, async () => {
     const res = await request(app)
       .get("/api/clue/ability")
       .set("Authorization", "Bearer " + token);
@@ -77,7 +77,7 @@ describe("Testing champion clue functionality", () => {
     expect(res.body.guessCount).toBe(1);
   });
 
-  it(`Should still not return splash clue after ${clueConfig.abilityClueThreshold} guesses but should return ability clue at threshold`, async () => {
+  it(`Should still not return splash clue after ${clueConfig.champion.abilityClueThreshold} guesses but should return ability clue at threshold`, async () => {
     const userObj = await user.findByToken(token);
     const correctChampion = await champion.findById(userObj.currentChampion);
     const allChampions = await champion.findAllIds();
@@ -86,7 +86,7 @@ describe("Testing champion clue functionality", () => {
     );
 
     // Make enough wrong guesses to reach ability threshold (total will be abilityClueThreshold)
-    for (let i = 0; i < clueConfig.abilityClueThreshold - 1; i++) {
+    for (let i = 0; i < clueConfig.champion.abilityClueThreshold - 1; i++) {
       await request(app)
         .post("/api/guess")
         .send({ guess: wrongChampion.name })
@@ -112,7 +112,7 @@ describe("Testing champion clue functionality", () => {
     expect(abilityRes.body.clue.data).toBeDefined();
   });
 
-  it(`Should return splash art clue after ${clueConfig.splashClueThreshold}th guess`, async () => {
+  it(`Should return splash art clue after ${clueConfig.champion.splashClueThreshold}th guess`, async () => {
     const userObj = await user.findByToken(token);
     const correctChampion = await champion.findById(userObj.currentChampion);
     const allChampions = await champion.findAllIds();
@@ -121,7 +121,9 @@ describe("Testing champion clue functionality", () => {
     );
 
     // Make enough more wrong guesses to reach splash threshold
-    const remainingGuesses = clueConfig.splashClueThreshold - clueConfig.abilityClueThreshold;
+    const remainingGuesses =
+      clueConfig.champion.splashClueThreshold -
+      clueConfig.champion.abilityClueThreshold;
     for (let i = 0; i < remainingGuesses; i++) {
       await request(app)
         .post("/api/guess")

@@ -51,10 +51,10 @@ export default function Game() {
 
   const FetchClueConfig = () => {
     axios
-      .get(Config.url + "/clue-config")
+      .get(Config.url + "/config")
       .then((response) => {
         if (response.data.status === "success") {
-          setClueThresholds(response.data.config);
+          setClueThresholds(response.data.config.clue.champion);
           setConfigLoaded(true);
         }
       })
@@ -63,7 +63,7 @@ export default function Game() {
         // Fallback to defaults if config fetch fails
         setClueThresholds({
           abilityClueThreshold: 5,
-          splashClueThreshold: 10,
+          splashClueThreshold: 12,
         });
         setConfigLoaded(true);
       });
@@ -279,18 +279,18 @@ export default function Game() {
         </form>
       </div>
 
-      {/* Clue Box - Show when at least one clue is available */}
-      {!correctGuess && configLoaded && clueThresholds && guessCount >= clueThresholds.abilityClueThreshold && (
+      {configLoaded && clueThresholds && guessCount > 2 && (
         <div className="d-flex justify-content-center mb-4">
           <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
             <div className="card-body text-center">
               <h5 className="card-title">💡 Clues</h5>
 
-              {/* Buttons for clues - mobile friendly with flex-wrap */}
               <div className="d-flex justify-content-center flex-wrap gap-2 mb-3 mt-4">
                 <button
                   className={`btn ${
-                    guessCount >= clueThresholds.abilityClueThreshold ? "btn-dark" : "btn-secondary"
+                    guessCount >= clueThresholds.abilityClueThreshold
+                      ? "btn-dark"
+                      : "btn-secondary"
                   }`}
                   onClick={toggleAbilityClue}
                   disabled={guessCount < clueThresholds.abilityClueThreshold}
@@ -300,11 +300,15 @@ export default function Game() {
                     ? showAbilityClue
                       ? "Hide Ability Clue"
                       : "Show Ability Clue"
-                    : `Ability Clue (${clueThresholds.abilityClueThreshold - guessCount} more)`}
+                    : `Ability Clue (${
+                        clueThresholds.abilityClueThreshold - guessCount
+                      } more)`}
                 </button>
                 <button
                   className={`btn ${
-                    guessCount >= clueThresholds.splashClueThreshold ? "btn-dark" : "btn-secondary"
+                    guessCount >= clueThresholds.splashClueThreshold
+                      ? "btn-dark"
+                      : "btn-secondary"
                   }`}
                   onClick={toggleSplashClue}
                   disabled={guessCount < clueThresholds.splashClueThreshold}
@@ -314,7 +318,9 @@ export default function Game() {
                     ? showSplashClue
                       ? "Hide Splash Clue"
                       : "Show Splash Clue"
-                    : `Splash Clue (${clueThresholds.splashClueThreshold - guessCount} more)`}
+                    : `Splash Clue (${
+                        clueThresholds.splashClueThreshold - guessCount
+                      } more)`}
                 </button>
               </div>
 

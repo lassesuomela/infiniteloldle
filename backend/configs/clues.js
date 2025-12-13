@@ -1,14 +1,19 @@
-/**
- * Configuration for clue thresholds in the champion guessing game
- * This is the single source of truth for clue unlock requirements
- */
-
 const clueConfig = {
-  // Ability clue unlocks after this many guesses (easier)
-  abilityClueThreshold: 5,
-  
-  // Splash art clue unlocks after this many guesses (harder)
-  splashClueThreshold: 10,
+  champion: {
+    // Ability clue unlocks after N guesses
+    abilityClueThreshold: 5,
+
+    // Splash art clue unlocks after N guesses
+    splashClueThreshold: 12,
+  },
+  ability: {
+    // Splash art clue unlocks after N guesses
+    splashClueThreshold: 8,
+  },
+  skin: {
+    // Ability clue unlocks after N guesses
+    abilityClueThreshold: 8,
+  },
 };
 
 module.exports = clueConfig;
