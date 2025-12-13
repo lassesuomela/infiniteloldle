@@ -21,6 +21,11 @@ import {
   customFilterOptionChamps,
   SelectTheme,
 } from "./styles/selectStyles";
+import {
+  clearChampionHistory,
+  getChampionGuessHistory,
+  addToChampionGuessHistory,
+} from "../history";
 
 export default function Game() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -42,7 +47,18 @@ export default function Game() {
 
   useEffect(() => {
     FetchChampions();
+    setHistory();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const setHistory = () => {
+    const history = getChampionGuessHistory().reverse();
+
+    if (history.length > 0) {
+      setChampions(history);
+      setGuesses(history.map((champ) => champ[0].guessedChampion));
+      setGuessCount(history.length);
+    }
+  };
 
   const FetchChampions = () => {
     axios
@@ -51,11 +67,19 @@ export default function Game() {
         if (response.data.status === "success") {
           const data = response.data.champions;
           data.sort((a, b) => a.value.localeCompare(b.value));
-          const transformedData = data.map((champion) => ({
-            value: champion.value,
-            label: champion.value,
-            image: champion.image,
-          }));
+
+          const guessChampionKeys = new Set(
+            getChampionGuessHistory().map((champ) => champ[0].championKey)
+          );
+
+          const transformedData = data
+            .filter((champion) => !guessChampionKeys.has(champion.value))
+
+            .map((champion) => ({
+              value: champion.value,
+              label: champion.value,
+              image: champion.image,
+            }));
           setValidGuesses(transformedData);
         }
       })
@@ -101,6 +125,7 @@ export default function Game() {
         }
 
         setChampions((champions) => [data, ...champions]);
+        addToChampionGuessHistory(data);
 
         if (correct) {
           if (guesses.length === 0) {
@@ -108,6 +133,7 @@ export default function Game() {
           }
           saveGamesPlayed();
           setCorrectGuess(true);
+          clearChampionHistory();
           setTitle(response.data.title);
         }
       })
@@ -126,6 +152,11 @@ export default function Game() {
     setCorrectGuess(false);
     setGuessCount(0);
     setClueBoxKey((prev) => prev + 1);
+  };
+
+  const handleReroll = () => {
+    clearChampionHistory();
+    Reroll("champion");
   };
 
   return (
@@ -188,7 +219,7 @@ export default function Game() {
             {!correctGuess && guesses.length >= 15 ? (
               <button
                 className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={() => Reroll("champion")}
+                onClick={handleReroll}
               >
                 Reroll
               </button>
