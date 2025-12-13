@@ -16,6 +16,10 @@ const fsp = require("fs").promises;
 
 const prisma = new PrismaClient();
 
+// Constants for clue feature
+const CLUE_BLUR_LEVEL = 15;
+const BLUR_CACHE_TTL_SECONDS = 3600 * 6; // 6 hours
+
 const GetAllChampions = (req, res) => {
   const key = req.path;
   if (cache.checkCache(key)) {
@@ -175,6 +179,7 @@ const Guess = async (req, res) => {
       correctGuess: true,
       properties: [champData, similarites],
       title: correctChampion.title,
+      guessCount: guessCount,
     });
   } catch (error) {
     console.error("Error in Guess function:", error);
@@ -599,14 +604,14 @@ const GetChampionClue = async (req, res) => {
     try {
       // Blur the image using sharp
       const blurredImageBuffer = await sharp(imagePath)
-        .blur(15) // Apply strong blur
+        .blur(CLUE_BLUR_LEVEL) // Apply strong blur
         .toBuffer();
 
       const base64 = blurredImageBuffer.toString("base64");
 
       // Cache the blurred image
       cache.saveCache(blurredImageKey, base64);
-      cache.changeTTL(blurredImageKey, 3600 * 6); // Cache for 6 hours
+      cache.changeTTL(blurredImageKey, BLUR_CACHE_TTL_SECONDS);
 
       res.set("X-CACHE", "MISS");
       return res.json({

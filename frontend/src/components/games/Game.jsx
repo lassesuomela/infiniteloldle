@@ -94,10 +94,13 @@ export default function Game() {
 
         const correct = response.data.correctGuess;
         const data = response.data.properties;
-        const currentGuessCount = response.data.guessCount || guesses.length + 1;
+        const currentGuessCount = response.data.guessCount;
+
+        if (currentGuessCount !== undefined) {
+          setGuessCount(currentGuessCount);
+        }
 
         setChampions((champions) => [data, ...champions]);
-        setGuessCount(currentGuessCount);
 
         if (correct) {
           if (guesses.length === 0) {
