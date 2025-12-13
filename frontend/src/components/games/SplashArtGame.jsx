@@ -268,7 +268,7 @@ export default function SplashArtGame() {
                 Guess
               </button>
             )}
-            {!correctGuess && guesses.length >= 10 ? (
+            {!correctGuess && guesses.length >= 15 ? (
               <button
                 className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
                 onClick={HandleReroll}
