@@ -36,19 +36,21 @@ const GuessItem = async (req, res) => {
     const guessCountKey = GuessCountKeys.item(user.id);
     await redisCache.increment(guessCountKey);
 
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+
     if (guess !== correctItem.name) {
       return res.json({
         status: "success",
         correctGuess: false,
         itemId: guessItemObj.itemId,
         name: guessItemObj.name,
+        guessCount: guessCount,
       });
     }
 
     // Correct guess
     // Get guess count from Redis and save to database
-    const guessCount = await redisCache.getGuessCount(guessCountKey);
-    
+
     const allIds = await itemV2.findAllItemIds();
     let solvedIds = await userV2.getSolvedItemIds(user.id);
 
@@ -87,6 +89,7 @@ const GuessItem = async (req, res) => {
       correctGuess: true,
       name: correctItem.name,
       itemId: correctItem.itemId,
+      guessCount: guessCount,
     });
   } catch (error) {
     console.error("Error in GuessItem:", error);
