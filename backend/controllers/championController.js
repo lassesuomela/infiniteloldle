@@ -16,10 +16,6 @@ const fsp = require("fs").promises;
 
 const prisma = new PrismaClient();
 
-// Constants for clue feature
-const CLUE_BLUR_LEVEL = 15;
-const BLUR_CACHE_TTL_SECONDS = 3600 * 6; // 6 hours
-
 const GetAllChampions = (req, res) => {
   const key = req.path;
   if (cache.checkCache(key)) {
@@ -121,7 +117,7 @@ const Guess = async (req, res) => {
     if (guess !== correctChampion.name) {
       // Get current guess count to return to frontend
       const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
-      
+
       return res.json({
         status: "success",
         correctGuess: false,
@@ -133,7 +129,7 @@ const Guess = async (req, res) => {
     // correct guess
     // Get guess count from Redis and save to database
     const guessCount = await redisCache.getGuessCount(guessCountKey);
-    
+
     // Get all champion IDs
     const allChampionIds = await championV2.findAllIds();
 
@@ -233,13 +229,17 @@ const GuessSplash = async (req, res) => {
     // correct guess
     // Get guess count from Redis and save to database
     const guessCount = await redisCache.getGuessCount(guessCountKey);
-    
+
     const allIds = await championV2.findAllIds();
     let solvedIds = await userV2.getSolvedSplashChampionIds(userObj.id);
 
     // Add the just-solved splash if not already present
     if (!solvedIds.includes(correctSkinData.champion.id)) {
-      await userV2.addSolvedSplash(userObj.id, correctSkinData.champion.id, guessCount);
+      await userV2.addSolvedSplash(
+        userObj.id,
+        correctSkinData.champion.id,
+        guessCount
+      );
       solvedIds.push(correctSkinData.champion.id);
     }
 
@@ -416,7 +416,7 @@ const GuessAbility = async (req, res) => {
     // ===== Correct guess =====
     // Get guess count from Redis and save to database
     const guessCount = await redisCache.getGuessCount(guessCountKey);
-    
+
     // Get all ability IDs
     const allIds = await ability.findAllIds();
     let solvedIds = await userV2.getSolvedAbilityIds(userObj.id);
@@ -557,8 +557,7 @@ const GetChampionClue = async (req, res) => {
     const guessCountKey = GuessCountKeys.champion(userObj.id);
     const guessCount = await redisCache.getGuessCount(guessCountKey);
 
-    // Only return clue if guess count is 7 or more
-    if (guessCount < 7) {
+    if (guessCount < 10) {
       return res.json({
         status: "success",
         clue: null,
@@ -572,18 +571,34 @@ const GetChampionClue = async (req, res) => {
       return res.json({ status: "error", message: "Champion not found" });
     }
 
+    // Get skin data to determine available splash arts
+    const skins = await skin.findByChampionId(currentChampion.id);
+    if (skins.length === 0) {
+      return res.json({
+        status: "error",
+        message: "No skins found for this champion",
+      });
+    }
+
+    // Omit default skin (id='0') from clue splashes
+    const clueSkins = skins.filter((s) => s.key !== "0");
+
+    // Or if no other skins, use default
+    const skinToUse =
+      clueSkins.length > 0 ? clueSkins[0] : skins.find((s) => s.key === "0");
+
     // Use splash art with id 0 (first splash art)
-    const splashId = 0;
+    const splashId = skinToUse.key;
     const imageName = `${currentChampion.championKey}_${splashId}.webp`;
-    const blurredImageKey = `blurred_${imageName}`;
+    const imageKey = `cropped_${imageName}`;
 
     // Check if blurred image is cached
-    if (cache.checkCache(blurredImageKey)) {
-      const data = cache.getCache(blurredImageKey);
+    if (cache.checkCache(imageKey)) {
+      const data = cache.getCache(imageKey);
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",
-        new Date(cache.getTtl(blurredImageKey)).toISOString()
+        new Date(cache.getTtl(imageKey)).toISOString()
       );
       return res.json({
         status: "success",
@@ -602,16 +617,28 @@ const GetChampionClue = async (req, res) => {
     );
 
     try {
-      // Blur the image using sharp
-      const blurredImageBuffer = await sharp(imagePath)
-        .blur(CLUE_BLUR_LEVEL) // Apply strong blur
+      const image = sharp(imagePath);
+      const metadata = await image.metadata();
+
+      const cropWidth = Math.floor(metadata.width * 0.5);
+      const cropHeight = Math.floor(metadata.height * 0.5);
+
+      const left = Math.floor((metadata.width - cropWidth) / 2);
+      const top = Math.floor((metadata.height - cropHeight) / 2);
+
+      const imageBuffer = await image
+        .extract({
+          left,
+          top,
+          width: cropWidth,
+          height: cropHeight,
+        })
         .toBuffer();
 
-      const base64 = blurredImageBuffer.toString("base64");
+      const base64 = imageBuffer.toString("base64");
 
-      // Cache the blurred image
-      cache.saveCache(blurredImageKey, base64);
-      cache.changeTTL(blurredImageKey, BLUR_CACHE_TTL_SECONDS);
+      cache.saveCache(imageKey, base64);
+      cache.changeTTL(imageKey, 3600 * 12);
 
       res.set("X-CACHE", "MISS");
       return res.json({
