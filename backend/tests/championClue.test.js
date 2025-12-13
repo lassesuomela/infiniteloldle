@@ -3,8 +3,23 @@ const request = require("supertest");
 const user = require("../models/v2/user");
 const champion = require("../models/v2/champion");
 const redisCache = require("../cache/cache");
-const { GuessCountKeys } = require("../helpers/redisKeys");
 const clueConfig = require("../configs/clues");
+
+jest.mock("sharp", () => {
+  return jest.fn(() => ({
+    metadata: jest.fn().mockResolvedValue({
+      width: 1000,
+      height: 800,
+    }),
+    extract: jest.fn().mockReturnThis(),
+    toBuffer: jest.fn().mockResolvedValue(Buffer.from("fake-image-bytes")),
+  }));
+});
+
+jest.mock("path", () => ({
+  ...jest.requireActual("path"),
+  join: jest.fn(() => "/mock/path/to/file.webp"),
+}));
 
 describe("Testing champion clue functionality", () => {
   let token = "";

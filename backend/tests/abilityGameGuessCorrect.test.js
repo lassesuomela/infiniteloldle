@@ -2,7 +2,6 @@ const app = require("../app");
 const request = require("supertest");
 const user = require("../models/v2/user");
 const ability = require("../models/v2/ability");
-const champion = require("../models/v2/champion");
 
 describe("Testing guessing abilities correctly and prestige", () => {
   let token = "";
