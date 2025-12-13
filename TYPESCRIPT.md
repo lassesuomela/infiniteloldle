@@ -145,3 +145,5 @@ Tests continue to work with the existing setup. No changes required to test infr
 - JavaScript and TypeScript files can coexist
 - Type definitions provide IDE benefits even without converting to TypeScript
 - Future work can progressively tighten the rules as the codebase stabilizes
+- Some type definitions intentionally use `any` to maintain flexibility during the migration phase
+- Index signatures in API response types allow backward compatibility with existing code
