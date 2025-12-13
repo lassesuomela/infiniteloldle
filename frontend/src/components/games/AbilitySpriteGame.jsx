@@ -318,7 +318,7 @@ export default function AbilityGuessingGame() {
           id="victory"
           championKey={champions[0].key}
           champion={currentGuess}
-          tries={guesses.length}
+          tries={guessCount}
           title={title}
         />
       ) : (

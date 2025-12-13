@@ -246,7 +246,7 @@ export default function Game() {
           id="victory"
           championKey={champions[0][0].championKey}
           champion={champions[0][0].guessedChampion}
-          tries={guesses.length}
+          tries={guessCount}
           title={title}
         />
       ) : (

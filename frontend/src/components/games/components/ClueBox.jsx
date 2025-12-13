@@ -24,7 +24,6 @@ export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
     axios
       .get(Config.url + "/config")
       .then((response) => {
-        console.log(response.data);
         if (response.data.status === "success") {
           setClueThresholds(response.data.config.clue);
           setConfigLoaded(true);
