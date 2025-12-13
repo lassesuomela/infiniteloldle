@@ -8,6 +8,7 @@ const oldItemController = require("../controllers/oldItemController");
 
 router.post("/guess", championController.Guess);
 router.get("/clue/champion", championController.GetChampionClue);
+router.get("/clue/ability", championController.GetAbilityClue);
 router.post("/splash", championController.GuessSplash);
 
 router.post("/item", itemController.GuessItem);

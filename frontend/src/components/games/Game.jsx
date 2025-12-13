@@ -29,8 +29,10 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [title, setTitle] = useState("");
   const [guessCount, setGuessCount] = useState(0);
-  const [clueData, setClueData] = useState(null);
-  const [showClue, setShowClue] = useState(false);
+  const [abilityClueData, setAbilityClueData] = useState(null);
+  const [splashClueData, setSplashClueData] = useState(null);
+  const [showAbilityClue, setShowAbilityClue] = useState(false);
+  const [showSplashClue, setShowSplashClue] = useState(false);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -125,24 +127,54 @@ export default function Game() {
     setGuess();
     setCorrectGuess(false);
     setGuessCount(0);
-    setClueData(null);
-    setShowClue(false);
+    setAbilityClueData(null);
+    setSplashClueData(null);
+    setShowAbilityClue(false);
+    setShowSplashClue(false);
   };
 
-  const FetchClue = () => {
+  const FetchAbilityClue = () => {
+    axios
+      .get(Config.url + "/clue/ability", {
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
+      })
+      .then((response) => {
+        if (response.data.status === "success" && response.data.clue) {
+          setAbilityClueData(response.data.clue);
+        }
+      })
+      .catch((error) => {
+        console.log("Error fetching ability clue:", error);
+      });
+  };
+
+  const FetchSplashClue = () => {
     axios
       .get(Config.url + "/clue/champion", {
         headers: { authorization: "Bearer " + localStorage.getItem("token") },
       })
       .then((response) => {
         if (response.data.status === "success" && response.data.clue) {
-          setClueData(response.data.clue);
-          setShowClue(true);
+          setSplashClueData(response.data.clue);
         }
       })
       .catch((error) => {
-        console.log("Error fetching clue:", error);
+        console.log("Error fetching splash clue:", error);
       });
+  };
+
+  const toggleAbilityClue = () => {
+    if (!abilityClueData) {
+      FetchAbilityClue();
+    }
+    setShowAbilityClue(!showAbilityClue);
+  };
+
+  const toggleSplashClue = () => {
+    if (!splashClueData) {
+      FetchSplashClue();
+    }
+    setShowSplashClue(!showSplashClue);
   };
 
   return (
@@ -216,28 +248,42 @@ export default function Game() {
         </form>
       </div>
 
-      {/* Clue Box - Show after 7 guesses */}
-      {!correctGuess && guessCount >= 7 && (
+      {/* Clue Box - Show when guessCount > 0 */}
+      {!correctGuess && guessCount > 0 && (
         <div className="d-flex justify-content-center mb-4">
           <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
             <div className="card-body text-center">
-              <h5 className="card-title">💡 Clue Available!</h5>
-              <p className="card-text">
-                You've made {guessCount} guesses. Here's a clue to help you!
-              </p>
-              {!showClue ? (
+              <h5 className="card-title">💡 Clues</h5>
+              
+              {/* Buttons for clues */}
+              <div className="d-flex justify-content-center gap-2 mb-3">
                 <button
-                  className="btn btn-primary"
-                  onClick={FetchClue}
+                  className={`btn ${guessCount >= 5 ? 'btn-primary' : 'btn-secondary'}`}
+                  onClick={toggleAbilityClue}
+                  disabled={guessCount < 5}
                 >
-                  Show Clue
+                  {guessCount >= 5 
+                    ? (showAbilityClue ? "Hide Ability Clue" : "Show Ability Clue")
+                    : `Ability Clue (${5 - guessCount} more)`}
                 </button>
-              ) : clueData ? (
-                <div className="mt-3">
-                  <p className="text-muted mb-2">Blurred Splash Art:</p>
+                <button
+                  className={`btn ${guessCount >= 10 ? 'btn-primary' : 'btn-secondary'}`}
+                  onClick={toggleSplashClue}
+                  disabled={guessCount < 10}
+                >
+                  {guessCount >= 10 
+                    ? (showSplashClue ? "Hide Splash Clue" : "Show Splash Clue")
+                    : `Splash Clue (${10 - guessCount} more)`}
+                </button>
+              </div>
+
+              {/* Display clues */}
+              {showAbilityClue && abilityClueData && (
+                <div className="mt-3 mb-3">
+                  <p className="text-muted mb-2">Ability Clue:</p>
                   <img
-                    src={`data:image/webp;base64,${clueData.data}`}
-                    alt="Blurred splash art clue"
+                    src={`data:image/webp;base64,${abilityClueData.data}`}
+                    alt="Ability clue"
                     style={{
                       maxWidth: "100%",
                       height: "auto",
@@ -246,8 +292,22 @@ export default function Game() {
                     }}
                   />
                 </div>
-              ) : (
-                <p className="text-muted mt-2">Loading clue...</p>
+              )}
+
+              {showSplashClue && splashClueData && (
+                <div className="mt-3">
+                  <p className="text-muted mb-2">Splash Art Clue:</p>
+                  <img
+                    src={`data:image/webp;base64,${splashClueData.data}`}
+                    alt="Splash art clue"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      borderRadius: "8px",
+                      border: "2px solid #dee2e6",
+                    }}
+                  />
+                </div>
               )}
             </div>
           </div>
