@@ -4,6 +4,7 @@ import Titles from "./components/GameTitle";
 import ChampionDetails from "./components/ChampionDetails";
 import Select from "react-select";
 import Victory from "./components/Victory";
+import ClueBox from "./components/ClueBox";
 import {
   saveGamesPlayed,
   saveTries,
@@ -29,12 +30,6 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [title, setTitle] = useState("");
   const [guessCount, setGuessCount] = useState(0);
-  const [abilityClueData, setAbilityClueData] = useState(null);
-  const [splashClueData, setSplashClueData] = useState(null);
-  const [showAbilityClue, setShowAbilityClue] = useState(false);
-  const [showSplashClue, setShowSplashClue] = useState(false);
-  const [clueThresholds, setClueThresholds] = useState(null);
-  const [configLoaded, setConfigLoaded] = useState(false);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -46,28 +41,7 @@ export default function Game() {
 
   useEffect(() => {
     FetchChampions();
-    FetchClueConfig();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const FetchClueConfig = () => {
-    axios
-      .get(Config.url + "/config")
-      .then((response) => {
-        if (response.data.status === "success") {
-          setClueThresholds(response.data.config.clue.champion);
-          setConfigLoaded(true);
-        }
-      })
-      .catch((error) => {
-        console.log("Error fetching clue config:", error);
-        // Fallback to defaults if config fetch fails
-        setClueThresholds({
-          abilityClueThreshold: 5,
-          splashClueThreshold: 12,
-        });
-        setConfigLoaded(true);
-      });
-  };
 
   const FetchChampions = () => {
     axios
@@ -150,62 +124,6 @@ export default function Game() {
     setGuess();
     setCorrectGuess(false);
     setGuessCount(0);
-    setAbilityClueData(null);
-    setSplashClueData(null);
-    setShowAbilityClue(false);
-    setShowSplashClue(false);
-  };
-
-  const FetchAbilityClue = () => {
-    axios
-      .get(Config.url + "/clue/ability", {
-        headers: { authorization: "Bearer " + localStorage.getItem("token") },
-      })
-      .then((response) => {
-        if (response.data.status === "success" && response.data.clue) {
-          setAbilityClueData(response.data.clue);
-        }
-      })
-      .catch((error) => {
-        console.log("Error fetching ability clue:", error);
-      });
-  };
-
-  const FetchSplashClue = () => {
-    axios
-      .get(Config.url + "/clue/champion", {
-        headers: { authorization: "Bearer " + localStorage.getItem("token") },
-      })
-      .then((response) => {
-        if (response.data.status === "success" && response.data.clue) {
-          setSplashClueData(response.data.clue);
-        }
-      })
-      .catch((error) => {
-        console.log("Error fetching splash clue:", error);
-      });
-  };
-
-  const toggleAbilityClue = () => {
-    if (!abilityClueData) {
-      FetchAbilityClue();
-    }
-    // Hide splash clue when showing ability clue
-    if (!showAbilityClue) {
-      setShowSplashClue(false);
-    }
-    setShowAbilityClue(!showAbilityClue);
-  };
-
-  const toggleSplashClue = () => {
-    if (!splashClueData) {
-      FetchSplashClue();
-    }
-    // Hide ability clue when showing splash clue
-    if (!showSplashClue) {
-      setShowAbilityClue(false);
-    }
-    setShowSplashClue(!showSplashClue);
   };
 
   return (
@@ -279,86 +197,25 @@ export default function Game() {
         </form>
       </div>
 
-      {configLoaded && clueThresholds && guessCount > 2 && (
-        <div className="d-flex justify-content-center mb-4">
-          <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
-            <div className="card-body text-center">
-              <h5 className="card-title">💡 Clues</h5>
-
-              <div className="d-flex justify-content-center flex-wrap gap-2 mb-3 mt-4">
-                <button
-                  className={`btn ${
-                    guessCount >= clueThresholds.abilityClueThreshold
-                      ? "btn-dark"
-                      : "btn-secondary"
-                  }`}
-                  onClick={toggleAbilityClue}
-                  disabled={guessCount < clueThresholds.abilityClueThreshold}
-                  style={{ minWidth: "150px" }}
-                >
-                  {guessCount >= clueThresholds.abilityClueThreshold
-                    ? showAbilityClue
-                      ? "Hide Ability Clue"
-                      : "Show Ability Clue"
-                    : `Ability Clue (${
-                        clueThresholds.abilityClueThreshold - guessCount
-                      } more)`}
-                </button>
-                <button
-                  className={`btn ${
-                    guessCount >= clueThresholds.splashClueThreshold
-                      ? "btn-dark"
-                      : "btn-secondary"
-                  }`}
-                  onClick={toggleSplashClue}
-                  disabled={guessCount < clueThresholds.splashClueThreshold}
-                  style={{ minWidth: "150px" }}
-                >
-                  {guessCount >= clueThresholds.splashClueThreshold
-                    ? showSplashClue
-                      ? "Hide Splash Clue"
-                      : "Show Splash Clue"
-                    : `Splash Clue (${
-                        clueThresholds.splashClueThreshold - guessCount
-                      } more)`}
-                </button>
-              </div>
-
-              {showAbilityClue && abilityClueData && (
-                <div className="mt-3 mb-3">
-                  <p className="text-muted mb-2">Ability Clue:</p>
-                  <img
-                    src={`data:image/webp;base64,${abilityClueData.data}`}
-                    alt="Ability clue"
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto",
-                      borderRadius: "8px",
-                      border: "2px solid #dee2e6",
-                    }}
-                  />
-                </div>
-              )}
-
-              {showSplashClue && splashClueData && (
-                <div className="mt-3">
-                  <p className="text-muted mb-2">Splash Art Clue:</p>
-                  <img
-                    src={`data:image/webp;base64,${splashClueData.data}`}
-                    alt="Splash art clue"
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto",
-                      borderRadius: "8px",
-                      border: "2px solid #dee2e6",
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <ClueBox
+        guessCount={guessCount}
+        correctGuess={correctGuess}
+        gameType="champion"
+        clueEndpoints={[
+          {
+            endpoint: "/clue/ability",
+            type: "ability",
+            label: "Ability Clue",
+            thresholdKey: "abilityClueThreshold",
+          },
+          {
+            endpoint: "/clue/champion",
+            type: "splash",
+            label: "Splash Clue",
+            thresholdKey: "splashClueThreshold",
+          },
+        ]}
+      />
 
       <div className="scroll-container">
         {champions.length > 0 ? <Titles /> : ""}

@@ -10,6 +10,7 @@ router.post("/guess", championController.Guess);
 router.get("/clue/champion", championController.GetChampionClue);
 router.get("/clue/ability", championController.GetAbilityClue);
 router.post("/splash", championController.GuessSplash);
+router.get("/clue/splash-game", championController.GetSplashGameClue);
 
 router.post("/item", itemController.GuessItem);
 router.get("/item", itemController.GetItemSprite);
@@ -21,5 +22,6 @@ router.get("/splash", championController.GetSplashArt);
 
 router.post("/ability", championController.GuessAbility);
 router.get("/ability", championController.GetAbilitySprite);
+router.get("/clue/ability-game", championController.GetAbilityGameClue);
 
 module.exports = router;
