@@ -30,9 +30,19 @@ describe("Testing champion clue functionality", () => {
       });
   });
 
-  it("Should not return clue when guess count is less than 7", async () => {
+  it("Should not return splash clue when guess count is less than 10", async () => {
     const res = await request(app)
       .get("/api/clue/champion")
+      .set("Authorization", "Bearer " + token);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.clue).toBeNull();
+    expect(res.body.message).toBe("Not enough guesses to unlock clue");
+  });
+
+  it("Should not return ability clue when guess count is less than 5", async () => {
+    const res = await request(app)
+      .get("/api/clue/ability")
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
@@ -66,7 +76,7 @@ describe("Testing champion clue functionality", () => {
     expect(res.body.guessCount).toBe(1);
   });
 
-  it("Should still not return clue after 6 guesses", async () => {
+  it("Should still not return splash clue after 6 guesses but should return ability clue after 5", async () => {
     const userObj = await user.findByToken(token);
     const correctChampion = await champion.findById(userObj.currentChampion);
     const allChampions = await champion.findAllIds();
@@ -74,7 +84,42 @@ describe("Testing champion clue functionality", () => {
       allChampions.find((id) => id !== correctChampion.id)
     );
 
-    // Make 5 more wrong guesses (total will be 6)
+    // Make 4 more wrong guesses (total will be 5)
+    for (let i = 0; i < 4; i++) {
+      await request(app)
+        .post("/api/guess")
+        .send({ guess: wrongChampion.name })
+        .set("Authorization", "Bearer " + token);
+    }
+
+    // Check that splash clue is still not available
+    const splashRes = await request(app)
+      .get("/api/clue/champion")
+      .set("Authorization", "Bearer " + token);
+
+    expect(splashRes.body.status).toBe("success");
+    expect(splashRes.body.clue).toBeNull();
+
+    // Check that ability clue IS available
+    const abilityRes = await request(app)
+      .get("/api/clue/ability")
+      .set("Authorization", "Bearer " + token);
+
+    expect(abilityRes.body.status).toBe("success");
+    expect(abilityRes.body.clue).not.toBeNull();
+    expect(abilityRes.body.clue.type).toBe("ability");
+    expect(abilityRes.body.clue.data).toBeDefined();
+  });
+
+  it("Should return splash art clue after 10th guess", async () => {
+    const userObj = await user.findByToken(token);
+    const correctChampion = await champion.findById(userObj.currentChampion);
+    const allChampions = await champion.findAllIds();
+    const wrongChampion = await champion.findById(
+      allChampions.find((id) => id !== correctChampion.id)
+    );
+
+    // Make 5 more wrong guesses (total will be 10)
     for (let i = 0; i < 5; i++) {
       await request(app)
         .post("/api/guess")
@@ -82,33 +127,7 @@ describe("Testing champion clue functionality", () => {
         .set("Authorization", "Bearer " + token);
     }
 
-    // Check that clue is still not available
-    const res = await request(app)
-      .get("/api/clue/champion")
-      .set("Authorization", "Bearer " + token);
-
-    expect(res.body.status).toBe("success");
-    expect(res.body.clue).toBeNull();
-    expect(res.body.message).toBe("Not enough guesses to unlock clue");
-  });
-
-  it("Should return blurred splash art clue after 7th guess", async () => {
-    const userObj = await user.findByToken(token);
-    const correctChampion = await champion.findById(userObj.currentChampion);
-    const allChampions = await champion.findAllIds();
-    const wrongChampion = await champion.findById(
-      allChampions.find((id) => id !== correctChampion.id)
-    );
-
-    // Make one more wrong guess (7th total)
-    const guessRes = await request(app)
-      .post("/api/guess")
-      .send({ guess: wrongChampion.name })
-      .set("Authorization", "Bearer " + token);
-
-    expect(guessRes.body.guessCount).toBe(7);
-
-    // Now clue should be available
+    // Now splash clue should be available
     const res = await request(app)
       .get("/api/clue/champion")
       .set("Authorization", "Bearer " + token);
