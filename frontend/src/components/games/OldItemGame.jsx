@@ -29,6 +29,7 @@ export default function OldItemGame() {
   const [currentGuess, setGuess] = useState();
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
+  const [guessCount, setGuessCount] = useState(0);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -159,6 +160,11 @@ export default function OldItemGame() {
         const isCorrect = response.data.correctGuess;
         const itemId = response.data.itemId;
         const name = response.data.name;
+        const currentGuessCount = response.data.guessCount;
+
+        if (currentGuessCount !== undefined) {
+          setGuessCount(currentGuessCount);
+        }
 
         setItems((items) => [{ id: itemId, name, isCorrect }, ...items]);
 
@@ -194,6 +200,8 @@ export default function OldItemGame() {
     setItems([]);
     setGuess();
     setCorrectGuess(false);
+    setGuessCount(0);
+
     clearOldItemHistory();
   };
 
@@ -290,7 +298,7 @@ export default function OldItemGame() {
           id="victory"
           championKey={items[0]?.id}
           champion={currentGuess}
-          tries={guesses.length}
+          tries={guessCount}
           isOldItem={true}
         />
       ) : (
