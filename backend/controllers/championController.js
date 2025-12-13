@@ -699,7 +699,7 @@ const GetAbilityClue = async (req, res) => {
       });
     }
 
-    // Pick first ability (typically passive or Q)
+    // Pick first ability (ordering depends on database)
     const abilityToUse = abilities[0];
     const imageName = `${currentChampion.championKey}_${abilityToUse.key}.webp`;
     const imageKey = `cropped_ability_${imageName}`;

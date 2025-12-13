@@ -248,8 +248,8 @@ export default function Game() {
         </form>
       </div>
 
-      {/* Clue Box - Show when guessCount > 0 */}
-      {!correctGuess && guessCount > 0 && (
+      {/* Clue Box - Show when at least one clue is available (5+ guesses) */}
+      {!correctGuess && guessCount >= 5 && (
         <div className="d-flex justify-content-center mb-4">
           <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
             <div className="card-body text-center">
