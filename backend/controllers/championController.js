@@ -221,7 +221,7 @@ const GuessSplash = async (req, res) => {
     if (guess !== correctSkinData.champion.name) {
       // Get current guess count to return to frontend
       const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
-      
+
       return res.json({
         status: "success",
         correctGuess: false,
@@ -413,7 +413,7 @@ const GuessAbility = async (req, res) => {
     if (guess.toLowerCase() !== correctAbility.champion.name.toLowerCase()) {
       // Get current guess count to return to frontend
       const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
-      
+
       return res.json({
         status: "success",
         correctGuess: false,
@@ -556,7 +556,7 @@ const GetAbilitySprite = async (req, res) => {
   }
 };
 
-const GetChampionClue = async (req, res) => {
+const GetSplashClueForChampionGame = async (req, res) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -674,7 +674,7 @@ const GetChampionClue = async (req, res) => {
   }
 };
 
-const GetAbilityClue = async (req, res) => {
+const GetAbilityClueForChampionGame = async (req, res) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -727,7 +727,6 @@ const GetAbilityClue = async (req, res) => {
       6: "W",
       0: "E",
     };
-    // Pick E as the ability to use for the clue, or first if no Q
     const abilityToUse = abilities.find(
       (ab) => ab.key === dayToAbilityKey[dayOfWeek]
     )
@@ -792,7 +791,7 @@ const GetAbilityClue = async (req, res) => {
   }
 };
 
-const GetSplashGameClue = async (req, res) => {
+const GetAbilityClueForSplashGame = async (req, res) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -805,7 +804,7 @@ const GetSplashGameClue = async (req, res) => {
     const guessCount = await redisCache.getGuessCount(guessCountKey);
 
     // Ability clue for splash game unlocks at threshold defined in config
-    if (guessCount < clueConfig.skin.abilityClueThreshold) {
+    if (guessCount < clueConfig.splash.abilityClueThreshold) {
       return res.json({
         status: "success",
         clue: null,
@@ -839,10 +838,31 @@ const GetSplashGameClue = async (req, res) => {
       });
     }
 
-    // Pick first ability (ordering depends on database)
-    const abilityToUse = abilities[0];
+    // Make it somewhat different on what the key will be each day
+    // Use week day to pick ability
+
+    // Get current day of week (0-6)
+    const dayOfWeek = new Date().getDay();
+    // Mon = 1 -> Q, Tue = 2 -> W, Wed = 3 -> E, Thu = 4 -> R, Fri = 5 -> Q, Sat = 6 -> W, Sun = 0 -> E
+
+    // Map day of week to ability key
+    const dayToAbilityKey = {
+      1: "Q",
+      2: "W",
+      3: "E",
+      4: "R",
+      5: "Q",
+      6: "W",
+      0: "E",
+    };
+    const abilityToUse = abilities.find(
+      (ab) => ab.key === dayToAbilityKey[dayOfWeek]
+    )
+      ? abilities.find((ab) => ab.key === dayToAbilityKey[dayOfWeek])
+      : abilities[0];
+
     const imageName = `${skinData.champion.championKey}_${abilityToUse.key}.webp`;
-    const imageKey = `cropped_ability_${imageName}`;
+    const imageKey = `clue_ability_${imageName}`;
 
     // Check if cropped image is cached
     if (cache.checkCache(imageKey)) {
@@ -870,22 +890,8 @@ const GetSplashGameClue = async (req, res) => {
 
     try {
       const image = sharp(imagePath);
-      const metadata = await image.metadata();
 
-      const cropWidth = Math.floor(metadata.width * 0.5);
-      const cropHeight = Math.floor(metadata.height * 0.5);
-
-      const left = Math.floor((metadata.width - cropWidth) / 2);
-      const top = Math.floor((metadata.height - cropHeight) / 2);
-
-      const imageBuffer = await image
-        .extract({
-          left,
-          top,
-          width: cropWidth,
-          height: cropHeight,
-        })
-        .toBuffer();
+      const imageBuffer = await image.toBuffer();
 
       const base64 = imageBuffer.toString("base64");
 
@@ -915,7 +921,7 @@ const GetSplashGameClue = async (req, res) => {
   }
 };
 
-const GetAbilityGameClue = async (req, res) => {
+const GetSplashClueForAbilityGame = async (req, res) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -973,7 +979,7 @@ const GetAbilityGameClue = async (req, res) => {
 
     const splashId = skinToUse.key;
     const imageName = `${abilityData.champion.championKey}_${splashId}.webp`;
-    const imageKey = `cropped_${imageName}`;
+    const imageKey = `clue_skin_${imageName}`;
 
     // Check if cropped image is cached
     if (cache.checkCache(imageKey)) {
@@ -1069,9 +1075,9 @@ module.exports = {
   GetSplashArt,
   GuessAbility,
   GetAbilitySprite,
-  GetChampionClue,
-  GetAbilityClue,
-  GetSplashGameClue,
-  GetAbilityGameClue,
   GetClueConfig,
+  GetSplashClueForChampionGame,
+  GetAbilityClueForChampionGame,
+  GetAbilityClueForSplashGame,
+  GetSplashClueForAbilityGame,
 };
