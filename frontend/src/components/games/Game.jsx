@@ -30,6 +30,7 @@ export default function Game() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [title, setTitle] = useState("");
   const [guessCount, setGuessCount] = useState(0);
+  const [clueBoxKey, setClueBoxKey] = useState(0);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -124,6 +125,7 @@ export default function Game() {
     setGuess();
     setCorrectGuess(false);
     setGuessCount(0);
+    setClueBoxKey((prev) => prev + 1);
   };
 
   return (
@@ -198,6 +200,7 @@ export default function Game() {
       </div>
 
       <ClueBox
+        key={clueBoxKey}
         guessCount={guessCount}
         gameType="champion"
         clueEndpoints={[

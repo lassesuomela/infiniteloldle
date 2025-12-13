@@ -33,6 +33,7 @@ export default function AbilityGuessingGame() {
   const [sprite, setSprite] = useState("");
   const [title, setTitle] = useState("");
   const [guessCount, setGuessCount] = useState(0);
+  const [clueBoxKey, setClueBoxKey] = useState(0);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -203,6 +204,7 @@ export default function AbilityGuessingGame() {
     setGuess();
     setCorrectGuess(false);
     setGuessCount(0);
+    setClueBoxKey((prev) => prev + 1);
   };
 
   const handleReroll = () => {
@@ -289,6 +291,7 @@ export default function AbilityGuessingGame() {
       </div>
 
       <ClueBox
+        key={clueBoxKey}
         guessCount={guessCount}
         gameType="ability"
         clueEndpoints={[
