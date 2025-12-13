@@ -167,12 +167,20 @@ export default function Game() {
     if (!abilityClueData) {
       FetchAbilityClue();
     }
+    // Hide splash clue when showing ability clue
+    if (!showAbilityClue) {
+      setShowSplashClue(false);
+    }
     setShowAbilityClue(!showAbilityClue);
   };
 
   const toggleSplashClue = () => {
     if (!splashClueData) {
       FetchSplashClue();
+    }
+    // Hide ability clue when showing splash clue
+    if (!showSplashClue) {
+      setShowAbilityClue(false);
     }
     setShowSplashClue(!showSplashClue);
   };
@@ -258,7 +266,7 @@ export default function Game() {
               {/* Buttons for clues */}
               <div className="d-flex justify-content-center gap-2 mb-3">
                 <button
-                  className={`btn ${guessCount >= 5 ? 'btn-primary' : 'btn-secondary'}`}
+                  className={`btn ${guessCount >= 5 ? 'btn-dark' : 'btn-secondary'}`}
                   onClick={toggleAbilityClue}
                   disabled={guessCount < 5}
                 >
@@ -267,7 +275,7 @@ export default function Game() {
                     : `Ability Clue (${5 - guessCount} more)`}
                 </button>
                 <button
-                  className={`btn ${guessCount >= 10 ? 'btn-primary' : 'btn-secondary'}`}
+                  className={`btn ${guessCount >= 10 ? 'btn-dark' : 'btn-secondary'}`}
                   onClick={toggleSplashClue}
                   disabled={guessCount < 10}
                 >
