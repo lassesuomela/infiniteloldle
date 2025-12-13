@@ -204,6 +204,7 @@ export default function SplashArtGame() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
+    setGuessCount(0);
     setClueBoxKey((prev) => prev + 1);
   };
 
