@@ -256,36 +256,41 @@ export default function Game() {
         </form>
       </div>
 
-      {/* Clue Box - Show when at least one clue is available (5+ guesses) */}
-      {!correctGuess && guessCount >= 5 && (
+      {!correctGuess && guessCount >= 2 && (
         <div className="d-flex justify-content-center mb-4">
           <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
             <div className="card-body text-center">
               <h5 className="card-title">💡 Clues</h5>
-              
-              {/* Buttons for clues */}
-              <div className="d-flex justify-content-center gap-2 mb-3">
+
+              <div className="d-flex justify-content-center gap-2 mb-3 mt-4">
                 <button
-                  className={`btn ${guessCount >= 5 ? 'btn-dark' : 'btn-secondary'}`}
+                  className={`btn ${
+                    guessCount >= 5 ? "btn-dark" : "btn-secondary"
+                  }`}
                   onClick={toggleAbilityClue}
                   disabled={guessCount < 5}
                 >
-                  {guessCount >= 5 
-                    ? (showAbilityClue ? "Hide Ability Clue" : "Show Ability Clue")
+                  {guessCount >= 5
+                    ? showAbilityClue
+                      ? "Hide Ability Clue"
+                      : "Show Ability Clue"
                     : `Ability Clue (${5 - guessCount} more)`}
                 </button>
                 <button
-                  className={`btn ${guessCount >= 10 ? 'btn-dark' : 'btn-secondary'}`}
+                  className={`btn ${
+                    guessCount >= 10 ? "btn-dark" : "btn-secondary"
+                  }`}
                   onClick={toggleSplashClue}
                   disabled={guessCount < 10}
                 >
-                  {guessCount >= 10 
-                    ? (showSplashClue ? "Hide Splash Clue" : "Show Splash Clue")
+                  {guessCount >= 10
+                    ? showSplashClue
+                      ? "Hide Splash Clue"
+                      : "Show Splash Clue"
                     : `Splash Clue (${10 - guessCount} more)`}
                 </button>
               </div>
 
-              {/* Display clues */}
               {showAbilityClue && abilityClueData && (
                 <div className="mt-3 mb-3">
                   <p className="text-muted mb-2">Ability Clue:</p>
