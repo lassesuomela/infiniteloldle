@@ -22,6 +22,7 @@ import {
   getAbilityGuessHistory,
   addToAbilityGuessHistory,
 } from "../history";
+import ClueBox from "./components/ClueBox";
 
 export default function AbilityGuessingGame() {
   const [validGuesses, setValidGuesses] = useState([]);
@@ -31,6 +32,7 @@ export default function AbilityGuessingGame() {
   const [correctGuess, setCorrectGuess] = useState(false);
   const [sprite, setSprite] = useState("");
   const [title, setTitle] = useState("");
+  const [guessCount, setGuessCount] = useState(0);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -134,8 +136,12 @@ export default function AbilityGuessingGame() {
         const isCorrect = response.data.correctGuess;
         const key = response.data.championKey;
         const name = response.data.name;
+        const currentGuessCount = response.data.guessCount;
 
-        console.log(response.data);
+        if (currentGuessCount !== undefined) {
+          setGuessCount(currentGuessCount);
+        }
+
         setChampions((champions) => [{ key, isCorrect, name }, ...champions]);
         addToAbilityGuessHistory({ key, isCorrect, name });
 
@@ -196,6 +202,7 @@ export default function AbilityGuessingGame() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
+    setGuessCount(0);
   };
 
   const handleReroll = () => {
@@ -280,6 +287,19 @@ export default function AbilityGuessingGame() {
           </div>
         </form>
       </div>
+
+      <ClueBox
+        guessCount={guessCount}
+        gameType="ability"
+        clueEndpoints={[
+          {
+            endpoint: "/clue/ability/splash",
+            type: "splash",
+            label: "Splash Clue",
+            thresholdKey: "splashClueThreshold",
+          },
+        ]}
+      />
 
       <div id="championsImgs" className="container">
         {champions.map((champ) => (

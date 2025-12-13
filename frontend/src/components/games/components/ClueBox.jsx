@@ -6,7 +6,7 @@ import Config from "../../../configs/config";
  * Reusable Clue component for displaying game clues
  * @param {number} guessCount - Current guess count from the game
  * @param {boolean} correctGuess - Whether the game has been won
- * @param {string} gameType - Type of game ('champion', 'splash', 'ability')
+ * @param {string} gameType - Type of game ('champion', 'skin', 'ability')
  * @param {Array} clueEndpoints - Array of clue endpoint configurations
  *   Each config: { endpoint: string, type: string, label: string, thresholdKey: string }
  */
@@ -24,6 +24,7 @@ export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
     axios
       .get(Config.url + "/config")
       .then((response) => {
+        console.log(response.data);
         if (response.data.status === "success") {
           setClueThresholds(response.data.config.clue);
           setConfigLoaded(true);
@@ -35,7 +36,7 @@ export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
         setClueThresholds({
           champion: { abilityClueThreshold: 5, splashClueThreshold: 12 },
           ability: { splashClueThreshold: 8 },
-          skin: { abilityClueThreshold: 8 },
+          splash: { abilityClueThreshold: 8 },
         });
         setConfigLoaded(true);
       });

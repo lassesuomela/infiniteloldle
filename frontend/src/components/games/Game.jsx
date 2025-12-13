@@ -202,13 +202,13 @@ export default function Game() {
         gameType="champion"
         clueEndpoints={[
           {
-            endpoint: "/clue/ability",
+            endpoint: "/clue/champion/ability",
             type: "ability",
             label: "Ability Clue",
             thresholdKey: "abilityClueThreshold",
           },
           {
-            endpoint: "/clue/champion",
+            endpoint: "/clue/champion/splash",
             type: "splash",
             label: "Splash Clue",
             thresholdKey: "splashClueThreshold",

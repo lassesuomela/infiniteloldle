@@ -33,7 +33,7 @@ describe("Testing champion clue functionality", () => {
 
   it(`Should not return splash clue when guess count is less than ${clueConfig.champion.splashClueThreshold}`, async () => {
     const res = await request(app)
-      .get("/api/clue/champion")
+      .get("/api/clue/champion/splash")
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
@@ -43,7 +43,7 @@ describe("Testing champion clue functionality", () => {
 
   it(`Should not return ability clue when guess count is less than ${clueConfig.champion.abilityClueThreshold}`, async () => {
     const res = await request(app)
-      .get("/api/clue/ability")
+      .get("/api/clue/champion/ability")
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
@@ -95,7 +95,7 @@ describe("Testing champion clue functionality", () => {
 
     // Check that splash clue is still not available
     const splashRes = await request(app)
-      .get("/api/clue/champion")
+      .get("/api/clue/champion/splash")
       .set("Authorization", "Bearer " + token);
 
     expect(splashRes.body.status).toBe("success");
@@ -103,7 +103,7 @@ describe("Testing champion clue functionality", () => {
 
     // Check that ability clue IS available
     const abilityRes = await request(app)
-      .get("/api/clue/ability")
+      .get("/api/clue/champion/ability")
       .set("Authorization", "Bearer " + token);
 
     expect(abilityRes.body.status).toBe("success");
@@ -133,7 +133,7 @@ describe("Testing champion clue functionality", () => {
 
     // Now splash clue should be available
     const res = await request(app)
-      .get("/api/clue/champion")
+      .get("/api/clue/champion/splash")
       .set("Authorization", "Bearer " + token);
 
     expect(res.body.status).toBe("success");
@@ -145,11 +145,11 @@ describe("Testing champion clue functionality", () => {
 
   it("Should return the same clue on subsequent requests", async () => {
     const res1 = await request(app)
-      .get("/api/clue/champion")
+      .get("/api/clue/champion/splash")
       .set("Authorization", "Bearer " + token);
 
     const res2 = await request(app)
-      .get("/api/clue/champion")
+      .get("/api/clue/champion/splash")
       .set("Authorization", "Bearer " + token);
 
     expect(res1.body.status).toBe("success");

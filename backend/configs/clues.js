@@ -10,7 +10,7 @@ const clueConfig = {
     // Splash art clue unlocks after N guesses
     splashClueThreshold: 8,
   },
-  skin: {
+  splash: {
     // Ability clue unlocks after N guesses
     abilityClueThreshold: 8,
   },
