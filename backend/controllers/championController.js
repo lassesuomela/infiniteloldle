@@ -7,6 +7,7 @@ const redisCache = require("../cache/cache");
 const { GuessCountKeys } = require("../helpers/redisKeys");
 const fs = require("fs");
 const path = require("path");
+const sharp = require("sharp");
 const GetPartialSimilarites =
   require("../helpers/compare").GetPartialSimilarites;
 const { PrismaClient } = require("../generated/prisma");
@@ -114,10 +115,14 @@ const Guess = async (req, res) => {
       ),
     };
     if (guess !== correctChampion.name) {
+      // Get current guess count to return to frontend
+      const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
+      
       return res.json({
         status: "success",
         correctGuess: false,
         properties: [champData, similarites],
+        guessCount: currentGuessCount,
       });
     }
 
@@ -535,6 +540,97 @@ const GetAbilitySprite = async (req, res) => {
   }
 };
 
+const GetChampionClue = async (req, res) => {
+  const token = req.token;
+  try {
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
+    }
+
+    // Get guess count from Redis
+    const guessCountKey = GuessCountKeys.champion(userObj.id);
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+
+    // Only return clue if guess count is 7 or more
+    if (guessCount < 7) {
+      return res.json({
+        status: "success",
+        clue: null,
+        message: "Not enough guesses to unlock clue",
+      });
+    }
+
+    // Get the current champion for this user
+    const currentChampion = await championV2.findById(userObj.currentChampion);
+    if (!currentChampion) {
+      return res.json({ status: "error", message: "Champion not found" });
+    }
+
+    // Use splash art with id 0 (first splash art)
+    const splashId = 0;
+    const imageName = `${currentChampion.championKey}_${splashId}.webp`;
+    const blurredImageKey = `blurred_${imageName}`;
+
+    // Check if blurred image is cached
+    if (cache.checkCache(blurredImageKey)) {
+      const data = cache.getCache(blurredImageKey);
+      res.set("X-CACHE", "HIT");
+      res.set(
+        "X-CACHE-REMAINING",
+        new Date(cache.getTtl(blurredImageKey)).toISOString()
+      );
+      return res.json({
+        status: "success",
+        clue: {
+          type: "splash_art",
+          data: data,
+        },
+      });
+    }
+
+    // Read the original image
+    const imagePath = path.join(
+      __dirname,
+      "../images/champions/splash",
+      imageName
+    );
+
+    try {
+      // Blur the image using sharp
+      const blurredImageBuffer = await sharp(imagePath)
+        .blur(15) // Apply strong blur
+        .toBuffer();
+
+      const base64 = blurredImageBuffer.toString("base64");
+
+      // Cache the blurred image
+      cache.saveCache(blurredImageKey, base64);
+      cache.changeTTL(blurredImageKey, 3600 * 6); // Cache for 6 hours
+
+      res.set("X-CACHE", "MISS");
+      return res.json({
+        status: "success",
+        clue: {
+          type: "splash_art",
+          data: base64,
+        },
+      });
+    } catch (error) {
+      console.error(`Error processing image ${imageName}:`, error);
+      return res.status(404).json({
+        status: "error",
+        message: "Splash art not found",
+      });
+    }
+  } catch (error) {
+    console.error("Error in GetChampionClue function:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Internal server error" });
+  }
+};
+
 module.exports = {
   GetAllChampions,
   Guess,
@@ -542,4 +638,5 @@ module.exports = {
   GetSplashArt,
   GuessAbility,
   GetAbilitySprite,
+  GetChampionClue,
 };
