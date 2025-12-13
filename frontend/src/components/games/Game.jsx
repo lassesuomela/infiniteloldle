@@ -199,7 +199,6 @@ export default function Game() {
 
       <ClueBox
         guessCount={guessCount}
-        correctGuess={correctGuess}
         gameType="champion"
         clueEndpoints={[
           {

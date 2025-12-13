@@ -10,7 +10,7 @@ import Config from "../../../configs/config";
  * @param {Array} clueEndpoints - Array of clue endpoint configurations
  *   Each config: { endpoint: string, type: string, label: string, thresholdKey: string }
  */
-export default function ClueBox({ guessCount, correctGuess, gameType, clueEndpoints }) {
+export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
   const [clueThresholds, setClueThresholds] = useState(null);
   const [configLoaded, setConfigLoaded] = useState(false);
   const [clueData, setClueData] = useState({});
@@ -22,7 +22,7 @@ export default function ClueBox({ guessCount, correctGuess, gameType, clueEndpoi
 
   const FetchClueConfig = () => {
     axios
-      .get(Config.url + "/clue-config")
+      .get(Config.url + "/config")
       .then((response) => {
         if (response.data.status === "success") {
           setClueThresholds(response.data.config.clue);
@@ -87,12 +87,7 @@ export default function ClueBox({ guessCount, correctGuess, gameType, clueEndpoi
 
   if (!configLoaded || !clueThresholds) return null;
 
-  // Find minimum threshold to show clue box
-  const minThreshold = Math.min(
-    ...clueEndpoints.map((ce) => getThreshold(ce.thresholdKey))
-  );
-
-  if (correctGuess || guessCount < minThreshold) return null;
+  if (guessCount < 2) return null;
 
   return (
     <div className="d-flex justify-content-center mb-4">
@@ -100,7 +95,6 @@ export default function ClueBox({ guessCount, correctGuess, gameType, clueEndpoi
         <div className="card-body text-center">
           <h5 className="card-title">💡 Clues</h5>
 
-          {/* Buttons for clues - mobile friendly with flex-wrap */}
           <div className="d-flex justify-content-center flex-wrap gap-2 mb-3 mt-4">
             {clueEndpoints.map((clueConfig) => {
               const threshold = getThreshold(clueConfig.thresholdKey);
@@ -110,10 +104,10 @@ export default function ClueBox({ guessCount, correctGuess, gameType, clueEndpoi
               return (
                 <button
                   key={clueConfig.type}
-                  className={`btn ${
-                    isUnlocked ? "btn-dark" : "btn-secondary"
-                  }`}
-                  onClick={() => toggleClue(clueConfig.endpoint, clueConfig.type)}
+                  className={`btn ${isUnlocked ? "btn-dark" : "btn-secondary"}`}
+                  onClick={() =>
+                    toggleClue(clueConfig.endpoint, clueConfig.type)
+                  }
                   disabled={!isUnlocked}
                   style={{ minWidth: "150px" }}
                 >
@@ -127,7 +121,6 @@ export default function ClueBox({ guessCount, correctGuess, gameType, clueEndpoi
             })}
           </div>
 
-          {/* Display active clue */}
           {activeClue && clueData[activeClue] && (
             <div className="mt-3 mb-3">
               <p className="text-muted mb-2">
