@@ -59,6 +59,7 @@ export default function AbilityGuessingGame() {
     if (history.length > 0) {
       setChampions(history);
       setGuesses(history.map((item) => item.name));
+      setGuessCount(history.length);
     }
   };
 
