@@ -1,6 +1,10 @@
 import axios from "axios";
 import Config from "../configs/config";
 
+/**
+ *
+ * @param {"ability" | "champion" | "splash" | "item" | "oldItem"} type
+ */
 const Reroll = (type) => {
   axios
     .put(
