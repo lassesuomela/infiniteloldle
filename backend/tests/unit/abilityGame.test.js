@@ -28,7 +28,7 @@ const {
 
 const app = express();
 app.use(bodyParser.json());
-app.post("/guess-ability", (req, res, next) => {
+app.post("/ability", (req, res, next) => {
   req.token = req.headers["authorization"] || null;
   GuessAbility(req, res, next);
 });
@@ -44,7 +44,7 @@ describe("GuessAbility", () => {
 
   it("should return error if guess is missing", async () => {
     const res = await request(app)
-      .post("/guess-ability")
+      .post("/ability")
       .set("Authorization", "token123")
       .send({});
     expect(res.body).toEqual({ status: "error", message: "Guess is required" });
@@ -53,7 +53,7 @@ describe("GuessAbility", () => {
   it("should return error if token is invalid", async () => {
     userV2.findByToken.mockResolvedValue(null);
     const res = await request(app)
-      .post("/guess-ability")
+      .post("/ability")
       .set("Authorization", "token123")
       .send({ guess: "Ahri" });
     expect(res.body).toEqual({ status: "error", message: "Token is invalid" });
@@ -69,7 +69,7 @@ describe("GuessAbility", () => {
     championV2.findByName.mockResolvedValue(null);
 
     const res = await request(app)
-      .post("/guess-ability")
+      .post("/ability")
       .set("Authorization", "token123")
       .send({ guess: "WrongName" });
 
@@ -92,7 +92,7 @@ describe("GuessAbility", () => {
     });
 
     const res = await request(app)
-      .post("/guess-ability")
+      .post("/ability")
       .set("Authorization", "token123")
       .send({ guess: "Ashe" });
 
@@ -101,6 +101,7 @@ describe("GuessAbility", () => {
       correctGuess: false,
       name: "Ashe",
       championKey: "Ashe",
+      guessCount: 1,
     });
   });
 
@@ -124,7 +125,7 @@ describe("GuessAbility", () => {
     cache.deleteCache.mockResolvedValue();
 
     const res = await request(app)
-      .post("/guess-ability")
+      .post("/ability")
       .set("Authorization", "token123")
       .send({ guess: "Ahri" });
 
