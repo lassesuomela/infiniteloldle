@@ -28,6 +28,9 @@ export default function Game() {
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
   const [title, setTitle] = useState("");
+  const [guessCount, setGuessCount] = useState(0);
+  const [clueData, setClueData] = useState(null);
+  const [showClue, setShowClue] = useState(false);
 
   const isColorBlindMode = useSelector(
     (state) => state.colorBlindReducer.isColorBlindMode
@@ -91,8 +94,10 @@ export default function Game() {
 
         const correct = response.data.correctGuess;
         const data = response.data.properties;
+        const currentGuessCount = response.data.guessCount || guesses.length + 1;
 
         setChampions((champions) => [data, ...champions]);
+        setGuessCount(currentGuessCount);
 
         if (correct) {
           if (guesses.length === 0) {
@@ -116,6 +121,25 @@ export default function Game() {
     setChampions([]);
     setGuess();
     setCorrectGuess(false);
+    setGuessCount(0);
+    setClueData(null);
+    setShowClue(false);
+  };
+
+  const FetchClue = () => {
+    axios
+      .get(Config.url + "/clue/champion", {
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
+      })
+      .then((response) => {
+        if (response.data.status === "success" && response.data.clue) {
+          setClueData(response.data.clue);
+          setShowClue(true);
+        }
+      })
+      .catch((error) => {
+        console.log("Error fetching clue:", error);
+      });
   };
 
   return (
@@ -188,6 +212,44 @@ export default function Game() {
           </div>
         </form>
       </div>
+
+      {/* Clue Box - Show after 7 guesses */}
+      {!correctGuess && guessCount >= 7 && (
+        <div className="d-flex justify-content-center mb-4">
+          <div className="card" style={{ maxWidth: "600px", width: "100%" }}>
+            <div className="card-body text-center">
+              <h5 className="card-title">💡 Clue Available!</h5>
+              <p className="card-text">
+                You've made {guessCount} guesses. Here's a clue to help you!
+              </p>
+              {!showClue ? (
+                <button
+                  className="btn btn-primary"
+                  onClick={FetchClue}
+                >
+                  Show Clue
+                </button>
+              ) : clueData ? (
+                <div className="mt-3">
+                  <p className="text-muted mb-2">Blurred Splash Art:</p>
+                  <img
+                    src={`data:image/webp;base64,${clueData.data}`}
+                    alt="Blurred splash art clue"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      borderRadius: "8px",
+                      border: "2px solid #dee2e6",
+                    }}
+                  />
+                </div>
+              ) : (
+                <p className="text-muted mt-2">Loading clue...</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="scroll-container">
         {champions.length > 0 ? <Titles /> : ""}
