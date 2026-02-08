@@ -1,5 +1,11 @@
 require("dotenv").config();
 
+const Sentry = require("@sentry/node");
+Sentry.init({
+  dsn: "https://27311a3db6fbf33bb814ef51f4050731@o4506107190575104.ingest.us.sentry.io/4510851880648704",
+  sendDefaultPii: true,
+});
+
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -55,5 +61,11 @@ app.use(requestTracker.trackDAU);
 
 app.use("/api", userRoutes);
 app.use("/api", guessRoutes);
+
+Sentry.setupExpressErrorHandler(app);
+
+app.use(function onError(err, req, res, next) {
+  res.status(500).json({ status: "error", message: "Internal server error" });
+});
 
 module.exports = app;
