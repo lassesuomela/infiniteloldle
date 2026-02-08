@@ -2,6 +2,11 @@ import "./Game.css";
 import "./Main.css";
 
 import { Routes, Route, Navigate } from "react-router-dom";
+import * as Sentry from "@sentry/react";
+Sentry.init({
+  dsn: "https://e42b9037954c7284ab059e22848fa3fa@o4506107190575104.ingest.us.sentry.io/4510851852402688",
+  sendDefaultPii: true,
+});
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
