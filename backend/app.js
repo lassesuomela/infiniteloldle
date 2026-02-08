@@ -4,6 +4,11 @@ const Sentry = require("@sentry/node");
 Sentry.init({
   dsn: "https://27311a3db6fbf33bb814ef51f4050731@o4506107190575104.ingest.us.sentry.io/4510851880648704",
   sendDefaultPii: true,
+  enableLogs: true,
+  tracesSampleRate: 1.0,
+  integrations: [
+    Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+  ],
 });
 
 const express = require("express");
