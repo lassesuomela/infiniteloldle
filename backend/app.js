@@ -5,7 +5,7 @@ Sentry.init({
   dsn: "https://27311a3db6fbf33bb814ef51f4050731@o4506107190575104.ingest.us.sentry.io/4510851880648704",
   sendDefaultPii: true,
   enableLogs: true,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.3,
   integrations: [
     Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
   ],
@@ -17,15 +17,14 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const schedule = require("node-schedule");
+const ipParser = require("./middleware/ipParser");
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 450,
-  standardHeaders: false,
+  max: 900,
+  standardHeaders: "draft-8",
   legacyHeaders: false,
-  validate: {
-    trustProxy: false,
-  },
+  ipv6Subnet: 56,
 });
 
 const job = schedule.scheduleJob("55 23 * * *", () => {
@@ -33,11 +32,13 @@ const job = schedule.scheduleJob("55 23 * * *", () => {
 });
 
 const app = express();
-app.use(limiter);
-app.use(cors());
 
 app.set("trust proxy", 1);
 
+app.use(ipParser);
+app.use(limiter);
+
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(morgan("combined"));
