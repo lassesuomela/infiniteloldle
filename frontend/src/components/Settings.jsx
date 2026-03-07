@@ -47,7 +47,7 @@ export default function Settings() {
         { nickname: newNickname },
         {
           headers: { authorization: "Bearer " + localStorage.getItem("token") },
-        }
+        },
       )
       .then((response) => {
         if (response.data.status === "success") {
@@ -73,6 +73,10 @@ export default function Settings() {
           localStorage.removeItem("triesPerDay");
           localStorage.removeItem("gamesPlayed");
           localStorage.setItem("userDeleted", true);
+          localStorage.removeItem("skinGuessHistory");
+          localStorage.removeItem("itemGuessHistory");
+          localStorage.removeItem("oldItemGuessHistory");
+          localStorage.removeItem("championGuessHistory");
           const cookies = new Cookies();
           cookies.remove("isValidToken");
           window.location.reload();
@@ -283,8 +287,8 @@ export default function Settings() {
                             {isValidToken === true
                               ? "Token is valid"
                               : isValidToken === false
-                              ? "Token is not valid"
-                              : ""}
+                                ? "Token is not valid"
+                                : ""}
                           </p>
                           <button
                             className="btn btn-outline-success mt-1"
