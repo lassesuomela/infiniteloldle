@@ -24,7 +24,7 @@ const limiter = rateLimit({
   max: 900,
   standardHeaders: "draft-8",
   legacyHeaders: false,
-  ipv6Subnet: 56,
+  keyGenerator: (req) => rateLimit.ipKeyGenerator(req.clientIp, 56),
 });
 
 const job = schedule.scheduleJob("55 23 * * *", () => {
@@ -41,7 +41,11 @@ app.use(limiter);
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
-app.use(morgan("combined"));
+app.use(
+  morgan(
+    ':remote-addr - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms',
+  ),
+);
 
 const token = require("./middleware/token");
 const requestTracker = require("./middleware/requestTracker");
