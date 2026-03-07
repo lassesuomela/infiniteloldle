@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
 import Cookies from "universal-cookie";
@@ -20,6 +20,12 @@ export default function Settings() {
   const [newToken, setNewToken] = useState("");
   const [isCopied, setIsCopied] = useState(false);
   const [isValidToken, setIsValidToken] = useState(null);
+
+  useEffect(() => {
+    if (localStorage.getItem("userDeleted") && !localStorage.getItem("token")) {
+      setIsShown(true);
+    }
+  }, []);
 
   const ToggleState = () => {
     setIsCopied(false);
@@ -293,7 +299,14 @@ export default function Settings() {
                     </div>
                   </>
                 ) : (
-                  <></>
+                  <>
+                    {localStorage.getItem("userDeleted") ? (
+                      <p className="text-warning pb-2">
+                        Your account has been deleted. Create a new account to
+                        continue playing.
+                      </p>
+                    ) : null}
+                  </>
                 )}
 
                 {localStorage.getItem("token") ? (
