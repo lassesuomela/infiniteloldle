@@ -4,11 +4,7 @@
  * Bind the IP to req.ip.
  */
 const ipParser = (req, res, next) => {
-  const cloudflareIp =
-    req.headers["X-Real-IP"] || req.headers["cf-connecting-ip"];
-  if (cloudflareIp) {
-    req.ip = cloudflareIp;
-  }
+  req.clientIp = req.headers["X-Real-IP"] || req.ip;
   next();
 };
 

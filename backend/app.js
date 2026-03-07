@@ -24,7 +24,7 @@ const limiter = rateLimit({
   max: 900,
   standardHeaders: "draft-8",
   legacyHeaders: false,
-  ipv6Subnet: 56,
+  keyGenerator: (req) => rateLimit.ipKeyGenerator(req.clientIp, 56),
 });
 
 const job = schedule.scheduleJob("55 23 * * *", () => {
