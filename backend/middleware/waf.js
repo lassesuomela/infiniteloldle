@@ -7,12 +7,18 @@ const checkRequest = (req, res, next) => {
     return;
   }
   const ua = req.get("User-Agent");
-  if (ua === undefined || ua === "-") {
+  if (ua === undefined || ua === "-" || ua === "") {
     return res.status(444);
   }
+
   if (ua.includes("wget") || ua.includes("curl") || ua.includes("python")) {
     return res.status(444);
   }
+
+  if (ua.includes("Googlebot") || ua.includes("Mediapartners-Google")) {
+    return next();
+  }
+
   const parsedUA = new Parser(ua).getResult();
   if (parsedUA.browser.name === undefined) {
     return res.status(444);
