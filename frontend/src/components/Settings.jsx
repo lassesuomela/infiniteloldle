@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Config from "../configs/config";
 import Cookies from "universal-cookie";
@@ -21,6 +21,12 @@ export default function Settings() {
   const [isCopied, setIsCopied] = useState(false);
   const [isValidToken, setIsValidToken] = useState(null);
 
+  useEffect(() => {
+    if (localStorage.getItem("userDeleted") && !localStorage.getItem("token")) {
+      setIsShown(true);
+    }
+  }, []);
+
   const ToggleState = () => {
     setIsCopied(false);
     setExportMode(false);
@@ -41,7 +47,7 @@ export default function Settings() {
         { nickname: newNickname },
         {
           headers: { authorization: "Bearer " + localStorage.getItem("token") },
-        }
+        },
       )
       .then((response) => {
         if (response.data.status === "success") {
@@ -67,6 +73,10 @@ export default function Settings() {
           localStorage.removeItem("triesPerDay");
           localStorage.removeItem("gamesPlayed");
           localStorage.setItem("userDeleted", true);
+          localStorage.removeItem("skinGuessHistory");
+          localStorage.removeItem("itemGuessHistory");
+          localStorage.removeItem("oldItemGuessHistory");
+          localStorage.removeItem("championGuessHistory");
           const cookies = new Cookies();
           cookies.remove("isValidToken");
           window.location.reload();
@@ -277,8 +287,8 @@ export default function Settings() {
                             {isValidToken === true
                               ? "Token is valid"
                               : isValidToken === false
-                              ? "Token is not valid"
-                              : ""}
+                                ? "Token is not valid"
+                                : ""}
                           </p>
                           <button
                             className="btn btn-outline-success mt-1"
@@ -293,7 +303,14 @@ export default function Settings() {
                     </div>
                   </>
                 ) : (
-                  <></>
+                  <>
+                    {localStorage.getItem("userDeleted") ? (
+                      <p className="text-warning pb-2">
+                        Your account has been deleted. Create a new account to
+                        continue playing.
+                      </p>
+                    ) : null}
+                  </>
                 )}
 
                 {localStorage.getItem("token") ? (

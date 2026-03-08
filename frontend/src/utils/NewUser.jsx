@@ -42,6 +42,7 @@ export default function NewUser() {
         if (response.data.status === "success") {
           localStorage.setItem("token", response.data.token);
           localStorage.removeItem("createNewUser");
+          localStorage.removeItem("userDeleted");
           cookies.set("isValidToken", true, {
             path: "/",
             maxAge: 86400,
