@@ -54,7 +54,7 @@ function App() {
         </Routes>
       </div>
       <Footer />
-      <ToastContainer position="top-right" />
+      <ToastContainer position="bottom-right" theme="dark" newestOnTop />
     </Provider>
   );
 }

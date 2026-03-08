@@ -8,7 +8,7 @@ export const handleResponseError = (error) => {
       {
         toastId: "rate-limit-error",
         autoClose: 5000,
-      }
+      },
     );
   }
   return Promise.reject(error);
@@ -17,7 +17,7 @@ export const handleResponseError = (error) => {
 const setupAxiosInterceptors = () => {
   const interceptorId = axios.interceptors.response.use(
     (response) => response,
-    handleResponseError
+    handleResponseError,
   );
   return () => axios.interceptors.response.eject(interceptorId);
 };
