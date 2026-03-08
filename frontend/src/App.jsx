@@ -2,11 +2,16 @@ import "./Game.css";
 import "./Main.css";
 
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import * as Sentry from "@sentry/react";
 Sentry.init({
   dsn: "https://e42b9037954c7284ab059e22848fa3fa@o4506107190575104.ingest.us.sentry.io/4510851852402688",
   sendDefaultPii: true,
 });
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import setupAxiosInterceptors from "./utils/axiosInterceptor";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -25,6 +30,11 @@ import store from "./store/store";
 import Ability from "./views/Ability";
 
 function App() {
+  useEffect(() => {
+    const eject = setupAxiosInterceptors();
+    return eject;
+  }, []);
+
   return (
     <Provider store={store}>
       <Header />
@@ -44,6 +54,7 @@ function App() {
         </Routes>
       </div>
       <Footer />
+      <ToastContainer position="bottom-right" theme="dark" newestOnTop />
     </Provider>
   );
 }
