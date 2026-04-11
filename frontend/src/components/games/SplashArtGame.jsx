@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Victory from "./components/Victory";
@@ -35,12 +35,12 @@ export default function SplashArtGame() {
   const [guessCount, setGuessCount] = useState(0);
   const [clueBoxKey, setClueBoxKey] = useState(0);
 
-  const isColorBlindMode = useSelector(
-    (state) => state.colorBlindReducer.isColorBlindMode
-  );
-
   const isMonochrome = useSelector(
     (state) => state.monochromeReducer.isMonochrome
+  );
+
+  const isColorBlindMode = useSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode
   );
 
   const randomRotate = useSelector(
@@ -144,11 +144,8 @@ export default function SplashArtGame() {
         if (currentGuessCount !== undefined) {
           setGuessCount(currentGuessCount);
         }
-        // Use object instead of tuple
         setChampions((champions) => [{ key, isCorrect, name }, ...champions]);
         addToSkinGuessHistory({ key, isCorrect, name });
-
-        const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
           if (guesses.length === 0) {
@@ -158,10 +155,11 @@ export default function SplashArtGame() {
           setCorrectGuess(true);
           clearSkinHistory();
           setTitle(response.data.title);
-
-          spriteImg.style.filter = "";
+          // Fetch unblurred image on correct guess
+          FetchSplashArt();
         } else {
-          ApplyBlur(guesses.length + 1);
+          // Fetch more-revealed (less blurred) image
+          FetchSplashArt();
         }
       })
       .catch((error) => {
@@ -170,34 +168,7 @@ export default function SplashArtGame() {
       });
   };
 
-  const ApplyBlur = useCallback(
-    (guessCount) => {
-      const spriteImg = document.getElementById("spriteImg");
-      if (!spriteImg) return;
-
-      const initialBlur = 1.0;
-      let blurVal = initialBlur;
-
-      for (let i = 0; i < guessCount; i++) {
-        blurVal -= blurVal * 0.4;
-      }
-
-      spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
-        isMonochrome ? "grayscale(1)" : ""
-      }`;
-    },
-    [isMonochrome]
-  );
-
-  useEffect(() => {
-    if (sprite) {
-      ApplyBlur(guesses.length);
-    }
-  }, [sprite, guesses, isMonochrome, ApplyBlur]);
-
   const Restart = () => {
-    setTimeout(() => ApplyBlur(0), 0);
-
     FetchSplashArt();
     FetchChampions();
 
@@ -266,14 +237,7 @@ export default function SplashArtGame() {
           />
 
           <div className="d-flex justify-content-evenly">
-            {correctGuess ? (
-              <button
-                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={Restart}
-              >
-                Next
-              </button>
-            ) : (
+            {!correctGuess && (
               <button className="btn btn-dark mb-3 mt-1 min-vw-25">
                 Guess
               </button>
@@ -322,9 +286,11 @@ export default function SplashArtGame() {
         <Victory
           id="victory"
           championKey={champions[0].key}
-          champion={currentGuess}
+          champion={champions[0].name}
           tries={guessCount}
           title={title}
+          isVictory={true}
+          onNextGame={Restart}
         />
       ) : (
         ""

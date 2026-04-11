@@ -202,16 +202,7 @@ export default function Game() {
           />
 
           <div className="d-flex justify-content-evenly">
-            {correctGuess ? (
-              <>
-                <button
-                  className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                  onClick={Restart}
-                >
-                  Next
-                </button>
-              </>
-            ) : (
+            {!correctGuess && (
               <button className="btn btn-dark mb-3 mt-1 min-vw-25">
                 Guess
               </button>
@@ -282,6 +273,8 @@ export default function Game() {
           champion={champions[0][0].guessedChampion}
           tries={guessCount}
           title={title}
+          isVictory={true}
+          onNextGame={Restart}
         />
       ) : (
         ""

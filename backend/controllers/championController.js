@@ -14,6 +14,7 @@ const { PrismaClient } = require("../generated/prisma");
 const skin = require("../models/v2/skin");
 const fsp = require("fs").promises;
 const clueConfig = require("../configs/clues");
+const { applyBlurToImage } = require("../helpers/blur");
 
 const prisma = new PrismaClient();
 
@@ -330,19 +331,16 @@ const GetSplashArt = async (req, res) => {
       });
     }
 
-    const imageName = `${skinData.champion.championKey}_${skinData.key}.webp`;
+    const guessCountKey = GuessCountKeys.splash(userObj.id);
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
 
-    if (cache.checkCache(imageName)) {
-      const data = cache.getCache(imageName);
+    const imageName = `${skinData.champion.championKey}_${skinData.key}.webp`;
+    const cacheKey = `${imageName}_blur_${guessCount}`;
+
+    if (cache.checkCache(cacheKey)) {
+      const data = cache.getCache(cacheKey);
       res.set("X-CACHE", "HIT");
-      res.set(
-        "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageName)).toISOString()
-      );
-      return res.json({
-        status: "success",
-        result: data,
-      });
+      return res.json({ status: "success", result: data });
     }
 
     const imagePath = path.join(
@@ -360,9 +358,12 @@ const GetSplashArt = async (req, res) => {
       });
     }
 
-    const base64 = file.toString("base64");
-    cache.saveCache(imageName, base64);
-    cache.changeTTL(imageName, 3600 * 6);
+    const blurredBuffer = await applyBlurToImage(file, guessCount);
+    const base64 = blurredBuffer.toString("base64");
+
+    cache.saveCache(cacheKey, base64);
+    cache.changeTTL(cacheKey, 3600 * 6);
+    res.set("X-CACHE", "MISS");
 
     return res.json({
       status: "success",
@@ -509,20 +510,17 @@ const GetAbilitySprite = async (req, res) => {
       });
     }
 
+    const guessCountKey = GuessCountKeys.ability(userObj.id);
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+
     // Compose image filename, e.g. championKey_abilityKey.webp
     const imageName = `${abilityData.champion.championKey}_${abilityData.key}.webp`;
+    const cacheKey = `${imageName}_blur_${guessCount}`;
 
-    if (cache.checkCache(imageName)) {
-      const data = cache.getCache(imageName);
+    if (cache.checkCache(cacheKey)) {
+      const data = cache.getCache(cacheKey);
       res.set("X-CACHE", "HIT");
-      res.set(
-        "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageName)).toISOString()
-      );
-      return res.json({
-        status: "success",
-        result: data,
-      });
+      return res.json({ status: "success", result: data });
     }
 
     const imagePath = path.join(
@@ -540,9 +538,12 @@ const GetAbilitySprite = async (req, res) => {
       });
     }
 
-    const base64 = file.toString("base64");
-    cache.saveCache(imageName, base64);
-    cache.changeTTL(imageName, 3600 * 6);
+    const blurredBuffer = await applyBlurToImage(file, guessCount);
+    const base64 = blurredBuffer.toString("base64");
+
+    cache.saveCache(cacheKey, base64);
+    cache.changeTTL(cacheKey, 3600 * 6);
+    res.set("X-CACHE", "MISS");
 
     return res.json({
       status: "success",

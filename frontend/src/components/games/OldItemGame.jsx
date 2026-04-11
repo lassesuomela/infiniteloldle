@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Victory from "./components/Victory";
@@ -11,8 +11,8 @@ import {
 } from "../../utils/saveStats";
 import { Reroll } from "../../utils/reroll";
 import {
+  SelectStyles,
   customFilterOptionItems,
-  HoverSelectStyles,
   SelectTheme,
 } from "./styles/selectStyles";
 import { useSelector } from "react-redux";
@@ -86,31 +86,6 @@ export default function OldItemGame() {
       });
   };
 
-  const ApplyBlur = useCallback(
-    (_guessCount) => {
-      const spriteImg = document.getElementById("spriteImg");
-      if (!spriteImg) return;
-
-      const initialBlur = 1.0;
-      let blurVal = initialBlur;
-
-      for (let i = 0; i < _guessCount; i++) {
-        blurVal -= blurVal * 0.4;
-      }
-
-      spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
-        isMonochrome ? "grayscale(1)" : ""
-      }`;
-    },
-    [isMonochrome]
-  );
-
-  useEffect(() => {
-    if (sprite) {
-      ApplyBlur(guesses.length);
-    }
-  }, [sprite, guesses, isMonochrome, ApplyBlur]);
-
   const FetchItemImage = () => {
     axios
       .get(Config.url + "/oldItem", {
@@ -167,10 +142,7 @@ export default function OldItemGame() {
         }
 
         setItems((items) => [{ id: itemId, name, isCorrect }, ...items]);
-
         addToOldItemGuessHistory({ id: itemId, name, isCorrect });
-
-        const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
           if (guesses.length === 0) {
@@ -178,10 +150,12 @@ export default function OldItemGame() {
           }
           saveGamesPlayed();
           setCorrectGuess(true);
-          spriteImg.style.filter = "";
           clearOldItemHistory();
+          // Fetch unblurred image on correct guess
+          FetchItemImage();
         } else {
-          ApplyBlur(guesses.length + 1);
+          // Fetch more-revealed (less blurred) image
+          FetchItemImage();
         }
       })
       .catch((error) => {
@@ -191,8 +165,6 @@ export default function OldItemGame() {
   };
 
   const Restart = () => {
-    setTimeout(() => ApplyBlur(0), 0);
-
     FetchItemImage();
     FetchItems();
 
@@ -218,12 +190,13 @@ export default function OldItemGame() {
 
       <div
         className="container d-flex justify-content-center shadow"
-        id="itemContainer"
+        id="spriteContainer"
       >
         <img
           src={`data:image/webp;base64,${sprite}`}
           style={{
-            transform: `${randomRotate ? "rotate(180deg)" : ""}`,
+            filter: isMonochrome ? "grayscale(1)" : "",
+            transform: randomRotate ? "rotate(180deg)" : "",
           }}
           className="rounded p-4"
           id="spriteImg"
@@ -239,12 +212,13 @@ export default function OldItemGame() {
           id="guess-form"
         >
           <Select
+            className="select"
             options={validGuesses}
             onChange={(selectedOption) => setGuess(selectedOption.value)}
             isDisabled={correctGuess}
-            placeholder="Type items name"
+            placeholder="Type item name"
             filterOption={customFilterOptionItems}
-            styles={HoverSelectStyles}
+            styles={SelectStyles}
             theme={SelectTheme}
             formatOptionLabel={(data) => (
               <div className="select-option">
@@ -254,14 +228,7 @@ export default function OldItemGame() {
           />
 
           <div className="d-flex justify-content-evenly">
-            {correctGuess ? (
-              <button
-                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={Restart}
-              >
-                Next
-              </button>
-            ) : (
+            {!correctGuess && (
               <button className="btn btn-dark mb-3 mt-1 min-vw-25">
                 Guess
               </button>
@@ -297,9 +264,11 @@ export default function OldItemGame() {
         <Victory
           id="victory"
           championKey={items[0]?.id}
-          champion={currentGuess}
+          champion={items[0]?.name}
           tries={guessCount}
           isOldItem={true}
+          isVictory={true}
+          onNextGame={Restart}
         />
       ) : (
         ""

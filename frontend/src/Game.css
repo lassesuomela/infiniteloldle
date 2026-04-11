@@ -123,7 +123,6 @@ small {
 
 .victory > .card {
   color: #fff;
-  background-image: linear-gradient(#408140, #5cb85c);
   border: none;
 }
 
@@ -161,7 +160,8 @@ small {
   max-width: 25vw;
 }
 
-#spriteContainer {
+#spriteContainer,
+#itemContainer {
   width: 40vw;
   height: auto;
 }
@@ -169,11 +169,6 @@ small {
 #spriteContainer img,
 #itemContainer img {
   width: 100%;
-}
-
-#itemContainer {
-  width: 30vw;
-  height: auto;
 }
 
 .darkBtn {
@@ -352,40 +347,6 @@ small {
     padding: 2em 2em;
   }
 
-  #itemContainer {
-    width: 40vw;
-    height: auto;
-  }
-
-  .scroll-container {
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  #gameTitle .row,
-  .champion-container .row {
-    display: flex;
-    flex-wrap: nowrap;
-    min-width: 800px;
-  }
-
-  #gameTitle .col-1,
-  .champion-container .col-1 {
-    padding: 0em;
-    width: 15%;
-  }
-
-  #gameTitle .col-2,
-  .champion-container .col-2 {
-    padding: 0em;
-    width: 30%;
-  }
-
-  .champion-container .breakWord {
-    white-space: pre-line;
-  }
-
   #spriteContainer,
   #itemContainer {
     width: 70vw;
@@ -456,13 +417,9 @@ small {
     width: 100%;
   }
 
-  #spriteContainer {
-    width: 50vw;
-    height: auto;
-  }
-
+  #spriteContainer,
   #itemContainer {
-    width: 40vw;
+    width: 50vw;
     height: auto;
   }
 
@@ -497,13 +454,9 @@ small {
     width: 75%;
   }
 
-  #spriteContainer {
-    width: 40vw;
-    height: auto;
-  }
-
+  #spriteContainer,
   #itemContainer {
-    width: 30vw;
+    width: 40vw;
     height: auto;
   }
 
@@ -534,13 +487,9 @@ small {
     width: 75%;
   }
 
-  #spriteContainer {
-    width: 40vw;
-    height: auto;
-  }
-
+  #spriteContainer,
   #itemContainer {
-    width: 30vw;
+    width: 40vw;
     height: auto;
   }
 
@@ -577,23 +526,14 @@ small {
     width: 75%;
   }
 
-  #spriteContainer {
-    width: 30vw;
-    height: auto;
-  }
-
+  #spriteContainer,
   #itemContainer {
-    width: 20vw;
+    width: 35vw;
     height: auto;
   }
 
   #championsImgs {
     max-width: 30%;
-  }
-
-  #spriteContainer {
-    width: 35vw;
-    height: auto;
   }
 }
 
@@ -612,7 +552,8 @@ small {
     max-width: 90vw;
   }
 
-  #spriteContainer {
+  #spriteContainer,
+  #itemContainer {
     width: 30vw;
     height: auto;
   }
