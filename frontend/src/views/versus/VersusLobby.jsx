@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "react-toastify";
 
@@ -27,6 +27,13 @@ export default function VersusLobby({
   const [rounds, setRounds] = useState(room.settings.rounds);
   const [maxPlayers, setMaxPlayers] = useState(room.settings.maxPlayers);
   const [gameModes, setGameModes] = useState(room.settings.gameModes);
+
+  // Sync local slider state whenever the server sends back authoritative settings
+  useEffect(() => {
+    setRounds(room.settings.rounds);
+    setMaxPlayers(room.settings.maxPlayers);
+    setGameModes(room.settings.gameModes);
+  }, [room.settings.rounds, room.settings.maxPlayers, room.settings.gameModes]);
 
   const handleCopyCode = () => {
     toast.success("Room code copied!");

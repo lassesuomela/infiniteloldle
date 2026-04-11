@@ -7,6 +7,12 @@ const SOCKET_URL =
 
 export function useVersusSocket(handlers) {
   const socketRef = useRef(null);
+  // Always keep a ref to the latest handlers so socket listeners
+  // are never stale, even after re-renders.
+  const handlersRef = useRef(handlers);
+  useEffect(() => {
+    handlersRef.current = handlers;
+  });
 
   useEffect(() => {
     const socket = io(SOCKET_URL, {
@@ -19,89 +25,39 @@ export function useVersusSocket(handlers) {
 
     socketRef.current = socket;
 
+    const on = (event, key) => {
+      socket.on(event, (data) => {
+        if (handlersRef.current[key]) handlersRef.current[key](data);
+      });
+    };
+
     socket.on("connect", () => {
-      if (handlers.onConnect) handlers.onConnect(socket.id);
+      if (handlersRef.current.onConnect) handlersRef.current.onConnect(socket.id);
     });
 
     socket.on("disconnect", () => {
-      if (handlers.onDisconnect) handlers.onDisconnect();
+      if (handlersRef.current.onDisconnect) handlersRef.current.onDisconnect();
     });
 
-    socket.on("roomCreated", (data) => {
-      if (handlers.onRoomCreated) handlers.onRoomCreated(data);
-    });
-
-    socket.on("roomJoined", (data) => {
-      if (handlers.onRoomJoined) handlers.onRoomJoined(data);
-    });
-
-    socket.on("playerJoined", (data) => {
-      if (handlers.onPlayerJoined) handlers.onPlayerJoined(data);
-    });
-
-    socket.on("playerLeft", (data) => {
-      if (handlers.onPlayerLeft) handlers.onPlayerLeft(data);
-    });
-
-    socket.on("playerKicked", (data) => {
-      if (handlers.onPlayerKicked) handlers.onPlayerKicked(data);
-    });
-
-    socket.on("hostChanged", (data) => {
-      if (handlers.onHostChanged) handlers.onHostChanged(data);
-    });
-
-    socket.on("gameStarted", (data) => {
-      if (handlers.onGameStarted) handlers.onGameStarted(data);
-    });
-
-    socket.on("roundStarted", (data) => {
-      if (handlers.onRoundStarted) handlers.onRoundStarted(data);
-    });
-
-    socket.on("correctGuess", (data) => {
-      if (handlers.onCorrectGuess) handlers.onCorrectGuess(data);
-    });
-
-    socket.on("roundEnded", (data) => {
-      if (handlers.onRoundEnded) handlers.onRoundEnded(data);
-    });
-
-    socket.on("gamePaused", (data) => {
-      if (handlers.onGamePaused) handlers.onGamePaused(data);
-    });
-
-    socket.on("gameResumed", (data) => {
-      if (handlers.onGameResumed) handlers.onGameResumed(data);
-    });
-
-    socket.on("gameEnded", (data) => {
-      if (handlers.onGameEnded) handlers.onGameEnded(data);
-    });
-
-    socket.on("error", (data) => {
-      if (handlers.onError) handlers.onError(data);
-    });
-
-    socket.on("authenticated", (data) => {
-      if (handlers.onAuthenticated) handlers.onAuthenticated(data);
-    });
-
-    socket.on("guessResult", (data) => {
-      if (handlers.onGuessResult) handlers.onGuessResult(data);
-    });
-
-    socket.on("settingsUpdated", (data) => {
-      if (handlers.onSettingsUpdated) handlers.onSettingsUpdated(data);
-    });
-
-    socket.on("lobbyReset", (data) => {
-      if (handlers.onLobbyReset) handlers.onLobbyReset(data);
-    });
-
-    socket.on("kicked", (data) => {
-      if (handlers.onKicked) handlers.onKicked(data);
-    });
+    on("roomCreated", "onRoomCreated");
+    on("roomJoined", "onRoomJoined");
+    on("playerJoined", "onPlayerJoined");
+    on("playerLeft", "onPlayerLeft");
+    on("playerKicked", "onPlayerKicked");
+    on("hostChanged", "onHostChanged");
+    on("gameStarted", "onGameStarted");
+    on("roundStarted", "onRoundStarted");
+    on("correctGuess", "onCorrectGuess");
+    on("roundEnded", "onRoundEnded");
+    on("gamePaused", "onGamePaused");
+    on("gameResumed", "onGameResumed");
+    on("gameEnded", "onGameEnded");
+    on("error", "onError");
+    on("authenticated", "onAuthenticated");
+    on("guessResult", "onGuessResult");
+    on("settingsUpdated", "onSettingsUpdated");
+    on("lobbyReset", "onLobbyReset");
+    on("kicked", "onKicked");
 
     return () => {
       socket.disconnect();
