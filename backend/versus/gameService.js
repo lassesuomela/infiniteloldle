@@ -67,7 +67,9 @@ async function selectRoundContent(mode) {
     const oldItems = await oldItemV2.findAll();
     const random = oldItems[Math.floor(Math.random() * oldItems.length)];
     const imageName = `${random.old_item_key}.webp`;
-    const imageBase64 = await loadImageBase64(path.join(OLD_ITEMS_DIR, imageName));
+    const imageBase64 = await loadImageBase64(
+      path.join(OLD_ITEMS_DIR, imageName),
+    );
     return {
       answer: random.name,
       imageBase64,
@@ -81,7 +83,9 @@ async function selectRoundContent(mode) {
     const random = abilities[Math.floor(Math.random() * abilities.length)];
     const champ = await championV2.findById(random.championId);
     const imageName = `${champ.championKey}_${random.key}.webp`;
-    const imageBase64 = await loadImageBase64(path.join(ABILITIES_DIR, imageName));
+    const imageBase64 = await loadImageBase64(
+      path.join(ABILITIES_DIR, imageName),
+    );
     return {
       answer: champ.name,
       imageBase64,
@@ -242,12 +246,18 @@ async function pauseGame(code, playerId) {
   const room = await getRoom(code);
   if (!room) return null;
   if (room.state !== "in_round") return null;
+  if (room.pauseState?.isPaused) return room;
+  if (room.pauseState?.disconnectedPlayerId === playerId) return room;
+
+  const now = Date.now();
 
   room.state = "paused";
   room.pauseState = {
     isPaused: true,
     reason: "disconnect",
-    resumeAt: Date.now() + PAUSE_DURATION_MS,
+    pausedAt: now,
+    resumeAt: now + PAUSE_DURATION_MS,
+    duration: PAUSE_DURATION_MS,
     disconnectedPlayerId: playerId,
   };
 

@@ -82,7 +82,9 @@ async function removePlayer(code, playerId) {
   }
 
   if (wasHost) {
-    const nextHost = room.players.slice().sort((a, b) => a.joinedAt - b.joinedAt)[0];
+    const nextHost = room.players
+      .slice()
+      .sort((a, b) => a.joinedAt - b.joinedAt)[0];
     room.hostId = nextHost.id;
   }
 
@@ -108,7 +110,8 @@ async function updateSettings(code, hostId, settings = {}) {
   const room = await getRoom(code);
   if (!room) return { error: "Room not found" };
   if (room.hostId !== hostId) return { error: "Only host can change settings" };
-  if (room.state !== "lobby") return { error: "Settings can only be changed in lobby" };
+  if (room.state !== "lobby")
+    return { error: "Settings can only be changed in lobby" };
 
   const VALID_MODES = ["champion", "splash", "item", "legacy_item", "ability"];
 
@@ -147,7 +150,9 @@ async function returnToLobby(code, hostId) {
   room.currentServerData = null;
   room.winnerId = null;
   room.pauseState = null;
-  room.players.forEach((p) => { p.score = 0; });
+  room.players.forEach((p) => {
+    p.score = 0;
+  });
   room.maxRounds = room.settings.rounds;
 
   await setRoom(code, room);

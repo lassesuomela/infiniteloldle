@@ -4,18 +4,33 @@ export default function PauseOverlay({ pauseState, isHost, onForceResume }) {
   const [secondsLeft, setSecondsLeft] = useState(0);
 
   useEffect(() => {
+    if (!pauseState?.pausedAt || !pauseState?.duration) return;
+
+    let interval;
+
     const updateCountdown = () => {
-      const remaining = Math.max(
-        0,
-        Math.floor((pauseState.resumeAt - Date.now()) / 1000)
-      );
-      setSecondsLeft(remaining);
+      setSecondsLeft((prev) => {
+        let remaining;
+
+        if (!prev) {
+          remaining = Math.ceil(pauseState.duration / 1000);
+        } else {
+          remaining = Math.max(0, prev - 1);
+        }
+
+        if (remaining === 0) {
+          clearInterval(interval);
+        }
+
+        return remaining;
+      });
     };
 
     updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
+    interval = setInterval(updateCountdown, 1000);
+
     return () => clearInterval(interval);
-  }, [pauseState.resumeAt]);
+  }, [pauseState?.pausedAt, pauseState?.duration]);
 
   return (
     <div
@@ -36,21 +51,19 @@ export default function PauseOverlay({ pauseState, isHost, onForceResume }) {
         >
           pause_circle
         </span>
+
         <h4 className="text-white">Game Paused</h4>
-        <p className="text-muted">
-          A player disconnected. Resuming in...
-        </p>
+        <p className="text-muted">A player disconnected. Resuming in...</p>
+
         <div
           className="display-4 text-warning fw-bold mb-3"
           style={{ fontFamily: "monospace" }}
         >
           {secondsLeft}s
         </div>
+
         {isHost && (
-          <button
-            className="btn btn-warning mt-2"
-            onClick={onForceResume}
-          >
+          <button className="btn btn-warning mt-2" onClick={onForceResume}>
             Force Resume
           </button>
         )}
