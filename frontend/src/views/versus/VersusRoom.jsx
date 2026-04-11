@@ -10,7 +10,7 @@ import VersusScoreboard from "./VersusScoreboard";
 export default function VersusRoom() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { action, code: joinCode, nickname } = location.state || {};
+  const { action, code: joinCode } = location.state || {};
 
   const [room, setRoom] = useState(null);
   const [myPlayerId, setMyPlayerId] = useState(null);
@@ -28,14 +28,13 @@ export default function VersusRoom() {
   }, []);
 
   const handlers = {
-    onConnect: (id) => {
-      setMyPlayerId(id);
-    },
-    onRoomCreated: ({ room }) => {
+    onRoomCreated: ({ room, myUserId }) => {
+      setMyPlayerId(myUserId);
       updateRoom(room);
       setGamePhase("lobby");
     },
-    onRoomJoined: ({ room }) => {
+    onRoomJoined: ({ room, myUserId }) => {
+      setMyPlayerId(myUserId);
       updateRoom(room);
       if (room.state === "game_end") {
         setGamePhase("scoreboard");
@@ -102,31 +101,28 @@ export default function VersusRoom() {
     },
   };
 
-  const { emit, getSocketId } = useVersusSocket(handlers);
+  const { emit } = useVersusSocket(handlers);
 
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
 
-    if (!action || !nickname) {
+    if (!action) {
       navigate("/game/versus");
       return;
     }
 
-    // Wait a tick for socket to connect
+    // Wait a tick for socket to connect and authenticate
     const timer = setTimeout(() => {
-      const id = getSocketId();
-      if (id) setMyPlayerId(id);
-
       if (action === "create") {
-        emit("createRoom", { nickname });
+        emit("createRoom");
       } else if (action === "join") {
-        emit("joinRoom", { code: joinCode, nickname });
+        emit("joinRoom", { code: joinCode });
       }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [action, joinCode, nickname, emit, navigate, getSocketId]);
+  }, [action, joinCode, emit, navigate]);
 
   const handleStartGame = useCallback(() => {
     emit("startGame");

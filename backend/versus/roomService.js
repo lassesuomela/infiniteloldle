@@ -104,29 +104,24 @@ async function kickPlayer(code, hostId, targetPlayerId) {
   return { room, kicked: target };
 }
 
-async function reconnectPlayer(code, playerId, socketId) {
+async function reconnectPlayer(code, userId) {
   const room = await getRoom(code);
   if (!room) return { error: "Room not found" };
 
-  const player = room.players.find((p) => p.id === playerId);
+  const player = room.players.find((p) => p.id === userId);
   if (!player) return { error: "Player not found in room" };
 
   player.isConnected = true;
-  player.id = socketId;
 
   let resumed = false;
   if (
     room.state === "paused" &&
     room.pauseState &&
-    room.pauseState.disconnectedPlayerId === playerId
+    room.pauseState.disconnectedPlayerId === userId
   ) {
     room.state = "in_round";
     room.pauseState = null;
     resumed = true;
-  }
-
-  if (room.hostId === playerId) {
-    room.hostId = socketId;
   }
 
   await setRoom(code, room);

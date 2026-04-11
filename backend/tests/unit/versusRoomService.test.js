@@ -173,4 +173,48 @@ describe("Versus roomService", () => {
       expect(result.error).toBe("Can only kick in lobby");
     });
   });
+
+  describe("reconnectPlayer", () => {
+    it("marks player as connected", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      room.players.push({ id: "p2", nickname: "P2", score: 2, isConnected: false, joinedAt: Date.now() });
+      getRoom.mockResolvedValue(room);
+      setRoom.mockResolvedValue(undefined);
+
+      const result = await roomService.reconnectPlayer(room.code, "p2");
+
+      expect(result.error).toBeUndefined();
+      expect(result.player.isConnected).toBe(true);
+      expect(result.resumed).toBe(false);
+    });
+
+    it("resumes paused game when disconnected player reconnects", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      room.players.push({ id: "p2", nickname: "P2", score: 0, isConnected: false, joinedAt: Date.now() });
+      room.state = "paused";
+      room.pauseState = { isPaused: true, reason: "disconnect", resumeAt: Date.now() + 10000, disconnectedPlayerId: "p2" };
+      getRoom.mockResolvedValue(room);
+      setRoom.mockResolvedValue(undefined);
+
+      const result = await roomService.reconnectPlayer(room.code, "p2");
+
+      expect(result.resumed).toBe(true);
+      expect(result.room.state).toBe("in_round");
+      expect(result.room.pauseState).toBeNull();
+    });
+
+    it("returns error if room not found", async () => {
+      getRoom.mockResolvedValue(null);
+      const result = await roomService.reconnectPlayer("NOROOM", "p1");
+      expect(result.error).toBe("Room not found");
+    });
+
+    it("returns error if player not found in room", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      getRoom.mockResolvedValue(room);
+
+      const result = await roomService.reconnectPlayer(room.code, "unknown");
+      expect(result.error).toBe("Player not found in room");
+    });
+  });
 });

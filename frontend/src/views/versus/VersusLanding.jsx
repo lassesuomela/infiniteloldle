@@ -7,10 +7,6 @@ export default function VersusLanding() {
   const [searchParams] = useSearchParams();
   const [view, setView] = useState("landing"); // landing | create | join
   const [joinCode, setJoinCode] = useState(searchParams.get("code") || "");
-  const [nickname, setNickname] = useState(() => {
-    const stored = localStorage.getItem("nickname") || "";
-    return stored.slice(0, 30);
-  });
 
   useEffect(() => {
     // If code is in URL params, go straight to join view
@@ -21,22 +17,18 @@ export default function VersusLanding() {
 
   const handleCreate = (e) => {
     e.preventDefault();
-    if (!nickname.trim()) return;
-    localStorage.setItem("nickname", nickname.trim());
     navigate("/game/versus/room", {
-      state: { action: "create", nickname: nickname.trim() },
+      state: { action: "create" },
     });
   };
 
   const handleJoin = (e) => {
     e.preventDefault();
-    if (!nickname.trim() || !joinCode.trim()) return;
-    localStorage.setItem("nickname", nickname.trim());
+    if (!joinCode.trim()) return;
     navigate("/game/versus/room", {
       state: {
         action: "join",
         code: joinCode.trim().toUpperCase(),
-        nickname: nickname.trim(),
       },
     });
   };
@@ -106,32 +98,25 @@ export default function VersusLanding() {
           <div className="col-12 col-md-6">
             <div className="card bg-dark border-secondary p-4">
               <h4 className="text-white mb-4">Create a Room</h4>
-              <form onSubmit={handleCreate}>
-                <div className="mb-3">
-                  <label className="form-label text-white">Your Nickname</label>
-                  <input
-                    type="text"
-                    className="form-control bg-secondary text-white border-0"
-                    placeholder="Enter nickname"
-                    maxLength={30}
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="d-flex gap-2">
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={() => setView("landing")}
-                  >
-                    Back
-                  </button>
-                  <button type="submit" className="btn btn-warning flex-grow-1">
-                    Create Room
-                  </button>
-                </div>
-              </form>
+              <p className="text-muted mb-4">
+                Your username will be used automatically from your profile.
+              </p>
+              <div className="d-flex gap-2">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setView("landing")}
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-warning flex-grow-1"
+                  onClick={handleCreate}
+                >
+                  Create Room
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -143,18 +128,6 @@ export default function VersusLanding() {
             <div className="card bg-dark border-secondary p-4">
               <h4 className="text-white mb-4">Join a Room</h4>
               <form onSubmit={handleJoin}>
-                <div className="mb-3">
-                  <label className="form-label text-white">Your Nickname</label>
-                  <input
-                    type="text"
-                    className="form-control bg-secondary text-white border-0"
-                    placeholder="Enter nickname"
-                    maxLength={30}
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    required
-                  />
-                </div>
                 <div className="mb-3">
                   <label className="form-label text-white">Room Code</label>
                   <input

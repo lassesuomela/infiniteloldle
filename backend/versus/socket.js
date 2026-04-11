@@ -1,62 +1,98 @@
 const roomService = require("./roomService");
 const gameService = require("./gameService");
+const userV2 = require("../models/v2/user");
 
 const ROUND_TRANSITION_DELAY_MS = 3000;
 const PAUSE_AUTO_RESUME_DELAY_MS = 15000;
 
-// Map from socketId to { code, playerId }
-const socketToRoom = new Map();
+// Map from socketId to { code, userId }
+const socketToSession = new Map();
+
+// Map from socketId to { userId, nickname }
+const socketToUser = new Map();
+
+// Map from userId to socketId (used to locate a player's socket for kick)
+const userToSocket = new Map();
 
 // Map from code to pauseTimeout timer
 const pauseTimers = new Map();
 
 function setupVersusSocket(io) {
-  io.on("connection", (socket) => {
-    console.log(`[versus] Socket connected: ${socket.id}`);
+  io.on("connection", async (socket) => {
+    const token = socket.handshake.auth?.token;
 
-    // createRoom: { nickname, settings }
-    socket.on("createRoom", async ({ nickname, settings } = {}) => {
+    if (!token) {
+      socket.emit("error", { message: "Authentication required" });
+      socket.disconnect(true);
+      return;
+    }
+
+    let dbUser;
+    try {
+      dbUser = await userV2.findByToken(token);
+    } catch (err) {
+      socket.emit("error", { message: "Authentication error" });
+      socket.disconnect(true);
+      return;
+    }
+
+    if (!dbUser) {
+      socket.emit("error", { message: "Invalid token" });
+      socket.disconnect(true);
+      return;
+    }
+
+    const { id: userId, nickname } = dbUser;
+    socketToUser.set(socket.id, { userId, nickname });
+    userToSocket.set(userId, socket.id);
+
+    console.log(`[versus] Socket connected: ${socket.id} (user: ${userId})`);
+
+    // createRoom: { settings }
+    socket.on("createRoom", async ({ settings } = {}) => {
       try {
-        const playerId = socket.id;
-        const room = roomService.createRoom(
-          playerId,
-          nickname || "Anonymous",
-          settings
-        );
+        const { userId: uid, nickname: nick } = socketToUser.get(socket.id);
+        const room = roomService.createRoom(uid, nick, settings);
         await roomService.setRoom(room.code, room);
 
-        socketToRoom.set(socket.id, { code: room.code, playerId });
+        socketToSession.set(socket.id, { code: room.code, userId: uid });
         socket.join(room.code);
 
-        socket.emit("roomCreated", { room: sanitizeRoom(room) });
+        socket.emit("roomCreated", {
+          room: sanitizeRoom(room),
+          myUserId: uid,
+        });
       } catch (err) {
         socket.emit("error", { message: err.message });
       }
     });
 
-    // joinRoom: { code, nickname }
-    socket.on("joinRoom", async ({ code, nickname } = {}) => {
+    // joinRoom: { code }
+    socket.on("joinRoom", async ({ code } = {}) => {
       try {
         if (!code)
           return socket.emit("error", { message: "Code is required" });
 
-        const playerId = socket.id;
+        const { userId: uid, nickname: nick } = socketToUser.get(socket.id);
         const result = await roomService.addPlayer(
           code.toUpperCase(),
-          playerId,
-          nickname || "Anonymous"
+          uid,
+          nick
         );
 
         if (result.error)
           return socket.emit("error", { message: result.error });
 
-        socketToRoom.set(socket.id, {
+        socketToSession.set(socket.id, {
           code: result.room.code,
-          playerId,
+          userId: uid,
         });
         socket.join(result.room.code);
 
-        socket.emit("roomJoined", { room: sanitizeRoom(result.room) });
+        socket.emit("roomJoined", {
+          room: sanitizeRoom(result.room),
+          myUserId: uid,
+        });
         socket.to(result.room.code).emit("playerJoined", {
           player: result.player,
           room: sanitizeRoom(result.room),
@@ -66,29 +102,30 @@ function setupVersusSocket(io) {
       }
     });
 
-    // reconnect: { code, playerId }
-    socket.on("reconnect", async ({ code, playerId } = {}) => {
+    // reconnect: { code }
+    socket.on("reconnect", async ({ code } = {}) => {
       try {
-        if (!code || !playerId)
-          return socket.emit("error", {
-            message: "Code and playerId required",
-          });
+        if (!code)
+          return socket.emit("error", { message: "Code is required" });
 
+        const { userId: uid } = socketToUser.get(socket.id);
         const result = await roomService.reconnectPlayer(
           code.toUpperCase(),
-          playerId,
-          socket.id
+          uid
         );
         if (result.error)
           return socket.emit("error", { message: result.error });
 
-        socketToRoom.set(socket.id, {
+        socketToSession.set(socket.id, {
           code: result.room.code,
-          playerId: socket.id,
+          userId: uid,
         });
         socket.join(result.room.code);
 
-        socket.emit("roomJoined", { room: sanitizeRoom(result.room) });
+        socket.emit("roomJoined", {
+          room: sanitizeRoom(result.room),
+          myUserId: uid,
+        });
 
         if (result.resumed) {
           clearPauseTimer(result.room.code);
@@ -106,34 +143,40 @@ function setupVersusSocket(io) {
       await handlePlayerLeave(socket, io, "leave");
     });
 
-    // kickPlayer: { playerId }
-    socket.on("kickPlayer", async ({ playerId } = {}) => {
+    // kickPlayer: { playerId } — playerId is the target DB userId
+    socket.on("kickPlayer", async ({ playerId: targetUserId } = {}) => {
       try {
-        const session = socketToRoom.get(socket.id);
+        const session = socketToSession.get(socket.id);
         if (!session)
           return socket.emit("error", { message: "Not in a room" });
 
+        const { userId: hostUserId } = socketToUser.get(socket.id);
         const result = await roomService.kickPlayer(
           session.code,
-          session.playerId,
-          playerId
+          hostUserId,
+          targetUserId
         );
         if (result.error)
           return socket.emit("error", { message: result.error });
 
-        // Notify and disconnect the kicked player's socket
-        const kickedSocket = io.sockets.sockets.get(playerId);
-        if (kickedSocket) {
-          socketToRoom.delete(playerId);
-          kickedSocket.leave(session.code);
-          kickedSocket.emit("playerKicked", {
-            playerId,
-            room: sanitizeRoom(result.room),
-          });
+        // Disconnect the kicked player's socket
+        const kickedSocketId = userToSocket.get(targetUserId);
+        if (kickedSocketId) {
+          const kickedSocket = io.sockets.sockets.get(kickedSocketId);
+          if (kickedSocket) {
+            socketToSession.delete(kickedSocketId);
+            socketToUser.delete(kickedSocketId);
+            kickedSocket.leave(session.code);
+            kickedSocket.emit("playerKicked", {
+              playerId: targetUserId,
+              room: sanitizeRoom(result.room),
+            });
+          }
+          userToSocket.delete(targetUserId);
         }
 
         io.to(session.code).emit("playerKicked", {
-          playerId,
+          playerId: targetUserId,
           room: sanitizeRoom(result.room),
         });
       } catch (err) {
@@ -144,14 +187,15 @@ function setupVersusSocket(io) {
     // startGame
     socket.on("startGame", async () => {
       try {
-        const session = socketToRoom.get(socket.id);
+        const session = socketToSession.get(socket.id);
         if (!session)
           return socket.emit("error", { message: "Not in a room" });
 
+        const { userId: uid } = socketToUser.get(socket.id);
         const room = await roomService.getRoom(session.code);
         if (!room)
           return socket.emit("error", { message: "Room not found" });
-        if (room.hostId !== session.playerId)
+        if (room.hostId !== uid)
           return socket.emit("error", { message: "Only host can start" });
 
         const startResult = await gameService.startGame(session.code);
@@ -172,14 +216,15 @@ function setupVersusSocket(io) {
     // forceResumeGame
     socket.on("forceResumeGame", async () => {
       try {
-        const session = socketToRoom.get(socket.id);
+        const session = socketToSession.get(socket.id);
         if (!session)
           return socket.emit("error", { message: "Not in a room" });
 
+        const { userId: uid } = socketToUser.get(socket.id);
         const room = await roomService.getRoom(session.code);
         if (!room)
           return socket.emit("error", { message: "Room not found" });
-        if (room.hostId !== session.playerId)
+        if (room.hostId !== uid)
           return socket.emit("error", {
             message: "Only host can force resume",
           });
@@ -200,15 +245,16 @@ function setupVersusSocket(io) {
     // submitGuess: { guess }
     socket.on("submitGuess", async ({ guess } = {}) => {
       try {
-        const session = socketToRoom.get(socket.id);
+        const session = socketToSession.get(socket.id);
         if (!session)
           return socket.emit("error", { message: "Not in a room" });
         if (!guess)
           return socket.emit("error", { message: "Guess is required" });
 
+        const { userId: uid } = socketToUser.get(socket.id);
         const result = await gameService.handleGuess(
           session.code,
-          session.playerId,
+          uid,
           guess
         );
         if (result.error)
@@ -216,7 +262,7 @@ function setupVersusSocket(io) {
         if (!result.correct) return;
 
         io.to(session.code).emit("correctGuess", {
-          playerId: session.playerId,
+          playerId: uid,
           nickname: result.winner.nickname,
           answer: result.answer,
           scores: result.scores,
@@ -233,16 +279,21 @@ function setupVersusSocket(io) {
 
     // Handle disconnect
     socket.on("disconnect", async () => {
-      console.log(`[versus] Socket disconnected: ${socket.id}`);
+      const userInfo = socketToUser.get(socket.id);
+      if (userInfo && userToSocket.get(userInfo.userId) === socket.id) {
+        userToSocket.delete(userInfo.userId);
+      }
+      socketToUser.delete(socket.id);
+      console.log(`[versus] Socket disconnected: ${socket.id} (user: ${userInfo?.userId})`);
       await handlePlayerLeave(socket, io, "disconnect");
     });
   });
 }
 
 async function handlePlayerLeave(socket, io, reason) {
-  const session = socketToRoom.get(socket.id);
+  const session = socketToSession.get(socket.id);
   if (!session) return;
-  socketToRoom.delete(socket.id);
+  socketToSession.delete(socket.id);
 
   const room = await roomService.getRoom(session.code);
   if (!room) return;
@@ -250,7 +301,7 @@ async function handlePlayerLeave(socket, io, reason) {
   if (reason === "disconnect" && room.state === "in_round") {
     const paused = await gameService.pauseGame(
       session.code,
-      session.playerId
+      session.userId
     );
     if (paused) {
       io.to(session.code).emit("gamePaused", {
@@ -276,13 +327,13 @@ async function handlePlayerLeave(socket, io, reason) {
 
   const result = await roomService.removePlayer(
     session.code,
-    session.playerId
+    session.userId
   );
   if (!result) return;
   if (result.deleted) return;
 
   io.to(session.code).emit("playerLeft", {
-    playerId: session.playerId,
+    playerId: session.userId,
     room: sanitizeRoom(result.room),
   });
 

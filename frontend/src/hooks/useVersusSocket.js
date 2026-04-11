@@ -12,6 +12,9 @@ export function useVersusSocket(handlers) {
     const socket = io(SOCKET_URL, {
       path: "/socket.io",
       transports: ["websocket", "polling"],
+      auth: {
+        token: localStorage.getItem("token"),
+      },
     });
 
     socketRef.current = socket;
