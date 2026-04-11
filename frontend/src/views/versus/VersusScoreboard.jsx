@@ -4,20 +4,35 @@ export default function VersusScoreboard({ scoreboard, room, myPlayerId, onPlayA
   const medalEmojis = ["🥇", "🥈", "🥉"];
   const isHost = room && room.hostId === myPlayerId;
 
+  const myEntry = scoreboard.find((e) => e.id === myPlayerId);
+  const myRank = scoreboard.findIndex((e) => e.id === myPlayerId);
+  const isVictory = myRank === 0;
+  const winner = scoreboard[0];
+
+  const headerStyle = {
+    backgroundImage: isVictory
+      ? "linear-gradient(#408140, #5cb85c)"
+      : "linear-gradient(#7a1a1a, #c0392b)",
+    borderRadius: "0.5rem",
+    padding: "1.5rem",
+    marginBottom: "1.5rem",
+  };
+
   return (
     <div className="row justify-content-center">
       <div className="col-12 col-md-6">
-        <div className="text-center mb-4">
-          <span
-            className="material-symbols-outlined text-warning"
-            style={{ fontSize: "4rem" }}
-          >
-            emoji_events
-          </span>
-          <h2 className="text-white">Game Over!</h2>
-          {scoreboard.length > 0 && (
-            <p className="text-muted">
-              🎉 <strong className="text-warning">{scoreboard[0].nickname}</strong> wins!
+        <div className="text-center" style={headerStyle}>
+          <h2 className="text-white fw-bold mb-2">
+            {isVictory ? "Victory!" : "Defeat"}
+          </h2>
+          {myEntry && (
+            <p className="mb-1" style={{ color: "rgba(255,255,255,0.9)" }}>
+              {myEntry.nickname}
+            </p>
+          )}
+          {winner && !isVictory && (
+            <p className="mb-0" style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.9em" }}>
+              🏆 <strong>{winner.nickname}</strong> wins!
             </p>
           )}
         </div>
