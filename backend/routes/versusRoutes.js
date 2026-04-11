@@ -39,7 +39,7 @@ router.get("/versus/splash/:championKey/:skinKey", async (req, res) => {
         .json({ status: "error", message: "Invalid parameters" });
     }
 
-    const imageName = `${championKey}_${skinKey}.webp`;
+    const imageName = path.basename(`${championKey}_${skinKey}.webp`);
     const cacheKey = `versus:splash:${imageName}`;
 
     if (cache.checkCache(cacheKey)) {
@@ -96,7 +96,7 @@ router.get("/versus/oldItem/:key", async (req, res) => {
         .json({ status: "error", message: "Invalid parameters" });
     }
 
-    const imageName = `${key}.webp`;
+    const imageName = path.basename(`${key}.webp`);
     const cacheKey = `versus:oldItem:${imageName}`;
 
     if (cache.checkCache(cacheKey)) {
