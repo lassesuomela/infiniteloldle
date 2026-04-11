@@ -99,9 +99,20 @@ export default function VersusRoom() {
     onError: ({ message }) => {
       toast.error(message);
     },
+    onAuthenticated: (_) => {
+      init();
+    },
   };
 
   const { emit } = useVersusSocket(handlers);
+
+  const init = () => {
+    if (action === "create") {
+      emit("createRoom", {});
+    } else if (action === "join") {
+      emit("joinRoom", { code: joinCode });
+    }
+  };
 
   useEffect(() => {
     if (initialized.current) return;
@@ -111,18 +122,7 @@ export default function VersusRoom() {
       navigate("/game/versus");
       return;
     }
-
-    // Wait a tick for socket to connect and authenticate
-    const timer = setTimeout(() => {
-      if (action === "create") {
-        emit("createRoom");
-      } else if (action === "join") {
-        emit("joinRoom", { code: joinCode });
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [action, joinCode, emit, navigate]);
+  }, [action, joinCode, navigate]);
 
   const handleStartGame = useCallback(() => {
     emit("startGame");
@@ -132,7 +132,7 @@ export default function VersusRoom() {
     (playerId) => {
       emit("kickPlayer", { playerId });
     },
-    [emit]
+    [emit],
   );
 
   const handleLeaveRoom = useCallback(() => {
@@ -144,7 +144,7 @@ export default function VersusRoom() {
     (guess) => {
       emit("submitGuess", { guess });
     },
-    [emit]
+    [emit],
   );
 
   const handleForceResume = useCallback(() => {

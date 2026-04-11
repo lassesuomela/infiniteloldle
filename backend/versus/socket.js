@@ -48,6 +48,8 @@ function setupVersusSocket(io) {
 
     console.log(`[versus] Socket connected: ${socket.id} (user: ${userId})`);
 
+    socket.emit("authenticated", { userId });
+
     // createRoom: { settings }
     socket.on("createRoom", async ({ settings } = {}) => {
       try {
@@ -70,14 +72,13 @@ function setupVersusSocket(io) {
     // joinRoom: { code }
     socket.on("joinRoom", async ({ code } = {}) => {
       try {
-        if (!code)
-          return socket.emit("error", { message: "Code is required" });
+        if (!code) return socket.emit("error", { message: "Code is required" });
 
         const { userId: uid, nickname: nick } = socketToUser.get(socket.id);
         const result = await roomService.addPlayer(
           code.toUpperCase(),
           uid,
-          nick
+          nick,
         );
 
         if (result.error)
@@ -105,13 +106,12 @@ function setupVersusSocket(io) {
     // reconnect: { code }
     socket.on("reconnect", async ({ code } = {}) => {
       try {
-        if (!code)
-          return socket.emit("error", { message: "Code is required" });
+        if (!code) return socket.emit("error", { message: "Code is required" });
 
         const { userId: uid } = socketToUser.get(socket.id);
         const result = await roomService.reconnectPlayer(
           code.toUpperCase(),
-          uid
+          uid,
         );
         if (result.error)
           return socket.emit("error", { message: result.error });
@@ -147,14 +147,13 @@ function setupVersusSocket(io) {
     socket.on("kickPlayer", async ({ playerId: targetUserId } = {}) => {
       try {
         const session = socketToSession.get(socket.id);
-        if (!session)
-          return socket.emit("error", { message: "Not in a room" });
+        if (!session) return socket.emit("error", { message: "Not in a room" });
 
         const { userId: hostUserId } = socketToUser.get(socket.id);
         const result = await roomService.kickPlayer(
           session.code,
           hostUserId,
-          targetUserId
+          targetUserId,
         );
         if (result.error)
           return socket.emit("error", { message: result.error });
@@ -188,13 +187,11 @@ function setupVersusSocket(io) {
     socket.on("startGame", async () => {
       try {
         const session = socketToSession.get(socket.id);
-        if (!session)
-          return socket.emit("error", { message: "Not in a room" });
+        if (!session) return socket.emit("error", { message: "Not in a room" });
 
         const { userId: uid } = socketToUser.get(socket.id);
         const room = await roomService.getRoom(session.code);
-        if (!room)
-          return socket.emit("error", { message: "Room not found" });
+        if (!room) return socket.emit("error", { message: "Room not found" });
         if (room.hostId !== uid)
           return socket.emit("error", { message: "Only host can start" });
 
@@ -217,13 +214,11 @@ function setupVersusSocket(io) {
     socket.on("forceResumeGame", async () => {
       try {
         const session = socketToSession.get(socket.id);
-        if (!session)
-          return socket.emit("error", { message: "Not in a room" });
+        if (!session) return socket.emit("error", { message: "Not in a room" });
 
         const { userId: uid } = socketToUser.get(socket.id);
         const room = await roomService.getRoom(session.code);
-        if (!room)
-          return socket.emit("error", { message: "Room not found" });
+        if (!room) return socket.emit("error", { message: "Room not found" });
         if (room.hostId !== uid)
           return socket.emit("error", {
             message: "Only host can force resume",
@@ -246,17 +241,12 @@ function setupVersusSocket(io) {
     socket.on("submitGuess", async ({ guess } = {}) => {
       try {
         const session = socketToSession.get(socket.id);
-        if (!session)
-          return socket.emit("error", { message: "Not in a room" });
+        if (!session) return socket.emit("error", { message: "Not in a room" });
         if (!guess)
           return socket.emit("error", { message: "Guess is required" });
 
         const { userId: uid } = socketToUser.get(socket.id);
-        const result = await gameService.handleGuess(
-          session.code,
-          uid,
-          guess
-        );
+        const result = await gameService.handleGuess(session.code, uid, guess);
         if (result.error)
           return socket.emit("error", { message: result.error });
         if (!result.correct) return;
@@ -284,9 +274,15 @@ function setupVersusSocket(io) {
         userToSocket.delete(userInfo.userId);
       }
       socketToUser.delete(socket.id);
-      console.log(`[versus] Socket disconnected: ${socket.id} (user: ${userInfo?.userId})`);
+      console.log(
+        `[versus] Socket disconnected: ${socket.id} (user: ${userInfo?.userId})`,
+      );
       await handlePlayerLeave(socket, io, "disconnect");
     });
+  });
+
+  io.on("error", (err) => {
+    console.error("Socket.IO error:", err);
   });
 }
 
@@ -299,10 +295,7 @@ async function handlePlayerLeave(socket, io, reason) {
   if (!room) return;
 
   if (reason === "disconnect" && room.state === "in_round") {
-    const paused = await gameService.pauseGame(
-      session.code,
-      session.userId
-    );
+    const paused = await gameService.pauseGame(session.code, session.userId);
     if (paused) {
       io.to(session.code).emit("gamePaused", {
         pauseState: paused.pauseState,
@@ -325,10 +318,7 @@ async function handlePlayerLeave(socket, io, reason) {
     }
   }
 
-  const result = await roomService.removePlayer(
-    session.code,
-    session.userId
-  );
+  const result = await roomService.removePlayer(session.code, session.userId);
   if (!result) return;
   if (result.deleted) return;
 

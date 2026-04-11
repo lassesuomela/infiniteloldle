@@ -83,6 +83,10 @@ export function useVersusSocket(handlers) {
       if (handlers.onError) handlers.onError(data);
     });
 
+    socket.on("authenticated", (data) => {
+      if (handlers.onAuthenticated) handlers.onAuthenticated(data);
+    });
+
     return () => {
       socket.disconnect();
     };
