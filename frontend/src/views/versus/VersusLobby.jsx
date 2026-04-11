@@ -205,7 +205,7 @@ export default function VersusLobby({
                 </div>
                 <div className="col-12">
                   <small className="text-muted d-block">Game Modes</small>
-                  <div className="d-flex flex-wrap gap-1 mt-1">
+                  <div className="d-inline-flex flex-wrap gap-1 align-items-start">
                     {room.settings.gameModes.map((mode) => (
                       <span
                         key={mode}
@@ -263,7 +263,7 @@ export default function VersusLobby({
             disabled={!canStart}
             onClick={onStartGame}
           >
-            {canStart ? "Start Game" : `Waiting for players (need at least 2)`}
+            {canStart ? "Start Game" : `Waiting for at least 2 players`}
           </button>
         ) : (
           <div className="text-center text-muted">
