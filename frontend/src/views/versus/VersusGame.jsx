@@ -1,16 +1,28 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Config from "../../configs/config";
 import { SelectStyles, SelectTheme } from "../../components/games/styles/selectStyles";
 import PauseOverlay from "./PauseOverlay";
+import ChampionDetails from "../../components/games/components/ChampionDetails";
+import GameTitle from "../../components/games/components/GameTitle";
 
 const MODE_LABELS = {
   champion: "Which champion is this?",
   splash: "Which champion's splash art is this?",
   item: "Which item is this?",
   legacy_item: "Which legacy item is this?",
+  ability: "Which champion's ability is this?",
 };
+
+// Apply progressive blur: starts at 1em, reduces 40% per wrong guess
+function getBlurValue(wrongGuesses) {
+  let blur = 1.0;
+  for (let i = 0; i < wrongGuesses; i++) {
+    blur -= blur * 0.4;
+  }
+  return blur;
+}
 
 export default function VersusGame({
   room,
@@ -20,109 +32,85 @@ export default function VersusGame({
   roundEndInfo,
   scores,
   lastCorrect,
+  guessResult,
   onSubmitGuess,
   onForceResume,
   onLeaveRoom,
 }) {
-  const [options, setOptions] = useState([]);
+  const [allOptions, setAllOptions] = useState([]);
+  const [myGuesses, setMyGuesses] = useState([]);   // champion names already guessed this round
+  const [myWrongGuesses, setMyWrongGuesses] = useState(0); // count for blur
+  const [myComparisons, setMyComparisons] = useState([]); // comparison rows for champion mode
   const [currentGuess, setCurrentGuess] = useState(null);
-  const [imageData, setImageData] = useState(null);
-  const [itemId, setItemId] = useState(null);
-  const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const prevRoundRef = useRef(null);
 
   const isHost = room.hostId === myPlayerId;
+
+  // Reset per-round state when round changes
+  useEffect(() => {
+    if (!roundInfo) return;
+    if (prevRoundRef.current !== roundInfo.round) {
+      prevRoundRef.current = roundInfo.round;
+      setMyGuesses([]);
+      setMyWrongGuesses(0);
+      setMyComparisons([]);
+      setCurrentGuess(null);
+    }
+  }, [roundInfo]);
 
   // Load options when mode changes
   useEffect(() => {
     if (!roundInfo) return;
-
-    setCurrentGuess(null);
-    setImageData(null);
-    setItemId(null);
-
-    if (roundInfo.mode === "champion" || roundInfo.mode === "splash") {
+    if (roundInfo.mode === "champion" || roundInfo.mode === "splash" || roundInfo.mode === "ability") {
       fetchChampions();
     } else if (roundInfo.mode === "item") {
       fetchItems();
-      // Item image is from static URL
-      if (roundInfo.roundData?.itemId) {
-        setItemId(roundInfo.roundData.itemId);
-      }
     } else if (roundInfo.mode === "legacy_item") {
       fetchOldItems();
-      if (roundInfo.roundData?.oldItemKey) {
-        fetchOldItemImage(roundInfo.roundData.oldItemKey);
-      }
     }
+  }, [roundInfo?.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    if (roundInfo.mode === "splash" && roundInfo.roundData?.championKey && roundInfo.roundData?.skinKey) {
-      fetchSplashImage(roundInfo.roundData.championKey, roundInfo.roundData.skinKey);
+  // When guessResult arrives, record the wrong guess
+  useEffect(() => {
+    if (!guessResult) return;
+    if (guessResult.champData) {
+      const name = guessResult.champData.guessedChampion;
+      setMyGuesses((prev) => [...prev, name]);
+      setMyWrongGuesses((prev) => prev + 1);
+      setMyComparisons((prev) => [guessResult, ...prev]);
+    } else {
+      setMyWrongGuesses((prev) => prev + 1);
     }
-  }, [roundInfo]);
+  }, [guessResult]);
 
   const fetchChampions = () => {
-    axios
-      .get(Config.url + "/champions")
-      .then((res) => {
-        if (res.data.status === "success") {
-          setOptions(
-            res.data.champions.map((c) => ({ value: c.value, label: c.value }))
-          );
-        }
-      })
-      .catch(console.error);
+    axios.get(Config.url + "/champions").then((res) => {
+      if (res.data.status === "success") {
+        setAllOptions(
+          res.data.champions.map((c) => ({ value: c.value, label: c.value }))
+        );
+      }
+    }).catch(console.error);
   };
 
   const fetchItems = () => {
-    axios
-      .get(Config.url + "/items")
-      .then((res) => {
-        if (res.data.status === "success") {
-          setOptions(
-            res.data.items.map((i) => ({ value: i.value, label: i.value }))
-          );
-        }
-      })
-      .catch(console.error);
+    axios.get(Config.url + "/items").then((res) => {
+      if (res.data.status === "success") {
+        setAllOptions(
+          res.data.items.map((i) => ({ value: i.value, label: i.value }))
+        );
+      }
+    }).catch(console.error);
   };
 
   const fetchOldItems = () => {
-    axios
-      .get(Config.url + "/oldItems")
-      .then((res) => {
-        if (res.data.status === "success") {
-          setOptions(
-            res.data.items.map((i) => ({ value: i.value, label: i.value }))
-          );
-        }
-      })
-      .catch(console.error);
-  };
-
-  const fetchSplashImage = (championKey, skinKey) => {
-    setIsLoadingImage(true);
-    axios
-      .get(Config.url + `/versus/splash/${championKey}/${skinKey}`)
-      .then((res) => {
-        if (res.data.status === "success") {
-          setImageData(res.data.result);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setIsLoadingImage(false));
-  };
-
-  const fetchOldItemImage = (key) => {
-    setIsLoadingImage(true);
-    axios
-      .get(Config.url + `/versus/oldItem/${key}`)
-      .then((res) => {
-        if (res.data.status === "success") {
-          setImageData(res.data.result);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setIsLoadingImage(false));
+    axios.get(Config.url + "/oldItems").then((res) => {
+      if (res.data.status === "success") {
+        setAllOptions(
+          res.data.items.map((i) => ({ value: i.value, label: i.value }))
+        );
+      }
+    }).catch(console.error);
   };
 
   const handleSubmit = useCallback(
@@ -138,6 +126,16 @@ export default function VersusGame({
   const currentScores = scores.length
     ? scores
     : room.players.map((p) => ({ id: p.id, nickname: p.nickname, score: p.score }));
+
+  // Available options = all - already guessed by me this round
+  const guessedSet = new Set(myGuesses);
+  const availableOptions = allOptions.filter((o) => !guessedSet.has(o.value));
+
+  // Image display for image-based modes
+  const imageBase64 = roundInfo?.imageBase64 || null;
+  const itemId = roundInfo?.roundData?.itemId || null;
+  const blurValue = getBlurValue(myWrongGuesses);
+  const hasImage = imageBase64 || (roundInfo?.mode === "item" && itemId);
 
   return (
     <div className="row justify-content-center">
@@ -177,7 +175,7 @@ export default function VersusGame({
                         {MODE_LABELS[roundInfo.mode] || "Guess the answer"}
                       </h6>
                       <span className="badge bg-secondary text-capitalize">
-                        {roundInfo.mode.replace("_", " ")}
+                        {roundInfo.mode.replace(/_/g, " ")}
                       </span>
                     </div>
 
@@ -193,33 +191,47 @@ export default function VersusGame({
                       </div>
                     )}
 
-                    {/* Image display */}
-                    {(roundInfo.mode === "splash" || roundInfo.mode === "legacy_item") && (
+                    {/* Image display for image-based modes */}
+                    {hasImage && (
                       <div className="text-center mb-3">
-                        {isLoadingImage ? (
-                          <div className="spinner-border spinner-border-sm text-secondary" />
-                        ) : imageData ? (
+                        {imageBase64 ? (
                           <img
-                            src={`data:image/webp;base64,${imageData}`}
+                            src={`data:image/webp;base64,${imageBase64}`}
                             alt="Guess this"
-                            className="img-fluid rounded"
-                            style={{ maxHeight: "300px", objectFit: "contain" }}
+                            className="img-fluid rounded p-2"
+                            style={{
+                              maxHeight: "300px",
+                              objectFit: "contain",
+                              filter: roundEndInfo
+                                ? "none"
+                                : `blur(${blurValue.toFixed(3)}em)`,
+                              transition: "filter 0.4s ease",
+                            }}
+                          />
+                        ) : itemId ? (
+                          <img
+                            src={`/items/${itemId}.webp`}
+                            alt="Item"
+                            className="rounded"
+                            style={{
+                              width: "80px",
+                              height: "80px",
+                              objectFit: "contain",
+                              filter: roundEndInfo
+                                ? "none"
+                                : `blur(${blurValue.toFixed(3)}em)`,
+                              transition: "filter 0.4s ease",
+                            }}
+                            onError={(e) => { e.target.style.display = "none"; }}
                           />
                         ) : null}
-                      </div>
-                    )}
-
-                    {roundInfo.mode === "item" && itemId && (
-                      <div className="text-center mb-3">
-                        <img
-                          src={`/items/${itemId}.webp`}
-                          alt="Item"
-                          className="rounded"
-                          style={{ width: "80px", height: "80px", objectFit: "contain" }}
-                          onError={(e) => {
-                            e.target.style.display = "none";
-                          }}
-                        />
+                        {!roundEndInfo && (
+                          <div className="mt-1">
+                            <small className="text-muted">
+                              Guess to reveal the image
+                            </small>
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -228,7 +240,7 @@ export default function VersusGame({
                       <form onSubmit={handleSubmit}>
                         <div className="mb-2">
                           <Select
-                            options={options}
+                            options={availableOptions}
                             value={currentGuess}
                             onChange={setCurrentGuess}
                             styles={SelectStyles}
@@ -246,6 +258,35 @@ export default function VersusGame({
                           Submit Guess
                         </button>
                       </form>
+                    )}
+
+                    {/* Champion mode comparison grid */}
+                    {roundInfo.mode === "champion" && myComparisons.length > 0 && (
+                      <div className="mt-3">
+                        <div className="scroll-container">
+                          <GameTitle />
+                          <div id="versus-champions">
+                            {myComparisons.map((r, idx) => (
+                              <ChampionDetails
+                                key={`${r.champData.championKey}-${idx}`}
+                                championKey={r.champData.championKey}
+                                gender={r.champData.gender}
+                                genre={r.champData.genre}
+                                resource={r.champData.resource}
+                                rangeTypes={r.champData.rangeType}
+                                positions={r.champData.position}
+                                releaseYear={r.champData.releaseYear}
+                                regions={r.champData.region}
+                                damageType={r.champData.damageType}
+                                similarites={r.similarities}
+                                isColorBlindMode={false}
+                                hideResource={false}
+                                name={r.champData.guessedChampion}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </>
                 )}

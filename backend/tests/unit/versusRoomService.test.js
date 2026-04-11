@@ -217,4 +217,83 @@ describe("Versus roomService", () => {
       expect(result.error).toBe("Player not found in room");
     });
   });
+
+  describe("updateSettings", () => {
+    it("allows host to update settings in lobby", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      getRoom.mockResolvedValue(room);
+      setRoom.mockResolvedValue(undefined);
+
+      const result = await roomService.updateSettings(room.code, "host1", {
+        rounds: 15,
+        maxPlayers: 8,
+        gameModes: ["champion", "ability"],
+      });
+
+      expect(result.error).toBeUndefined();
+      expect(result.room.settings.rounds).toBe(15);
+      expect(result.room.settings.maxPlayers).toBe(8);
+      expect(result.room.settings.gameModes).toEqual(["champion", "ability"]);
+    });
+
+    it("rejects update from non-host", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      getRoom.mockResolvedValue(room);
+
+      const result = await roomService.updateSettings(room.code, "other", {
+        rounds: 5,
+      });
+
+      expect(result.error).toBe("Only host can change settings");
+    });
+
+    it("clamps rounds to valid range", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      getRoom.mockResolvedValue(room);
+      setRoom.mockResolvedValue(undefined);
+
+      const result = await roomService.updateSettings(room.code, "host1", {
+        rounds: 999,
+        gameModes: ["champion"],
+      });
+
+      expect(result.room.settings.rounds).toBe(10); // unchanged - out of range
+    });
+  });
+
+  describe("returnToLobby", () => {
+    it("resets a finished game back to lobby", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      room.state = "game_end";
+      room.currentRound = 5;
+      room.players[0].score = 3;
+      getRoom.mockResolvedValue(room);
+      setRoom.mockResolvedValue(undefined);
+
+      const result = await roomService.returnToLobby(room.code, "host1");
+
+      expect(result.error).toBeUndefined();
+      expect(result.room.state).toBe("lobby");
+      expect(result.room.currentRound).toBe(0);
+      expect(result.room.players[0].score).toBe(0);
+    });
+
+    it("rejects non-host from calling returnToLobby", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      room.state = "game_end";
+      getRoom.mockResolvedValue(room);
+
+      const result = await roomService.returnToLobby(room.code, "other");
+      expect(result.error).toBe("Only host can restart");
+    });
+
+    it("rejects returnToLobby if game not ended", async () => {
+      const room = roomService.createRoom("host1", "Host");
+      room.state = "in_round";
+      getRoom.mockResolvedValue(room);
+
+      const result = await roomService.returnToLobby(room.code, "host1");
+      expect(result.error).toBe("Game has not ended yet");
+    });
+  });
 });

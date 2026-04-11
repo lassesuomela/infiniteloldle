@@ -9,11 +9,14 @@ export default function VersusLanding() {
   const [joinCode, setJoinCode] = useState(searchParams.get("code") || "");
 
   useEffect(() => {
-    // If code is in URL params, go straight to join view
-    if (searchParams.get("code")) {
-      setView("join");
+    // If code is in URL params, auto-navigate to room
+    const code = searchParams.get("code");
+    if (code) {
+      navigate("/game/versus/room", {
+        state: { action: "join", code: code.trim().toUpperCase() },
+      });
     }
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   const handleCreate = (e) => {
     e.preventDefault();
@@ -98,9 +101,11 @@ export default function VersusLanding() {
           <div className="col-12 col-md-6">
             <div className="card bg-dark border-secondary p-4">
               <h4 className="text-white mb-4">Create a Room</h4>
-              <p className="text-muted mb-4">
-                Your username will be used automatically from your profile.
-              </p>
+              <ul className="text-muted mb-4 ps-3">
+                <li>Choose game modes, rounds and player cap after creating</li>
+                <li>Share the room code or link with friends to invite them</li>
+                <li>Start when everyone is ready — you're the host</li>
+              </ul>
               <div className="d-flex gap-2">
                 <button
                   type="button"

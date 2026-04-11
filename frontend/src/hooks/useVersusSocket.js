@@ -87,6 +87,22 @@ export function useVersusSocket(handlers) {
       if (handlers.onAuthenticated) handlers.onAuthenticated(data);
     });
 
+    socket.on("guessResult", (data) => {
+      if (handlers.onGuessResult) handlers.onGuessResult(data);
+    });
+
+    socket.on("settingsUpdated", (data) => {
+      if (handlers.onSettingsUpdated) handlers.onSettingsUpdated(data);
+    });
+
+    socket.on("lobbyReset", (data) => {
+      if (handlers.onLobbyReset) handlers.onLobbyReset(data);
+    });
+
+    socket.on("kicked", (data) => {
+      if (handlers.onKicked) handlers.onKicked(data);
+    });
+
     return () => {
       socket.disconnect();
     };

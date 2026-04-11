@@ -3,8 +3,25 @@ const championV2 = require("../models/v2/champion");
 const itemV2 = require("../models/v2/item");
 const oldItemV2 = require("../models/v2/oldItem");
 const skinV2 = require("../models/v2/skin");
+const abilityV2 = require("../models/v2/ability");
+const { GetPartialSimilarites } = require("../helpers/compare");
+const fsp = require("fs").promises;
+const path = require("path");
 
 const PAUSE_DURATION_MS = 15000;
+
+const SPLASH_DIR = path.resolve(__dirname, "../images/champions/splash");
+const ABILITIES_DIR = path.resolve(__dirname, "../images/champions/abilities");
+const OLD_ITEMS_DIR = path.resolve(__dirname, "../old_items");
+
+async function loadImageBase64(filePath) {
+  try {
+    const buf = await fsp.readFile(filePath);
+    return buf.toString("base64");
+  } catch {
+    return null;
+  }
+}
 
 async function selectRoundContent(mode) {
   if (mode === "champion") {
@@ -12,7 +29,10 @@ async function selectRoundContent(mode) {
     const random = champions[Math.floor(Math.random() * champions.length)];
     return {
       answer: random.name,
-      roundData: { championKey: random.championKey },
+      imageBase64: null,
+      // Store full champion for server-side comparison, never sent to client
+      serverData: { champion: random },
+      roundData: {},
     };
   }
 
@@ -20,20 +40,25 @@ async function selectRoundContent(mode) {
     const skins = await skinV2.findAll();
     const random = skins[Math.floor(Math.random() * skins.length)];
     const champ = await championV2.findById(random.championId);
+    const imageName = `${champ.championKey}_${random.key}.webp`;
+    const imageBase64 = await loadImageBase64(path.join(SPLASH_DIR, imageName));
     return {
       answer: champ.name,
-      roundData: {
-        championKey: champ.championKey,
-        skinKey: random.key,
-      },
+      imageBase64,
+      serverData: {},
+      roundData: {},
     };
   }
 
   if (mode === "item") {
     const items = await itemV2.findAll();
     const random = items[Math.floor(Math.random() * items.length)];
+    // Item images are served as static files from frontend; send itemId so client can load image
+    // itemId alone does not reveal the item name (users must still guess by name)
     return {
       answer: random.name,
+      imageBase64: null,
+      serverData: {},
       roundData: { itemId: random.itemId },
     };
   }
@@ -41,9 +66,27 @@ async function selectRoundContent(mode) {
   if (mode === "legacy_item") {
     const oldItems = await oldItemV2.findAll();
     const random = oldItems[Math.floor(Math.random() * oldItems.length)];
+    const imageName = `${random.old_item_key}.webp`;
+    const imageBase64 = await loadImageBase64(path.join(OLD_ITEMS_DIR, imageName));
     return {
       answer: random.name,
-      roundData: { oldItemKey: random.old_item_key },
+      imageBase64,
+      serverData: {},
+      roundData: {},
+    };
+  }
+
+  if (mode === "ability") {
+    const abilities = await abilityV2.findAll();
+    const random = abilities[Math.floor(Math.random() * abilities.length)];
+    const champ = await championV2.findById(random.championId);
+    const imageName = `${champ.championKey}_${random.key}.webp`;
+    const imageBase64 = await loadImageBase64(path.join(ABILITIES_DIR, imageName));
+    return {
+      answer: champ.name,
+      imageBase64,
+      serverData: {},
+      roundData: {},
     };
   }
 
@@ -73,16 +116,51 @@ async function startRound(code) {
   const modes = room.settings.gameModes;
   const mode = modes[Math.floor(Math.random() * modes.length)];
 
-  const { answer, roundData } = await selectRoundContent(mode);
+  const { answer, imageBase64, serverData, roundData } =
+    await selectRoundContent(mode);
 
   room.currentMode = mode;
   room.currentAnswer = answer;
   room.currentRoundData = roundData;
+  room.currentServerData = serverData;
   room.winnerId = null;
   room.state = "in_round";
 
   await setRoom(code, room);
-  return { room, mode, roundData };
+  return { room, mode, roundData, imageBase64 };
+}
+
+function computeChampionComparison(guessedChampion, correctChampion) {
+  return {
+    sameResource: guessedChampion.resource === correctChampion.resource,
+    sameGender: guessedChampion.gender === correctChampion.gender,
+    sameReleaseYear:
+      correctChampion.released === guessedChampion.released
+        ? "="
+        : correctChampion.released > guessedChampion.released
+          ? ">"
+          : "<",
+    samePosition: GetPartialSimilarites(
+      guessedChampion.position,
+      correctChampion.position,
+    ),
+    sameRangeType: GetPartialSimilarites(
+      guessedChampion.rangeType,
+      correctChampion.rangeType,
+    ),
+    sameRegion: GetPartialSimilarites(
+      guessedChampion.region,
+      correctChampion.region,
+    ),
+    sameGenre: GetPartialSimilarites(
+      guessedChampion.genre,
+      correctChampion.genre,
+    ),
+    sameDamageType: GetPartialSimilarites(
+      guessedChampion.damageType,
+      correctChampion.damageType,
+    ),
+  };
 }
 
 async function handleGuess(code, playerId, guess) {
@@ -93,7 +171,39 @@ async function handleGuess(code, playerId, guess) {
 
   const correct =
     guess.trim().toLowerCase() === room.currentAnswer.trim().toLowerCase();
-  if (!correct) return { correct: false };
+
+  if (!correct) {
+    // For champion mode, return comparison data so the guesser can see feedback
+    if (room.currentMode === "champion") {
+      const correctChampion = room.currentServerData?.champion;
+      const guessedChampion = await championV2.findByName(guess);
+      if (guessedChampion && correctChampion) {
+        const similarities = computeChampionComparison(
+          guessedChampion,
+          correctChampion,
+        );
+        return {
+          correct: false,
+          guessData: {
+            champData: {
+              guessedChampion: guessedChampion.name,
+              championKey: guessedChampion.championKey,
+              resource: guessedChampion.resource,
+              gender: guessedChampion.gender,
+              position: guessedChampion.position,
+              rangeType: guessedChampion.rangeType,
+              region: guessedChampion.region,
+              releaseYear: guessedChampion.released,
+              genre: guessedChampion.genre,
+              damageType: guessedChampion.damageType,
+            },
+            similarities,
+          },
+        };
+      }
+    }
+    return { correct: false };
+  }
 
   const player = room.players.find((p) => p.id === playerId);
   if (!player) return { error: "Player not found" };

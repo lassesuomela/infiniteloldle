@@ -1,7 +1,8 @@
 import React from "react";
 
-export default function VersusScoreboard({ scoreboard, onPlayAgain }) {
+export default function VersusScoreboard({ scoreboard, room, myPlayerId, onPlayAgain }) {
   const medalEmojis = ["🥇", "🥈", "🥉"];
+  const isHost = room && room.hostId === myPlayerId;
 
   return (
     <div className="row justify-content-center">
@@ -42,6 +43,9 @@ export default function VersusScoreboard({ scoreboard, onPlayAgain }) {
                       <span className={index === 0 ? "fw-bold" : ""}>
                         {entry.nickname}
                       </span>
+                      {entry.id === myPlayerId && (
+                        <span className="badge bg-info text-dark">You</span>
+                      )}
                     </div>
                     <span className="fw-bold">
                       {entry.score} pt{entry.score !== 1 ? "s" : ""}
@@ -53,9 +57,16 @@ export default function VersusScoreboard({ scoreboard, onPlayAgain }) {
           </div>
         </div>
 
-        <button className="btn btn-warning w-100 py-3" onClick={onPlayAgain}>
-          Play Again
-        </button>
+        {isHost ? (
+          <button className="btn btn-warning w-100 py-3" onClick={onPlayAgain}>
+            Play Again (return to lobby)
+          </button>
+        ) : (
+          <div className="text-center text-muted py-3">
+            <span className="spinner-grow spinner-grow-sm me-2" />
+            Waiting for host to start a new game...
+          </div>
+        )}
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ export default function VersusRoom() {
   const [scores, setScores] = useState([]);
   const [lastCorrect, setLastCorrect] = useState(null);
   const [roundEndInfo, setRoundEndInfo] = useState(null);
+  const [guessResult, setGuessResult] = useState(null);
   const initialized = useRef(false);
 
   const updateRoom = useCallback((newRoom) => {
@@ -59,6 +60,10 @@ export default function VersusRoom() {
       updateRoom(room);
       toast.info("A player was kicked from the room");
     },
+    onKicked: () => {
+      // The server disconnects our socket after this; just navigate away
+      navigate("/game/versus");
+    },
     onHostChanged: ({ newHostId, room }) => {
       updateRoom(room);
       if (newHostId === myPlayerId) {
@@ -71,8 +76,8 @@ export default function VersusRoom() {
       updateRoom(room);
       setGamePhase("game");
     },
-    onRoundStarted: ({ round, maxRounds, mode, roundData }) => {
-      setRoundInfo({ round, maxRounds, mode, roundData });
+    onRoundStarted: ({ round, maxRounds, mode, roundData, imageBase64 }) => {
+      setRoundInfo({ round, maxRounds, mode, roundData, imageBase64 });
       setLastCorrect(null);
       setRoundEndInfo(null);
       setPauseState(null);
@@ -81,6 +86,9 @@ export default function VersusRoom() {
       setLastCorrect({ playerId, nickname, answer });
       setScores(newScores);
       setRoundEndInfo({ answer, winnerNickname: nickname });
+    },
+    onGuessResult: (data) => {
+      setGuessResult(data);
     },
     onRoundEnded: () => {
       // Round ended, next round will come via roundStarted
@@ -95,6 +103,19 @@ export default function VersusRoom() {
     onGameEnded: ({ scoreboard }) => {
       setScoreboard(scoreboard);
       setGamePhase("scoreboard");
+    },
+    onSettingsUpdated: ({ room }) => {
+      updateRoom(room);
+    },
+    onLobbyReset: ({ room }) => {
+      updateRoom(room);
+      setScoreboard([]);
+      setScores([]);
+      setRoundInfo(null);
+      setRoundEndInfo(null);
+      setGuessResult(null);
+      setPauseState(null);
+      setGamePhase("lobby");
     },
     onError: ({ message }) => {
       toast.error(message);
@@ -152,8 +173,15 @@ export default function VersusRoom() {
   }, [emit]);
 
   const handlePlayAgain = useCallback(() => {
-    navigate("/game/versus");
-  }, [navigate]);
+    emit("returnToLobby");
+  }, [emit]);
+
+  const handleUpdateSettings = useCallback(
+    (settings) => {
+      emit("updateSettings", { settings });
+    },
+    [emit],
+  );
 
   const shareLink = room
     ? `${window.location.origin}/game/versus?code=${room.code}`
@@ -184,6 +212,7 @@ export default function VersusRoom() {
           onStartGame={handleStartGame}
           onKickPlayer={handleKickPlayer}
           onLeaveRoom={handleLeaveRoom}
+          onUpdateSettings={handleUpdateSettings}
         />
       )}
 
@@ -196,6 +225,7 @@ export default function VersusRoom() {
           roundEndInfo={roundEndInfo}
           scores={scores}
           lastCorrect={lastCorrect}
+          guessResult={guessResult}
           onSubmitGuess={handleSubmitGuess}
           onForceResume={handleForceResume}
           onLeaveRoom={handleLeaveRoom}
@@ -205,6 +235,8 @@ export default function VersusRoom() {
       {gamePhase === "scoreboard" && (
         <VersusScoreboard
           scoreboard={scoreboard}
+          room={room}
+          myPlayerId={myPlayerId}
           onPlayAgain={handlePlayAgain}
         />
       )}

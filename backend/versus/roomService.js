@@ -104,6 +104,56 @@ async function kickPlayer(code, hostId, targetPlayerId) {
   return { room, kicked: target };
 }
 
+async function updateSettings(code, hostId, settings = {}) {
+  const room = await getRoom(code);
+  if (!room) return { error: "Room not found" };
+  if (room.hostId !== hostId) return { error: "Only host can change settings" };
+  if (room.state !== "lobby") return { error: "Settings can only be changed in lobby" };
+
+  const VALID_MODES = ["champion", "splash", "item", "legacy_item", "ability"];
+
+  const rounds = Number(settings.rounds);
+  const maxPlayers = Number(settings.maxPlayers);
+  const gameModes = Array.isArray(settings.gameModes)
+    ? settings.gameModes.filter((m) => VALID_MODES.includes(m))
+    : null;
+
+  if (!isNaN(rounds) && rounds >= 1 && rounds <= 30) {
+    room.settings.rounds = rounds;
+    room.maxRounds = rounds;
+  }
+  if (!isNaN(maxPlayers) && maxPlayers >= 2 && maxPlayers <= 16) {
+    room.settings.maxPlayers = maxPlayers;
+  }
+  if (gameModes && gameModes.length >= 1) {
+    room.settings.gameModes = gameModes;
+  }
+
+  await setRoom(code, room);
+  return { room };
+}
+
+async function returnToLobby(code, hostId) {
+  const room = await getRoom(code);
+  if (!room) return { error: "Room not found" };
+  if (room.hostId !== hostId) return { error: "Only host can restart" };
+  if (room.state !== "game_end") return { error: "Game has not ended yet" };
+
+  room.state = "lobby";
+  room.currentRound = 0;
+  room.currentAnswer = "";
+  room.currentMode = "";
+  room.currentRoundData = null;
+  room.currentServerData = null;
+  room.winnerId = null;
+  room.pauseState = null;
+  room.players.forEach((p) => { p.score = 0; });
+  room.maxRounds = room.settings.rounds;
+
+  await setRoom(code, room);
+  return { room };
+}
+
 async function reconnectPlayer(code, userId) {
   const room = await getRoom(code);
   if (!room) return { error: "Room not found" };
@@ -133,6 +183,8 @@ module.exports = {
   addPlayer,
   removePlayer,
   kickPlayer,
+  updateSettings,
+  returnToLobby,
   reconnectPlayer,
   getRoom,
   setRoom,

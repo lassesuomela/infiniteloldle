@@ -3,12 +3,19 @@ jest.mock("../../models/v2/champion");
 jest.mock("../../models/v2/item");
 jest.mock("../../models/v2/oldItem");
 jest.mock("../../models/v2/skin");
+jest.mock("../../models/v2/ability");
+jest.mock("fs", () => ({
+  promises: {
+    readFile: jest.fn().mockResolvedValue(Buffer.from("fake-image")),
+  },
+}));
 
 const { getRoom, setRoom } = require("../../versus/redis");
 const championV2 = require("../../models/v2/champion");
 const itemV2 = require("../../models/v2/item");
 const oldItemV2 = require("../../models/v2/oldItem");
 const skinV2 = require("../../models/v2/skin");
+const abilityV2 = require("../../models/v2/ability");
 const gameService = require("../../versus/gameService");
 
 function makeRoom(overrides = {}) {
@@ -29,8 +36,9 @@ function makeRoom(overrides = {}) {
     currentRound: 0,
     maxRounds: 3,
     currentAnswer: "",
-    currentMode: "",
+    currentMode: "champion",
     currentRoundData: null,
+    currentServerData: null,
     winnerId: null,
     pauseState: null,
     createdAt: Date.now(),
@@ -85,7 +93,18 @@ describe("Versus gameService", () => {
       getRoom.mockResolvedValue(room);
       setRoom.mockResolvedValue(undefined);
       championV2.findAll.mockResolvedValue([
-        { name: "Ahri", championKey: "Ahri" },
+        {
+          name: "Ahri",
+          championKey: "Ahri",
+          gender: 2,
+          resource: "Mana",
+          position: "Middle",
+          rangeType: "Ranged",
+          region: "Ionia",
+          released: 2011,
+          genre: "Mage",
+          damageType: "Magic",
+        },
       ]);
 
       const result = await gameService.startRound("ABC123");
@@ -95,12 +114,26 @@ describe("Versus gameService", () => {
       expect(result.room.currentRound).toBe(1);
       expect(result.room.state).toBe("in_round");
       expect(result.room.currentAnswer).toBe("Ahri");
+      expect(result.imageBase64).toBeNull(); // no image for champion mode
     });
   });
 
   describe("handleGuess", () => {
+    const mockChampion = {
+      name: "Ahri",
+      championKey: "Ahri",
+      gender: 2,
+      resource: "Mana",
+      position: "Middle",
+      rangeType: "Ranged",
+      region: "Ionia",
+      released: 2011,
+      genre: "Mage",
+      damageType: "Magic",
+    };
+
     it("registers correct guess", async () => {
-      const room = makeRoom({ state: "in_round", currentAnswer: "Ahri" });
+      const room = makeRoom({ state: "in_round", currentAnswer: "Ahri", currentServerData: { champion: mockChampion } });
       getRoom.mockResolvedValue(room);
       setRoom.mockResolvedValue(undefined);
 
@@ -113,7 +146,7 @@ describe("Versus gameService", () => {
     });
 
     it("case-insensitive matching", async () => {
-      const room = makeRoom({ state: "in_round", currentAnswer: "Ahri" });
+      const room = makeRoom({ state: "in_round", currentAnswer: "Ahri", currentServerData: { champion: mockChampion } });
       getRoom.mockResolvedValue(room);
       setRoom.mockResolvedValue(undefined);
 
@@ -122,13 +155,23 @@ describe("Versus gameService", () => {
       expect(result.correct).toBe(true);
     });
 
-    it("rejects wrong guess", async () => {
-      const room = makeRoom({ state: "in_round", currentAnswer: "Ahri" });
+    it("rejects wrong guess and returns comparison data for champion mode", async () => {
+      const zedChampion = { ...mockChampion, name: "Zed", championKey: "Zed", gender: 1, resource: "Energy" };
+      const room = makeRoom({
+        state: "in_round",
+        currentAnswer: "Ahri",
+        currentMode: "champion",
+        currentServerData: { champion: mockChampion },
+      });
       getRoom.mockResolvedValue(room);
+      championV2.findByName.mockResolvedValue(zedChampion);
 
       const result = await gameService.handleGuess("ABC123", "p2", "Zed");
 
       expect(result.correct).toBe(false);
+      expect(result.guessData).toBeDefined();
+      expect(result.guessData.champData.guessedChampion).toBe("Zed");
+      expect(result.guessData.similarities).toBeDefined();
     });
 
     it("returns error if not in round", async () => {
