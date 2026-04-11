@@ -22,13 +22,14 @@ function createPlayer(id, nickname) {
 function createRoom(hostId, nickname, settings = {}) {
   const code = generateCode();
   const mergedSettings = {
-    maxPlayers: settings.maxPlayers || 16,
+    maxPlayers: settings.maxPlayers || 4,
     rounds: settings.rounds || 10,
     gameModes: settings.gameModes || [
       "champion",
       "splash",
       "item",
       "legacy_item",
+      "ability",
     ],
     hintsEnabled:
       settings.hintsEnabled !== undefined ? settings.hintsEnabled : true,

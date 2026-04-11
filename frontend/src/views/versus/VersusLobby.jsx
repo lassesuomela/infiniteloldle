@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { toast } from "react-toastify";
 
 const ALL_MODES = [
   { value: "champion", label: "Champion" },
@@ -35,14 +34,6 @@ export default function VersusLobby({
     setGameModes(room.settings.gameModes);
   }, [room.settings.rounds, room.settings.maxPlayers, room.settings.gameModes]);
 
-  const handleCopyCode = () => {
-    toast.success("Room code copied!");
-  };
-
-  const handleCopyLink = () => {
-    toast.success("Room link copied to clipboard!");
-  };
-
   const toggleMode = (mode) => {
     if (gameModes.includes(mode)) {
       if (gameModes.length === 1) return; // must have at least 1
@@ -55,6 +46,14 @@ export default function VersusLobby({
   const handleApplySettings = () => {
     onUpdateSettings({ rounds, maxPlayers, gameModes });
   };
+
+  const hasChanges = useMemo(() => {
+    return (
+      rounds !== room.settings.rounds ||
+      maxPlayers !== room.settings.maxPlayers ||
+      JSON.stringify(gameModes) !== JSON.stringify(room.settings.gameModes)
+    );
+  }, [rounds, maxPlayers, gameModes, room.settings]);
 
   return (
     <div className="row justify-content-center">
@@ -74,28 +73,25 @@ export default function VersusLobby({
           <div className="card-body">
             <small className="text-muted d-block mb-2">Room Code</small>
             <div className="d-flex align-items-center gap-2 flex-wrap">
-              <div
-                className="d-flex align-items-center gap-2 flex-grow-1"
-                style={{ cursor: "pointer" }}
-                onClick={() => setCodeVisible((v) => !v)}
-              >
+              <div className="d-flex align-items-center gap-2 flex-grow-1">
                 <h2
                   className="text-warning mb-0"
-                  style={{ letterSpacing: "0.3em", minWidth: "8rem" }}
+                  style={{
+                    letterSpacing: "0.3em",
+                    minWidth: "8rem",
+                  }}
                 >
-                  {codeVisible
-                    ? room.code
-                    : "•".repeat(room.code.length)}
+                  {codeVisible ? room.code : "•".repeat(room.code.length)}
                 </h2>
-                <span
-                  className="material-symbols-outlined text-muted"
-                  style={{ fontSize: "1.2rem" }}
-                >
-                  {codeVisible ? "visibility_off" : "visibility"}
-                </span>
               </div>
               <div className="d-flex gap-2">
-                <CopyToClipboard text={room.code} onCopy={handleCopyCode}>
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  onClick={() => setCodeVisible((v) => !v)}
+                >
+                  {codeVisible ? "Hide" : "Show"}
+                </button>
+                <CopyToClipboard text={room.code}>
                   <button className="btn btn-outline-secondary btn-sm">
                     <span
                       className="material-symbols-outlined"
@@ -106,7 +102,7 @@ export default function VersusLobby({
                     Copy Code
                   </button>
                 </CopyToClipboard>
-                <CopyToClipboard text={shareLink} onCopy={handleCopyLink}>
+                <CopyToClipboard text={shareLink}>
                   <button className="btn btn-outline-warning btn-sm">
                     <span
                       className="material-symbols-outlined"
@@ -177,7 +173,9 @@ export default function VersusLobby({
                           className={`btn btn-sm ${active ? "btn-warning" : "btn-outline-secondary"}`}
                           disabled={disabled}
                           onClick={() => toggleMode(value)}
-                          title={disabled ? "At least one mode must be selected" : ""}
+                          title={
+                            disabled ? "At least one mode must be selected" : ""
+                          }
                         >
                           {label}
                         </button>
@@ -186,10 +184,13 @@ export default function VersusLobby({
                   </div>
                 </div>
                 <button
-                  className="btn btn-outline-warning btn-sm w-100"
+                  className={`btn w-100 py-2 ${
+                    hasChanges ? "btn-warning" : "btn-outline-secondary"
+                  }`}
                   onClick={handleApplySettings}
+                  disabled={!hasChanges}
                 >
-                  Apply Settings
+                  {hasChanges ? "Apply Settings" : "No Changes"}
                 </button>
               </>
             ) : (
@@ -262,9 +263,7 @@ export default function VersusLobby({
             disabled={!canStart}
             onClick={onStartGame}
           >
-            {canStart
-              ? "Start Game"
-              : `Waiting for players (need at least 2)`}
+            {canStart ? "Start Game" : `Waiting for players (need at least 2)`}
           </button>
         ) : (
           <div className="text-center text-muted">
