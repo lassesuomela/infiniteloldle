@@ -131,7 +131,7 @@ export default function VersusLobby({
                   </label>
                   <input
                     type="range"
-                    className="form-range"
+                    className="form-range custom-range"
                     min={1}
                     max={30}
                     value={rounds}
@@ -149,7 +149,7 @@ export default function VersusLobby({
                   </label>
                   <input
                     type="range"
-                    className="form-range"
+                    className="form-range custom-range"
                     min={2}
                     max={16}
                     value={maxPlayers}

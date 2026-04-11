@@ -57,7 +57,7 @@ export default function VersusLanding() {
             <div
               className="card bg-dark border-secondary h-100 text-center p-4"
               style={{ cursor: "pointer" }}
-              onClick={() => setView("create")}
+              onClick={handleCreate}
             >
               <div className="card-body">
                 <span
@@ -96,37 +96,6 @@ export default function VersusLanding() {
         </div>
       )}
 
-      {view === "create" && (
-        <div className="row justify-content-center">
-          <div className="col-12 col-md-6">
-            <div className="card bg-dark border-secondary p-4">
-              <h4 className="text-white mb-4">Create a Room</h4>
-              <ul className="text-muted mb-4 ps-3">
-                <li>Choose game modes, rounds and player cap after creating</li>
-                <li>Share the room code or link with friends to invite them</li>
-                <li>Start when everyone is ready — you're the host</li>
-              </ul>
-              <div className="d-flex gap-2">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={() => setView("landing")}
-                >
-                  Back
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-warning flex-grow-1"
-                  onClick={handleCreate}
-                >
-                  Create Room
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {view === "join" && (
         <div className="row justify-content-center">
           <div className="col-12 col-md-6">
@@ -141,9 +110,7 @@ export default function VersusLanding() {
                     placeholder="Enter 6-character code"
                     maxLength={6}
                     value={joinCode}
-                    onChange={(e) =>
-                      setJoinCode(e.target.value.toUpperCase())
-                    }
+                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                     required
                   />
                 </div>
