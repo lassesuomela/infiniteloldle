@@ -2,7 +2,10 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Config from "../../configs/config";
-import { SelectStyles, SelectTheme } from "../../components/games/styles/selectStyles";
+import {
+  SelectStyles,
+  SelectTheme,
+} from "../../components/games/styles/selectStyles";
 import PauseOverlay from "./PauseOverlay";
 import ChampionDetails from "../../components/games/components/ChampionDetails";
 import GameTitle from "../../components/games/components/GameTitle";
@@ -38,7 +41,7 @@ export default function VersusGame({
   onLeaveRoom,
 }) {
   const [allOptions, setAllOptions] = useState([]);
-  const [myGuesses, setMyGuesses] = useState([]);   // champion names already guessed this round
+  const [myGuesses, setMyGuesses] = useState([]); // champion names already guessed this round
   const [myWrongGuesses, setMyWrongGuesses] = useState(0); // count for blur
   const [myComparisons, setMyComparisons] = useState([]); // comparison rows for champion mode
   const [currentGuess, setCurrentGuess] = useState(null);
@@ -61,7 +64,11 @@ export default function VersusGame({
   // Load options when mode changes
   useEffect(() => {
     if (!roundInfo) return;
-    if (roundInfo.mode === "champion" || roundInfo.mode === "splash" || roundInfo.mode === "ability") {
+    if (
+      roundInfo.mode === "champion" ||
+      roundInfo.mode === "splash" ||
+      roundInfo.mode === "ability"
+    ) {
       fetchChampions();
     } else if (roundInfo.mode === "item") {
       fetchItems();
@@ -84,33 +91,42 @@ export default function VersusGame({
   }, [guessResult]);
 
   const fetchChampions = () => {
-    axios.get(Config.url + "/champions").then((res) => {
-      if (res.data.status === "success") {
-        setAllOptions(
-          res.data.champions.map((c) => ({ value: c.value, label: c.value }))
-        );
-      }
-    }).catch(console.error);
+    axios
+      .get(Config.url + "/champions")
+      .then((res) => {
+        if (res.data.status === "success") {
+          setAllOptions(
+            res.data.champions.map((c) => ({ value: c.value, label: c.value })),
+          );
+        }
+      })
+      .catch(console.error);
   };
 
   const fetchItems = () => {
-    axios.get(Config.url + "/items").then((res) => {
-      if (res.data.status === "success") {
-        setAllOptions(
-          res.data.items.map((i) => ({ value: i.value, label: i.value }))
-        );
-      }
-    }).catch(console.error);
+    axios
+      .get(Config.url + "/items")
+      .then((res) => {
+        if (res.data.status === "success") {
+          setAllOptions(
+            res.data.items.map((i) => ({ value: i.value, label: i.value })),
+          );
+        }
+      })
+      .catch(console.error);
   };
 
   const fetchOldItems = () => {
-    axios.get(Config.url + "/oldItems").then((res) => {
-      if (res.data.status === "success") {
-        setAllOptions(
-          res.data.items.map((i) => ({ value: i.value, label: i.value }))
-        );
-      }
-    }).catch(console.error);
+    axios
+      .get(Config.url + "/oldItems")
+      .then((res) => {
+        if (res.data.status === "success") {
+          setAllOptions(
+            res.data.items.map((i) => ({ value: i.value, label: i.value })),
+          );
+        }
+      })
+      .catch(console.error);
   };
 
   const handleSubmit = useCallback(
@@ -120,12 +136,16 @@ export default function VersusGame({
       onSubmitGuess(currentGuess.value);
       setCurrentGuess(null);
     },
-    [currentGuess, onSubmitGuess]
+    [currentGuess, onSubmitGuess],
   );
 
   const currentScores = scores.length
     ? scores
-    : room.players.map((p) => ({ id: p.id, nickname: p.nickname, score: p.score }));
+    : room.players.map((p) => ({
+        id: p.id,
+        nickname: p.nickname,
+        score: p.score,
+      }));
 
   // Available options = all - already guessed by me this round
   const guessedSet = new Set(myGuesses);
@@ -174,9 +194,6 @@ export default function VersusGame({
                       <h6 className="text-white mb-0">
                         {MODE_LABELS[roundInfo.mode] || "Guess the answer"}
                       </h6>
-                      <span className="badge bg-secondary text-capitalize">
-                        {roundInfo.mode.replace(/_/g, " ")}
-                      </span>
                     </div>
 
                     {/* Round end message */}
@@ -186,7 +203,9 @@ export default function VersusGame({
                         correctly! Answer:{" "}
                         <strong>{roundEndInfo.answer}</strong>
                         <div className="mt-1">
-                          <small className="text-muted">Next round starting...</small>
+                          <small className="text-muted">
+                            Next round starting...
+                          </small>
                         </div>
                       </div>
                     )}
@@ -222,7 +241,9 @@ export default function VersusGame({
                                 : `blur(${blurValue.toFixed(3)}em)`,
                               transition: "filter 0.4s ease",
                             }}
-                            onError={(e) => { e.target.style.display = "none"; }}
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                            }}
                           />
                         ) : null}
                         {!roundEndInfo && (
@@ -261,33 +282,34 @@ export default function VersusGame({
                     )}
 
                     {/* Champion mode comparison grid */}
-                    {roundInfo.mode === "champion" && myComparisons.length > 0 && (
-                      <div className="mt-3">
-                        <div className="scroll-container">
-                          <GameTitle />
-                          <div id="versus-champions">
-                            {myComparisons.map((r, idx) => (
-                              <ChampionDetails
-                                key={`${r.champData.championKey}-${idx}`}
-                                championKey={r.champData.championKey}
-                                gender={r.champData.gender}
-                                genre={r.champData.genre}
-                                resource={r.champData.resource}
-                                rangeTypes={r.champData.rangeType}
-                                positions={r.champData.position}
-                                releaseYear={r.champData.releaseYear}
-                                regions={r.champData.region}
-                                damageType={r.champData.damageType}
-                                similarites={r.similarities}
-                                isColorBlindMode={false}
-                                hideResource={false}
-                                name={r.champData.guessedChampion}
-                              />
-                            ))}
+                    {roundInfo.mode === "champion" &&
+                      myComparisons.length > 0 && (
+                        <div className="mt-3">
+                          <div className="scroll-container">
+                            <GameTitle />
+                            <div id="versus-champions">
+                              {myComparisons.map((r, idx) => (
+                                <ChampionDetails
+                                  key={`${r.champData.championKey}-${idx}`}
+                                  championKey={r.champData.championKey}
+                                  gender={r.champData.gender}
+                                  genre={r.champData.genre}
+                                  resource={r.champData.resource}
+                                  rangeTypes={r.champData.rangeType}
+                                  positions={r.champData.position}
+                                  releaseYear={r.champData.releaseYear}
+                                  regions={r.champData.region}
+                                  damageType={r.champData.damageType}
+                                  similarites={r.similarities}
+                                  isColorBlindMode={false}
+                                  hideResource={false}
+                                  name={r.champData.guessedChampion}
+                                />
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </>
                 )}
               </div>
@@ -299,25 +321,33 @@ export default function VersusGame({
             <div className="card bg-dark border-secondary">
               <div className="card-body">
                 <h6 className="text-muted mb-3">Scores</h6>
+
                 <ul className="list-unstyled mb-0">
                   {[...currentScores]
                     .sort((a, b) => b.score - a.score)
                     .map((p) => (
                       <li
                         key={p.id}
-                        className="d-flex justify-content-between py-1 border-bottom border-secondary"
+                        className="d-flex align-items-center justify-content-between py-2 border-bottom border-secondary"
                       >
-                        <span
-                          className={
-                            p.id === myPlayerId ? "text-warning" : "text-white"
-                          }
-                        >
-                          {p.nickname}
-                          {p.id === myPlayerId && (
-                            <small className="text-muted ms-1">(you)</small>
-                          )}
+                        {/* Left side */}
+                        <div className="d-flex align-items-center gap-2 text-truncate">
+                          <span
+                            className={
+                              p.id === myPlayerId
+                                ? "text-warning text-truncate"
+                                : "text-white text-truncate"
+                            }
+                            style={{ maxWidth: "180px" }}
+                          >
+                            {p.nickname}
+                          </span>
+                        </div>
+
+                        {/* Right side (score) */}
+                        <span className="text-white fw-bold ms-3 flex-shrink-0">
+                          {p.score}
                         </span>
-                        <span className="text-white fw-bold">{p.score}</span>
                       </li>
                     ))}
                 </ul>
