@@ -289,8 +289,6 @@ export default function SplashArtGame() {
           champion={champions[0].name}
           tries={guessCount}
           title={title}
-          isVictory={true}
-          onNextGame={Restart}
         />
       ) : (
         ""

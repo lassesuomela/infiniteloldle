@@ -268,8 +268,6 @@ export default function ItemGame() {
           champion={items[0]?.name}
           tries={guessCount}
           isItem={true}
-          isVictory={true}
-          onNextGame={Restart}
         />
       ) : (
         ""

@@ -267,8 +267,6 @@ export default function OldItemGame() {
           champion={items[0]?.name}
           tries={guessCount}
           isOldItem={true}
-          isVictory={true}
-          onNextGame={Restart}
         />
       ) : (
         ""

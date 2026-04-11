@@ -273,8 +273,6 @@ export default function Game() {
           champion={champions[0][0].guessedChampion}
           tries={guessCount}
           title={title}
-          isVictory={true}
-          onNextGame={Restart}
         />
       ) : (
         ""

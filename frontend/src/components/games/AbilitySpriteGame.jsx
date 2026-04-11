@@ -289,8 +289,6 @@ export default function AbilityGuessingGame() {
           champion={champions[0].name}
           tries={guessCount}
           title={title}
-          isVictory={true}
-          onNextGame={restart}
         />
       ) : (
         ""
