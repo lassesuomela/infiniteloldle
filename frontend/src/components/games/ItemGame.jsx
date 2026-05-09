@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Victory from "./components/Victory";
@@ -11,8 +11,8 @@ import {
 } from "../../utils/saveStats";
 import { Reroll } from "../../utils/reroll";
 import {
+  SelectStyles,
   customFilterOptionItems,
-  HoverSelectStyles,
   SelectTheme,
 } from "./styles/selectStyles";
 import { useSelector } from "react-redux";
@@ -28,7 +28,8 @@ export default function ItemGame() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setGuess] = useState(validGuesses[0]);
   const [correctGuess, setCorrectGuess] = useState(false);
-  const [spriteUrl, setSpriteUrl] = useState("");
+  const [sprite, setSprite] = useState("");
+  const [currentItemId, setCurrentItemId] = useState(null);
   const [guessCount, setGuessCount] = useState(0);
 
   const isColorBlindMode = useSelector(
@@ -49,30 +50,6 @@ export default function ItemGame() {
     SetHistory();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const ApplyBlur = useCallback(
-    (_guessCount) => {
-      const spriteImg = document.getElementById("spriteImg");
-      if (!spriteImg) return;
-
-      const initialBlur = 1.0;
-      let blurVal = initialBlur;
-
-      for (let i = 0; i < _guessCount; i++) {
-        blurVal -= blurVal * 0.4;
-      }
-
-      spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
-        isMonochrome ? "grayscale(1)" : ""
-      }`;
-    },
-    [isMonochrome]
-  );
-
-  useEffect(() => {
-    if (spriteUrl) {
-      ApplyBlur(guesses.length);
-    }
-  }, [spriteUrl, guesses, isMonochrome, ApplyBlur]);
   const SetHistory = () => {
     const history = getItemGuessHistory().reverse();
 
@@ -116,8 +93,10 @@ export default function ItemGame() {
       .then((response) => {
         if (response.data.status === "success") {
           if (response.data.result) {
-            const url = "/items/" + response.data.result + ".webp";
-            setSpriteUrl(url);
+            setSprite(response.data.result);
+          }
+          if (response.data.itemId) {
+            setCurrentItemId(response.data.itemId);
           }
         }
       })
@@ -155,7 +134,6 @@ export default function ItemGame() {
         saveTries(1);
 
         const isCorrect = response.data.correctGuess;
-
         const itemId = response.data.itemId;
         const name = response.data.name;
         const currentGuessCount = response.data.guessCount;
@@ -165,9 +143,7 @@ export default function ItemGame() {
         }
 
         setItems((items) => [{ itemId, name, isCorrect }, ...items]);
-
         addToItemGuessHistory({ itemId, name, isCorrect });
-        const spriteImg = document.getElementById("spriteImg");
 
         if (isCorrect) {
           if (guesses.length === 0) {
@@ -176,9 +152,11 @@ export default function ItemGame() {
           saveGamesPlayed();
           setCorrectGuess(true);
           clearItemHistory();
-          spriteImg.style.filter = "";
+          // Fetch unblurred image on correct guess
+          FetchItemImage();
         } else {
-          ApplyBlur(guesses.length + 1);
+          // Fetch more-revealed (less blurred) image
+          FetchItemImage();
         }
       })
       .catch((error) => {
@@ -188,7 +166,6 @@ export default function ItemGame() {
   };
 
   const Restart = () => {
-    setTimeout(() => ApplyBlur(0), 0);
     clearItemHistory();
 
     FetchItemImage();
@@ -214,12 +191,13 @@ export default function ItemGame() {
 
       <div
         className="container d-flex justify-content-center shadow"
-        id="itemContainer"
+        id="spriteContainer"
       >
         <img
-          src={spriteUrl}
+          src={sprite ? `data:image/webp;base64,${sprite}` : ""}
           style={{
-            transform: `${randomRotate ? "rotate(180deg)" : ""}`,
+            filter: isMonochrome ? "grayscale(1)" : "",
+            transform: randomRotate ? "rotate(180deg)" : "",
           }}
           className="rounded p-4"
           id="spriteImg"
@@ -235,12 +213,13 @@ export default function ItemGame() {
           id="guess-form"
         >
           <Select
+            className="select"
             options={validGuesses}
             onChange={(selectedOption) => setGuess(selectedOption.value)}
             isDisabled={correctGuess}
-            placeholder="Type items name"
+            placeholder="Type item name"
             filterOption={customFilterOptionItems}
-            styles={HoverSelectStyles}
+            styles={SelectStyles}
             theme={SelectTheme}
             formatOptionLabel={(data) => (
               <div className="select-option">
@@ -250,14 +229,7 @@ export default function ItemGame() {
           />
 
           <div className="d-flex justify-content-evenly">
-            {correctGuess ? (
-              <button
-                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={Restart}
-              >
-                Next
-              </button>
-            ) : (
+            {!correctGuess && (
               <button className="btn btn-dark mb-3 mt-1 min-vw-25">
                 Guess
               </button>
@@ -292,8 +264,8 @@ export default function ItemGame() {
       {correctGuess ? (
         <Victory
           id="victory"
-          championKey={items[0]?.itemId}
-          champion={currentGuess}
+          championKey={currentItemId || items[0]?.itemId}
+          champion={items[0]?.name}
           tries={guessCount}
           isItem={true}
         />

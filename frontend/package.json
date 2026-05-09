@@ -24,6 +24,7 @@
     "react-tooltip": "^5.30.0",
     "recharts": "^2.12.7",
     "redux": "^4.2.1",
+    "socket.io-client": "^4.8.3",
     "universal-cookie": "^4.0.4"
   },
   "scripts": {

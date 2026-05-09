@@ -144,3 +144,15 @@ p {
     font-size: 1.4em;
   }
 }
+
+.custom-range::-webkit-slider-thumb {
+  background: var(--secondary-color);
+}
+
+.custom-range::-moz-range-thumb {
+  background: var(--secondary-color);
+}
+
+.custom-range::-ms-thumb {
+  background: var(--secondary-color);
+}
