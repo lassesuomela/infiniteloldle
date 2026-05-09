@@ -195,7 +195,10 @@ function setupVersusSocket(io) {
         }
 
         io.to(session.code).emit("playerKicked", {
-          playerId: targetUserId,
+          kicked: {
+            id: targetUserId,
+            nickname: result.kicked.nickname,
+          },
           room: sanitizeRoom(result.room),
         });
       } catch (err) {

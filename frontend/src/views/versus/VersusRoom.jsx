@@ -45,24 +45,27 @@ export default function VersusRoom() {
         setGamePhase("game");
       }
     },
-    onPlayerJoined: ({ room }) => {
+    onPlayerJoined: ({ player, room }) => {
       updateRoom(room);
+      toast.info(`${player.nickname} joined the room`);
     },
     onPlayerLeft: ({ room }) => {
       updateRoom(room);
     },
-    onPlayerKicked: ({ playerId, room }) => {
-      if (playerId === myPlayerId) {
+    onPlayerKicked: ({ kicked, room }) => {
+      if (kicked.id === myPlayerId) {
         toast.error("You were kicked from the room");
         navigate("/game/versus");
         return;
       }
       updateRoom(room);
-      toast.info("A player was kicked from the room");
+      // PLayer name was kicked from the room
+      toast.info(`${kicked.nickname} was kicked from the room`);
     },
     onKicked: () => {
       // The server disconnects our socket after this; just navigate away
       navigate("/game/versus");
+      toast.info("You have been kicked from the room");
     },
     onHostChanged: ({ newHostId, room }) => {
       updateRoom(room);
