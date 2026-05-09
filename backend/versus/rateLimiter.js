@@ -85,7 +85,10 @@ function checkRate(socket, eventName) {
     _emitError(
       socket,
       "rateLimitError",
-      `Please wait ${minMs - elapsed}ms before sending "${eventName}" again.`,
+      `Rate limit exceeded. Please wait a moment before trying again.`,
+    );
+    console.warn(
+      `[rateLimiter] Socket ${socket.id} rate limited wait ${minMs - elapsed}ms before sending "${eventName}" again.`,
     );
 
     if (socket[KEY_VIOLATIONS] >= MAX_VIOLATIONS_BEFORE_DISCONNECT) {

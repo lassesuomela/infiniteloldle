@@ -221,10 +221,6 @@ export default function VersusGame({
                             style={{
                               maxHeight: "300px",
                               objectFit: "contain",
-                              filter: roundEndInfo
-                                ? "none"
-                                : `blur(${blurValue.toFixed(3)}em)`,
-                              transition: "filter 0.4s ease",
                             }}
                           />
                         ) : itemId ? (

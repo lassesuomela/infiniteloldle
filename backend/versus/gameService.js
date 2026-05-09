@@ -50,6 +50,7 @@ async function selectRoundContent(mode) {
     };
   }
 
+  // FIXME: Should read from backend folder and send base64
   if (mode === "item") {
     const items = await itemV2.findAll();
     const random = items[Math.floor(Math.random() * items.length)];
