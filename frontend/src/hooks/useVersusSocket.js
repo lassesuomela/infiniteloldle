@@ -32,7 +32,9 @@ export function useVersusSocket(handlers) {
     };
 
     socket.on("connect", () => {
-      if (handlersRef.current.onConnect) handlersRef.current.onConnect(socket.id);
+      if (handlersRef.current.onConnect) {
+        handlersRef.current.onConnect(socket.id);
+      }
     });
 
     socket.on("disconnect", () => {
@@ -58,6 +60,7 @@ export function useVersusSocket(handlers) {
     on("settingsUpdated", "onSettingsUpdated");
     on("lobbyReset", "onLobbyReset");
     on("kicked", "onKicked");
+    on("rateLimitError", "onRateLimitError");
 
     return () => {
       socket.disconnect();

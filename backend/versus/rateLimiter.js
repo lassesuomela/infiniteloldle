@@ -84,7 +84,7 @@ function checkRate(socket, eventName) {
 
     _emitError(
       socket,
-      "TOO_FAST",
+      "rateLimitError",
       `Please wait ${minMs - elapsed}ms before sending "${eventName}" again.`,
     );
 

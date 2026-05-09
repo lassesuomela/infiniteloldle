@@ -129,6 +129,11 @@ export default function VersusRoom() {
     onAuthenticated: (_) => {
       init();
     },
+    onRateLimitError: ({ _message }) => {
+      toast.error(
+        "Rate limit exceeded. Please wait a moment before trying again.",
+      );
+    },
   };
 
   const { emit } = useVersusSocket(handlers);
