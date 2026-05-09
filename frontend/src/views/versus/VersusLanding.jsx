@@ -107,8 +107,8 @@ export default function VersusLanding() {
                   <input
                     type="text"
                     className="form-control bg-secondary text-white border-0"
-                    placeholder="Enter 6-character code"
-                    maxLength={6}
+                    placeholder="Enter 8-character code"
+                    maxLength={8}
                     value={joinCode}
                     onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                     required

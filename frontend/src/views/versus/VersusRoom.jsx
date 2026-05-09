@@ -119,6 +119,9 @@ export default function VersusRoom() {
     },
     onError: ({ message }) => {
       toast.error(message);
+      if (message === "Room not found") {
+        navigate("/game/versus");
+      }
     },
     onAuthenticated: (_) => {
       init();
