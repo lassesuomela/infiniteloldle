@@ -133,13 +133,13 @@ export default function VersusLobby({
                     type="range"
                     className="form-range custom-range"
                     min={1}
-                    max={30}
+                    max={10}
                     value={rounds}
                     onChange={(e) => setRounds(Number(e.target.value))}
                   />
                   <div className="d-flex justify-content-between">
                     <small className="text-muted">1</small>
-                    <small className="text-muted">30</small>
+                    <small className="text-muted">10</small>
                   </div>
                 </div>
                 <div className="mb-3">

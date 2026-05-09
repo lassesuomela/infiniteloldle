@@ -1,6 +1,11 @@
 const roomService = require("./roomService");
 const gameService = require("./gameService");
 const userV2 = require("../models/v2/user");
+const {
+  checkRate,
+  incrementGuessCount,
+  resetSession,
+} = require("./rateLimiter");
 
 const ROUND_TRANSITION_DELAY_MS = 3000;
 const PAUSE_AUTO_RESUME_DELAY_MS = 15000;
@@ -56,9 +61,10 @@ function setupVersusSocket(io) {
 
     // createRoom: { settings }
     socket.on("createRoom", async ({ settings } = {}) => {
+      if (!checkRate(socket, "createRoom")) return;
       try {
         const { userId: uid, nickname: nick } = socketToUser.get(socket.id);
-        const room = roomService.createRoom(uid, nick, settings);
+        const room = roomService.createRoom(uid, nick);
         await roomService.setRoom(room.code, room);
 
         socketToSession.set(socket.id, { code: room.code, userId: uid });
@@ -69,12 +75,16 @@ function setupVersusSocket(io) {
           myUserId: uid,
         });
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(
+          `Failed to create room: ${err.message} (UID: ${socketToUser.get(socket.id)?.userId})`,
+        );
+        socket.emit("error", { message: "Failed to create room" });
       }
     });
 
     // joinRoom: { code }
     socket.on("joinRoom", async ({ code } = {}) => {
+      if (!checkRate(socket, "joinRoom")) return;
       try {
         if (!code) return socket.emit("error", { message: "Code is required" });
 
@@ -103,7 +113,10 @@ function setupVersusSocket(io) {
           room: sanitizeRoom(result.room),
         });
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(
+          `Failed to join a room: ${err.message} (UID: ${socketToUser.get(socket.id)?.userId})`,
+        );
+        socket.emit("error", { message: "Failed to join a room" });
       }
     });
 
@@ -138,7 +151,10 @@ function setupVersusSocket(io) {
           });
         }
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(
+          `Failed to reconnect to a room: ${err.message} (UID: ${socketToUser.get(socket.id)?.userId}) Room code: ${code})`,
+        );
+        socket.emit("error", { message: "Failed to join a room" });
       }
     });
 
@@ -183,12 +199,14 @@ function setupVersusSocket(io) {
           room: sanitizeRoom(result.room),
         });
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(`Failed to kick player: ${err.message}`);
+        socket.emit("error", { message: "Failed to kick player" });
       }
     });
 
     // updateSettings: { settings } — host only
     socket.on("updateSettings", async ({ settings } = {}) => {
+      if (!checkRate(socket, "settingsChanged")) return;
       try {
         const session = socketToSession.get(socket.id);
         if (!session) return socket.emit("error", { message: "Not in a room" });
@@ -206,7 +224,8 @@ function setupVersusSocket(io) {
           room: sanitizeRoom(result.room),
         });
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(`Failed to update settings: ${err.message}`);
+        socket.emit("error", { message: "Failed to update settings" });
       }
     });
 
@@ -225,7 +244,8 @@ function setupVersusSocket(io) {
           room: sanitizeRoom(result.room),
         });
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(`Failed to return to lobby: ${err.message}`);
+        socket.emit("error", { message: "Return to lobby failed" });
       }
     });
 
@@ -251,7 +271,8 @@ function setupVersusSocket(io) {
 
         await beginRound(session.code, io);
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(`Failed to start a game: ${err.message}`);
+        socket.emit("error", { message: "Failed to start a game" });
       }
     });
 
@@ -278,12 +299,18 @@ function setupVersusSocket(io) {
           room: sanitizeRoom(resumed),
         });
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(`Failed to force resume game: ${err.message}`);
+        socket.emit("error", { message: "Force resume failed" });
       }
     });
 
     // submitGuess: { guess }
     socket.on("submitGuess", async ({ guess } = {}) => {
+      if (!checkRate(socket, "guess")) return;
+      if (!incrementGuessCount(socket, socketToSession.get(socket.id)?.code)) {
+        return;
+      }
+
       try {
         const session = socketToSession.get(socket.id);
         if (!session) return socket.emit("error", { message: "Not in a room" });
@@ -314,12 +341,14 @@ function setupVersusSocket(io) {
           await advanceRound(session.code, io);
         }, ROUND_TRANSITION_DELAY_MS);
       } catch (err) {
-        socket.emit("error", { message: err.message });
+        console.log(`Failed to submit guess: ${err.message}`);
+        socket.emit("error", { message: "Guess failed" });
       }
     });
 
     // Handle disconnect
     socket.on("disconnect", async () => {
+      resetSession(socket);
       const userInfo = socketToUser.get(socket.id);
       if (userInfo && userToSocket.get(userInfo.userId) === socket.id) {
         userToSocket.delete(userInfo.userId);

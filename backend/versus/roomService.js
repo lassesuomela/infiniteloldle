@@ -1,10 +1,14 @@
 const { getRoom, setRoom, deleteRoom } = require("./redis");
 
+const crypto = require("crypto");
+
+const ROOM_CODE_LENGTH = 8;
+
 function generateCode() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let code = "";
-  for (let i = 0; i < 6; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)];
+  for (let i = 0; i < ROOM_CODE_LENGTH; i++) {
+    code += chars[Math.floor(crypto.randomInt() * chars.length)];
   }
   return code;
 }
@@ -19,20 +23,13 @@ function createPlayer(id, nickname) {
   };
 }
 
-function createRoom(hostId, nickname, settings = {}) {
+function createRoom(hostId, nickname) {
   const code = generateCode();
   const mergedSettings = {
-    maxPlayers: settings.maxPlayers || 4,
-    rounds: settings.rounds || 10,
-    gameModes: settings.gameModes || [
-      "champion",
-      "splash",
-      "item",
-      "legacy_item",
-      "ability",
-    ],
-    hintsEnabled:
-      settings.hintsEnabled !== undefined ? settings.hintsEnabled : true,
+    maxPlayers: 4,
+    rounds: 10,
+    gameModes: ["champion", "splash", "item", "legacy_item", "ability"],
+    hintsEnabled: false, // TODO: Implement hints in the future
   };
 
   const host = createPlayer(hostId, nickname);
@@ -122,7 +119,7 @@ async function updateSettings(code, hostId, settings = {}) {
     ? settings.gameModes.filter((m) => VALID_MODES.includes(m))
     : null;
 
-  if (!isNaN(rounds) && rounds >= 1 && rounds <= 30) {
+  if (!isNaN(rounds) && rounds >= 1 && rounds <= 10) {
     room.settings.rounds = rounds;
     room.maxRounds = rounds;
   }
