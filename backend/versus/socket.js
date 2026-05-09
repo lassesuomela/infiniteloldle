@@ -209,7 +209,7 @@ function setupVersusSocket(io) {
 
     // updateSettings: { settings } — host only
     socket.on("updateSettings", async ({ settings } = {}) => {
-      if (!checkRate(socket, "settingsChanged")) return;
+      if (!checkRate(socket, "updateSettings")) return;
       try {
         const session = socketToSession.get(socket.id);
         if (!session) return socket.emit("error", { message: "Not in a room" });
@@ -309,7 +309,7 @@ function setupVersusSocket(io) {
 
     // submitGuess: { guess }
     socket.on("submitGuess", async ({ guess } = {}) => {
-      if (!checkRate(socket, "guess")) return;
+      if (!checkRate(socket, "submitGuess")) return;
       if (!incrementGuessCount(socket, socketToSession.get(socket.id)?.code)) {
         return;
       }

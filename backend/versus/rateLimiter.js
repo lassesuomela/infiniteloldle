@@ -6,10 +6,10 @@
  * and return false — the handler must return immediately on false.
  */
 const RATE_LIMITS_MS = {
-  guess: 60,
+  submitGuess: 60,
   createRoom: 5000,
   joinRoom: 2000,
-  settingsChanged: 200,
+  updateSettings: 100,
 };
 
 /**
