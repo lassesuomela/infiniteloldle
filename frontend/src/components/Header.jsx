@@ -28,7 +28,7 @@ export default function Header() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link className="nav-link" to="/">
+              <Link className="nav-link" to="/game/champion">
                 Champions
               </Link>
             </li>
@@ -58,7 +58,7 @@ export default function Header() {
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="leaderboard">
+              <Link className="nav-link" to="/leaderboard">
                 Leaderboard
               </Link>
             </li>
@@ -71,7 +71,7 @@ export default function Header() {
                 data-tooltip-content="About"
               >
                 <li className="nav-item">
-                  <Link className="nav-link" to="about">
+                  <Link className="nav-link" to="/about">
                     <span className="material-symbols-outlined">help</span>
                   </Link>
                   <Tooltip id="about-tooltip" />
@@ -83,7 +83,7 @@ export default function Header() {
                 data-tooltip-content="Legal"
               >
                 <li className="nav-item">
-                  <Link className="nav-link" to="legal">
+                  <Link className="nav-link" to="/legal">
                     <span className="material-symbols-outlined">gavel</span>
                   </Link>
                   <Tooltip id="legal-tooltip" />
@@ -95,7 +95,7 @@ export default function Header() {
                 data-tooltip-content="My stats"
               >
                 <li className="nav-item">
-                  <Link className="nav-link" to="stats/me">
+                  <Link className="nav-link" to="/stats/me">
                     <span className="material-symbols-outlined">trophy</span>
                     <Tooltip id="stats-tooltip" />
                   </Link>
@@ -107,7 +107,7 @@ export default function Header() {
                 data-tooltip-content="Global statistics"
               >
                 <li className="nav-item">
-                  <Link className="nav-link" to="stats">
+                  <Link className="nav-link" to="/stats">
                     <span className="material-symbols-outlined">
                       monitoring
                     </span>

@@ -15,7 +15,7 @@ import setupAxiosInterceptors from "./utils/axiosInterceptor";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Game from "./components/games/Game";
+import Home from "./views/Home";
 import Scoreboard from "./views/Scoreboard";
 import Legal from "./views/Legal";
 import About from "./views/About";
@@ -24,6 +24,7 @@ import Item from "./views/Item";
 import OldItem from "./views/OldItem";
 import Stats from "./views/Stats";
 import MyStats from "./views/MyStats";
+import Champion from "./views/Champion";
 
 import { Provider } from "react-redux";
 import store from "./store/store";
@@ -40,7 +41,8 @@ function App() {
       <Header />
       <div className="container">
         <Routes>
-          <Route path="/" element={<Game />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/game/champion" element={<Champion />} />
           <Route path="/game/splash" element={<Splash />} />
           <Route path="/game/ability" element={<Ability />} />
           <Route path="/game/item" element={<Item />} />

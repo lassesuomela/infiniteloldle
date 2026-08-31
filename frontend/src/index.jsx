@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App";
 import NewUser from "./utils/NewUser";
 import { BrowserRouter } from "react-router-dom";
+import isPrerenderMode from "./seo/prerenderMode";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+const prerenderMode = isPrerenderMode();
+
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <NewUser />
+      {!prerenderMode ? <NewUser /> : null}
       <App />
     </BrowserRouter>
   </React.StrictMode>

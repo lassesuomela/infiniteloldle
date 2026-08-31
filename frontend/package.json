@@ -29,12 +29,17 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "prerender:static": "node scripts/prerender-static.mjs",
+    "prerender:game": "node scripts/prerender-game-routes.mjs",
+    "prerender": "npm run prerender:static && npm run prerender:game",
+    "seo:assert": "node scripts/assert-prerender.mjs",
     "preview": "vite preview",
     "test": "vitest run"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
     "jsdom": "^28.1.0",
+    "playwright": "^1.55.0",
     "vite": "^6.3.5",
     "vitest": "^4.0.18"
   }

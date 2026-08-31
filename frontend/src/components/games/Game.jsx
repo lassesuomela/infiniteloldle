@@ -12,7 +12,6 @@ import {
 } from "../../utils/saveStats";
 import Config from "../../configs/config";
 import { Reroll } from "../../utils/reroll";
-import { Helmet } from "react-helmet";
 import LazyLoad from "react-lazy-load";
 import { useSelector } from "react-redux";
 
@@ -161,16 +160,6 @@ export default function Game() {
 
   return (
     <div className="container main pt-4 pb-5 mb-5">
-      <Helmet>
-        <title>
-          Infinite LoLdle - Ultimate LoL quiz - Champion guessing game
-        </title>
-        <meta
-          name="description"
-          content="The ultimate quiz game for League of Legends enthusiasts. Guess League of Legends champions infinitely."
-        />
-      </Helmet>
-
       <h3 className="text-center pb-3">Start guessing your champion</h3>
 
       <div className="d-flex justify-content-center mt-4 mb-3">

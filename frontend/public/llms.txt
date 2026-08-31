@@ -1,0 +1,13 @@
+InfiniteLoLdle is an unlimited League of Legends guessing game inspired by LoLdle.
+
+Canonical pages:
+- https://www.infiniteloldle.com/
+- https://www.infiniteloldle.com/game/champion
+- https://www.infiniteloldle.com/game/ability
+- https://www.infiniteloldle.com/game/splash
+- https://www.infiniteloldle.com/game/item
+- https://www.infiniteloldle.com/game/item/legacy
+- https://www.infiniteloldle.com/leaderboard
+- https://www.infiniteloldle.com/stats
+- https://www.infiniteloldle.com/about
+- https://www.infiniteloldle.com/legal

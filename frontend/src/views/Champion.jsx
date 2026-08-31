@@ -1,41 +1,41 @@
 import React from "react";
-import AbilitySpriteGame from "../components/games/AbilitySpriteGame";
 import { Link } from "react-router-dom";
+import Game from "../components/games/Game";
 import PageMeta from "../seo/PageMeta";
 import StructuredData from "../seo/StructuredData";
 import isPrerenderMode from "../seo/prerenderMode";
 import { breadcrumbSchema, webAppSchema } from "../seo/schema";
 
-export default function Ability() {
+export default function Champion() {
   const prerenderMode = isPrerenderMode();
 
   return (
     <div className="container pb-5 mb-5">
       <PageMeta
-        title="League of Legends Ability Quiz"
-        description="Guess League of Legends champions from their abilities. Play unlimited ability guessing rounds in InfiniteLoLdle."
-        path="/game/ability"
+        title="League Champion Guessing Game"
+        description="Guess League of Legends champions with unlimited rounds. Use champion attributes and clues to solve each puzzle in InfiniteLoLdle."
+        path="/game/champion"
       />
       <StructuredData data={webAppSchema} />
       <StructuredData
         data={breadcrumbSchema([
           { name: "Home", path: "/" },
-          { name: "Ability Mode", path: "/game/ability" },
+          { name: "Champion Mode", path: "/game/champion" },
         ])}
       />
 
-      <h1 className="text-center pt-4 pb-3">League of Legends Ability Quiz</h1>
+      <h1 className="text-center pt-4 pb-3">League Champion Guessing Game</h1>
       <p>
-        Identify champions from their abilities and narrow down your guesses with each clue. This
-        mode keeps generating rounds, so you are not limited to one daily puzzle.
+        Guess the League of Legends champion using role, region, resource, release year, and other
+        clue columns. This mode is unlimited, so you can keep playing beyond a daily challenge.
       </p>
       <p>
-        Try other quizzes: <Link to="/game/champion">Champion</Link>,{" "}
+        Related modes: <Link to="/game/ability">Ability</Link>,{" "}
         <Link to="/game/splash">Splash art</Link>, <Link to="/game/item">Item</Link>,{" "}
         <Link to="/game/item/legacy">Legacy item</Link>.
       </p>
 
-      {!prerenderMode ? <AbilitySpriteGame /> : null}
+      {!prerenderMode ? <Game /> : null}
     </div>
   );
 }

@@ -1,10 +1,13 @@
-FROM node:22-alpine3.21 AS build-stage
+FROM node:22-bookworm-slim AS build-stage
 WORKDIR /app
 COPY package.json package.json
 COPY package-lock.json package-lock.json
 RUN npm ci
 COPY . .
 RUN npm run build
+RUN npx playwright install --with-deps chromium
+RUN npm run prerender
+RUN npm run seo:assert
 
 FROM nginx:stable-alpine AS prod-stage
 COPY --from=build-stage /app/build /usr/share/nginx/html
