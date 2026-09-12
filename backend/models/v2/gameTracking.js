@@ -163,7 +163,10 @@ const gameTracking = {
     });
   },
 
-  async markAbandonedRounds({ now = new Date(), thresholdHours = 24 } = {}) {
+  async markAbandonedRounds({
+    now = new Date(),
+    thresholdHours = 24 * 30, // Default to 30 days
+  } = {}) {
     const cutoff = new Date(now.getTime() - thresholdHours * 60 * 60 * 1000);
 
     return prisma.gameRound.updateMany({
