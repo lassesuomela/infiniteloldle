@@ -183,6 +183,9 @@ model GameRound {
   @@index([gameType, startedAt])
   @@index([gameType, targetId])
   @@index([status, startedAt])
+  @@index([userId, gameType, targetId, targetVariantId, status, startedAt])
+  @@index([userId, gameType, status, startedAt])
+  @@index([status, updatedAt])
 }
 
 model GameGuess {

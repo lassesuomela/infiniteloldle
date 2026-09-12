@@ -20,6 +20,9 @@ CREATE TABLE `GameRound` (
   INDEX `GameRound_gameType_startedAt_idx`(`gameType`, `startedAt`),
   INDEX `GameRound_gameType_targetId_idx`(`gameType`, `targetId`),
   INDEX `GameRound_status_startedAt_idx`(`status`, `startedAt`),
+  INDEX `GameRound_userId_gameType_targetId_targetVariantId_status_startedAt_idx`(`userId`, `gameType`, `targetId`, `targetVariantId`, `status`, `startedAt`),
+  INDEX `GameRound_userId_gameType_status_startedAt_idx`(`userId`, `gameType`, `status`, `startedAt`),
+  INDEX `GameRound_status_updatedAt_idx`(`status`, `updatedAt`),
   CONSTRAINT `GameRound_userId_fkey`
     FOREIGN KEY (`userId`) REFERENCES `users`(`id`)
     ON DELETE CASCADE ON UPDATE CASCADE
