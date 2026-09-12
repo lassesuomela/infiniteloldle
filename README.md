@@ -91,6 +91,13 @@ Frontend API config is in \frontend\src\configs\config.js
 - `cd ./backend`
 - run `npm test`
 
+## Tests & development
+
+Incase database has been changed and there is a desire for the CI/CD pipeline to pass the tests the mysql-docker/db.sql should be updated with new tables. Couple options here:
+
+- make CI/CD run migrations (soon)
+- dump current local db with mysqldump and then copy over new tables from that to the db.sql file.
+
 ## Code coverage
 
 ![Code coverage](screenshots/backend/coverage.png)
