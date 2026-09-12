@@ -79,7 +79,7 @@ const Create = (req, res) => {
           if (skins.length === 0) {
             console.log(
               "FATAL: No skins found for champion ID",
-              currentSplashChampion.id
+              currentSplashChampion.id,
             );
             return res.json({
               status: "error",
@@ -100,7 +100,7 @@ const Create = (req, res) => {
             }
 
             const randomOldItemIdx = Math.floor(
-              Math.random() * oldItemData.length
+              Math.random() * oldItemData.length,
             );
 
             const currentOldItemId = oldItemData[randomOldItemIdx];
@@ -122,35 +122,6 @@ const Create = (req, res) => {
             };
 
             const user = await userV2.create(userData);
-
-            await Promise.all([
-              gameTracking.startRound({
-                userId: user.id,
-                gameType: gameTracking.GameTypes.champion,
-                targetId: currentChampion.id,
-              }),
-              gameTracking.startRound({
-                userId: user.id,
-                gameType: gameTracking.GameTypes.splash,
-                targetId: currentSplashChampion.id,
-                targetVariantId: randomSkin.id,
-              }),
-              gameTracking.startRound({
-                userId: user.id,
-                gameType: gameTracking.GameTypes.item,
-                targetId: currentItemId.itemId,
-              }),
-              gameTracking.startRound({
-                userId: user.id,
-                gameType: gameTracking.GameTypes.oldItem,
-                targetId: currentOldItemId.id,
-              }),
-              gameTracking.startRound({
-                userId: user.id,
-                gameType: gameTracking.GameTypes.ability,
-                targetId: randomAbilityId,
-              }),
-            ]);
 
             res.json({ status: "success", token: token });
           });
