@@ -58,6 +58,12 @@ export default function Header() {
             </li>
 
             <li className="nav-item">
+              <Link className="nav-link" to="/game/versus">
+                Versus
+              </Link>
+            </li>
+
+            <li className="nav-item">
               <Link className="nav-link" to="leaderboard">
                 Leaderboard
               </Link>

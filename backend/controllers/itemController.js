@@ -4,6 +4,9 @@ const redisCache = require("../cache/cache");
 const { GuessCountKeys } = require("../helpers/redisKeys");
 const itemV2 = require("../models/v2/item");
 const userV2 = require("../models/v2/user");
+const fs = require("fs").promises;
+const path = require("path");
+const { applyBlurToImage } = require("../helpers/blur");
 
 const GuessItem = async (req, res) => {
   try {
@@ -99,24 +102,61 @@ const GuessItem = async (req, res) => {
   }
 };
 
-const GetItemSprite = (req, res) => {
+const GetItemSprite = async (req, res) => {
   const token = req.token;
 
-  item.getItemByToken(token, (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.json({ status: "error", message: "Error on fetching item" });
+  try {
+    const userObj = await userV2.findByToken(token);
+    if (!userObj) {
+      return res.json({ status: "error", message: "Token is invalid" });
     }
 
-    if (result.length === 0) {
-      return res.json({
-        status: "error",
-        message: "Item was not found for that token",
-      });
+    const currentItemV2 = await itemV2.findByItemId(userObj.currentItemId);
+    if (!currentItemV2) {
+      return res.json({ status: "error", message: "Item not found for token" });
     }
 
-    res.json({ status: "success", result: result[0]["itemId"] });
-  });
+    const itemId = currentItemV2.itemId;
+    const guessCountKey = GuessCountKeys.item(userObj.id);
+    const guessCount = await redisCache.getGuessCount(guessCountKey);
+
+    const imageName = `${itemId}.webp`;
+    const cacheKey = `item_${imageName}_blur_${guessCount}`;
+
+    if (cache.checkCache(cacheKey)) {
+      const data = cache.getCache(cacheKey);
+      res.set("X-CACHE", "HIT");
+      return res.json({ status: "success", result: data, itemId });
+    }
+
+    const imagePath = path.join(__dirname, "../items", imageName);
+
+    let fileBuffer;
+    try {
+      fileBuffer = await fs.readFile(imagePath);
+    } catch (fsErr) {
+      console.log(`FATAL: Item image is missing for: ${imageName}`);
+      return res.status(404).json({ status: "error", message: "File not found" });
+    }
+
+    const blurredBuffer = await applyBlurToImage(fileBuffer, guessCount);
+    const base64 = blurredBuffer.toString("base64");
+
+    cache.saveCache(cacheKey, base64);
+    cache.changeTTL(cacheKey, 3600 * 6);
+    res.set("X-CACHE", "MISS");
+
+    return res.json({ status: "success", result: base64, itemId });
+  } catch (error) {
+    console.error("Error in GetItemSprite:", error);
+    // Legacy fallback: return just the itemId for old clients
+    item.getItemByToken(token, (err, result) => {
+      if (err || result.length === 0) {
+        return res.json({ status: "error", message: "Error on fetching item" });
+      }
+      res.json({ status: "success", result: null, itemId: result[0]["itemId"] });
+    });
+  }
 };
 
 const GetAllItems = (req, res) => {

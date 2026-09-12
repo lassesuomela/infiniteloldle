@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const oldItemV2 = require("../models/v2/oldItem");
 const userV2 = require("../models/v2/user");
+const { applyBlurToImage } = require("../helpers/blur");
 
 const GuessItem = async (req, res) => {
   try {
@@ -103,7 +104,7 @@ const GuessItem = async (req, res) => {
 const GetItemSprite = (req, res) => {
   const token = req.token;
 
-  oldItemModel.getItemByToken(token, (err, result) => {
+  oldItemModel.getItemByToken(token, async (err, result) => {
     if (err) {
       console.log(err);
       return res.json({ status: "error", message: "Error on fetching item" });
@@ -118,37 +119,52 @@ const GetItemSprite = (req, res) => {
 
     const imageName = result[0]["old_item_key"] + ".webp";
 
-    if (cache.checkCache(imageName)) {
-      const data = cache.getCache(imageName);
-      res.set("X-CACHE", "HIT");
-      return res.json({
-        status: "success",
-        result: data,
-      });
-    }
+    try {
+      const userObj = await userV2.findByToken(token);
+      const guessCountKey = GuessCountKeys.oldItem(userObj ? userObj.id : null);
+      const guessCount = userObj
+        ? await redisCache.getGuessCount(guessCountKey)
+        : 0;
 
-    const imagePath = path.join(__dirname, "../old_items", imageName);
+      const cacheKey = `${imageName}_blur_${guessCount}`;
 
-    fs.readFile(imagePath, (err, data) => {
-      if (err) {
-        console.log(`FATAL: Image is missing for: ${imageName}`);
-        return res.status(404).json({
-          status: "error",
-          message: "File not found",
-        });
+      if (cache.checkCache(cacheKey)) {
+        const data = cache.getCache(cacheKey);
+        res.set("X-CACHE", "HIT");
+        return res.json({ status: "success", result: data });
       }
 
-      const base64 = data.toString("base64");
+      const imagePath = path.join(__dirname, "../old_items", imageName);
 
-      cache.saveCache(imageName, base64);
-      cache.changeTTL(imageName, 3600 * 6);
-      res.set("X-CACHE", "MISS");
+      fs.readFile(imagePath, async (fsErr, data) => {
+        if (fsErr) {
+          console.log(`FATAL: Image is missing for: ${imageName}`);
+          return res.status(404).json({
+            status: "error",
+            message: "File not found",
+          });
+        }
 
-      return res.json({
-        status: "success",
-        result: base64,
+        const blurredBuffer = await applyBlurToImage(data, guessCount);
+        const base64 = blurredBuffer.toString("base64");
+
+        cache.saveCache(cacheKey, base64);
+        cache.changeTTL(cacheKey, 3600 * 6);
+        res.set("X-CACHE", "MISS");
+
+        return res.json({ status: "success", result: base64 });
       });
-    });
+    } catch (lookupErr) {
+      console.error("Error looking up user for blur:", lookupErr);
+      // Fall back: serve image without blur
+      const imagePath = path.join(__dirname, "../old_items", imageName);
+      fs.readFile(imagePath, (fsErr, data) => {
+        if (fsErr) {
+          return res.status(404).json({ status: "error", message: "File not found" });
+        }
+        return res.json({ status: "success", result: data.toString("base64") });
+      });
+    }
   });
 };
 

@@ -57,6 +57,7 @@ const gameRoutes = require("./routes/gameRoutes");
 const guessRoutes = require("./routes/guessRoutes");
 const scoreboardRoutes = require("./routes/scoreboardRoutes");
 const statsRoutes = require("./routes/statsRoutes");
+const versusRoutes = require("./routes/versusRoutes");
 
 app.use(waf.checkRequest);
 app.use(requestTracker.trackRequests);
@@ -65,6 +66,7 @@ app.use("/api", createUserRoutes);
 app.use("/api", scoreboardRoutes);
 app.use("/api", gameRoutes);
 app.use("/api", statsRoutes);
+app.use("/api", versusRoutes);
 
 app.use(token);
 app.use(requestTracker.trackDAU);

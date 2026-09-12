@@ -24,6 +24,8 @@ import Item from "./views/Item";
 import OldItem from "./views/OldItem";
 import Stats from "./views/Stats";
 import MyStats from "./views/MyStats";
+import VersusLanding from "./views/versus/VersusLanding";
+import VersusRoom from "./views/versus/VersusRoom";
 
 import { Provider } from "react-redux";
 import store from "./store/store";
@@ -45,6 +47,8 @@ function App() {
           <Route path="/game/ability" element={<Ability />} />
           <Route path="/game/item" element={<Item />} />
           <Route path="/game/item/legacy" element={<OldItem />} />
+          <Route path="/game/versus" element={<VersusLanding />} />
+          <Route path="/game/versus/room" element={<VersusRoom />} />
           <Route path="/leaderboard" element={<Scoreboard />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="/about" element={<About />} />

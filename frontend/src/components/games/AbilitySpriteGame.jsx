@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 import Victory from "./components/Victory";
@@ -147,8 +147,6 @@ export default function AbilityGuessingGame() {
         setChampions((champions) => [{ key, isCorrect, name }, ...champions]);
         addToAbilityGuessHistory({ key, isCorrect, name });
 
-        const abilityImgEl = document.getElementById("abilityImg");
-
         if (isCorrect) {
           if (guesses.length === 0) {
             saveFirstTries();
@@ -157,10 +155,11 @@ export default function AbilityGuessingGame() {
           setCorrectGuess(true);
           clearAbilityHistory();
           setTitle(response.data.title);
-
-          if (abilityImgEl) abilityImgEl.style.filter = "";
+          // Fetch unblurred image on correct guess
+          fetchAbilityImage();
         } else {
-          applyBlur(guesses.length + 1);
+          // Fetch more-revealed (less blurred) image
+          fetchAbilityImage();
         }
       })
       .catch((error) => {
@@ -169,34 +168,7 @@ export default function AbilityGuessingGame() {
       });
   };
 
-  const applyBlur = useCallback(
-    (_guessCount) => {
-      const abilityImgEl = document.getElementById("abilityImg");
-      if (!abilityImgEl) return;
-
-      const initialBlur = 1.0;
-      let blurVal = initialBlur;
-
-      for (let i = 0; i < _guessCount; i++) {
-        blurVal -= blurVal * 0.4;
-      }
-
-      abilityImgEl.style.filter = `blur(${blurVal.toFixed(3)}em) ${
-        isMonochrome ? "grayscale(1)" : ""
-      }`;
-    },
-    [isMonochrome]
-  );
-
-  useEffect(() => {
-    if (sprite) {
-      applyBlur(guesses.length);
-    }
-  }, [sprite, guesses, isMonochrome, applyBlur]);
-
   const restart = () => {
-    setTimeout(() => applyBlur(0), 0);
-
     fetchAbilityImage();
     FetchChampions();
 
@@ -221,7 +193,7 @@ export default function AbilityGuessingGame() {
 
       <div
         className="container d-flex justify-content-center shadow"
-        id="itemContainer"
+        id="spriteContainer"
       >
         <img
           src={`data:image/webp;base64,${sprite}`}
@@ -265,14 +237,7 @@ export default function AbilityGuessingGame() {
           />
 
           <div className="d-flex justify-content-evenly">
-            {correctGuess ? (
-              <button
-                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
-                onClick={restart}
-              >
-                Next
-              </button>
-            ) : (
+            {!correctGuess && (
               <button className="btn btn-dark mb-3 mt-1 min-vw-25">
                 Guess
               </button>
@@ -321,7 +286,7 @@ export default function AbilityGuessingGame() {
         <Victory
           id="victory"
           championKey={champions[0].key}
-          champion={currentGuess}
+          champion={champions[0].name}
           tries={guessCount}
           title={title}
         />
