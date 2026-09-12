@@ -31,3 +31,18 @@ mysql -u root -p loldle < migrations/add_guess_count.sql
 - Adds `guessCount INT NOT NULL DEFAULT 0` to each table
 
 **Safe to Run:** Yes, uses ADD COLUMN with DEFAULT value, won't affect existing data.
+
+### add_game_round_tracking.sql
+**Date:** 2026-09-12  
+**Description:** Adds `GameRound` and `GameGuess` tables for detailed per-round/per-guess tracking.
+
+**Affected Tables:**
+- GameRound
+- GameGuess
+
+**Changes:**
+- Adds per-round status/timing/target tracking
+- Adds per-guess sequential logging with uniqueness on `(gameRoundId, guessNumber)`
+- Adds analytics-oriented indexes for user, game type, status, and guess lookups
+
+**Safe to Run:** Yes, creates new tables only and does not modify existing solved-target tables.

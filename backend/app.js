@@ -18,6 +18,10 @@ const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const schedule = require("node-schedule");
 const ipParser = require("./middleware/ipParser");
+const token = require("./middleware/token");
+const requestTracker = require("./middleware/requestTracker");
+const waf = require("./middleware/waf");
+const gameTracking = require("./models/v2/gameTracking");
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -29,6 +33,14 @@ const limiter = rateLimit({
 
 const job = schedule.scheduleJob("55 23 * * *", () => {
   requestTracker.saveStats();
+});
+
+const abandonRoundsJob = schedule.scheduleJob("0 0 * * *", async () => {
+  try {
+    await gameTracking.markAbandonedRounds();
+  } catch (error) {
+    console.error("Failed to mark abandoned rounds:", error);
+  }
 });
 
 const app = express();
@@ -46,10 +58,6 @@ app.use(
     ':remote-addr - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms',
   ),
 );
-
-const token = require("./middleware/token");
-const requestTracker = require("./middleware/requestTracker");
-const waf = require("./middleware/waf");
 
 const userRoutes = require("./routes/userRoutes");
 const createUserRoutes = require("./routes/createUserRoutes");
