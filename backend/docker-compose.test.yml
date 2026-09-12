@@ -15,6 +15,16 @@ services:
     restart: unless-stopped
     environment:
       - DOCKER_APP_PORT=8080
+      - DB_HOST=loldle-mysql
+      - DB_PORT=3306
+      - REDIS_HOST=loldle-redis
+      - REDIS_PORT=6379
+      - DATABASE_URL=mysql://root:${DB_PASSWORD}@loldle-mysql:3306/${DB_DATABASE}
+    depends_on:
+      loldle-mysql:
+        condition: service_healthy
+      loldle-redis:
+        condition: service_started
     networks:
       - mynetwork
 
@@ -30,8 +40,6 @@ services:
     environment:
       - MYSQL_DATABASE=${DB_DATABASE}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - loldle-mysql:/var/lib/mysql
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u root --password=$DB_PASSWORD
       start_period: 5s
@@ -41,5 +49,17 @@ services:
     networks:
       - mynetwork
 
+  loldle-redis:
+    image: redis:8.2.0
+    container_name: loldle-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - test-loldle-redis:/data
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    networks:
+      - mynetwork
+
 volumes:
-  loldle-mysql:
+  test-loldle-redis:
