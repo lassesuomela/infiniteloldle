@@ -9,7 +9,7 @@ import {
 import PauseOverlay from "./PauseOverlay";
 import ChampionDetails from "../../components/games/components/ChampionDetails";
 import GameTitle from "../../components/games/components/GameTitle";
-
+import ChampionImg from "../../components/games/components/ChampionImg";
 const MODE_LABELS = {
   champion: "Which champion is this?",
   splash: "Which champion's splash art is this?",
@@ -276,6 +276,18 @@ export default function VersusGame({
                         </button>
                       </form>
                     )}
+
+                    <div id="championsImgs" className="container">
+                      {myGuesses.map((champ) => (
+                        <ChampionImg
+                          key={champ.key}
+                          championKey={champ.key}
+                          isCorrect={champ.isCorrect}
+                          isColorBlindMode={false}
+                          name={champ.name}
+                        />
+                      ))}
+                    </div>
 
                     {/* Champion mode comparison grid */}
                     {roundInfo.mode === "champion" &&

@@ -179,36 +179,64 @@ async function handleGuess(code, playerId, guess) {
 
   if (!correct) {
     // For champion mode, return comparison data so the guesser can see feedback
-    if (room.currentMode === "champion") {
-      const correctChampion = room.currentServerData?.champion;
+    if (
+      room.currentMode === "champion" ||
+      room.currentMode === "splash" ||
+      room.currentMode === "ability"
+    ) {
       const guessedChampion = await championV2.findByName(guess);
-      if (guessedChampion && correctChampion) {
-        const similarities = computeChampionComparison(
-          guessedChampion,
-          correctChampion,
-        );
+      if (guessedChampion) {
+        const similarities = computeChampionComparison(guessedChampion);
         return {
           correct: false,
           guessData: {
-            champData: {
-              guessedChampion: guessedChampion.name,
-              championKey: guessedChampion.championKey,
-              resource: guessedChampion.resource,
-              gender: guessedChampion.gender,
-              position: guessedChampion.position,
-              rangeType: guessedChampion.rangeType,
-              region: guessedChampion.region,
-              releaseYear: guessedChampion.released,
-              genre: guessedChampion.genre,
-              damageType: guessedChampion.damageType,
-            },
+            guessedChampion: guessedChampion.name,
+            championKey: guessedChampion.championKey,
+            resource: guessedChampion.resource,
+            gender: guessedChampion.gender,
+            position: guessedChampion.position,
+            rangeType: guessedChampion.rangeType,
+            region: guessedChampion.region,
+            releaseYear: guessedChampion.released,
+            genre: guessedChampion.genre,
+            damageType: guessedChampion.damageType,
             similarities,
           },
         };
       }
+
+      return { correct: false };
+    } else if (room.currentMode === "item") {
+      // Fetch item details from db
+      const guessedItem = await itemV2.findByName(guess);
+
+      if (guessedItem) {
+        return {
+          correct: false,
+          guessData: {
+            guessedItem: guessedItem.name,
+            itemId: guessedItem.itemId,
+          },
+        };
+      }
+      return { correct: false };
+    } else if (room.currentMode === "legacy_item") {
+      const guessedOldItem = await oldItemV2.findByName(guess);
+
+      if (guessedOldItem) {
+        return {
+          correct: false,
+          guessData: {
+            guessedOldItem: guessedOldItem.name,
+            old_item_key: guessedOldItem.old_item_key,
+          },
+        };
+      }
+      return { correct: false };
     }
-    return { correct: false };
   }
+
+  console.log("correct");
 
   const player = room.players.find((p) => p.id === playerId);
   if (!player) return { error: "Player not found" };

@@ -329,7 +329,11 @@ function setupVersusSocket(io) {
           // For champion mode, send comparison feedback to the guesser only
           if (result.guessData) {
             socket.emit("guessResult", result.guessData);
+            return;
           }
+          // For other modes return only correct/incorrect without details
+          socket.emit("guessResult", { correct: false });
+
           return;
         }
 
