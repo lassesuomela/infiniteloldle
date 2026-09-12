@@ -4,6 +4,7 @@ const redisCache = require("../cache/cache");
 const { GuessCountKeys } = require("../helpers/redisKeys");
 const itemV2 = require("../models/v2/item");
 const userV2 = require("../models/v2/user");
+const gameTracking = require("../models/v2/gameTracking");
 
 const GuessItem = async (req, res) => {
   try {
@@ -35,10 +36,19 @@ const GuessItem = async (req, res) => {
     // Increment guess count in Redis
     const guessCountKey = GuessCountKeys.item(user.id);
     await redisCache.increment(guessCountKey);
+    const isCorrectGuess = guess === correctItem.name;
+
+    await gameTracking.recordGuess({
+      userId: user.id,
+      gameType: gameTracking.GameTypes.item,
+      targetId: correctItem.itemId,
+      guessId: guessItemObj.itemId,
+      isCorrect: isCorrectGuess,
+    });
 
     const guessCount = await redisCache.getGuessCount(guessCountKey);
 
-    if (guess !== correctItem.name) {
+    if (!isCorrectGuess) {
       return res.json({
         status: "success",
         correctGuess: false,
@@ -80,6 +90,11 @@ const GuessItem = async (req, res) => {
       currentItemId: newItemId,
       prestige,
       score: { increment: 1 },
+    });
+    await gameTracking.startRound({
+      userId: user.id,
+      gameType: gameTracking.GameTypes.item,
+      targetId: newItemId,
     });
 
     cache.deleteCache("/user:" + token);

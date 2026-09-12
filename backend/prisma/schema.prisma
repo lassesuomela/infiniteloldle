@@ -70,6 +70,7 @@ model users {
   solvedOldItems      UserSolvedOldItems[]
   solvedSplashes      UserSolvedSplashes[]
   solvedAbilities     UserSolvedAbilities[]
+  gameRounds          GameRound[]
 }
 
 model UserSolvedChampions {
@@ -160,4 +161,42 @@ model UserSolvedAbilities {
 
   @@id([userId, abilityId])
   @@index([abilityId])
+}
+
+model GameRound {
+  id              Int        @id @default(autoincrement())
+  userId          Int
+  gameType        String     @db.VarChar(20)
+  targetId        Int
+  targetVariantId Int?
+  status          String     @default("in_progress") @db.VarChar(20)
+  startedAt       DateTime   @default(now()) @db.Timestamp(0)
+  endedAt         DateTime?  @db.Timestamp(0)
+  guessCount      Int        @default(0)
+  patchVersion    String?    @db.VarChar(20)
+  createdAt       DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime   @updatedAt @db.Timestamp(0)
+  user            users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guesses         GameGuess[]
+
+  @@index([userId, startedAt])
+  @@index([gameType, startedAt])
+  @@index([gameType, targetId])
+  @@index([status, startedAt])
+  @@index([userId, gameType, targetId, targetVariantId, status, startedAt])
+  @@index([userId, gameType, status, startedAt])
+  @@index([status, updatedAt])
+}
+
+model GameGuess {
+  id          Int      @id @default(autoincrement())
+  gameRoundId Int
+  guessNumber Int
+  guessId     Int
+  guessedAt   DateTime @default(now()) @db.Timestamp(0)
+  isCorrect   Boolean  @default(false)
+  gameRound   GameRound @relation(fields: [gameRoundId], references: [id], onDelete: Cascade)
+
+  @@unique([gameRoundId, guessNumber])
+  @@index([guessId, guessedAt])
 }

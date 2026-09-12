@@ -12,6 +12,7 @@ const itemV2 = require("../models/v2/item");
 const oldItemV2 = require("../models/v2/oldItem");
 const skin = require("../models/v2/skin");
 const ability = require("../models/v2/ability");
+const gameTracking = require("../models/v2/gameTracking");
 
 const GetNickname = (nick) => {
   let nickname = nick ? nick.trim() : "";
@@ -121,6 +122,35 @@ const Create = (req, res) => {
             };
 
             const user = await userV2.create(userData);
+
+            await Promise.all([
+              gameTracking.startRound({
+                userId: user.id,
+                gameType: gameTracking.GameTypes.champion,
+                targetId: currentChampion.id,
+              }),
+              gameTracking.startRound({
+                userId: user.id,
+                gameType: gameTracking.GameTypes.splash,
+                targetId: currentSplashChampion.id,
+                targetVariantId: randomSkin.id,
+              }),
+              gameTracking.startRound({
+                userId: user.id,
+                gameType: gameTracking.GameTypes.item,
+                targetId: currentItemId.itemId,
+              }),
+              gameTracking.startRound({
+                userId: user.id,
+                gameType: gameTracking.GameTypes.oldItem,
+                targetId: currentOldItemId.id,
+              }),
+              gameTracking.startRound({
+                userId: user.id,
+                gameType: gameTracking.GameTypes.ability,
+                targetId: randomAbilityId,
+              }),
+            ]);
 
             res.json({ status: "success", token: token });
           });
@@ -280,7 +310,17 @@ const ChangeChampionGuess = async (req, res) => {
     const random = Math.floor(Math.random() * champPool.length);
     const newChampionId = champPool[random];
 
+    await gameTracking.markCurrentRoundAsGaveUp({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.champion,
+    });
+
     await userV2.updateById(userObj.id, { currentChampion: newChampionId });
+    await gameTracking.startRound({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.champion,
+      targetId: newChampionId,
+    });
 
     // Reset guess count in Redis
     const guessCountKey = GuessCountKeys.champion(userObj.id);
@@ -324,7 +364,18 @@ const ChangeSplashGuess = async (req, res) => {
     const randomSkinIndex = Math.floor(Math.random() * skins.length);
     const randomSkin = skins[randomSkinIndex];
 
+    await gameTracking.markCurrentRoundAsGaveUp({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.splash,
+    });
+
     await userV2.updateById(userObj.id, { currentSplashSkinId: randomSkin.id });
+    await gameTracking.startRound({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.splash,
+      targetId: newChampionId,
+      targetVariantId: randomSkin.id,
+    });
 
     // Reset guess count in Redis
     const guessCountKey = GuessCountKeys.splash(userObj.id);
@@ -355,8 +406,18 @@ const ChangeItemGuess = async (req, res) => {
     const random = Math.floor(Math.random() * itemPool.length);
     const newItemId = itemPool[random];
 
+    await gameTracking.markCurrentRoundAsGaveUp({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.item,
+    });
+
     await userV2.updateById(userObj.id, {
       currentItemId: newItemId,
+    });
+    await gameTracking.startRound({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.item,
+      targetId: newItemId,
     });
 
     // Reset guess count in Redis
@@ -388,8 +449,18 @@ const ChangeOldItemGuess = async (req, res) => {
     const random = Math.floor(Math.random() * itemPool.length);
     const newOldItemId = itemPool[random];
 
+    await gameTracking.markCurrentRoundAsGaveUp({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.oldItem,
+    });
+
     await userV2.updateById(userObj.id, {
       currentOldItemId: newOldItemId,
+    });
+    await gameTracking.startRound({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.oldItem,
+      targetId: newOldItemId,
     });
 
     // Reset guess count in Redis
@@ -421,8 +492,18 @@ const ChangeAbilityGuess = async (req, res) => {
     const random = Math.floor(Math.random() * abilityPool.length);
     const newAbilityId = abilityPool[random];
 
+    await gameTracking.markCurrentRoundAsGaveUp({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.ability,
+    });
+
     await userV2.updateById(userObj.id, {
       currentAbilityId: newAbilityId,
+    });
+    await gameTracking.startRound({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.ability,
+      targetId: newAbilityId,
     });
 
     // Reset guess count in Redis

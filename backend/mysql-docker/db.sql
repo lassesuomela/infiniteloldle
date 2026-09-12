@@ -348,6 +348,59 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=86534 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `GameGuess`
+--
+
+DROP TABLE IF EXISTS `GameGuess`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `GameGuess` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `gameRoundId` int NOT NULL,
+  `guessNumber` int NOT NULL,
+  `guessId` int NOT NULL,
+  `guessedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `isCorrect` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `GameGuess_gameRoundId_guessNumber_key` (`gameRoundId`,`guessNumber`),
+  KEY `GameGuess_guessId_guessedAt_idx` (`guessId`,`guessedAt`),
+  CONSTRAINT `GameGuess_gameRoundId_fkey` FOREIGN KEY (`gameRoundId`) REFERENCES `GameRound` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `GameRound`
+--
+
+DROP TABLE IF EXISTS `GameRound`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `GameRound` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `userId` int NOT NULL,
+  `gameType` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `targetId` int NOT NULL,
+  `targetVariantId` int DEFAULT NULL,
+  `status` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'in_progress',
+  `startedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `endedAt` timestamp NULL DEFAULT NULL,
+  `guessCount` int NOT NULL DEFAULT '0',
+  `patchVersion` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `GameRound_userId_startedAt_idx` (`userId`,`startedAt`),
+  KEY `GameRound_gameType_startedAt_idx` (`gameType`,`startedAt`),
+  KEY `GameRound_gameType_targetId_idx` (`gameType`,`targetId`),
+  KEY `GameRound_status_startedAt_idx` (`status`,`startedAt`),
+  KEY `GameRound_userId_gameType_targetId_targetVariantId_status_st_idx` (`userId`,`gameType`,`targetId`,`targetVariantId`,`status`,`startedAt`),
+  KEY `GameRound_userId_gameType_status_startedAt_idx` (`userId`,`gameType`,`status`,`startedAt`),
+  KEY `GameRound_status_updatedAt_idx` (`status`,`updatedAt`),
+  CONSTRAINT `GameRound_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -358,4 +411,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-12 20:15:45
+-- Dump completed on 2026-09-12 19:39:06

@@ -14,6 +14,7 @@ const { PrismaClient } = require("../generated/prisma");
 const skin = require("../models/v2/skin");
 const fsp = require("fs").promises;
 const clueConfig = require("../configs/clues");
+const gameTracking = require("../models/v2/gameTracking");
 
 const prisma = new PrismaClient();
 
@@ -71,6 +72,15 @@ const Guess = async (req, res) => {
     // Increment guess count in Redis
     const guessCountKey = GuessCountKeys.champion(user.id);
     await redisCache.increment(guessCountKey);
+    const isCorrectGuess = guess === correctChampion.name;
+
+    await gameTracking.recordGuess({
+      userId: user.id,
+      gameType: gameTracking.GameTypes.champion,
+      targetId: correctChampion.id,
+      guessId: guessChampion.id,
+      isCorrect: isCorrectGuess,
+    });
 
     const champData = {
       guessedChampion: guessChampion.name,
@@ -115,7 +125,7 @@ const Guess = async (req, res) => {
         correctChampion.damageType
       ),
     };
-    if (guess !== correctChampion.name) {
+    if (!isCorrectGuess) {
       // Get current guess count to return to frontend
       const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
 
@@ -168,6 +178,11 @@ const Guess = async (req, res) => {
       prestige,
       score: { increment: 1 },
     });
+    await gameTracking.startRound({
+      userId: user.id,
+      gameType: gameTracking.GameTypes.champion,
+      targetId: newChampionId,
+    });
 
     cache.deleteCache("/user:" + token);
 
@@ -217,8 +232,18 @@ const GuessSplash = async (req, res) => {
     // Increment guess count in Redis
     const guessCountKey = GuessCountKeys.splash(userObj.id);
     await redisCache.increment(guessCountKey);
+    const isCorrectGuess = guess === correctSkinData.champion.name;
 
-    if (guess !== correctSkinData.champion.name) {
+    await gameTracking.recordGuess({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.splash,
+      targetId: correctSkinData.champion.id,
+      targetVariantId: correctSkinData.id,
+      guessId: guessChampion.id,
+      isCorrect: isCorrectGuess,
+    });
+
+    if (!isCorrectGuess) {
       // Get current guess count to return to frontend
       const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
 
@@ -285,6 +310,12 @@ const GuessSplash = async (req, res) => {
       currentSplashSkinId: randomSkin.id,
       prestige,
       score: { increment: 1 },
+    });
+    await gameTracking.startRound({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.splash,
+      targetId: newChampionId,
+      targetVariantId: randomSkin.id,
     });
 
     cache.deleteCache("/user:" + token);
@@ -409,8 +440,18 @@ const GuessAbility = async (req, res) => {
     // Increment guess count in Redis
     const guessCountKey = GuessCountKeys.ability(userObj.id);
     await redisCache.increment(guessCountKey);
+    const isCorrectGuess =
+      guess.toLowerCase() === correctAbility.champion.name.toLowerCase();
 
-    if (guess.toLowerCase() !== correctAbility.champion.name.toLowerCase()) {
+    await gameTracking.recordGuess({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.ability,
+      targetId: correctAbility.id,
+      guessId: guessedChampion.id,
+      isCorrect: isCorrectGuess,
+    });
+
+    if (!isCorrectGuess) {
       // Get current guess count to return to frontend
       const currentGuessCount = await redisCache.getGuessCount(guessCountKey);
 
@@ -460,6 +501,11 @@ const GuessAbility = async (req, res) => {
       prestige,
       score: { increment: 1 },
     });
+    await gameTracking.startRound({
+      userId: userObj.id,
+      gameType: gameTracking.GameTypes.ability,
+      targetId: newAbilityId,
+    });
 
     cache.deleteCache("/user:" + token);
 
@@ -496,6 +542,11 @@ const GetAbilitySprite = async (req, res) => {
 
       userObj = await userV2.updateById(userObj.id, {
         currentAbilityId: randomAbilityId,
+      });
+      await gameTracking.startRound({
+        userId: userObj.id,
+        gameType: gameTracking.GameTypes.ability,
+        targetId: randomAbilityId,
       });
     }
 

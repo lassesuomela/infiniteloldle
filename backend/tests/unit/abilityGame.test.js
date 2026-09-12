@@ -8,6 +8,7 @@ jest.mock("../../models/v2/user");
 jest.mock("../../models/v2/ability");
 jest.mock("../../models/v2/champion");
 jest.mock("../../middleware/cache");
+jest.mock("../../models/v2/gameTracking");
 jest.mock("fs/promises", () => ({ readFile: jest.fn() }));
 jest.mock("path", () => ({
   ...jest.requireActual("path"),
@@ -17,6 +18,7 @@ const userV2 = require("../../models/v2/user");
 const ability = require("../../models/v2/ability");
 const championV2 = require("../../models/v2/champion");
 const cache = require("../../middleware/cache");
+const gameTracking = require("../../models/v2/gameTracking");
 
 const fsp = require("fs/promises");
 const path = require("path");
@@ -40,6 +42,11 @@ app.get("/ability-sprite", (req, res, next) => {
 describe("GuessAbility", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    gameTracking.recordGuess.mockResolvedValue();
+    gameTracking.startRound.mockResolvedValue();
+    gameTracking.GameTypes = {
+      ability: "ability",
+    };
   });
 
   it("should return error if guess is missing", async () => {
