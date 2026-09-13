@@ -318,7 +318,6 @@ export default function AbilityGuessingGame() {
 
       {correctGuess ? (
         <Victory
-          id="victory"
           championKey={champions[0].key}
           champion={currentGuess}
           tries={guessCount}

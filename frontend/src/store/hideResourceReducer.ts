@@ -1,10 +1,8 @@
-const getInitialStateFromLocalStorage = () => {
-  const storedState = localStorage.getItem("hideResource");
-  const localStorageState = storedState === "true" ? true : false;
-  return { hideResource: localStorageState };
-};
+import { getBooleanFromLocalStorage } from "../utils/localStorage";
 
-const initialState = getInitialStateFromLocalStorage();
+const initialState = {
+  hideResource: getBooleanFromLocalStorage("hideResource"),
+};
 
 const hideResourceReducer = (state = initialState, action) => {
   switch (action.type) {

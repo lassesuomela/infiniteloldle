@@ -1,7 +1,14 @@
 import { Tooltip } from "react-tooltip";
 
-export default function ChampionImg(props) {
-  const checkColorBlindMode = () => {
+interface ChampionImgProps {
+  isColorBlindMode: boolean;
+  isCorrect: boolean;
+  championKey: string;
+  name: string;
+}
+
+export default function ChampionImg(props: ChampionImgProps) {
+  const checkColorBlindMode = (): string => {
     return props.isColorBlindMode ? "cb-" : "";
   };
   return (

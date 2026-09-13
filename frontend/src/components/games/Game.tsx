@@ -276,7 +276,6 @@ export default function Game() {
 
       {correctGuess ? (
         <Victory
-          id="victory"
           championKey={champions[0][0].championKey}
           champion={champions[0][0].guessedChampion}
           tries={guessCount}

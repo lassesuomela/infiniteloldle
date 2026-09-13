@@ -1,7 +1,9 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export const handleResponseError = (error) => {
+export const handleResponseError = (error: {
+  response: { status: number };
+}) => {
   if (error.response && error.response.status === 429) {
     toast.error(
       "Too many requests. Please wait a moment before trying again.",

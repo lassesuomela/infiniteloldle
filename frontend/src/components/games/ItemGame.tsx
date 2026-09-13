@@ -91,7 +91,7 @@ export default function ItemGame() {
           data.sort((a, b) => a.value.localeCompare(b.value));
 
           const guessHistoryNames = new Set(
-            getItemGuessHistory().map((item) => item.name),
+            getItemGuessHistory().map((item) =>  item.name),
           );
 
           const transformedData = data
@@ -291,7 +291,6 @@ export default function ItemGame() {
 
       {correctGuess ? (
         <Victory
-          id="victory"
           championKey={items[0]?.itemId}
           champion={currentGuess}
           tries={guessCount}

@@ -1,10 +1,8 @@
-const getInitialStateFromLocalStorage = () => {
-  const storedState = localStorage.getItem("isColorBlindMode");
-  const localStorageState = storedState === "true" ? true : false;
-  return { isColorBlindMode: localStorageState };
-};
+import { getBooleanFromLocalStorage } from "../utils/localStorage";
 
-const initialState = getInitialStateFromLocalStorage();
+const initialState = {
+  isColorBlindMode: getBooleanFromLocalStorage("isColorBlindMode"),
+};
 
 const colorBlindModeReducer = (state = initialState, action) => {
   switch (action.type) {

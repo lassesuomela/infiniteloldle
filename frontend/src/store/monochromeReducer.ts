@@ -1,10 +1,8 @@
-const getInitialStateFromLocalStorage = () => {
-  const storedState = localStorage.getItem("isMonochrome");
-  const localStorageState = storedState === "true" ? true : false;
-  return { isMonochrome: localStorageState };
-};
+import { getBooleanFromLocalStorage } from "../utils/localStorage";
 
-const initialState = getInitialStateFromLocalStorage();
+const initialState = {
+  isMonochrome: getBooleanFromLocalStorage("isMonochrome"),
+};
 
 const monochromeReducer = (state = initialState, action) => {
   switch (action.type) {

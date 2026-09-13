@@ -1,7 +1,16 @@
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 
-export default function Victory(props) {
+interface VictoryProps {
+  isItem?: boolean;
+  isOldItem?: boolean;
+  championKey: string;
+  champion: string;
+  title?: string;
+  tries: number;
+}
+
+export default function Victory(props: VictoryProps) {
   const [isShown, setIsShown] = useState(true);
 
   const Close = () => {

@@ -68,7 +68,9 @@ export default function OldItemGame() {
 
           // Remove already guessed items from valid guesses
           const guessHistoryNames = new Set(
-            getOldItemGuessHistory().map((item) => item.name),
+            getOldItemGuessHistory().map(
+              (item) => item.name,
+            ),
           );
 
           const transformedData = data
@@ -295,7 +297,6 @@ export default function OldItemGame() {
 
       {correctGuess ? (
         <Victory
-          id="victory"
           championKey={items[0]?.id}
           champion={currentGuess}
           tries={guessCount}

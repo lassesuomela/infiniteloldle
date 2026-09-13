@@ -1,10 +1,8 @@
-const getInitialStateFromLocalStorage = () => {
-  const storedState = localStorage.getItem("randomRotate");
-  const localStorageState = storedState === "true" ? true : false;
-  return { randomRotate: localStorageState };
-};
+import { getBooleanFromLocalStorage } from "../utils/localStorage";
 
-const initialState = getInitialStateFromLocalStorage();
+const initialState = {
+  randomRotate: getBooleanFromLocalStorage("randomRotate"),
+};
 
 const randomRotateReducer = (state = initialState, action) => {
   switch (action.type) {

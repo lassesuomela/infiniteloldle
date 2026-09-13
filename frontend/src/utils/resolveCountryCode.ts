@@ -1,4 +1,4 @@
-export const getCountryName = (countryCode) => {
+export const getCountryName = (countryCode: string) => {
   if (typeof countryCode !== "string") {
     return null;
   }

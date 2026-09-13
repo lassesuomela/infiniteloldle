@@ -1,7 +1,15 @@
 import { Tooltip } from "react-tooltip";
 
-export default function ItemImg(props) {
-  const checkColorBlindMode = () => {
+interface ItemImgProps {
+  isColorBlindMode: boolean;
+  isCorrect: boolean;
+  itemId: string | number;
+  name: string;
+  path: string;
+}
+
+export default function ItemImg(props: ItemImgProps) {
+  const checkColorBlindMode = (): string => {
     return props.isColorBlindMode ? "cb-" : "";
   };
 

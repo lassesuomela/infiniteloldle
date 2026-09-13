@@ -2,19 +2,38 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Config from "../../../configs/config";
 
-/**
- * Reusable Clue component for displaying game clues
- * @param {number} guessCount - Current guess count from the game
- * @param {boolean} correctGuess - Whether the game has been won
- * @param {string} gameType - Type of game ('champion', 'skin', 'ability')
- * @param {Array} clueEndpoints - Array of clue endpoint configurations
- *   Each config: { endpoint: string, type: string, label: string, thresholdKey: string }
- */
-export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
-  const [clueThresholds, setClueThresholds] = useState(null);
+type GameType = "champion" | "skin" | "ability" | "splash";
+
+type ClueEndpoint = {
+  endpoint: string;
+  type: string;
+  label: string;
+  thresholdKey: string;
+};
+
+type ClueThresholds = Record<string, Record<string, number>>;
+
+type ClueData = {
+  data: string;
+};
+
+type ClueBoxProps = {
+  guessCount: number;
+  gameType: GameType;
+  clueEndpoints: ClueEndpoint[];
+};
+
+export default function ClueBox({
+  guessCount,
+  gameType,
+  clueEndpoints,
+}: ClueBoxProps) {
+  const [clueThresholds, setClueThresholds] = useState<ClueThresholds | null>(
+    null,
+  );
   const [configLoaded, setConfigLoaded] = useState(false);
-  const [clueData, setClueData] = useState({});
-  const [activeClue, setActiveClue] = useState(null);
+  const [clueData, setClueData] = useState<Record<string, ClueData>>({});
+  const [activeClue, setActiveClue] = useState<string | null>(null);
 
   useEffect(() => {
     FetchClueConfig();
@@ -41,7 +60,7 @@ export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
       });
   };
 
-  const FetchClue = (endpoint, clueType) => {
+  const FetchClue = (endpoint: string, clueType: string) => {
     if (clueData[clueType]) {
       // Already fetched, just toggle
       setActiveClue(activeClue === clueType ? null : clueType);
@@ -66,7 +85,7 @@ export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
       });
   };
 
-  const toggleClue = (endpoint, clueType) => {
+  const toggleClue = (endpoint: string, clueType: string) => {
     if (activeClue === clueType) {
       // Hide current clue
       setActiveClue(null);
@@ -80,9 +99,8 @@ export default function ClueBox({ guessCount, gameType, clueEndpoints }) {
     }
   };
 
-  const getThreshold = (thresholdKey) => {
-    if (!clueThresholds || !clueThresholds[gameType]) return 999;
-    return clueThresholds[gameType][thresholdKey];
+  const getThreshold = (thresholdKey: string): number => {
+    return clueThresholds?.[gameType]?.[thresholdKey] ?? 999;
   };
 
   if (!configLoaded || !clueThresholds) return null;
