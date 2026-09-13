@@ -1,0 +1,42 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./build",
+
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "lib": ["dom"],
+    "types": ["node", "vite/client"],
+
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    // Style Options
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitAny": false,
+
+    // Recommended Options
+    // TODO: Enable strict mode when we have migrated all JS files to TS
+    "strict": false,
+    "jsx": "react-jsx",
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+
+    // TODO: Remove these when we have migrated all JS files to TS
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": ["src"]
+}

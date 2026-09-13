@@ -1,0 +1,339 @@
+import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useSelector } from "react-redux";
+import Select from "react-select";
+import Config from "../../configs/config";
+import { Reroll } from "../../utils/reroll";
+import {
+  saveFirstTries,
+  saveGamesPlayed,
+  saveTries,
+} from "../../utils/saveStats";
+import {
+  addToSkinGuessHistory,
+  clearSkinHistory,
+  getSkinGuessHistory,
+} from "../history";
+import ChampionImg from "./components/ChampionImg";
+import ClueBox from "./components/ClueBox";
+import Victory from "./components/Victory";
+import {
+  customFilterOptionChamps,
+  SelectStyles,
+  SelectTheme,
+} from "./styles/selectStyles";
+
+type SplashArtGameState = {
+  colorBlindReducer: { isColorBlindMode: boolean };
+  monochromeReducer: { isMonochrome: boolean };
+  randomRotateReducer: { randomRotate: boolean };
+};
+
+export default function SplashArtGame() {
+  const [validGuesses, setValidGuesses] = useState([]);
+  const [champions, setChampions] = useState([]);
+  const [guesses, setGuesses] = useState([]);
+  const [currentGuess, setGuess] = useState(validGuesses[0]);
+  const [correctGuess, setCorrectGuess] = useState(false);
+  const [sprite, setSprite] = useState("");
+  const [title, setTitle] = useState("");
+  const [guessCount, setGuessCount] = useState(0);
+  const [clueBoxKey, setClueBoxKey] = useState(0);
+
+  const isColorBlindMode = useSelector(
+    (state: SplashArtGameState) => state.colorBlindReducer.isColorBlindMode,
+  );
+
+  const isMonochrome = useSelector(
+    (state: SplashArtGameState) => state.monochromeReducer.isMonochrome,
+  );
+
+  const randomRotate = useSelector(
+    (state: SplashArtGameState) => state.randomRotateReducer.randomRotate,
+  );
+
+  useEffect(() => {
+    FetchChampions();
+    FetchSplashArt();
+    SetHistory();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const SetHistory = () => {
+    const history = getSkinGuessHistory().reverse();
+
+    if (history.length > 0) {
+      setChampions(history);
+      setGuesses(history.map((item) => item.name));
+      setGuessCount(history.length);
+    }
+  };
+
+  const FetchChampions = () => {
+    axios
+      .get(Config.url + "/champions")
+      .then((response) => {
+        if (response.data.status === "success") {
+          const data = response.data.champions;
+          data.sort((a, b) => a.value.localeCompare(b.value));
+
+          const guessChampionKeys = new Set(
+            getSkinGuessHistory().map((champ) => champ.key),
+          );
+
+          const transformedData = data
+            .filter((champion) => !guessChampionKeys.has(champion.value))
+            .map((champion) => ({
+              value: champion.value,
+              label: champion.value,
+              image: champion.image,
+            }));
+          setValidGuesses(transformedData);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const FetchSplashArt = () => {
+    axios
+      .get(Config.url + "/splash", {
+        headers: { authorization: "Bearer " + localStorage.getItem("token") },
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          if (response.data.result) {
+            setSprite(response.data.result);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const Guess = (e) => {
+    e.preventDefault();
+
+    if (!currentGuess) {
+      return;
+    }
+
+    if (guesses.indexOf(currentGuess) !== -1) {
+      return;
+    }
+
+    setValidGuesses(validGuesses.filter((item) => item.label !== currentGuess));
+    setGuesses((guesses) => [...guesses, currentGuess]);
+
+    axios
+      .post(
+        Config.url + "/splash",
+        { guess: currentGuess },
+        {
+          headers: { authorization: "Bearer " + localStorage.getItem("token") },
+        },
+      )
+      .then((response) => {
+        if (response.data.status !== "success") {
+          return;
+        }
+        saveTries(1);
+
+        const isCorrect = response.data.correctGuess;
+        const key = response.data.championKey;
+
+        const name = response.data.name;
+        const currentGuessCount = response.data.guessCount;
+
+        if (currentGuessCount !== undefined) {
+          setGuessCount(currentGuessCount);
+        }
+        // Use object instead of tuple
+        setChampions((champions) => [{ key, isCorrect, name }, ...champions]);
+        addToSkinGuessHistory({ key, isCorrect, name });
+
+        const spriteImg = document.getElementById("spriteImg");
+
+        if (isCorrect) {
+          if (guesses.length === 0) {
+            saveFirstTries();
+          }
+          saveGamesPlayed();
+          setCorrectGuess(true);
+          clearSkinHistory();
+          setTitle(response.data.title);
+
+          spriteImg.style.filter = "";
+        } else {
+          ApplyBlur(guesses.length + 1);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setChampions([]);
+      });
+  };
+
+  const ApplyBlur = useCallback(
+    (guessCount) => {
+      const spriteImg = document.getElementById("spriteImg");
+      if (!spriteImg) return;
+
+      const initialBlur = 1.0;
+      let blurVal = initialBlur;
+
+      for (let i = 0; i < guessCount; i++) {
+        blurVal -= blurVal * 0.4;
+      }
+
+      spriteImg.style.filter = `blur(${blurVal.toFixed(3)}em) ${
+        isMonochrome ? "grayscale(1)" : ""
+      }`;
+    },
+    [isMonochrome],
+  );
+
+  useEffect(() => {
+    if (sprite) {
+      ApplyBlur(guesses.length);
+    }
+  }, [sprite, guesses, isMonochrome, ApplyBlur]);
+
+  const Restart = () => {
+    setTimeout(() => ApplyBlur(0), 0);
+
+    FetchSplashArt();
+    FetchChampions();
+
+    setGuesses([]);
+    setChampions([]);
+    setGuess("");
+    setCorrectGuess(false);
+    setGuessCount(0);
+    setClueBoxKey((prev) => prev + 1);
+  };
+
+  const HandleReroll = () => {
+    clearSkinHistory();
+    setGuesses([]);
+    setChampions([]);
+    Reroll("splash");
+  };
+
+  return (
+    <div className="container main pt-4 pb-5 mb-5">
+      <h3 className="text-center pb-3">Whose splash art is this?</h3>
+
+      <div
+        className="container d-flex justify-content-center shadow"
+        id="spriteContainer"
+      >
+        <img
+          src={`data:image/webp;base64,${sprite}`}
+          style={{
+            filter: `${isMonochrome ? "grayscale(1)" : ""}`,
+            transform: `${randomRotate ? "rotate(180deg)" : ""}`,
+          }}
+          className="rounded p-4"
+          id="spriteImg"
+          alt="Champion splash art."
+          draggable="false"
+        />
+      </div>
+
+      <div className="d-flex justify-content-center mt-4 pt-3 mb-3">
+        <form
+          className="form-control row g-3 mb-2"
+          onSubmit={Guess}
+          id="guess-form"
+        >
+          <Select
+            className="select"
+            options={validGuesses}
+            onChange={(selectedOption) => setGuess(selectedOption.value)}
+            isDisabled={correctGuess}
+            styles={SelectStyles}
+            placeholder="Type champions name"
+            filterOption={customFilterOptionChamps}
+            formatOptionLabel={(data) => (
+              <div className="select-option">
+                <LazyLoadImage
+                  src={"/40_40/champions/" + data.image + ".webp"}
+                  alt="Champion icon"
+                  threshold={200}
+                />
+                <span>{data.label}</span>
+              </div>
+            )}
+            theme={SelectTheme}
+          />
+
+          <div className="d-flex justify-content-evenly">
+            {correctGuess ? (
+              <button
+                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
+                onClick={Restart}
+              >
+                Next
+              </button>
+            ) : (
+              <button className="btn btn-dark mb-3 mt-1 min-vw-25">
+                Guess
+              </button>
+            )}
+            {!correctGuess && guesses.length >= 15 ? (
+              <button
+                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
+                onClick={HandleReroll}
+              >
+                Reroll
+              </button>
+            ) : (
+              ""
+            )}
+          </div>
+        </form>
+      </div>
+
+      <ClueBox
+        key={clueBoxKey}
+        guessCount={guessCount}
+        gameType="splash"
+        clueEndpoints={[
+          {
+            endpoint: "/clue/splash/ability",
+            type: "ability",
+            label: "Ability Clue",
+            thresholdKey: "abilityClueThreshold",
+          },
+        ]}
+      />
+
+      <div id="championsImgs" className="container">
+        {champions.map((champ) => (
+          <ChampionImg
+            key={champ.key}
+            championKey={champ.key}
+            isCorrect={champ.isCorrect}
+            isColorBlindMode={isColorBlindMode}
+            name={champ.name}
+          />
+        ))}
+      </div>
+
+      {correctGuess ? (
+        <Victory
+          id="victory"
+          championKey={champions[0].key}
+          champion={currentGuess}
+          tries={guessCount}
+          title={title}
+        />
+      ) : (
+        ""
+      )}
+    </div>
+  );
+}
