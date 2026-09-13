@@ -1,0 +1,289 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import Select from "react-select";
+import Config from "../../configs/config";
+import { useAppSelector } from "../../store/hooks";
+import { Reroll } from "../../utils/reroll";
+import {
+  saveFirstTries,
+  saveGamesPlayed,
+  saveTries,
+} from "../../utils/saveStats";
+import ChampionDetails from "./components/ChampionDetails";
+import ClueBox from "./components/ClueBox";
+import Titles from "./components/GameTitle";
+import Victory from "./components/Victory";
+
+import {
+  addToChampionGuessHistory,
+  clearChampionHistory,
+  getChampionGuessHistory,
+} from "../history";
+import {
+  customFilterOptionChamps,
+  SelectStyles,
+  SelectTheme,
+} from "./styles/selectStyles";
+
+export default function Game() {
+  const [validGuesses, setValidGuesses] = useState([]);
+  const [champions, setChampions] = useState([]);
+  const [guesses, setGuesses] = useState([]);
+  const [currentGuess, setGuess] = useState(validGuesses[0]);
+  const [correctGuess, setCorrectGuess] = useState(false);
+  const [title, setTitle] = useState("");
+  const [guessCount, setGuessCount] = useState(0);
+  const [clueBoxKey, setClueBoxKey] = useState(0);
+
+  const isColorBlindMode = useAppSelector(
+    (state) => state.colorBlindReducer.isColorBlindMode,
+  );
+
+  const hideResource = useAppSelector(
+    (state) => state.hideResourceReducer.hideResource,
+  );
+
+  useEffect(() => {
+    FetchChampions();
+    setHistory();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const setHistory = () => {
+    const history = getChampionGuessHistory().reverse();
+
+    if (history.length > 0) {
+      setChampions(history);
+      setGuesses(history.map((champ) => champ[0].guessedChampion));
+      setGuessCount(history.length);
+    }
+  };
+
+  const FetchChampions = () => {
+    axios
+      .get(Config.url + "/champions")
+      .then((response) => {
+        if (response.data.status === "success") {
+          const data = response.data.champions;
+          data.sort((a, b) => a.value.localeCompare(b.value));
+
+          const guessChampionKeys = new Set(
+            getChampionGuessHistory().map((champ) => champ[0].championKey),
+          );
+
+          const transformedData = data
+            .filter((champion) => !guessChampionKeys.has(champion.value))
+
+            .map((champion) => ({
+              value: champion.value,
+              label: champion.value,
+              image: champion.image,
+            }));
+          setValidGuesses(transformedData);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const Guess = (e) => {
+    e.preventDefault();
+
+    if (!currentGuess) {
+      return;
+    }
+
+    if (guesses.indexOf(currentGuess) !== -1) {
+      return;
+    }
+
+    setValidGuesses(validGuesses.filter((item) => item.label !== currentGuess));
+    setGuesses((guesses) => [...guesses, currentGuess]);
+
+    axios
+      .post(
+        Config.url + "/guess",
+        { guess: currentGuess },
+        {
+          headers: { authorization: "Bearer " + localStorage.getItem("token") },
+        },
+      )
+      .then((response) => {
+        if (response.data.status !== "success") {
+          return;
+        }
+        saveTries(1);
+
+        const correct = response.data.correctGuess;
+        const data = response.data.properties;
+        const currentGuessCount = response.data.guessCount;
+
+        if (currentGuessCount !== undefined) {
+          setGuessCount(currentGuessCount);
+        }
+
+        setChampions((champions) => [data, ...champions]);
+        addToChampionGuessHistory(data);
+
+        if (correct) {
+          if (guesses.length === 0) {
+            saveFirstTries();
+          }
+          saveGamesPlayed();
+          setCorrectGuess(true);
+          clearChampionHistory();
+          setTitle(response.data.title);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setChampions([]);
+      });
+  };
+
+  const Restart = () => {
+    FetchChampions();
+
+    setGuesses([]);
+    setChampions([]);
+    setGuess("");
+    setCorrectGuess(false);
+    setGuessCount(0);
+    setClueBoxKey((prev) => prev + 1);
+  };
+
+  const handleReroll = () => {
+    clearChampionHistory();
+    Reroll("champion");
+  };
+
+  return (
+    <div className="container main pt-4 pb-5 mb-5">
+      <Helmet>
+        <title>
+          Infinite LoLdle - Ultimate LoL quiz - Champion guessing game
+        </title>
+        <meta
+          name="description"
+          content="The ultimate quiz game for League of Legends enthusiasts. Guess League of Legends champions infinitely."
+        />
+      </Helmet>
+
+      <h3 className="text-center pb-3">Start guessing your champion</h3>
+
+      <div className="d-flex justify-content-center mt-4 mb-3">
+        <form
+          className="form-control row g-3 mb-4"
+          onSubmit={Guess}
+          id="guess-form"
+        >
+          <Select
+            className="select"
+            options={validGuesses}
+            onChange={(selectedOption) => setGuess(selectedOption.value)}
+            isDisabled={correctGuess}
+            styles={SelectStyles}
+            placeholder="Type champions name"
+            filterOption={customFilterOptionChamps}
+            formatOptionLabel={(data) => (
+              <div className="select-option">
+                <LazyLoadImage
+                  src={"/40_40/champions/" + data.image + ".webp"}
+                  alt="Champion icon"
+                  threshold={200}
+                />
+                <span>{data.label}</span>
+              </div>
+            )}
+            theme={SelectTheme}
+          />
+
+          <div className="d-flex justify-content-evenly">
+            {correctGuess ? (
+              <>
+                <button
+                  className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
+                  onClick={Restart}
+                >
+                  Next
+                </button>
+              </>
+            ) : (
+              <button className="btn btn-dark mb-3 mt-1 min-vw-25">
+                Guess
+              </button>
+            )}
+            {!correctGuess && guesses.length >= 15 ? (
+              <button
+                className="btn btn-outline-dark mb-3 mt-1 min-vw-25"
+                onClick={handleReroll}
+              >
+                Reroll
+              </button>
+            ) : (
+              ""
+            )}
+          </div>
+        </form>
+      </div>
+
+      <ClueBox
+        key={clueBoxKey}
+        guessCount={guessCount}
+        gameType="champion"
+        clueEndpoints={[
+          {
+            endpoint: "/clue/champion/ability",
+            type: "ability",
+            label: "Ability Clue",
+            thresholdKey: "abilityClueThreshold",
+          },
+          {
+            endpoint: "/clue/champion/splash",
+            type: "splash",
+            label: "Splash Clue",
+            thresholdKey: "splashClueThreshold",
+          },
+        ]}
+      />
+
+      <div className="scroll-container">
+        {champions.length > 0 ? <Titles /> : ""}
+
+        <div id="champions">
+          {champions.map((champ) => (
+            <ChampionDetails
+              key={champ[0].championKey}
+              championKey={champ[0].championKey}
+              gender={champ[0].gender}
+              genre={champ[0].genre}
+              resource={champ[0].resource}
+              rangeTypes={champ[0].rangeType}
+              positions={champ[0].position}
+              releaseYear={champ[0].releaseYear}
+              regions={champ[0].region}
+              damageType={champ[0].damageType}
+              similarites={champ[1]}
+              isColorBlindMode={isColorBlindMode}
+              hideResource={hideResource}
+              name={champ[0].guessedChampion}
+            />
+          ))}
+        </div>
+      </div>
+
+      {correctGuess ? (
+        <Victory
+          championKey={champions[0][0].championKey}
+          champion={champions[0][0].guessedChampion}
+          tries={guessCount}
+          title={title}
+        />
+      ) : (
+        ""
+      )}
+    </div>
+  );
+}
