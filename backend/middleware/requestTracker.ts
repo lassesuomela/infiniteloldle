@@ -8,7 +8,7 @@ const DAU_KEY = "stats:dau";
 const TOKENS_KEY = "stats:tokens";
 
 const trackRequests = async (req, res, next) => {
-  if (process.env.NODE_ENV === "test") {
+  if (process.env["NODE_ENV"] === "test") {
     next();
     return;
   }
@@ -23,7 +23,7 @@ const trackRequests = async (req, res, next) => {
 };
 
 const trackDAU = async (req, res, next) => {
-  if (process.env.NODE_ENV === "test") {
+  if (process.env["NODE_ENV"] === "test") {
     next();
     return;
   }
@@ -46,7 +46,7 @@ const trackDAU = async (req, res, next) => {
 
 // Save stats to DB and reset Redis counters
 const saveStats = async () => {
-  if (process.env.NODE_ENV === "test") {
+  if (process.env["NODE_ENV"] === "test") {
     console.log("Skipping stats saving in test environment");
     return;
   }
