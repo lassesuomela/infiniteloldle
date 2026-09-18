@@ -5,18 +5,14 @@ const ability = require("../models/v2/ability");
 const cache = require("../middleware/cache");
 const redisCache = require("../cache/cache");
 const { GuessCountKeys } = require("../helpers/redisKeys");
-const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
 const GetPartialSimilarites =
   require("../helpers/compare").GetPartialSimilarites;
-const { PrismaClient } = require("../generated/prisma");
 const skin = require("../models/v2/skin");
 const fsp = require("fs").promises;
 const clueConfig = require("../configs/clues");
 const gameTracking = require("../models/v2/gameTracking");
-
-const prisma = new PrismaClient();
 
 const GetAllChampions = (req, res) => {
   const key = req.path;
@@ -102,27 +98,27 @@ const Guess = async (req, res) => {
         correctChampion.released === guessChampion.released
           ? "="
           : correctChampion.released > guessChampion.released
-          ? ">"
-          : "<",
+            ? ">"
+            : "<",
       samePosition: GetPartialSimilarites(
         guessChampion.position,
-        correctChampion.position
+        correctChampion.position,
       ),
       sameRangeType: GetPartialSimilarites(
         guessChampion.rangeType,
-        correctChampion.rangeType
+        correctChampion.rangeType,
       ),
       sameRegion: GetPartialSimilarites(
         guessChampion.region,
-        correctChampion.region
+        correctChampion.region,
       ),
       sameGenre: GetPartialSimilarites(
         guessChampion.genre,
-        correctChampion.genre
+        correctChampion.genre,
       ),
       sameDamageType: GetPartialSimilarites(
         guessChampion.damageType,
-        correctChampion.damageType
+        correctChampion.damageType,
       ),
     };
     if (!isCorrectGuess) {
@@ -168,7 +164,7 @@ const Guess = async (req, res) => {
 
     // Pick a new champion not yet solved
     const unsolvedIds = allChampionIds.filter(
-      (id) => !solvedChamps.includes(id)
+      (id) => !solvedChamps.includes(id),
     );
     const newChampionId =
       unsolvedIds[Math.floor(Math.random() * unsolvedIds.length)];
@@ -268,7 +264,7 @@ const GuessSplash = async (req, res) => {
       await userV2.addSolvedSplash(
         userObj.id,
         correctSkinData.champion.id,
-        guessCount
+        guessCount,
       );
       solvedIds.push(correctSkinData.champion.id);
     }
@@ -368,7 +364,7 @@ const GetSplashArt = async (req, res) => {
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageName)).toISOString()
+        new Date(cache.getTtl(imageName)).toISOString(),
       );
       return res.json({
         status: "success",
@@ -379,7 +375,7 @@ const GetSplashArt = async (req, res) => {
     const imagePath = path.join(
       __dirname,
       "../images/champions/splash",
-      imageName
+      imageName,
     );
 
     const file = await fsp.readFile(imagePath);
@@ -568,7 +564,7 @@ const GetAbilitySprite = async (req, res) => {
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageName)).toISOString()
+        new Date(cache.getTtl(imageName)).toISOString(),
       );
       return res.json({
         status: "success",
@@ -579,7 +575,7 @@ const GetAbilitySprite = async (req, res) => {
     const imagePath = path.join(
       __dirname,
       "../images/champions/abilities",
-      imageName
+      imageName,
     );
 
     const file = await fsp.readFile(imagePath);
@@ -660,7 +656,7 @@ const GetSplashClueForChampionGame = async (req, res) => {
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageKey)).toISOString()
+        new Date(cache.getTtl(imageKey)).toISOString(),
       );
       return res.json({
         status: "success",
@@ -675,7 +671,7 @@ const GetSplashClueForChampionGame = async (req, res) => {
     const imagePath = path.join(
       __dirname,
       "../images/champions/splash",
-      imageName
+      imageName,
     );
 
     try {
@@ -779,7 +775,7 @@ const GetAbilityClueForChampionGame = async (req, res) => {
       0: "E",
     };
     const abilityToUse = abilities.find(
-      (ab) => ab.key === dayToAbilityKey[dayOfWeek]
+      (ab) => ab.key === dayToAbilityKey[dayOfWeek],
     )
       ? abilities.find((ab) => ab.key === dayToAbilityKey[dayOfWeek])
       : abilities[0];
@@ -792,7 +788,7 @@ const GetAbilityClueForChampionGame = async (req, res) => {
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageKey)).toISOString()
+        new Date(cache.getTtl(imageKey)).toISOString(),
       );
       return res.json({
         status: "success",
@@ -807,7 +803,7 @@ const GetAbilityClueForChampionGame = async (req, res) => {
     const imagePath = path.join(
       __dirname,
       "../images/champions/abilities",
-      imageName
+      imageName,
     );
 
     try {
@@ -907,7 +903,7 @@ const GetAbilityClueForSplashGame = async (req, res) => {
       0: "E",
     };
     const abilityToUse = abilities.find(
-      (ab) => ab.key === dayToAbilityKey[dayOfWeek]
+      (ab) => ab.key === dayToAbilityKey[dayOfWeek],
     )
       ? abilities.find((ab) => ab.key === dayToAbilityKey[dayOfWeek])
       : abilities[0];
@@ -921,7 +917,7 @@ const GetAbilityClueForSplashGame = async (req, res) => {
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageKey)).toISOString()
+        new Date(cache.getTtl(imageKey)).toISOString(),
       );
       return res.json({
         status: "success",
@@ -936,7 +932,7 @@ const GetAbilityClueForSplashGame = async (req, res) => {
     const imagePath = path.join(
       __dirname,
       "../images/champions/abilities",
-      imageName
+      imageName,
     );
 
     try {
@@ -1038,7 +1034,7 @@ const GetSplashClueForAbilityGame = async (req, res) => {
       res.set("X-CACHE", "HIT");
       res.set(
         "X-CACHE-REMAINING",
-        new Date(cache.getTtl(imageKey)).toISOString()
+        new Date(cache.getTtl(imageKey)).toISOString(),
       );
       return res.json({
         status: "success",
@@ -1053,7 +1049,7 @@ const GetSplashClueForAbilityGame = async (req, res) => {
     const imagePath = path.join(
       __dirname,
       "../images/champions/splash",
-      imageName
+      imageName,
     );
 
     try {

@@ -1,4 +1,4 @@
-const schedule = require("node-schedule");
+const { jest } = require("@jest/globals");
 
 jest.mock("node-schedule", () => ({
   scheduleJob: jest.fn(),

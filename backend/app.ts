@@ -31,11 +31,11 @@ const limiter = rateLimit({
   keyGenerator: (req) => rateLimit.ipKeyGenerator(req.clientIp, 56),
 });
 
-const job = schedule.scheduleJob("55 23 * * *", () => {
+schedule.scheduleJob("55 23 * * *", () => {
   requestTracker.saveStats();
 });
 
-const abandonRoundsJob = schedule.scheduleJob("0 0 * * *", async () => {
+schedule.scheduleJob("0 0 * * *", async () => {
   try {
     await gameTracking.markAbandonedRounds();
   } catch (error) {
