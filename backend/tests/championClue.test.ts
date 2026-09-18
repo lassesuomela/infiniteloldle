@@ -23,7 +23,6 @@ jest.mock("path", () => ({
 
 describe("Testing champion clue functionality", () => {
   let token = "";
-  let userId = 0;
 
   beforeAll(async () => {
     // Clear Redis before tests
@@ -68,13 +67,12 @@ describe("Testing champion clue functionality", () => {
 
   it("Should increment guess count and return it in response", async () => {
     const userObj = await user.findByToken(token);
-    userId = userObj.id;
     const correctChampion = await champion.findById(userObj.currentChampion);
 
     // Get a different champion to guess wrongly
     const allChampions = await champion.findAllIds();
     const wrongChampion = await champion.findById(
-      allChampions.find((id) => id !== correctChampion.id)
+      allChampions.find((id) => id !== correctChampion.id),
     );
 
     const body = {
@@ -97,7 +95,7 @@ describe("Testing champion clue functionality", () => {
     const correctChampion = await champion.findById(userObj.currentChampion);
     const allChampions = await champion.findAllIds();
     const wrongChampion = await champion.findById(
-      allChampions.find((id) => id !== correctChampion.id)
+      allChampions.find((id) => id !== correctChampion.id),
     );
 
     // Make enough wrong guesses to reach ability threshold (total will be abilityClueThreshold)
@@ -132,7 +130,7 @@ describe("Testing champion clue functionality", () => {
     const correctChampion = await champion.findById(userObj.currentChampion);
     const allChampions = await champion.findAllIds();
     const wrongChampion = await champion.findById(
-      allChampions.find((id) => id !== correctChampion.id)
+      allChampions.find((id) => id !== correctChampion.id),
     );
 
     // Make enough more wrong guesses to reach splash threshold

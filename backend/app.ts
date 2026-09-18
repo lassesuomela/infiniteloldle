@@ -31,11 +31,11 @@ const limiter = rateLimit({
   keyGenerator: (req) => rateLimit.ipKeyGenerator(req.clientIp, 56),
 });
 
-const job = schedule.scheduleJob("55 23 * * *", () => {
+schedule.scheduleJob("55 23 * * *", () => {
   requestTracker.saveStats();
 });
 
-const abandonRoundsJob = schedule.scheduleJob("0 0 * * *", async () => {
+schedule.scheduleJob("0 0 * * *", async () => {
   try {
     await gameTracking.markAbandonedRounds();
   } catch (error) {
@@ -82,7 +82,7 @@ app.use("/api", guessRoutes);
 
 Sentry.setupExpressErrorHandler(app);
 
-app.use(function onError(err, req, res, next) {
+app.use(function onError(_err, _req, res, _next) {
   res.status(500).json({ status: "error", message: "Internal server error" });
 });
 
