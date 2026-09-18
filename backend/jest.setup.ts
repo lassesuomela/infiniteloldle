@@ -1,7 +1,7 @@
-const { jest } = require("@jest/globals");
+const jestApi = require("@jest/globals");
 
-jest.mock("node-schedule", () => ({
-  scheduleJob: jest.fn(),
+jestApi.jest.mock("node-schedule", () => ({
+  scheduleJob: jestApi.jest.fn(),
 }));
 
-jest.mock("ioredis", () => require("ioredis-mock"));
+jestApi.jest.mock("ioredis", () => require("ioredis-mock"));

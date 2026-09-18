@@ -5,7 +5,7 @@
     "outDir": "./dist",
 
     "target": "ES2022",
-    "types": ["node"],
+    "types": ["node", "jest"],
 
     // Other Outputs
     "sourceMap": true,

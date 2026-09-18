@@ -21,7 +21,6 @@ const cache = require("../../middleware/cache");
 const gameTracking = require("../../models/v2/gameTracking");
 
 const fsp = require("fs/promises");
-const path = require("path");
 
 const {
   GuessAbility,
