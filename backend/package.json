@@ -3,12 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node dist/server.js",
+    "dev": "tsx watch server.ts",
     "test": "jest --detectOpenHandles --runInBand --forceExit",
     "db:gen": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
-    "db:push": "npx prisma db push"
+    "db:push": "npx prisma db push",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
@@ -31,9 +33,13 @@
     "ua-parser-js": "^2.0.9"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.1",
     "ioredis-mock": "^8.13.1",
     "jest": "^29.7.0",
     "prisma": "^6.9.0",
-    "supertest": "^6.3.4"
+    "supertest": "^6.3.4",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
   }
 }
