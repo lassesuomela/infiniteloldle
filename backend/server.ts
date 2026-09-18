@@ -10,7 +10,7 @@ app.listen(port, "0.0.0.0", () => {
 // handle ctrl + c
 process.on("SIGINT", function () {
   console.log("Caught interrupt signal");
-  db.end(function (err) {
+  db.end(function (_err) {
     // all connections in the pool have ended
     console.log("Closed all pool connections");
     process.exit();

@@ -17,7 +17,7 @@
     // Style Options
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    // "noUnusedParameters": true,
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitAny": false,

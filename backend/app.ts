@@ -82,7 +82,7 @@ app.use("/api", guessRoutes);
 
 Sentry.setupExpressErrorHandler(app);
 
-app.use(function onError(err, req, res, next) {
+app.use(function onError(_err, _req, res, _next) {
   res.status(500).json({ status: "error", message: "Internal server error" });
 });
 

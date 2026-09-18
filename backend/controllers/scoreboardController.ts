@@ -8,7 +8,7 @@ const TopAllTime = (req, res) => {
     return res.json(cache.getCache(key));
   }
 
-  scoreboard.getByScoreCount((err, result) => {
+  scoreboard.getByScoreCount((_err, result) => {
     if (!result || result.length === 0) {
       return res.json({
         status: "error",

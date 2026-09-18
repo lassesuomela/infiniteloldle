@@ -3,7 +3,7 @@
  * Attaches the real from headers "cf-connecting-ip" that nginx attaches as x-real-ip
  * Bind the IP to req.ip.
  */
-const ipParser = (req, res, next) => {
+const ipParser = (req, _res, next) => {
   req.clientIp = req.headers["X-Real-IP"] || req.ip;
   next();
 };

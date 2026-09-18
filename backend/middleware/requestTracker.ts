@@ -7,7 +7,7 @@ const REQUESTS_KEY = "stats:requests";
 const DAU_KEY = "stats:dau";
 const TOKENS_KEY = "stats:tokens";
 
-const trackRequests = async (req, res, next) => {
+const trackRequests = async (_req, _res, next) => {
   if (process.env["NODE_ENV"] === "test") {
     next();
     return;
@@ -22,7 +22,7 @@ const trackRequests = async (req, res, next) => {
   next();
 };
 
-const trackDAU = async (req, res, next) => {
+const trackDAU = async (req, _res, next) => {
   if (process.env["NODE_ENV"] === "test") {
     next();
     return;

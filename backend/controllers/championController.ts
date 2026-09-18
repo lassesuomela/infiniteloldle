@@ -1099,7 +1099,7 @@ const GetSplashClueForAbilityGame = async (req, res) => {
   }
 };
 
-const GetClueConfig = async (req, res) => {
+const GetClueConfig = async (_req, res) => {
   try {
     return res.json({
       status: "success",
