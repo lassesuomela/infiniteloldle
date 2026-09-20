@@ -10,7 +10,7 @@
     "db:gen": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
     "db:push": "npx prisma db push",
-    "build": "tsc && rm -rf dist/generated && cp -R generated dist/generated",
+    "build": "tsc && rm -rf dist/generated && cp -R generated dist/generated && cp -R images dist/images",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
