@@ -1,5 +1,12 @@
-const token = (req, res, next) => {
-  let authorization = req.headers.authorization;
+import type { NextFunction, Request } from "express";
+import type { ApiResponseWriter } from "../types/api";
+
+const token = (
+  req: Request,
+  res: ApiResponseWriter<never>,
+  next: NextFunction,
+): void => {
+  const authorization = req.headers.authorization;
 
   if (!authorization) {
     return res.json({
@@ -14,12 +21,12 @@ const token = (req, res, next) => {
       message: "Malformed authorization header",
     });
   }
-  authorization = authorization.split(" ")[1];
-  if (!authorization || authorization === null || authorization.length < 10) {
+  const tokenValue = authorization.split(" ")[1];
+  if (!tokenValue || tokenValue.length < 10) {
     return res.json({ status: "error", message: "Token is required" });
   }
 
-  req.token = authorization;
+  req.token = tokenValue;
   next();
 };
 
