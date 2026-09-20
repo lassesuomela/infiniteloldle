@@ -20,7 +20,7 @@ describe("CheckToken", () => {
   });
 
   it("should return 500 if DB error occurs (errno -111)", () => {
-    user.fetchByTokenForUserDataAPI.mockImplementation((token, cb) => {
+    user.fetchByTokenForUserDataAPI.mockImplementation((_token, cb) => {
       cb({ errno: -111 }, null);
     });
 
@@ -28,7 +28,7 @@ describe("CheckToken", () => {
 
     expect(user.fetchByTokenForUserDataAPI).toHaveBeenCalledWith(
       "abc123",
-      expect.any(Function)
+      expect.any(Function),
     );
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
@@ -38,7 +38,7 @@ describe("CheckToken", () => {
   });
 
   it("should return token invalid if no user found and no DB error", () => {
-    user.fetchByTokenForUserDataAPI.mockImplementation((token, cb) => {
+    user.fetchByTokenForUserDataAPI.mockImplementation((_token, cb) => {
       cb(null, null); // No user
     });
 

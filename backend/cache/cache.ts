@@ -1,10 +1,11 @@
 const Redis = require("ioredis");
 
 class Cache {
+  redis: any;
   constructor() {
     this.redis = new Redis({
-      host: process.env.REDIS_HOST || "localhost",
-      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+      host: process.env["REDIS_HOST"] || "localhost",
+      port: parseInt(process.env["REDIS_PORT"], 10) || 6379,
       connectTimeout: 500,
     });
 

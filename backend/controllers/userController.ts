@@ -121,7 +121,7 @@ const Create = (req, res) => {
               currentAbilityId: randomAbilityId,
             };
 
-            const user = await userV2.create(userData);
+            await userV2.create(userData);
 
             res.json({ status: "success", token: token });
           });

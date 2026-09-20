@@ -1,5 +1,4 @@
 const oldItemModel = require("../models/oldItemModel");
-const user = require("../models/userModel");
 const cache = require("../middleware/cache");
 const redisCache = require("../cache/cache");
 const { GuessCountKeys } = require("../helpers/redisKeys");

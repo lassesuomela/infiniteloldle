@@ -119,7 +119,11 @@ const gameTracking = {
         },
       });
 
-      const updateData = {
+      const updateData: {
+        guessCount: number;
+        status?: string;
+        endedAt?: Date;
+      } = {
         guessCount: guessNumber,
       };
 
