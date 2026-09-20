@@ -2,6 +2,7 @@
   "name": "backend",
   "version": "0.0.0",
   "private": true,
+  "type": "commonjs",
   "scripts": {
     "start": "node dist/server.js",
     "dev": "tsx watch server.ts",
@@ -9,7 +10,7 @@
     "db:gen": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
     "db:push": "npx prisma db push",
-    "build": "tsc",
+    "build": "tsc && rm -rf dist/generated && cp -R generated dist/generated",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

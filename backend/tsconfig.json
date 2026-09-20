@@ -4,7 +4,9 @@
     "rootDir": "./",
     "outDir": "./dist",
 
-    "target": "ES2022",
+    "target": "esnext",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "types": ["node", "jest"],
 
     // Other Outputs
@@ -25,7 +27,7 @@
     // Recommended Options
     // TODO: Enable strict mode when we have migrated all JS files to TS
     "strict": false,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
