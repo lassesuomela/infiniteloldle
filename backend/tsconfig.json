@@ -35,5 +35,5 @@
     "allowJs": true,
     "checkJs": false
   },
-  "exclude": ["node_modules", "dist", "coverage", "generated"]
+  "exclude": ["node_modules", "dist", "coverage", "generated", "cron", "tests"]
 }

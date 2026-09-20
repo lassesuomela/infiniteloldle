@@ -44,5 +44,12 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.23.13",
     "typescript": "^5.8.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "prisma@6.9.0": true,
+    "@prisma/engines@6.9.0": true,
+    "@prisma/client@6.9.0": true,
+    "sharp@0.34.5": true
   }
 }

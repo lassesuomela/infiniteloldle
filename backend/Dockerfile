@@ -7,13 +7,13 @@ COPY package-lock.json package-lock.json
 
 RUN npm ci
 
-RUN npm run build
-
 COPY prisma ./prisma
 
 RUN npx prisma generate
 
 COPY . .
+
+RUN npm run build
 
 EXPOSE 8080
 
