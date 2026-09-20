@@ -1,3 +1,16 @@
+import type { Request } from "express";
+import type { ApiResponseWriter } from "../types/api";
+
+type CreateUserResponse = { status: "success"; token: string };
+
+type UserProfileResponse = {
+  status: "success";
+  message: string;
+  player: unknown;
+};
+
+type UserMessageResponse = { status: "success"; message: string };
+
 const user = require("../models/userModel");
 const champion = require("../models/championModel");
 const item = require("../models/itemModel");
@@ -28,7 +41,7 @@ const GetNickname = (nick) => {
   return nickname;
 };
 
-const Create = (req, res) => {
+const Create = (req: Request, res: ApiResponseWriter<CreateUserResponse>) => {
   crypto.randomBytes(46, (err, token) => {
     if (err) {
       console.log(err);
@@ -137,7 +150,10 @@ const Create = (req, res) => {
   });
 };
 
-const CheckToken = (req, res) => {
+const CheckToken = (
+  req: Request,
+  res: ApiResponseWriter<UserProfileResponse>,
+) => {
   const token = req.token;
 
   const key = req.path + ":" + token;
@@ -154,7 +170,7 @@ const CheckToken = (req, res) => {
         ? result[1][0]["user_rank"]
         : "n/a";
       const response = {
-        status: "success",
+        status: "success" as const,
         message: "Token is valid",
         player: result[0][0],
       };
@@ -182,7 +198,10 @@ const CheckToken = (req, res) => {
   });
 };
 
-const ChangeCountry = (req, res) => {
+const ChangeCountry = (
+  req: Request,
+  res: ApiResponseWriter<UserMessageResponse>,
+) => {
   const token = req.token;
 
   const country = req.get("cf-ipcountry");
@@ -209,7 +228,10 @@ const ChangeCountry = (req, res) => {
   });
 };
 
-const ChangeNickname = (req, res) => {
+const ChangeNickname = (
+  req: Request,
+  res: ApiResponseWriter<UserMessageResponse>,
+) => {
   let { nickname } = req.body;
 
   if (!nickname) {
@@ -245,7 +267,10 @@ const ChangeNickname = (req, res) => {
   });
 };
 
-const DeleteUser = (req, res) => {
+const DeleteUser = (
+  req: Request,
+  res: ApiResponseWriter<UserMessageResponse>,
+) => {
   user.deleteUser(req.token, (err, result) => {
     if (err) {
       console.log(err);
@@ -266,7 +291,10 @@ const DeleteUser = (req, res) => {
   });
 };
 
-const ChangeChampionGuess = async (req, res) => {
+const ChangeChampionGuess = async (
+  req: Request,
+  res: ApiResponseWriter<UserMessageResponse>,
+) => {
   try {
     const token = req.token;
     const userObj = await userV2.findByToken(token);
@@ -307,7 +335,10 @@ const ChangeChampionGuess = async (req, res) => {
   }
 };
 
-const ChangeSplashGuess = async (req, res) => {
+const ChangeSplashGuess = async (
+  req: Request,
+  res: ApiResponseWriter<UserMessageResponse>,
+) => {
   try {
     const token = req.token;
     const userObj = await userV2.findByToken(token);
@@ -362,7 +393,10 @@ const ChangeSplashGuess = async (req, res) => {
   }
 };
 
-const ChangeItemGuess = async (req, res) => {
+const ChangeItemGuess = async (
+  req: Request,
+  res: ApiResponseWriter<UserMessageResponse>,
+) => {
   try {
     const token = req.token;
     const userObj = await userV2.findByToken(token);
@@ -405,7 +439,10 @@ const ChangeItemGuess = async (req, res) => {
   }
 };
 
-const ChangeOldItemGuess = async (req, res) => {
+const ChangeOldItemGuess = async (
+  req: Request,
+  res: ApiResponseWriter<UserMessageResponse>,
+) => {
   try {
     const token = req.token;
     const userObj = await userV2.findByToken(token);
@@ -448,7 +485,10 @@ const ChangeOldItemGuess = async (req, res) => {
   }
 };
 
-const ChangeAbilityGuess = async (req, res) => {
+const ChangeAbilityGuess = async (
+  req: Request,
+  res: ApiResponseWriter<UserMessageResponse>,
+) => {
   try {
     const token = req.token;
     const userObj = await userV2.findByToken(token);

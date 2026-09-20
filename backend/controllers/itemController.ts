@@ -1,3 +1,24 @@
+import type { Request } from "express";
+import type { ApiResponseWriter } from "../types/api";
+
+type GuessItemResponse = {
+  status: "success";
+  correctGuess: boolean;
+  itemId: number;
+  name: string;
+  guessCount: number;
+};
+
+type GetItemSpriteResponse = {
+  status: "success";
+  result: number;
+};
+
+type GetAllItemsResponse = {
+  status: "success";
+  items: Array<{ value: string }>;
+};
+
 const item = require("../models/itemModel");
 const cache = require("../middleware/cache");
 const redisCache = require("../cache/cache");
@@ -6,7 +27,10 @@ const itemV2 = require("../models/v2/item");
 const userV2 = require("../models/v2/user");
 const gameTracking = require("../models/v2/gameTracking");
 
-const GuessItem = async (req, res) => {
+const GuessItem = async (
+  req: Request,
+  res: ApiResponseWriter<GuessItemResponse>,
+) => {
   try {
     const { guess } = req.body;
 
@@ -114,7 +138,10 @@ const GuessItem = async (req, res) => {
   }
 };
 
-const GetItemSprite = (req, res) => {
+const GetItemSprite = (
+  req: Request,
+  res: ApiResponseWriter<GetItemSpriteResponse>,
+) => {
   const token = req.token;
 
   item.getItemByToken(token, (err, result) => {
@@ -134,7 +161,10 @@ const GetItemSprite = (req, res) => {
   });
 };
 
-const GetAllItems = (req, res) => {
+const GetAllItems = (
+  req: Request,
+  res: ApiResponseWriter<GetAllItemsResponse>,
+) => {
   const key = req.path;
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
@@ -150,7 +180,7 @@ const GetAllItems = (req, res) => {
       items.push({ value: item["name"] });
     });
 
-    const response = { status: "success", items: items };
+    const response = { status: "success" as const, items: items };
     cache.saveCache(key, response);
     cache.changeTTL(key, 3600 * 24);
     res.set("X-CACHE", "MISS");

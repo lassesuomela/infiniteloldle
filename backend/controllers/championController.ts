@@ -1,3 +1,47 @@
+import type { Request } from "express";
+import type { ApiResponseWriter } from "../types/api";
+
+type GetAllChampionsResponse = {
+  status: "success";
+  champions: Array<{ value: string; image: string }>;
+};
+
+type GuessResponse = {
+  status: "success";
+  correctGuess: boolean;
+  properties: unknown[];
+  title?: string | null;
+  guessCount: number;
+};
+
+type GuessSplashResponse = {
+  status: "success";
+  correctGuess: boolean;
+  championKey: string;
+  name?: string;
+  title?: string | null;
+  guessCount: number;
+};
+
+type GuessAbilityResponse = {
+  status: "success";
+  correctGuess: boolean;
+  abilityName?: string;
+  name: string;
+  championKey: string;
+  guessCount: number;
+};
+
+type GetImageResponse = { status: "success"; result: string };
+
+type ClueResponse = {
+  status: "success";
+  clue: unknown;
+  message?: string;
+};
+
+type ConfigResponse = { status: "success"; config: { clue: unknown } };
+
 const champion = require("../models/championModel");
 const userV2 = require("../models/v2/user");
 const championV2 = require("../models/v2/champion");
@@ -14,7 +58,10 @@ const fsp = require("fs").promises;
 const clueConfig = require("../configs/clues");
 const gameTracking = require("../models/v2/gameTracking");
 
-const GetAllChampions = (req, res) => {
+const GetAllChampions = (
+  req: Request,
+  res: ApiResponseWriter<GetAllChampionsResponse>,
+) => {
   const key = req.path;
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
@@ -33,7 +80,7 @@ const GetAllChampions = (req, res) => {
       });
     });
 
-    const response = { status: "success", champions: champions };
+    const response = { status: "success" as const, champions: champions };
     cache.saveCache(key, response);
     cache.changeTTL(key, 3600 * 24);
     res.set("X-CACHE", "MISS");
@@ -41,7 +88,7 @@ const GetAllChampions = (req, res) => {
   });
 };
 
-const Guess = async (req, res) => {
+const Guess = async (req: Request, res: ApiResponseWriter<GuessResponse>) => {
   try {
     const { guess } = req.body;
     if (!guess)
@@ -197,7 +244,10 @@ const Guess = async (req, res) => {
   }
 };
 
-const GuessSplash = async (req, res) => {
+const GuessSplash = async (
+  req: Request,
+  res: ApiResponseWriter<GuessSplashResponse>,
+) => {
   try {
     const { guess } = req.body;
     if (!guess) {
@@ -331,7 +381,10 @@ const GuessSplash = async (req, res) => {
   }
 };
 
-const GetSplashArt = async (req, res) => {
+const GetSplashArt = async (
+  req: Request,
+  res: ApiResponseWriter<GetImageResponse>,
+) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -403,7 +456,10 @@ const GetSplashArt = async (req, res) => {
   }
 };
 
-const GuessAbility = async (req, res) => {
+const GuessAbility = async (
+  req: Request,
+  res: ApiResponseWriter<GuessAbilityResponse>,
+) => {
   try {
     const { guess } = req.body;
     if (!guess) {
@@ -521,7 +577,10 @@ const GuessAbility = async (req, res) => {
   }
 };
 
-const GetAbilitySprite = async (req, res) => {
+const GetAbilitySprite = async (
+  req: Request,
+  res: ApiResponseWriter<GetImageResponse>,
+) => {
   const token = req.token;
   try {
     let userObj = await userV2.findByToken(token);
@@ -603,7 +662,10 @@ const GetAbilitySprite = async (req, res) => {
   }
 };
 
-const GetSplashClueForChampionGame = async (req, res) => {
+const GetSplashClueForChampionGame = async (
+  req: Request,
+  res: ApiResponseWriter<ClueResponse>,
+) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -721,7 +783,10 @@ const GetSplashClueForChampionGame = async (req, res) => {
   }
 };
 
-const GetAbilityClueForChampionGame = async (req, res) => {
+const GetAbilityClueForChampionGame = async (
+  req: Request,
+  res: ApiResponseWriter<ClueResponse>,
+) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -838,7 +903,10 @@ const GetAbilityClueForChampionGame = async (req, res) => {
   }
 };
 
-const GetAbilityClueForSplashGame = async (req, res) => {
+const GetAbilityClueForSplashGame = async (
+  req: Request,
+  res: ApiResponseWriter<ClueResponse>,
+) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -968,7 +1036,10 @@ const GetAbilityClueForSplashGame = async (req, res) => {
   }
 };
 
-const GetSplashClueForAbilityGame = async (req, res) => {
+const GetSplashClueForAbilityGame = async (
+  req: Request,
+  res: ApiResponseWriter<ClueResponse>,
+) => {
   const token = req.token;
   try {
     const userObj = await userV2.findByToken(token);
@@ -1099,7 +1170,10 @@ const GetSplashClueForAbilityGame = async (req, res) => {
   }
 };
 
-const GetClueConfig = async (_req, res) => {
+const GetClueConfig = async (
+  _req: Request,
+  res: ApiResponseWriter<ConfigResponse>,
+) => {
   try {
     return res.json({
       status: "success",

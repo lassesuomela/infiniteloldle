@@ -1,7 +1,20 @@
+import type { Request } from "express";
+import type { ApiResponseWriter } from "../types/api";
+
+type TopAllTimeResponse = {
+  status: "success";
+  scores: unknown[];
+  registered_count: number;
+  player_count: number;
+};
+
 const scoreboard = require("../models/scoreboardModel");
 const cache = require("../middleware/cache");
 
-const TopAllTime = (req, res) => {
+const TopAllTime = (
+  req: Request,
+  res: ApiResponseWriter<TopAllTimeResponse>,
+) => {
   const key = req.path;
   if (cache.checkCache(key)) {
     res.set("X-CACHE", "HIT");
@@ -18,7 +31,7 @@ const TopAllTime = (req, res) => {
     }
 
     const response = {
-      status: "success",
+      status: "success" as const,
       scores: result[0],
       registered_count: result[1][0]["registered_count"],
       player_count: result[2][0]["player_count"],

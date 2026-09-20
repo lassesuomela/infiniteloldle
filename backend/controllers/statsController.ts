@@ -1,8 +1,31 @@
+import type { Request } from "express";
+import type { ApiResponseWriter } from "../types/api";
+
+type GetAllResponse = {
+  status: "success";
+  stats: unknown[];
+  register_count: number;
+  player_count: number;
+  item_count: number;
+  champion_count: number;
+  global_skin_count: number;
+  player_stats: unknown[];
+  todays_players: unknown[];
+  todays_player_count: number;
+  yesterdays_player_count: number;
+  top_countries: unknown[];
+  user_data: unknown[];
+  dau: number;
+  mau: number;
+  old_item_count: number;
+  score_count_graph: unknown[];
+};
+
 const statsModel = require("../models/statsModel");
 const cache = require("../middleware/cache");
 const skin = require("../models/v2/skin");
 
-const GetAll = (req, res) => {
+const GetAll = (req: Request, res: ApiResponseWriter<GetAllResponse>) => {
   const key = req.path;
 
   if (cache.checkCache(key)) {
@@ -57,7 +80,7 @@ const GetAll = (req, res) => {
       });
 
       const response = {
-        status: "success",
+        status: "success" as const,
         stats: result[0],
         register_count: result[1][0].user_count,
         player_count: result[2][0].player_count,
