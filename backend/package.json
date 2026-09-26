@@ -36,13 +36,13 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.1",
     "ioredis-mock": "^8.13.1",
     "jest": "^29.7.0",
     "prisma": "^6.9.0",
     "supertest": "^6.3.4",
     "ts-jest": "^29.4.12",
-    "ts-node": "^10.9.2",
     "tsx": "^4.23.13",
     "typescript": "^5.8.3"
   },
