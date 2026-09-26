@@ -19,7 +19,7 @@
     "axios": "^1.13.6",
     "cors": "^2.8.6",
     "dotenv": "^16.4.5",
-    "express": "~4.19.2",
+    "express": "^5.2.1",
     "express-rate-limit": "^8.3.0",
     "helmet": "^5.1.1",
     "ioredis": "^5.10.0",
@@ -31,7 +31,8 @@
     "p-limit": "3.0.0",
     "semver": "^7.7.3",
     "sharp": "^0.34.3",
-    "ua-parser-js": "^2.0.9"
+    "ua-parser-js": "^2.0.9",
+    "mime-types": "^3.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
