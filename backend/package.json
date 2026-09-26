@@ -16,23 +16,23 @@
   "dependencies": {
     "@prisma/client": "^6.9.0",
     "@sentry/node": "^10.42.0",
-    "axios": "^1.13.6",
+    "axios": "^1.20.0",
     "cors": "^2.8.6",
     "dotenv": "^16.4.5",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.3.0",
+    "express-rate-limit": "^8.7.0",
     "helmet": "^5.1.1",
     "ioredis": "^5.10.0",
     "jsonwebtoken": "^8.5.1",
-    "morgan": "~1.10.1",
+    "morgan": "~1.12.1",
     "mysql2": "^2.3.3",
     "node-cache": "^5.1.2",
     "node-schedule": "^2.1.1",
     "p-limit": "3.0.0",
-    "semver": "^7.7.3",
+    "semver": "^7.8.5",
     "sharp": "^0.34.3",
-    "ua-parser-js": "^2.0.9",
-    "mime-types": "^3.0.0"
+    "ua-parser-js": "^2.0.10",
+    "mime-types": "^3.0.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
@@ -43,8 +43,8 @@
     "jest": "^29.7.0",
     "prisma": "^6.9.0",
     "supertest": "^6.3.4",
-    "ts-jest": "^29.4.12",
-    "tsx": "^4.23.13",
+    "ts-jest": "^29.4.14",
+    "tsx": "^4.23.15",
     "typescript": "^5.8.3"
   },
   "allowScripts": {
